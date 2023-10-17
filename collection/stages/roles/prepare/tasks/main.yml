@@ -1,0 +1,3 @@
+---
+# tasks file for prepare
+- debug: var=foo

@@ -1,0 +1,35 @@
+- hosts: localhost
+  vars_files:
+    - "defaults.yaml"
+  pre_tasks:
+    - name: Preparing for the run
+      debug:
+        msg: "Preparing for the run..."
+    - name: Print all available facts
+      debug:
+        var: ansible_facts
+
+  roles: 
+    - name: Cleanup setup
+      role: shiftstack.stages.cleanup
+      vars:
+        foo: bar # overrides var_files
+
+    - name: Prepare setup
+      role: shiftstack.stages.prepare
+
+    - name: Install OCP on setup
+      role: shiftstack.stages.install
+
+    - name: Run post operations on setup
+      role: shiftstack.stages.post
+
+    - name: Run tests on OCP
+      role: shiftstack.stages.test
+
+    - name: Run day2ops
+      role: shiftstack.stages.day2ops
+
+  post_tasks:
+    - debug:
+        msg: "Gathering resources..."
