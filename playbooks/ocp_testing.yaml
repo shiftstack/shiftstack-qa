@@ -1,14 +1,14 @@
+---
 - name: OCP testing for new candidate
   hosts: localhost
   vars_files:
-    - "vars/defaults.yaml"
+    - "../configs/secret.yaml"
+    - "../configs/ocp_testing.yaml"
+
   pre_tasks:
     - name: Preparing for the run
       ansible.builtin.debug:
         msg: "Preparing for the run..."
-    - name: Print all available facts
-      ansible.builtin.debug:
-        var: ansible_facts
 
   roles:
     - name: Cleanup setup

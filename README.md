@@ -5,6 +5,7 @@ Ansible playbooks and roles for QA automation for OSP18 and up.
 1. This code is intended to run on top of the image https://quay.io/repository/shiftstack-qe/shiftstack-client
 2. The container must have access to the Openstack API and the external Openstack network.
 3. The container should have internet access.
+4. The container should have the vault-password-file in the expected place.
 
 ## Install
 ```
@@ -20,7 +21,7 @@ where:
 ## Run
 ```
 oc rsh shiftstackclient -n openstack \
-  ansible-navigator shiftstack-qe/playbooks/{playbook_name}.yaml
+  ansible-navigator run shiftstack-qe/playbooks/{playbook_name}.yaml
 ```
 where:
 - [playbooks](./playbooks) includes 1 playbook per scenario to be tested (formerly known as Job).
