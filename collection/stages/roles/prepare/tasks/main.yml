@@ -1,3 +1,8 @@
 ---
-# tasks file for prepare
-- debug: var=ocp_pull_secret
+- name: Create project
+  openstack.cloud.project:
+    cloud: "{{ admin_cloud | default(omit) }}"
+    state: present
+    name: "{{ user_cloud }}"
+    domain_id: default
+    enabled: True
