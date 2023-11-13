@@ -1,0 +1,18 @@
+---
+- name: Collect "{{ admin_cloud }}" project facts
+  openstack.cloud.project_info:
+    cloud: "{{ admin_cloud  }}"
+    name: "{{ admin_cloud }}"
+  register: admin_project_fact
+
+- name: Collect "{{ user_cloud }}" project facts
+  openstack.cloud.project_info:
+    cloud: "{{ admin_cloud  }}"
+    name: "{{ user_cloud }}"
+  register: user_project_fact
+
+- name: Update {{ clouds_yaml_file_path }}
+  blockinfile:
+    block: "{{ lookup('ansible.builtin.template', 'clouds.yml.j2') }}"
+    dest: "{{ clouds_yaml_file_path }}"
+    marker: "# {mark} {{ user_cloud }} PARAMETERS"

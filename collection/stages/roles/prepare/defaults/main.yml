@@ -1,3 +1,27 @@
 ---
 admin_cloud: undefined
 user_cloud: undefined
+clouds_yaml_file_path: "~/clouds.yaml"
+project:
+  name: "{{ user_cloud }}"
+  user: user
+  password: redhat
+  role: member
+  swift_role: swiftoperator
+  domain_name: Default
+  cacert: '/etc/pki/ca-trust/source/anchors/undercloud-cacert.pem'
+  region: 'regionOne'
+  os_quota:   # https://github.com/openshift/installer/tree/master/docs/user/openstack#openstack-requirements
+      ram: 147456
+      cores: 50
+      network: 250
+      subnet: 250
+      security_group: 250
+      security_group_rule: 1000
+      port: 1510
+      volumes: 100
+      snapshots: 100
+      gigabytes: 1000
+      load_balancers: 1000
+      load_balancer_listeners: 5000
+      load_balancer_pools: 5000  

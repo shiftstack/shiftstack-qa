@@ -1,0 +1,31 @@
+---
+- name: Create project
+  openstack.cloud.project:
+    cloud: "{{ admin_cloud }}"
+    state: present
+    name: "{{ user_cloud }}"
+    domain_id: default
+    enabled: True
+
+- name: Create openstack user
+  openstack.cloud.identity_user:
+    cloud: "{{ admin_cloud }}"
+    state: present
+    name: "{{ project.user }}"
+    password: "{{ project.password }}"
+    default_project: "{{ user_cloud }}"
+    domain: default
+
+- name: Create openstack user role
+  openstack.cloud.role_assignment:
+    cloud: "{{ admin_cloud }}"
+    user: "{{ project.user }}"
+    role: "{{ project.role }}"
+    project: "{{ user_cloud }}"
+
+- name: Add swift operator role to openstack user
+  openstack.cloud.role_assignment:
+    cloud: "{{ admin_cloud }}"
+    user: "{{ project.user }}"
+    role: "{{ project.swift_role }}"
+    project: "{{ user_cloud }}"

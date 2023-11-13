@@ -1,8 +1,21 @@
 ---
-- name: Create project
-  openstack.cloud.project:
-    cloud: "{{ admin_cloud | default(omit) }}"
-    state: present
-    name: "{{ user_cloud }}"
-    domain_id: default
-    enabled: true
+- name: Create new Project
+  import_tasks: project.yml
+
+- name: update clouds.yml file with new Project
+  include_tasks: clouds.yml
+
+- name: Update Project Quota
+  openstack.cloud.quota:
+      cloud: "{{ admin_cloud }}"
+      name: "{{ user_cloud }}"
+      ram: "{{ project.os_quota.ram | default(omit) }}"
+      cores: "{{ project.os_quota.cores | default(omit) }}"
+      network: "{{ project.os_quota.network | default(omit) }}"
+      subnet: "{{ project.os_quota.subnet | default(omit) }}"
+      security_group: "{{ project.os_quota.security_group | default(omit) }}"
+      security_group_rule: "{{ project.os_quota.security_group_rule | default(omit) }}"
+      port: "{{ project.os_quota.port | default(omit) }}"
+      volumes: "{{ project.os_quota.volumes | default(omit) }}"
+      snapshots: "{{ project.os_quota.snapshots | default(omit) }}"
+      gigabytes: "{{ project.os_quota.gigabytes | default(omit) }}"
