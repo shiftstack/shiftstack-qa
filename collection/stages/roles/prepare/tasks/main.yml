@@ -5,4 +5,4 @@
     state: present
     name: "{{ user_cloud }}"
     domain_id: default
-    enabled: True
+    enabled: true
