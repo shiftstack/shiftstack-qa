@@ -1,2 +1,4 @@
 ---
 # defaults file for install
+home_dir: "{{ ansible_facts.env['HOME'] }}"
+installation_dir: "{{ home_dir }}/ostest"

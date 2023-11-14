@@ -1,0 +1,27 @@
+---
+- name: Create API Floating IP
+  # NOTE: openstack.cloud.floatingip does not allow FIP creation without server assignation
+  # TBD: This operation is not idempotent. It should check if there are FIPs matching the description and skip below if yes:
+  ansible.builtin.shell: |
+    openstack floating ip create --description '{{ ocp_api_description }}' {{ infra.external_network }} -c name -f value
+  register: api_fip
+  changed_when: true
+  environment:
+    OS_CLOUD: "{{ user_cloud }}"
+
+- name: Create APPS Floating IP
+  ansible.builtin.shell: |
+    openstack floating ip create --description '{{ ocp_apps_description }}' {{ infra.external_network }} -c name -f value
+  register: apps_fip
+  changed_when: true
+  environment:
+    OS_CLOUD: "{{ user_cloud }}"
+
+- name: Add resulting API and APPS fip/vip to /etc/hosts file
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    regexp: "{{ item.regex }}"
+    line: "{{ item.row }}"
+    unsafe_writes: true
+  loop: "{{ fip_hosts }}"

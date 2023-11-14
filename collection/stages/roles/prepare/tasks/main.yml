@@ -1,21 +1,12 @@
 ---
 - name: Create new Project
-  import_tasks: project.yml
+  ansible.builtin.import_tasks: project.yml
 
-- name: update clouds.yml file with new Project
-  include_tasks: clouds.yml
+- name: Update clouds.yml file with new Project
+  ansible.builtin.include_tasks: clouds.yml
 
-- name: Update Project Quota
-  openstack.cloud.quota:
-      cloud: "{{ admin_cloud }}"
-      name: "{{ user_cloud }}"
-      ram: "{{ project.os_quota.ram | default(omit) }}"
-      cores: "{{ project.os_quota.cores | default(omit) }}"
-      network: "{{ project.os_quota.network | default(omit) }}"
-      subnet: "{{ project.os_quota.subnet | default(omit) }}"
-      security_group: "{{ project.os_quota.security_group | default(omit) }}"
-      security_group_rule: "{{ project.os_quota.security_group_rule | default(omit) }}"
-      port: "{{ project.os_quota.port | default(omit) }}"
-      volumes: "{{ project.os_quota.volumes | default(omit) }}"
-      snapshots: "{{ project.os_quota.snapshots | default(omit) }}"
-      gigabytes: "{{ project.os_quota.gigabytes | default(omit) }}"
+- name: Prepare setup for accessing the OCP Cluster
+  ansible.builtin.include_tasks: external_access.yml
+
+- name: Get OCP installer and client in the installer host
+  ansible.builtin.include_tasks: get_installer.yml

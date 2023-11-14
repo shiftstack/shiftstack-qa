@@ -1,2 +1,20 @@
 ---
-# tasks file for install
+- name: Remove the directory for the installation files (if exists)
+  ansible.builtin.file:
+    path: "{{ installation_dir }}"
+    state: absent
+
+- name: Create a directory for the installation files
+  ansible.builtin.file:
+    path: "{{ installation_dir }}"
+    state: directory
+    mode: u=rw,g=rw,o=r
+
+- name: Install cluster with IPI on regular tenant network
+  ansible.builtin.include_tasks: ipi_tenant.yml
+  when: installation_type == 'ipi'
+
+- name: Fail if installation_type is not supported
+  ansible.builtin.fail:
+    msg: "Installation type not supported: {{ installation_type }}"
+  when: installation_type != 'ipi'

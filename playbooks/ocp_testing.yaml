@@ -13,8 +13,6 @@
   roles:
     - name: Cleanup setup
       role: shiftstack.stages.cleanup
-      vars:
-        cleanup_foo: bar # overrides var_files
 
     - name: Prepare setup
       role: shiftstack.stages.prepare
@@ -24,6 +22,9 @@
 
     - name: Run post operations on setup
       role: shiftstack.stages.post
+
+    - name: Run post operations on setup
+      role: shiftstack.stages.verification
 
     - name: Run tests on OCP
       role: shiftstack.stages.test

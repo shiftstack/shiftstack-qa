@@ -1,18 +1,26 @@
 ---
-- name: Collect "{{ admin_cloud }}" project facts
-  openstack.cloud.project_info:
-    cloud: "{{ admin_cloud  }}"
-    name: "{{ admin_cloud }}"
-  register: admin_project_fact
+- name: Load as fact existing {{ clouds_yaml_file_path }}
+  ansible.builtin.set_fact:
+    clouds_yml: "{{ lookup('file', clouds_yaml_file_path) | from_yaml }}"
 
-- name: Collect "{{ user_cloud }}" project facts
+- name: Get auth url from existing {{ admin_cloud }}
+  ansible.builtin.set_fact:
+    auth_url: "{{ clouds_yml['clouds'][admin_cloud]['auth']['auth_url'] }}"
+
+- name: Collect project facts from {{ user_cloud }}
   openstack.cloud.project_info:
-    cloud: "{{ admin_cloud  }}"
+    cloud: "{{ admin_cloud }}"
     name: "{{ user_cloud }}"
   register: user_project_fact
 
 - name: Update {{ clouds_yaml_file_path }}
-  blockinfile:
+  ansible.builtin.blockinfile:
     block: "{{ lookup('ansible.builtin.template', 'clouds.yml.j2') }}"
-    dest: "{{ clouds_yaml_file_path }}"
+    path: "{{ clouds_yaml_file_path }}"
     marker: "# {mark} {{ user_cloud }} PARAMETERS"
+    backup: true
+    unsafe_writes: true
+
+- name: Test it is possible to access {{ user_cloud }}
+  openstack.cloud.auth:
+    cloud: "{{ user_cloud }}"

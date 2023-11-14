@@ -1,6 +1,6 @@
  {{ user_cloud }}:
     auth:
-        auth_url: {{ admin_project_fact.openstack_projects[0].os_auth_url }}
+        auth_url: {{ auth_url }}
         project_name: {{ project.name }}
         password: {{ project.password }}
         project_domain_name: Default

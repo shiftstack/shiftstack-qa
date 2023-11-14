@@ -1,0 +1,34 @@
+- name: Generate install-config.yaml from template
+  ansible.builtin.template:
+    src: install-config.yaml.j2
+    dest: "{{ home_dir }}/install-config.yaml"
+    mode: u=rw,g=rw,o=r
+  vars:
+    cluster_name: "{{ ocp_cluster_name }}"
+    worker_flavor: "{{ topology.flavors.worker.name }}"
+    worker_replicas: "{{ topology.replicas.worker }}"
+    master_flavor: "{{ topology.flavors.master.name }}"
+    master_replicas: "{{ topology.replicas.master }}"
+    machine_cidr: "{{ topology.machine_cidr }}"
+    network_type: "{{ topology.network_type }}"
+    external_network: "{{ infra.external_network }}"
+    region: "{{ infra.region }}"
+    dns_servers: "{{ infra.dns_servers }}"
+    api_fip: "{{ lookup('file', '/etc/hosts').splitlines() |
+                      select('search', ' api.') |
+                      first | split() | first }}"
+    apps_fip: "{{ lookup('file', '/etc/hosts').splitlines() |
+                      select('search', ' oauth-openshift.apps.') |
+                      first | split() | first }}"
+
+- name: Copy the install-config.yaml to installation dir
+  ansible.builtin.copy:
+    src: "{{ home_dir }}/install-config.yaml"
+    dest: "{{ installation_dir }}/install-config.yaml"
+    remote_src: yes
+    mode: u=rw,g=rw,o=r
+
+- name: Install Openshift (IPI mode)
+  ansible.builtin.shell: |
+      openshift-install create cluster --log-level debug --dir {{ installation_dir }}
+  changed_when: true

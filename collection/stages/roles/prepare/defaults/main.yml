@@ -12,16 +12,28 @@ project:
   cacert: '/etc/pki/ca-trust/source/anchors/undercloud-cacert.pem'
   region: 'regionOne'
   os_quota:   # https://github.com/openshift/installer/tree/master/docs/user/openstack#openstack-requirements
-      ram: 147456
-      cores: 50
-      network: 250
-      subnet: 250
-      security_group: 250
-      security_group_rule: 1000
-      port: 1510
-      volumes: 100
-      snapshots: 100
-      gigabytes: 1000
-      load_balancers: 1000
-      load_balancer_listeners: 5000
-      load_balancer_pools: 5000  
+    ram: 147456
+    cores: 50
+    network: 250
+    subnet: 250
+    security_group: 250
+    security_group_rule: 1000
+    port: 1510
+    volumes: 100
+    snapshots: 100
+    gigabytes: 1000
+    load_balancers: 1000
+    load_balancer_listeners: 5000
+    load_balancer_pools: 5000
+ocp_api_description: "API {{ ocp_cluster_name }}.{{ user_cloud }}"
+ocp_apps_description: "APPS {{ ocp_cluster_name }}.{{ user_cloud }}"
+fip_hosts:
+  - {regex: 'api\..*\.{{ user_cloud }}.com', row: '{{ api_fip.stdout }} api.{{ ocp_cluster_name }}.{{ user_cloud }}.com'}
+  - {regex: 'oauth-openshift.apps\..*\.{{ user_cloud }}.com', row: '{{ apps_fip.stdout }} oauth-openshift.apps.{{ ocp_cluster_name }}.{{ user_cloud }}.com'}
+  - {regex: 'console-openshift-console.apps\..*\.{{ user_cloud }}.com', row: '{{ apps_fip.stdout }} console-openshift-console.apps.{{ ocp_cluster_name }}.{{ user_cloud }}.com'}
+  - {regex: 'downloads-openshift-console.apps\..*\.{{ user_cloud }}.com', row: '{{ apps_fip.stdout }} downloads-openshift-console.apps.{{ ocp_cluster_name }}.{{ user_cloud }}.com'}
+  - {regex: 'canary-openshift-ingress-canary.apps\..*\.{{ user_cloud }}.com', row: '{{ apps_fip.stdout }} canary-openshift-ingress-canary.apps.{{ ocp_cluster_name }}.{{ user_cloud }}.com'}
+  - {regex: 'alertmanager-main-openshift-monitoring.apps\..*\.{{ user_cloud }}.com', row: '{{ apps_fip.stdout }} alertmanager-main-openshift-monitoring.apps.{{ ocp_cluster_name }}.{{ user_cloud }}.com'}
+  - {regex: 'grafana-openshift-monitoring.apps\..*\.{{ user_cloud }}.com', row: '{{ apps_fip.stdout }} grafana-openshift-monitoring.apps.{{ ocp_cluster_name }}.{{ user_cloud }}.com'}
+  - {regex: 'prometheus-k8s-openshift-monitoring.apps\..*\.{{ user_cloud }}.com', row: '{{ apps_fip.stdout }} prometheus-k8s-openshift-monitoring.apps.{{ ocp_cluster_name }}.{{ user_cloud }}.com'}
+  - {regex: 'thanos-querier-openshift-monitoring.apps\..*\.{{ user_cloud }}.com', row: '{{ apps_fip.stdout }} thanos-querier-openshift-monitoring.apps.{{ ocp_cluster_name }}.{{ user_cloud }}.com'}
