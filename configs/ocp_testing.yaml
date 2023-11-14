@@ -4,26 +4,16 @@ user_cloud: shiftstack
 ocp_cluster_name: ostest
 topology: # Store required params for deploying OCP
   flavors:
-    bootstrap:
-      name: bootstrap
-      ram: 16384
-      vcpus: 4
-      disk: 100
     master:
       name: master
       ram: 16384
       vcpus: 4
-      disk: 100
+      disk: 100 # openshift-qe-xxx setups require disk: 10
     worker:
       name: worker
       ram: 8192
       vcpus: 2
-      disk: 100
-    m4.xlarge:
-      name: m4.xlarge
-      ram: 16384
-      vcpus: 4
-      disk: 40
+      disk: 100 # openshift-qe-xxx setups require disk: 10
   replicas:
     master: 3
     worker: 3
@@ -33,11 +23,9 @@ infra: # Store required Openstack deployment info for deploying OCP
   external_network: nova
   region: regionOne
   dns_servers:
-    - 10.47.242.10
-
+    - '10.47.242.10'
+openshift_release: 4.15 # It can be "4.10", "4.11", etc. or "4-stable"
 openshift_build_name: ""
 # ^ It can be an empty value "" (latest nightly), a given build
 # "4.11.0-0.nightly-2022-08-26-005549" or "4.6.46", or any
 # upgrade channel "candidate", "fast", "stable" or "eus".
-openshift_release: 4.15 # It can be "4.10", "4.11", etc. or "4-stable"
-installation_type: ipi

@@ -19,6 +19,8 @@
 
     - name: Install OCP on setup
       role: shiftstack.stages.install
+      vars:
+        installation_type: ipi
 
     - name: Run post operations on setup
       role: shiftstack.stages.post
