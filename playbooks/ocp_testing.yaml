@@ -10,6 +10,15 @@
       ansible.builtin.debug:
         msg: "Preparing for the run..."
 
+    - name: Copy the install-config.yaml to installation dir
+      vars:
+        home_dir: "{{ ansible_facts.env['HOME'] }}"
+      ansible.builtin.copy:
+        src: "{{ home_dir }}/.config/opesntack/clouds.yaml"
+        dest: "{{ home_dir }}/clouds.yaml"
+        remote_src: yes
+        mode: u=rw,g=rw,o=r
+
   roles:
     - name: Cleanup setup
       role: shiftstack.stages.cleanup
