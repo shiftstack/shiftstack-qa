@@ -1,3 +1,15 @@
+- name: Discover pre-created FIPs stored on /etc/hosts
+  ansible.builtin.set_fact:
+    precreated_lb_fip: "{{ lookup('file', '/etc/hosts').splitlines() |
+                      select('search', api_filter) |
+                      first | split() | first }}"
+    precreated_ingress_fip: "{{ lookup('file', '/etc/hosts').splitlines() |
+                      select('search', ingress_filter) |
+                      first | split() | first }}"
+  vars:
+    api_filter: "api.{{ ocp_cluster_name }}.{{ user_cloud }}.com"
+    ingress_filter: "oauth-openshift.apps.{{ ocp_cluster_name }}.{{ user_cloud }}.com"
+
 - name: Generate install-config.yaml from template
   ansible.builtin.template:
     src: install-config.yaml.j2
@@ -14,12 +26,8 @@
     external_network: "{{ infra.external_network }}"
     region: "{{ infra.region }}"
     dns_servers: "{{ infra.dns_servers }}"
-    lb_floating_ip: "{{ lookup('file', '/etc/hosts').splitlines() |
-                      select('search', ' api.') |
-                      first | split() | first }}"
-    ingress_floating_ip: "{{ lookup('file', '/etc/hosts').splitlines() |
-                      select('search', ' oauth-openshift.apps.') |
-                      first | split() | first }}"
+    lb_floating_ip: "{{ precreated_lb_fip }}"
+    ingress_floating_ip: "{{ precreated_ingress_fip }}"
 
 - name: Copy the install-config.yaml to installation dir
   ansible.builtin.copy:
