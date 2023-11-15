@@ -14,10 +14,10 @@
     external_network: "{{ infra.external_network }}"
     region: "{{ infra.region }}"
     dns_servers: "{{ infra.dns_servers }}"
-    api_fip: "{{ lookup('file', '/etc/hosts').splitlines() |
+    lb_floating_ip: "{{ lookup('file', '/etc/hosts').splitlines() |
                       select('search', ' api.') |
                       first | split() | first }}"
-    apps_fip: "{{ lookup('file', '/etc/hosts').splitlines() |
+    ingress_floating_ip: "{{ lookup('file', '/etc/hosts').splitlines() |
                       select('search', ' oauth-openshift.apps.') |
                       first | split() | first }}"
 

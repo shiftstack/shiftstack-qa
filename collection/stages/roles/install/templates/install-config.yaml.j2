@@ -29,8 +29,8 @@ platform:
     cloud:            "{{ user_cloud }}"
     externalNetwork:  "{{ external_network }}"
     region:           "{{ region }}"
-    lbFloatingIP:     "{{ api_fip }}"
-    ingressFloatingIP:     "{{ apps_fip }}"
+    lbFloatingIP:     "{{ lb_floating_ip }}"
+    ingressFloatingIP:     "{{ ingress_floating_ip }}"
     externalDNS:      {{ dns_servers }}
 pullSecret: |
   {{ ocp_pull_secret }}
