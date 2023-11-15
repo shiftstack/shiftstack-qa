@@ -1,5 +1,5 @@
 ---
-admin_cloud: overcloud
+admin_cloud: default
 user_cloud: shiftstack
 ocp_cluster_name: ostest
 topology: # Store required params for deploying OCP
