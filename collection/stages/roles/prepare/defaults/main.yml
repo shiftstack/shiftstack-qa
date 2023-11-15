@@ -1,16 +1,17 @@
 ---
 admin_cloud: undefined
 user_cloud: undefined
-clouds_yaml_file_path: "~/clouds.yaml"
-verify_cacert: false
+clouds_yaml_file_path: "{{ ansible_facts.env['HOME'] }}/.config/openstack/clouds.yaml"
+admin_verify_cacert: false
 project:
   name: "{{ user_cloud }}"
   user: user
   password: redhat
   role: member
-  swift_role: swiftoperator
+  # swift_role: swiftoperator <-- Needed value in 16.2
+  swift_role: member
   domain_name: Default
-  cacert: '/etc/pki/ca-trust/source/anchors/undercloud-cacert.pem'
+  cacert: '/etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem'
   region: 'regionOne'
   os_quota:   # https://github.com/openshift/installer/tree/master/docs/user/openstack#openstack-requirements
     ram: 147456

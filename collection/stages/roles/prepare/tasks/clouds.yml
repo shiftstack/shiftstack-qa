@@ -11,7 +11,7 @@
   openstack.cloud.project_info:
     cloud: "{{ admin_cloud }}"
     name: "{{ user_cloud }}"
-    verify: "{{ verify_cacert }}"
+    verify: "{{ admin_verify_cacert }}"
   register: user_project_fact
 
 - name: Update {{ clouds_yaml_file_path }}
@@ -25,4 +25,3 @@
 - name: Test it is possible to access {{ user_cloud }}
   openstack.cloud.auth:
     cloud: "{{ user_cloud }}"
-    verify: "{{ verify_cacert }}"

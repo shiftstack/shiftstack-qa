@@ -6,7 +6,7 @@
     name: "{{ user_cloud }}"
     domain_id: default
     enabled: true
-    verify: "{{ verify_cacert }}"
+    verify: "{{ admin_verify_cacert }}"
 
 - name: Create openstack user
   openstack.cloud.identity_user:
@@ -16,7 +16,7 @@
     password: "{{ project.password }}"
     default_project: "{{ user_cloud }}"
     domain: default
-    verify: "{{ verify_cacert }}"
+    verify: "{{ admin_verify_cacert }}"
 
 - name: Create openstack user role
   openstack.cloud.role_assignment:
@@ -24,7 +24,7 @@
     user: "{{ project.user }}"
     role: "{{ project.role }}"
     project: "{{ user_cloud }}"
-    verify: "{{ verify_cacert }}"
+    verify: "{{ admin_verify_cacert }}"
 
 - name: Add swift operator role to openstack user
   openstack.cloud.role_assignment:
@@ -32,7 +32,7 @@
     user: "{{ project.user }}"
     role: "{{ project.swift_role }}"
     project: "{{ user_cloud }}"
-    verify: "{{ verify_cacert }}"
+    verify: "{{ admin_verify_cacert }}"
 
 - name: Update Project Quota
   openstack.cloud.quota:
@@ -48,7 +48,7 @@
     volumes: "{{ project.os_quota.volumes | default(omit) }}"
     snapshots: "{{ project.os_quota.snapshots | default(omit) }}"
     gigabytes: "{{ project.os_quota.gigabytes | default(omit) }}"
-    verify: "{{ verify_cacert }}"
+    verify: "{{ admin_verify_cacert }}"
 
 - name: Create flavors
   openstack.cloud.compute_flavor:
@@ -58,6 +58,6 @@
     ram: "{{ item.value.ram }}"
     vcpus: "{{ item.value.vcpus }}"
     disk: "{{ item.value.disk }}"
-    verify: "{{ verify_cacert }}"
+    verify: "{{ admin_verify_cacert }}"
   register: flavors
   loop: "{{ lookup('ansible.builtin.dict', topology.flavors) }}"
