@@ -1,0 +1,40 @@
+---
+- name: OCP testing for new candidate on legacy OSP (17.1 or 16.2)
+  hosts: localhost
+  vars_files:
+    - "../configs/secret.yaml"
+    - "../configs/legacy_ocp_testing.yaml"
+
+  pre_tasks:
+    - name: Preparing for the run
+      ansible.builtin.debug:
+        msg: "Preparing for the run..."
+
+  roles:
+    - name: Cleanup setup
+      role: shiftstack.stages.cleanup
+
+    - name: Prepare setup
+      role: shiftstack.stages.prepare
+
+    - name: Install OCP on setup
+      role: shiftstack.stages.install
+      vars:
+        installation_type: ipi
+
+    - name: Run post operations on setup
+      role: shiftstack.stages.post
+
+    - name: Run post operations on setup
+      role: shiftstack.stages.verification
+
+    - name: Run tests on OCP
+      role: shiftstack.stages.test
+
+    - name: Run day2ops
+      role: shiftstack.stages.day2ops
+
+  post_tasks:
+    - name: Gathering resources
+      ansible.builtin.debug:
+        msg: "Gathering resources..."

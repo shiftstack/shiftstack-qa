@@ -1,0 +1,25 @@
+---
+# NOTE: openstack.cloud.floatingip does not allow FIP creation without server assignation
+# Shell operation is not idempotent, so we need to implement some logic:
+- name: Get existing FIPs
+  openstack.cloud.floating_ip_info:
+    cloud: "{{ user_cloud }}"
+    description: "{{ description }}"
+    floating_network: "{{ infra.external_network }}"
+    status: "down" # Not considering the ones in active.
+  register: res
+
+- name: Fail when more than 1 FIPs are available
+  ansible.builtin.fail:
+    msg: 'You have an excess of available floating ips to associate with {{ description }}.
+     You have {{ res.floating_ips | length }}. Please clean your project.'
+  when: res.floating_ips | length > 1
+
+- name: Create API Floating IP
+  ansible.builtin.shell: |
+    openstack floating ip create --description '{{ description }}' {{ infra.external_network }} -c name -f value
+  register: created_fip
+  changed_when: true
+  environment:
+    OS_CLOUD: "{{ user_cloud }}"
+  when: res.floating_ips | length == 0

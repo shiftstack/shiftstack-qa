@@ -1,21 +1,37 @@
 ---
-- name: Create API Floating IP
-  # NOTE: openstack.cloud.floatingip does not allow FIP creation without server assignation
-  # TBD: This operation is not idempotent. It should check if there are FIPs matching the description and skip below if yes:
-  ansible.builtin.shell: |
-    openstack floating ip create --description '{{ ocp_api_description }}' {{ infra.external_network }} -c name -f value
-  register: api_fip
-  changed_when: true
-  environment:
-    OS_CLOUD: "{{ user_cloud }}"
+- name: Create (if needed) API FIPs
+  ansible.builtin.include_tasks: create_fip.yml
+  vars:
+    description: "{{ ocp_api_description }}"
 
-- name: Create APPS Floating IP
-  ansible.builtin.shell: |
-    openstack floating ip create --description '{{ ocp_apps_description }}' {{ infra.external_network }} -c name -f value
-  register: apps_fip
-  changed_when: true
-  environment:
-    OS_CLOUD: "{{ user_cloud }}"
+- name: Get API FIP
+  openstack.cloud.floating_ip_info:
+    cloud: "{{ user_cloud }}"
+    description: "{{ ocp_api_description }}"
+    floating_network: "{{ infra.external_network }}"
+    status: "down"
+  register: res
+
+- name: Store API FIP
+  ansible.builtin.set_fact:
+    api_fip: "{{ res.floating_ips[0].floating_ip_address }}"
+
+- name: Create (if needed) APPS FIPs
+  ansible.builtin.include_tasks: create_fip.yml
+  vars:
+    description: "{{ ocp_apps_description }}"
+
+- name: Get APPS FIP
+  openstack.cloud.floating_ip_info:
+    cloud: "{{ user_cloud }}"
+    description: "{{ ocp_apps_description }}"
+    floating_network: "{{ infra.external_network }}"
+    status: "down"
+  register: res
+
+- name: Store APPS FIP
+  ansible.builtin.set_fact:
+    apps_fip: "{{ res.floating_ips[0].floating_ip_address }}"
 
 - name: Add resulting API and APPS fip/vip to /etc/hosts file
   become: true
@@ -24,4 +40,7 @@
     regexp: "{{ item.regex }}"
     line: "{{ item.row }}"
     unsafe_writes: true
-  loop: "{{ fip_hosts }}"
+  vars:
+    api_ip: "{{ api_fip }}"
+    apps_ip: "{{ apps_fip }}"
+  loop: "{{ etc_hosts_entries }}"
