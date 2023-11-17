@@ -11,7 +11,6 @@ project:
   # swift_role: swiftoperator <-- Needed value in 16.2
   swift_role: member
   domain_name: Default
-  cacert: '/etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem'
   region: 'regionOne'
   os_quota:   # https://github.com/openshift/installer/tree/master/docs/user/openstack#openstack-requirements
     ram: 147456
