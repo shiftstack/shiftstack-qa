@@ -39,7 +39,15 @@ oc rsh shiftstackclient -n openstack \
   ansible-navigator replay /home/shifstack/artifacts/{playbook_name}-artifact-{time_stamp}.json -m interactive
 ```
 
+## Development
+
+We are using gerrithub for code review. Please submit changes to:
+
+https://gerrithub.io/admin/repos/shiftstack/shiftstack-qe,general
+
 ## Enable hooks in your setup
+
+When cloning the repo, please enable hooks in your setup so ansible-lint is run while performing a commit. That will facilitate to identify issues in the early stages and will keep the code readable and reusable:
 
 ```
 pip install pre-commit &&  git config --global init.templateDir ~/.git-template && pre-commit init-templatedir ~/.git-template
