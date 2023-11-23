@@ -1,6 +1,7 @@
 ---
 - name: OCP testing for new candidate
   hosts: localhost
+  gather_facts: no
   vars_files:
     - "../configs/secret.yaml"
     - "../configs/ocp_testing.yaml"
@@ -9,6 +10,11 @@
     - name: Preparing for the run
       ansible.builtin.debug:
         msg: "Preparing for the run..."
+
+    - name: Gather host environment variables
+      ansible.builtin.setup:
+        gather_subset:
+          - env
 
     - name: Make a copy of the original config directory
       vars:

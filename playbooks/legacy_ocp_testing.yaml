@@ -1,6 +1,7 @@
 ---
 - name: OCP testing for new candidate on legacy OSP (17.1 or 16.2)
   hosts: localhost
+  gather_facts: no
   vars_files:
     - "../configs/secret.yaml"
     - "../configs/legacy_ocp_testing.yaml"
@@ -9,6 +10,11 @@
     - name: Preparing for the run
       ansible.builtin.debug:
         msg: "Preparing for the run..."
+
+    - name: Gather host environment variables
+      ansible.builtin.setup:
+        gather_subset:
+          - env
 
   roles:
     - name: Cleanup setup
