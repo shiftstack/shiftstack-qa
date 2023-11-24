@@ -2,6 +2,7 @@
 - name: OCP testing for new candidate on legacy OSP (17.1 or 16.2)
   hosts: localhost
   gather_facts: no
+  # debugger: on_failed # https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_debugger.html#playbook-debugger
   vars_files:
     - "../configs/secret.yaml"
     - "../configs/legacy_ocp_testing.yaml"
