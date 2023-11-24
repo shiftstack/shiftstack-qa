@@ -21,10 +21,18 @@ where:
 - [shiftstack.stages](./collection/stages): The local collection including the automation.
 
 ## Run
+You can list the tasks on a playbook:
+```
+oc rsh shiftstackclient -n openstack \
+  ansible-navigator run shiftstack-qa/playbooks/{playbook_name}.yaml --list-tasks
+```
+
+For running:
 ```
 oc rsh shiftstackclient -n openstack \
   ansible-navigator run shiftstack-qa/playbooks/{playbook_name}.yaml
 ```
+
 where:
 - [playbooks](./playbooks) includes 1 playbook per scenario to be tested (formerly known as Job).
 
