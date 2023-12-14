@@ -8,7 +8,7 @@
   ansible.builtin.file:
     path: "{{ installation_dir }}"
     state: directory
-    mode: u=rw,g=rw,o=r
+    mode: u=rwx,g=rw,o=r
 
 - name: Install cluster with IPI on regular tenant network
   ansible.builtin.include_tasks: ipi_tenant.yml
