@@ -24,7 +24,7 @@
       ansible.builtin.file:
         path: "{{ output_dir }}/{{ release_name }}"
         state: directory
-        mode: u=rw,g=rw,o=r
+        mode: u=rwx,g=rw,o=r
 
     - name: Get the installer binary and create a symlink
       when: "'installer' in binaries"

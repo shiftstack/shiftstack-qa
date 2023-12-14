@@ -34,12 +34,12 @@ topology: # Store required params for deploying OCP
       name: master
       ram: 16384
       vcpus: 4
-      disk: 10 # openshift-qe-xxx setups require disk: 10
+      disk: 25
     worker:
       name: worker
       ram: 8192
       vcpus: 2
-      disk: 10 # openshift-qe-xxx setups require disk: 10
+      disk: 25
   replicas:
     master: 3
     worker: 3
