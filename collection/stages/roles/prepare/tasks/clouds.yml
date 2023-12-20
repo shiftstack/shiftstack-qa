@@ -25,3 +25,9 @@
 - name: Test it is possible to access {{ user_cloud }}
   openstack.cloud.auth:
     cloud: "{{ user_cloud }}"
+
+- name: Generate {{ user_cloud }}rc file from template
+  ansible.builtin.template:
+    src: user_env_file.j2
+    dest: "{{ home_dir }}/{{ user_cloud }}rc"
+    mode: u=rw,g=rw,o=r

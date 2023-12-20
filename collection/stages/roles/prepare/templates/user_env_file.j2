@@ -1,0 +1,8 @@
+export OS_CLOUD={{ user_cloud }}
+
+# Add OS_CLOUD to PS1
+if [ -z "${CLOUDPROMPT_ENABLED:-}" ]; then
+    export PS1=${PS1:-""}
+    export PS1=\${OS_CLOUD:+"(\$OS_CLOUD)"}\ $PS1
+    export CLOUDPROMPT_ENABLED=1
+fi
