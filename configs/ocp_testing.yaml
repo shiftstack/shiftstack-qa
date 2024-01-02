@@ -1,10 +1,7 @@
 ---
 admin_cloud: default
 user_cloud: shiftstack
-# Below cacert path includes a file too long for the installer. Options:
-# - Long term solution: find the exact cert needed.
-# - temporary solution: set verify:False on the clouds.yaml for both admin and user cloud
-cacert: /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem
+cacert: /home/cloud-admin/.original-config/cert/ca.crt
 ocp_cluster_name: ostest
 topology: # Store required params for deploying OCP
   flavors:
