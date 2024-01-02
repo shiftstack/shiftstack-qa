@@ -8,8 +8,7 @@ project:
   user: user
   password: redhat
   role: member
-  # swift_role: swiftoperator <-- Needed value in 16.2
-  swift_role: member
+  swift_role: member # Should be updated (to swiftoperator?) as soon https://issues.redhat.com/browse/OSPRH-1308 is done.
   domain_name: Default
   region: 'regionOne'
   os_quota:   # https://github.com/openshift/installer/tree/master/docs/user/openstack#openstack-requirements
