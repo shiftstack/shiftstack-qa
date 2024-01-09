@@ -1,0 +1,140 @@
+---
+- name: Check LB type svc
+  block:
+    - name: Generate a test ID for resource naming
+      set_fact:
+        test_id: "lb-tcp-verification"
+
+    - name: Ensure the "{{ test_id }}-ns" project is not already present
+      k8s:
+        api_version: project.openshift.io/v1
+        state: absent
+        kind: Project
+        name: "{{ test_id }}-ns"
+
+    - name: Create a project, deployment and a LoadBalancer type service
+      block:
+        - name: Create the resource/manifest file for "{{ test_id }}"
+          template:
+            src: lb_tcp.manifests.yaml.j2
+            dest: "{{ home_dir }}/lb_verification_resources.yaml"
+
+        - name: Apply the manifest for resource creation
+          k8s:
+            state: present
+            src: "{{ home_dir }}/lb_verification_resources.yaml"
+            wait: yes
+            wait_timeout: 100
+
+    - name: Wait until the LB is created and ready
+      k8s_info:
+        api_version: v1
+        kind: Service
+        namespace: "{{ test_id }}-ns"
+        name: "{{ test_id }}-svc"
+        field_selectors:
+          - spec.type=LoadBalancer
+      register: test_svc
+      until: test_svc.resources[0].status.loadBalancer.ingress[0].ip is defined
+      retries: 20
+      delay: 15
+
+    - name: Save the LB ingress address
+      set_fact:
+        lb_ingress_ip: "{{ test_svc.resources[0].status.loadBalancer.ingress[0].ip }}"
+
+    - name: Get the LB internal IP on openstack when the lb is using a FIP
+      shell: |
+        openstack floating ip show {{ lb_ingress_ip }} -c fixed_ip_address -f value
+      environment:
+        OS_CLOUD: "{{ user_cloud }}"
+      register: lb_internal_ip_output
+      when: not internal_lb
+
+    - name: Define the internal IP
+      set_fact:
+          lb_internal_ip: "{{ internal_lb| ternary (lb_ingress_ip , lb_internal_ip_output.stdout) }}"
+
+    - name: Get the Octavia provider type for the LB
+      shell: |
+        openstack loadbalancer list -c vip_address -c provider -f value | grep {{ lb_internal_ip }} | awk '{print $2}'
+      environment:
+        OS_CLOUD: "{{ user_cloud }}"
+      register: svc_lb_type
+
+    - name: Check the LB exists with the internal IP (VIP address) "{{ lb_internal_ip }}"
+      assert:
+        that: svc_lb_type.stdout | length > 0
+        fail_msg: Could not find a LB in OSP with the vip_address "{{ lb_internal_ip }}"
+        success_msg: A LB with the vip_address "{{ lb_internal_ip }}" has been found in OSP
+
+    - debug:
+        msg: "Detected LB Octavia provider: {{ svc_lb_type.stdout }}"
+
+    - name: Get pod names
+      k8s_info:
+        kind: Pod
+        namespace: "{{ test_id }}-ns"
+      register: pods
+
+    - name: Store pod names
+      set_fact:
+        pod_names: "{{ pods | json_query('resources[*].metadata.name') | list }}"
+
+    - name: Check connectivity to the svc, and balancing between endpoints
+      uri:
+        url: "http://{{ lb_ingress_ip }}:80"
+        return_content: yes
+      register: uri_return
+      retries: 10
+      delay: 5
+      until:
+        - "'HELLO! I AM ALIVE!!!' in uri_return.content"
+        - pod_item in uri_return.content
+      loop: "{{ pod_names }}"
+      loop_control:
+        loop_var: pod_item
+
+    - name: Check the connectivity to the svc is consistent
+      uri:
+        url: "http://{{ lb_ingress_ip }}:80"
+        return_content: yes
+        status_code: 200
+      loop: "{{ range(10)|list }}"
+      loop_control:
+        loop_var: count
+
+    - name: Delete the "{{ test_id }}-ns" project
+      k8s:
+        api_version: project.openshift.io/v1
+        state: absent
+        kind: Project
+        name: "{{ test_id }}-ns"
+
+    - name: Wait until the project "{{ test_id }}-ns" is deleted
+      k8s_info:
+        api_version: project.openshift.io/v1
+        kind: Project
+        name: "{{ test_id }}-ns"
+      register: oc_project
+      retries: 20
+      delay: 15
+      until: oc_project.resources|length == 0
+
+    - name: Check the LB with "{{ lb_ingress_ip }}" ingress IP has been removed from OSP
+      shell: |
+        openstack loadbalancer list -f value | grep {{ lb_ingress_ip }}
+      environment:
+        OS_CLOUD: "{{ user_cloud }}"
+      register: svc_lb
+      failed_when: svc_lb.rc == 0
+      when: lb_internal_ip | length > 0
+
+    - name: Check the fip "{{ lb_ingress_ip }}" has been removed from OSP
+      shell: |
+        openstack floating ip show {{ lb_ingress_ip }} -f value
+      environment:
+        OS_CLOUD: "{{ user_cloud }}"
+      register: fip
+      failed_when: fip.rc == 0
+      when: not internal_lb

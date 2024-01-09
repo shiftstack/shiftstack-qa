@@ -1,0 +1,28 @@
+---
+- name: "'wait_until_cluster_is_healthy' action"
+  block:
+    - name: Wait until OCP cluster is healthy (available, not progressing and not failing)
+      kubernetes.core.k8s_info:
+        kind: ClusterVersion
+      register: cluster_version
+      until:
+        - cluster_version is not failed
+        - cluster_version.resources is defined
+        - cluster_version.resources[0].status is defined
+        - cluster_version.resources[0].status | json_query("conditions[?type=='Available' && status=='True']")
+        - cluster_version.resources[0].status | json_query("conditions[?type=='Progressing' && status=='False']")
+        - cluster_version.resources[0].status | json_query("conditions[?type=='Failing' && status=='False']")
+      retries: "{{ wait_retries }}"
+      delay: "{{ wait_delay }}"
+  rescue:
+    - name: Get ClusterVersion
+      shell: oc get clusterversion
+      register: cluster_version
+
+    - name: Print ClusterVersion
+      debug:
+        msg: "{{ cluster_version.stdout_lines }}"
+
+    - name: Fail inside rescue block
+      fail:
+        msg: "The cluster is not healthy, check failed task logs. Failed task: '{{ ansible_failed_task.name }}'"

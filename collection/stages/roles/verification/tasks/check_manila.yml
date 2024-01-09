@@ -1,0 +1,57 @@
+---
+# Goal: Create pvcs using manila storage class and confirms they behave as expected
+
+- name: re-create {{ manila_project_name }} project
+  include_role:
+    name: tools_ocp_project
+    tasks_from: recreate_ocp_project.yml
+  vars:
+    project_name: "{{ manila_project_name }}"
+    force_delete: true
+
+- name: create manifests for {{ manila_project_name }} namespace
+  template:
+    src: manila.manifests.yaml.j2
+    dest: "{{ home_dir }}/manila.manifests.yaml"
+
+- name: Apply manifests for {{ manila_project_name }} namespace and check they are running.
+  kubernetes.core.k8s:
+    state: present
+    src: "{{ home_dir }}/manila.manifests.yaml"
+    wait: yes
+    wait_timeout: "{{ manifests_wait_timeout }}"
+
+# Check that manila PVC is created on openstack
+- name: Get created PVCs on {{ manila_project_name }}
+  kubernetes.core.k8s_info:
+    kind: pvc
+    namespace: "{{ manila_project_name }}"
+  register: existing_pvcs
+
+- set_fact:
+    existing_pvc_ids: "{{ existing_pvcs | json_query('resources[].spec.volumeName') | list }}"
+
+- name: Check manila volume for PVC exist
+  shell: source {{ user_env_file }} && manila show "{{ item }}"
+  loop: "{{ existing_pvc_ids }}"
+
+# Check that writes/reads on the manila PVC are persistent across the pods (ReadWriteMany)
+- name: Get pod names
+  kubernetes.core.k8s_info:
+    kind: Pod
+    namespace: "{{ manila_project_name }}"
+  register: demo_pods
+
+- name: store name of pods
+  set_fact:
+    pod_names: "{{ demo_pods | json_query('resources[*].metadata.name') | list }}"
+
+- name: create file on the PVC running on the first pod
+  shell: "oc exec -t {{ pod_names[0] }} -n {{ manila_project_name }} -- touch /var/lib/www/data/hello-{{pod_names[0]}}"
+
+- name: read file on the PVC running on the last pod
+  shell: "oc exec -t {{ pod_names[-1] }} -n {{ manila_project_name }} -- ls /var/lib/www/data/hello-{{pod_names[0]}}"
+  register: output
+  until: output.rc == 0
+  retries: 6
+  delay: 10
