@@ -1,2 +1,3 @@
 ---
 # defaults file for post
+ipv6_openshift_secondary: False

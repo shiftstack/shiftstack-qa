@@ -1,0 +1,27 @@
+---
+- name: "'wait_until_no_unschedulable_nodes' action"
+  block:
+    - name: Wait until there are no unschedulable nodes (oc get nodes --field-selector spec.unschedulable=true)
+      kubernetes.core.k8s_info:
+        api_version: v1
+        kind: Node
+        field_selectors:
+          - spec.unschedulable=true
+      register: unschedulable_nodes
+      until:
+        - unschedulable_nodes.resources is defined
+        - unschedulable_nodes.resources|length == 0
+      retries: "{{ wait_retries }}"
+      delay: "{{ wait_delay }}"
+  rescue:
+    - name: Get cluster nodes
+      shell: oc get nodes
+      register: cluster_nodes
+
+    - name: Print cluster nodes
+      debug:
+        msg: "{{ cluster_nodes.stdout_lines }}"
+
+    - name: Fail inside rescue block
+      fail:
+        msg: "There are unschedulable nodes, check failed task logs. Failed task: '{{ ansible_failed_task.name }}'"

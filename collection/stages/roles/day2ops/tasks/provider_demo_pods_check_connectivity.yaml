@@ -1,0 +1,80 @@
+- name: Get Pods in "{{ namespace }}"
+  k8s_info:
+    kind: Pod
+    namespace: "{{ namespace }}"
+    label_selectors:
+      - "app = {{ app_label }}"
+  register: pods
+
+- name: Init pods_names and pods_ips
+  set_fact:
+    pods_names: []
+    pods_ips: []
+
+- name: Set pods names
+  set_fact:
+    pods_names: "{{ (pods_names|default([]))}} + {{ [item.metadata.name] }}"
+  loop: "{{ pods.resources }}"
+
+- name: Get provider demo pods IPs
+  shell: "oc exec {{ item }} -n {{ namespace }} -- ip -4 addr show dev net1 scope global |  awk '/inet/{print $2}' | cut -f1 -d'/' "
+  loop: "{{ pods_names }}"
+  register: pods_ips_results
+  until: pods_ips_results.stdout != ""
+  retries: 20
+  delay: 30
+
+- name: Set provider demo pods IPs
+  set_fact:
+    pods_ips: "{{ pods_ips | default({})|combine( { item.item: item.stdout  } ) }}"
+  loop: "{{ pods_ips_results.results }}"
+
+- name: Print Pods names
+  debug: var=pods_names
+
+- name: Print Pods IPs
+  debug: var=pods_ips
+
+- name: Set the workers ports name suffix based on the OCP version
+  block:
+    - name: Get the ID fit with the provider network if the OCP version equal to 4.11 or higher
+      vars:
+        port_list: "openstack port list -f value -c Name -c 'Fixed IP Addresses'"
+        prov_net_subnet: "$(openstack network show {{ prov_net_id }} -f value -c subnets | tr -d [\\'])"
+        filters_to_obtain_id: "grep worker | head -1 | awk '{print $1}' | awk -F- '{print $NF}'"
+      shell: |-
+        {{ port_list }} | grep {{ prov_net_subnet }} | {{ filters_to_obtain_id }}
+      environment:
+        OS_CLOUD: "{{ user_cloud }}"
+      register: port_id_fits_with_prov
+
+    - name: Set the workers ports name suffix
+      set_fact:
+        port_name_suffix: "{{ port_id_fits_with_prov.stdout }}"
+
+- name: Get Pods in "{{ namespace }}"
+  k8s_info:
+    kind: Pod
+    namespace: "{{ namespace }}"
+    label_selectors:
+      - "app = {{ app_label }}"
+  register: pods_results
+
+- name: Allow pods IP in workers port
+  openstack.cloud.port:
+    state: present
+    cloud: shiftstack
+    name: "{{ item.spec.nodeName }}-{{ port_name_suffix }}"
+    allowed_address_pairs:
+      - ip_address: "{{ item.metadata.annotations['k8s.v1.cni.cncf.io/network-status'] | from_json | json_query('[?name==`default/test-network-1`].ips | [0][0] ') }}"
+  loop: "{{ pods_results.resources }}"
+
+- name: Check pod to pod connectivity
+  shell: "oc exec {{ item[0] }} -n {{ namespace }} -- /bin/curl http://{{ item[1]}}:8080"
+  with_nested:
+    - "{{ pods_ips.keys() | list}}"
+    - "{{ pods_ips.values() | list }}"
+  when: pods_ips[item[0]] != item[1]
+  register: hello_pod
+  until: hello_pod.stdout is search('Hello OpenShift!')
+

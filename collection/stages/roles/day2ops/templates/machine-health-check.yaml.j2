@@ -1,0 +1,13 @@
+apiVersion: machine.openshift.io/v1beta1
+kind: MachineHealthCheck
+metadata:
+  name: {{ healthcheck_name }}
+  namespace: openshift-machine-api
+spec:
+  selector:
+    matchLabels:
+      machine.openshift.io/cluster-api-machine-role: master
+      machine.openshift.io/cluster-api-machine-type: master
+  #unhealthyConditions: #not required for InstanceMissing condition
+  maxUnhealthy: "1"
+  nodeStartupTimeout: "20m"

@@ -1,0 +1,22 @@
+spec:
+  additionalNetworks:
+  - name: slaac
+    namespace: slaac
+    rawCNIConfig: |-
+      {
+        "cniVersion": "0.3.1",
+        "name": "slaac",
+        "type": "macvlan",
+        "master": "{{ipv6_interfaces[0] }}"
+      }
+    type: Raw
+  - name: dhcpstateless
+    namespace: dhcpstateless
+    rawCNIConfig: |-
+      {
+        "cniVersion": "0.3.1",
+        "name": "dhcpstateless",
+        "type": "macvlan",
+        "master": "{{ ipv6_interfaces[1] }}"
+      }
+    type: Raw
