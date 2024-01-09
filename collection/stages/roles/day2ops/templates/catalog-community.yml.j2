@@ -1,0 +1,13 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: CatalogSource
+metadata:
+  name: community-operator-catalog
+  namespace: openshift-marketplace
+spec:
+  sourceType: grpc
+  image: installer-host.example.com:8443/redhat/community-operator-index:{{ release_tag }}
+  displayName: Community Operator Catalog
+  publisher: OSASINFRA-QE
+  updateStrategy:
+    registryPoll:
+      interval: 30m

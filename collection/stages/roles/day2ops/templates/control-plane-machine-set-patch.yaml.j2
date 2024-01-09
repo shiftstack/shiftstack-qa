@@ -1,0 +1,19 @@
+apiVersion: machine.openshift.io/v1
+metadata:
+  name: cluster
+  namespace: openshift-machine-api
+kind: ControlPlaneMachineSet
+spec:
+  template:
+    machines_v1beta1_machine_openshift_io:
+      failureDomains:
+        openstack:
+        {{cpms_failuredomains| to_nice_yaml| indent(8, false)}}
+      spec:
+        providerSpec:
+          value:
+            networks:
+            {{cpms_networks| to_nice_yaml| indent(12, false)}}
+            securityGroups:
+            {{cpms_sgs| to_nice_yaml| indent(12, false)}}
+status: {}

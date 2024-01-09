@@ -1,0 +1,52 @@
+apiVersion: machine.openshift.io/v1beta1
+kind: MachineSet
+metadata:
+  labels:
+    machine.openshift.io/cluster-api-cluster: {{ infrastructure_id }}
+    machine.openshift.io/cluster-api-machine-role: worker
+    machine.openshift.io/cluster-api-machine-type: worker
+  name: {{ baremetal.virt_machineset }}
+  namespace: openshift-machine-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      machine.openshift.io/cluster-api-cluster: {{ infrastructure_id }}
+      machine.openshift.io/cluster-api-machineset: {{ infrastructure_id }}-{{ baremetal.virt_machineset }}
+  template:
+    metadata:
+      labels:
+        machine.openshift.io/cluster-api-cluster: {{ infrastructure_id }}
+        machine.openshift.io/cluster-api-machine-role: worker
+        machine.openshift.io/cluster-api-machine-type: worker
+        machine.openshift.io/cluster-api-machineset: {{ infrastructure_id }}-{{ baremetal.virt_machineset }}
+    spec:
+      providerSpec:
+        value:
+          apiVersion: openstackproviderconfig.openshift.io/v1alpha1
+          cloudName: openstack
+          cloudsSecret:
+            name: openstack-cloud-credentials
+            namespace: openshift-machine-api
+          flavor: {{ osp_worker_flavor }}
+          image: {{ infrastructure_id }}-rhcos
+          serverGroupName: {{ infrastructure_id }}-worker
+          kind: OpenstackProviderSpec
+          networks:
+          - filter: {}
+            subnets:
+            - filter:
+                name: provisioning_subnet
+                uuid: {{ bm_sub_id }}
+          primarySubnet: {{ bm_sub_id }}
+          securityGroups:
+          - filter: {}
+            name: {{ infrastructure_id }}-worker
+          serverMetadata:
+            Name: {{ infrastructure_id }}-worker
+            openshiftClusterID: {{ infrastructure_id }}
+          tags:
+          - openshiftClusterID={{ infrastructure_id }}
+          trunk: true
+          userDataSecret:
+            name: worker-user-data

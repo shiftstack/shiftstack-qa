@@ -1,0 +1,32 @@
+{% if az_enable %}
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: topology-aware-nova
+provisioner: cinder.csi.openstack.org
+parameters:
+  availability: nova
+volumeBindingMode: WaitForFirstConsumer
+allowVolumeExpansion: true
+{% endif %}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cluster-monitoring-config
+  namespace: openshift-monitoring
+data:
+  config.yaml: |
+    prometheusK8s:
+      retention: 1d
+      volumeClaimTemplate:
+        spec:
+{% if az_enable %}
+          storageClassName: topology-aware-nova
+{% else %}
+          #storageClassName: <undefined will use the default storageClass>
+{% endif %}
+          resources:
+            requests:
+              storage: 4Gi

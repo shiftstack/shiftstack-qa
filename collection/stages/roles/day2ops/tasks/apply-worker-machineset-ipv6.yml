@@ -1,0 +1,24 @@
+---
+- name: Apply machineset to enable DHCP on workers
+  include_tasks: apply-machineset.yml
+  vars:
+    machineset_manifest_path: "worker-machineconfig-dhcp.yaml"
+    manifest_name: "worker-machineconfig-dhcp.yaml"
+    user_dir : "{{ undercloud_user_dir }}"
+    wait_retries: 5
+    wait_delay: 30
+
+- name: Check MCP is updated
+  include_role:
+    name: cluster_checks
+    tasks_from: wait_mcp_updated.yml
+
+- name: Wait until OCP cluster is healthy
+  include_role:
+    name: cluster_checks
+    tasks_from: wait_until_cluster_is_healthy.yml
+
+- name: Wait until cluster nodes are ready
+  include_role:
+    name: cluster_checks
+    tasks_from: wait_until_nodes_ready

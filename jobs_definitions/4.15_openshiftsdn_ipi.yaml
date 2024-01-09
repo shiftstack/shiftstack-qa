@@ -1,0 +1,5 @@
+openshift_release: 4.15 # It can be "4.10", "4.11", etc. or "4-stable"
+network_type: OpenShiftSDN
+installation_type: ipi
+stages:
+  - cleanup

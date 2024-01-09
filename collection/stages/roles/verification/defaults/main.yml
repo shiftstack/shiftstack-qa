@@ -1,2 +1,16 @@
 ---
 # defaults file for verification
+cinder_csi_project_name: cinder-test # project for testing cinder-csi sc provider
+manila_project_name: manila-test # project for testing manila sc provider
+demo_project_name: demo # project for testing demo app
+verify_existing_namespace: False
+soft_checks: true # run checks that won't stop the playbook but will generate the jenkins message to mark the run as unstable.
+alerts_to_ignore:
+  # - 'Watchdog' # Should not be considered as severity is none
+  - 'NodeClockNotSynchronising'
+  # - 'InsightsRecommendationActive' # Should not be considered as severity is info
+  - 'KubeCPUOvercommit'
+  # - 'AlertmanagerReceiversNotConfigured' # Should not be considered as severity is warning
+  - 'KubeContainerWaiting'
+  - 'KubePodNotReady'
+  - 'ClusterNotUpgradeable'

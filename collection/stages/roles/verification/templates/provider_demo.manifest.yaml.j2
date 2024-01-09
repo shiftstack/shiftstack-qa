@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pod-provider
+spec:
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+         - labelSelector:
+            matchExpressions:
+            - key: app
+              operator: In
+              values:
+              - pod-provider
+  replicas: {{ num_workers }}
+  selector:
+    matchLabels:
+      app: pod-provider
+  template:
+    metadata:
+      labels:
+        app: pod-provider
+      annotations:
+        k8s.v1.cni.cncf.io/networks: test-network-1
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+      - name: pod-provider
+        resources:
+          requests:
+            memory: "500Mi"
+            cpu: "100m"
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+        image: quay.io/openshift/origin-hello-openshift
+        ports:
+        - containerPort: 8080
+

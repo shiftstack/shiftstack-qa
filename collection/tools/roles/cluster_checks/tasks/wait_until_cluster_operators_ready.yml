@@ -1,0 +1,24 @@
+---
+- name: "'wait_until_cluster_operators_ready' action"
+  block:
+    - name: Active wait until all the ClusterOperators are ready
+      kubernetes.core.k8s_info:
+        api_version: config.openshift.io/v1
+        kind: ClusterOperator
+      register: cluster_operators
+      until:
+        - cluster_operators is not failed
+        - cluster_operators.resources is defined
+        - cluster_operators | json_query('resources[*].status.conditions[?type==`Available`].status') | unique == [["True"]]
+        - cluster_operators | json_query('resources[*].status.conditions[?type==`Progressing`].status') | unique == [["False"]]
+        - cluster_operators | json_query('resources[*].status.conditions[?type==`Degraded`].status') | unique == [["False"]]
+      retries: "{{ wait_retries }}"
+      delay: "{{ wait_delay }}"
+      no_log: true
+  rescue:
+    - name: Check the unready Cluster Operators
+      include_tasks: debug_clusteroperators.yml
+
+    - name: Fail inside rescue block
+      fail:
+        msg: "Not expected cluster operator status, check failed task logs. Failed task: '{{ ansible_failed_task.name }}'"

@@ -1,0 +1,54 @@
+---
+- name : Verify volume types for rootVolumes (masters and workers)
+  block:
+    - name: Fetch the list of OpenStack volumes
+      shell: "openstack volume list -f json"
+      environment:
+        OS_CLOUD: "{{ user_cloud }}"
+      register: volume_list_output
+
+    - name: Extract volume names for volumes named 'master'
+      set_fact:
+        master_volume_names: "{{ volume_list_output.stdout | from_json | json_query(jquery) }}"
+      vars:
+        jquery: "[?contains(Name,'master')].Name"
+
+    - name: Extract volume names for volumes named 'worker'
+      set_fact:
+        worker_volume_names: "{{ volume_list_output.stdout | from_json | json_query(jquery) }}"
+      vars:
+        jquery: "[?contains(Name,'worker')].Name"
+
+    - name: Fetch volume details for masters
+      shell: "openstack volume show {{ item }} -f json"
+      environment:
+        OS_CLOUD: "{{ user_cloud }}"
+      register: master_volumes_details
+      loop: "{{ master_volume_names }}"
+
+    - name: Fetch volume details for workers
+      shell: "openstack volume show {{ item }} -f json"
+      environment:
+        OS_CLOUD: "{{ user_cloud }}"
+      register: worker_volumes_details
+      loop: "{{ worker_volume_names }}"
+
+    - name: Sort master volumes by type
+      set_fact:
+        sorted_master_volumes: "{{ master_volumes_details.results | map(attribute='stdout') | map('from_json') | sort(attribute='type') }}"
+
+    - name: Assert master volumes have the expected types
+      assert:
+        that:
+          - "sorted_master_volumes | length == 3"
+          - "sorted_master_volumes[0]['type'] == 'fastpool-0'"
+          - "sorted_master_volumes[1]['type'] == 'fastpool-1'"
+          - "sorted_master_volumes[2]['type'] == 'fastpool-2'"
+        fail_msg: "Master volumes have unexpected types."
+
+    - name: Assert worker volumes have the expected types
+      assert:
+        that:
+          - "item.stdout | from_json | json_query('type') in ['fastpool-0', 'fastpool-1', 'fastpool-2']"
+        fail_msg: "Worker volume {{ item.stdout | from_json | json_query('name') }} has type {{ item.stdout | from_json | json_query('type') }}, which is not an expected worker volume type."
+      loop: "{{ worker_volumes_details.results }}"

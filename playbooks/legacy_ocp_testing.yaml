@@ -4,6 +4,7 @@
   gather_facts: no
   # debugger: on_failed # https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_debugger.html#playbook-debugger
   vars_files:
+    - "../group_vars/all.yml"
     - "../configs/secret.yaml"
     - "../configs/legacy_ocp_testing.yaml"
 
@@ -17,23 +18,37 @@
         gather_subset:
           - env
 
+    - name: Cleanup workspace flags - Remove the stage_unstable_flag if it exists
+      file:
+        path: "{{ stage_unstable_flag }}"
+        state: absent
+
   roles:
+    - name: Discover OSP version
+      role: shiftstack.tools.discover_osp_version
+
     - name: Cleanup setup
       role: shiftstack.stages.cleanup
+      when: "'cleanup' in stages"
 
     - name: Prepare setup
       role: shiftstack.stages.prepare
+      when: "'prepare' in stages"
 
     - name: Install OCP on setup
       role: shiftstack.stages.install
-      vars:
-        installation_type: ipi
+      when: "'install' in stages"
 
-    - name: Run post operations on setup
+    - name: Discover OCP version and networkType
+      role: shiftstack.tools.discover_ocp_version
+      environment:
+        KUBECONFIG: "{{ kubeconfig }}"
+
+    - name: Run post operations and OCP verification checks on setup
       role: shiftstack.stages.post
-
-    - name: Run post operations on setup
-      role: shiftstack.stages.verification
+      environment:
+        KUBECONFIG: "{{ kubeconfig }}"
+      when: "'post' in stages"
 
     - name: Run tests on OCP
       role: shiftstack.stages.test

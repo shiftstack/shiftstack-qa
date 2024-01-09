@@ -1,0 +1,136 @@
+---
+- name: Get IPv6 Networks and ports
+  include_tasks: get-ipv6-addresses.yml
+
+- name: Get existing workers
+  kubernetes.core.k8s_info:
+    api_version: v1
+    kind: Node
+    label_selectors:
+      - node-role.kubernetes.io/worker
+  register: workers
+
+- name: Set the number of workers
+  set_fact:
+    num_workers: "{{ workers.resources|length }}"
+
+- name: Declare a list of workers names
+  set_fact:
+    workers_names: "{{ workers_names|default([]) }} + ['{{ item.metadata.labels['kubernetes.io/hostname'] }}']"
+  loop: "{{ workers.resources | sort(attribute='metadata.name') | list }}"
+  no_log: true
+
+- name: Get IPv6 interfaces
+  shell: |
+     oc adm node-logs {{ workers_names[0] }} | grep {{ item.subnet_cidr_ipv6_prefix }} |grep dev | sed  's/.*{{ item.subnet_cidr_ipv6_prefix }}::.* dev \(\S\+\).*/\1/g' |tail -1
+  loop: "{{ ipv6.networks }}"
+  register: ipv6_interfaces_results
+
+- name: ipv6_interfaces_results.results
+  debug: msg="{{ ipv6_interfaces_results.results[1].stdout }}"
+
+- name: Set ipv6_interfaces_list
+  set_fact:
+    ipv6_interfaces: "{{ ipv6_interfaces|default([]) }} + ['{{ item.stdout }}']"
+  loop: "{{ ipv6_interfaces_results.results|list }}"
+
+- name: Print IPv6 interfaces
+  debug: var=ipv6_interfaces
+
+- name: Copy macvlan-network.yml to the undercloud
+  template:
+    src: network-macvlan.yml.j2
+    dest: "{{ undercloud_user_dir }}/network-macvlan.yml"
+
+- name: Create projects for testing IPv6 connectivity
+  k8s:
+    api_version: project.openshift.io/v1
+    state: present
+    kind: Project
+    name: "{{ item }}"
+  loop: "{{ ipv6.projects }}"
+
+- name: Create IPv6 networks in Cluster Network Operator(CNO)
+  shell: oc patch network.operator cluster --patch "$(cat network-macvlan.yml)" --type merge
+
+- name: Verify the NetworkAttachmentDefinition exist
+  k8s_info:
+    api_version: k8s.cni.cncf.io/v1
+    kind: NetworkAttachmentDefinition
+  register: network_attachments
+  until:
+    - network_attachments is defined
+    - network_attachments is not failed
+    - network_attachments | json_query('resources[*].metadata.name') | list | sort == ipv6.projects|sort
+  retries: 10
+  delay: 30
+
+- name: Copy ipv6-deployment.yml deployment file to undercloud
+  template:
+    src: ipv6-deployment.yml.j2
+    dest: "{{ undercloud_user_dir }}/ipv6-deployment-{{ item }}.yml"
+  loop: "{{ ipv6.projects }}"
+
+- name: Copy ipv6-pod.yml file to undercloud
+  template:
+    src: ipv6-pod.yml.j2
+    dest: "{{ undercloud_user_dir }}/ipv6-pod-{{ item[0] }}-{{ item[1] }}.yml"
+  with_nested:
+    - "{{ ipv6.projects }}"
+    - [1, 2, 3]
+
+- name: Apply the manifest for deployments creation
+  k8s:
+    state: present
+    src: "{{ home_dir }}/ipv6-deployment-{{ item }}.yml"
+    wait: yes
+    wait_timeout: 100
+    namespace: "{{ item }}"
+  loop: "{{ ipv6.projects }}"
+
+- name: Create 2 pod on the same node in each IPv6 namespace
+  k8s:
+    state: present
+    src: "{{ home_dir }}/ipv6-pod-{{ item[0]}}-{{ item[1] }}.yml"
+    wait: yes
+    wait_timeout: 100
+    namespace: "{{ item[0] }}"
+  with_nested:
+    - "{{ ipv6.projects}}"
+    - ['1', '2']
+
+- name: Collect facts about worker servers
+  openstack.cloud.server_info:
+   cloud: "{{ user_cloud }}"
+   server: "{{ ocp_cluster_name }}*worker*"
+  register: result
+
+- name: Disable port security and remove security groups from worker
+  openstack.cloud.port:
+    cloud: "{{ user_cloud }}"
+    state: present
+    name: "{{ item.name }}"
+    port_security_enabled: false
+    no_security_groups: true
+  loop: "{{ workers_ports }}"
+
+- name: Install IPv6 VM
+  import_role:
+    name: day2ops
+    tasks_from: install_ipv6_vm.yml
+
+- name: Check connectivity between pods on different nodes
+  vars:
+    app_label: "hello-openshift"
+  include_tasks: check_ipv6_connectivity.yml
+  loop: "{{ ipv6.projects }}"
+  loop_control:
+    loop_var: namespace
+
+- name: Check connectivity between pods on the same node
+  vars:
+    app_label: "hello-openshift-samenode"
+  include_tasks: check_ipv6_connectivity.yml
+  loop: "{{ ipv6.projects }}"
+  loop_control:
+    loop_var: namespace
