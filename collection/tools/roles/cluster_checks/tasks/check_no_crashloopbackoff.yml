@@ -1,0 +1,24 @@
+---
+- name: "'check_no_crashloopbackoff' action"
+  block:
+    - name: Check there are no pods in CrashLoopBackOff
+      kubernetes.core.k8s_info:
+        api_version: v1
+        kind: Pod
+      register: pods
+      no_log: true # This tasks logs ~130000 lines
+
+    - set_fact:
+        waiting_pods: "{{ pods | json_query('resources[*].status.containerStatuses[*].state.waiting.reason') | flatten }}"
+
+    - assert:
+        that:
+          - '"CrashLoopBackOff" not in waiting_pods'
+        fail_msg: "There are pod(s) in CrashLoopBackOff"
+  rescue:
+    - name: Check the unready pods
+      include_tasks: debug_pods.yml
+
+    - name: Fail inside rescue block
+      fail:
+        msg: "There are pod(s) in CrashLoopBackOff, check failed task logs. Failed task: '{{ ansible_failed_task.name }}'"

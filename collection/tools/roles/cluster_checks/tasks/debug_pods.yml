@@ -1,0 +1,32 @@
+---
+- name: Check the unready Pods
+  block:
+    - name: Get the Pods
+      shell: 'oc get pods -A'
+
+    - name: Register the failed pods
+      kubernetes.core.k8s_info:
+        api_version: v1
+        kind: Pod
+        field_selectors:
+          - status.phase!=Running,status.phase!=Succeeded
+      register: failed_pods
+      no_log: true
+
+    - name: Set a fact for the failed pods
+      set_fact:
+        failed_pods_names: >-
+          {{ failed_pods | json_query("resources[*].[metadata.namespace,metadata.name]") | list }}
+
+    - name: Describe each of the unready Pods
+      shell: "oc describe pod -n {{ item[0] }} {{ item[1] }}"
+      loop: "{{ failed_pods_names }}"
+      when: failed_pods_names|length < 5
+
+    - name: Indicate if too many pods are not ready
+      debug:
+        msg: |
+          {{ failed_pods_names|length }} pods are not ready.
+          Please check the failed pods in the logs and must-gather.
+      when: failed_pods_names|length >= 5
+  ignore_errors: yes

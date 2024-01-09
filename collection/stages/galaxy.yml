@@ -40,7 +40,7 @@ tags: ['openshift', 'redhat-openstack']
 # collection label 'namespace.name'. The value is a version range
 # L(specifiers,https://python-semanticversion.readthedocs.io/en/latest/#requirement-specification). Multiple version
 # range specifiers can be set and are separated by ','
-dependencies: {}
+dependencies: {'shiftstack.tools': '1.0.0'}
 
 # The URL of the originating SCM repository
 repository: https://review.gerrithub.io/plugins/gitiles/shiftstack/shiftstack-qa

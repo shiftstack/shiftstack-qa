@@ -1,0 +1,30 @@
+---
+- name: "'wait_until_nodes_ready' action"
+  block:
+    - name: Wait until cluster nodes are ready
+      kubernetes.core.k8s_info:
+        api_version: v1
+        kind: Node
+      register: nodes
+      until:
+        - nodes is not failed
+        - nodes.resources is defined
+        - nodes | json_query('resources[*].status.conditions[?type==`Ready`].status') | unique == [["True"]]
+        - nodes | json_query('resources[*].status.conditions[?type==`DiskPressure`].status') | unique == [["False"]]
+        - nodes | json_query('resources[*].status.conditions[?type==`MemoryPressure`].status') | unique == [["False"]]
+        - nodes | json_query('resources[*].status.conditions[?type==`PIDPressure`].status') | unique == [["False"]]
+      retries: "{{ wait_retries }}"
+      delay: "{{ wait_delay }}"
+      no_log: true
+  rescue:
+    - name: Get cluster nodes
+      shell: oc get nodes
+      register: cluster_nodes
+
+    - name: Print cluster nodes
+      debug:
+        msg: "{{ cluster_nodes.stdout_lines }}"
+
+    - name: Fail inside rescue block
+      fail:
+        msg: "There are not ready nodes, check failed task logs. Failed task: '{{ ansible_failed_task.name }}'"

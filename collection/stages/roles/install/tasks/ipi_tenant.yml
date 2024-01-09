@@ -22,7 +22,6 @@
     master_flavor: "{{ topology.flavors.master.name }}"
     master_replicas: "{{ topology.replicas.master }}"
     machine_cidr: "{{ topology.machine_cidr }}"
-    network_type: "{{ topology.network_type }}"
     external_network: "{{ infra.external_network }}"
     region: "{{ infra.region }}"
     dns_servers: "{{ infra.dns_servers }}"
