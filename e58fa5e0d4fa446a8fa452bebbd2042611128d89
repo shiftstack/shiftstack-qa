@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "acb1763b_5c8b786d",
+        "filename": "configs/ocp_testing.yaml",
+        "patchSetId": 5
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-01-09T15:11:19Z",
+      "side": 1,
+      "message": "what do you think about:\n```\ncacert: \"{{ home_dir }}/.original-config/cert/ca.crt\"\n```",
+      "range": {
+        "startLine": 4,
+        "startChar": 0,
+        "endLine": 4,
+        "endChar": 54
+      },
+      "revId": "e58fa5e0d4fa446a8fa452bebbd2042611128d89",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
