@@ -1,0 +1,67 @@
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: topology-aware-{{ item }}
+provisioner: cinder.csi.openstack.org
+parameters:
+  availability: {{ cinder_az_for_sc[item] }}
+volumeBindingMode: WaitForFirstConsumer
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: "pvc-{{ item }}"
+  namespace: "{{ cinder_csi_project_name }}"
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: topology-aware-{{ item }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-{{item}}
+  namespace: "{{ cinder_csi_project_name }}"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: demo-{{item}}
+      cinder-az: {{cinder_az_for_sc[item]}}
+      nova-az: {{nova_az_for_sc[item]}}
+  template:
+    metadata:
+      labels:
+        app: demo-{{item}}
+        cinder-az: {{cinder_az_for_sc[item]}}
+        nova-az: {{nova_az_for_sc[item]}}
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+      - name: demo
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+        image: {{ demo_image }}
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        volumeMounts:
+          - mountPath: /var/lib/www/data
+            name: mydata
+      nodeSelector:
+        topology.cinder.csi.openstack.org/zone: {{nova_az_for_sc[item]}}
+      volumes:
+        - name: mydata
+          persistentVolumeClaim:
+            claimName: pvc-{{item}}
+            readOnly: false

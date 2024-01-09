@@ -1,12 +1,12 @@
 ---
 - name: Get the OCP release build name (it sets the 'openshift_release_build_name' fact)
   ansible.builtin.include_role:
-    name: utils
+    name: get_openshift_release
     tasks_from: get_openshift_release_build_name.yml
   vars:
     release: "{{ openshift_release }}"
     build_name: "{{ openshift_build_name }}"
-    output_dir: "{{ ansible_facts.env['HOME'] }}"
+    output_dir: "{{ home_dir }}"
 
 - name: Marking the Openshift release build name {{ openshift_release_build_name }}
   ansible.builtin.debug:
@@ -14,9 +14,9 @@
 
 - name: Get the installer and client binaries for release {{ openshift_release_build_name }}
   ansible.builtin.include_role:
-    name: utils
+    name: get_openshift_release
     tasks_from: get_openshift_release_binaries.yml
   vars:
     binaries: [installer, client]
     release_name: "{{ openshift_release_build_name | default('') }}"
-    output_dir: "{{ ansible_facts.env['HOME'] }}"
+    output_dir: "{{ home_dir }}"
