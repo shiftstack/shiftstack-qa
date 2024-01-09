@@ -1,0 +1,36 @@
+---
+- name: Check the Control Plane MachineSet is healthy
+  block:
+    - name: Get the Control Plane MachineSet resource
+      kubernetes.core.k8s_info:
+        api_version: machine.openshift.io/v1
+        kind: ControlPlaneMachineSet
+      register: cpms
+
+    - name: Fail if the CPMS is not active
+      vars:
+        error_msg: >
+          Failed! CPMS {{ cpms.metadata.name }} is not active
+      fail:
+        msg: "{{ error_msg }}"
+      when:
+        - cpms.resources[0].spec is not defined
+        - cpms.resources[0].spec.state != 'Active'
+
+    - name: Fail if the number of OCP desired machines is not equal to the available machines
+      vars:
+        error_msg: >
+          Failed! The replicas value of Control Plance MachineSet is
+          not corresponding with the Control plane MachineSet available replicas status:\n
+          {{ cpms.resources[0].status }}
+      fail:
+        msg: "{{ error_msg }}"
+      when: cpms.resources[0].status.readyReplicas is not defined or
+            cpms.resources[0].status.replicas != cpms.resources[0].status.readyReplicas
+  rescue:
+    - name: Get Instances, Machines, and MachineSets information for unhealthy MachineSets
+      include_tasks: debug_machines.yml
+
+    - name: Fail inside rescue block
+      fail:
+        msg: "The Control Plane MachineSets health check failed. See above commands output for more information."
