@@ -1,0 +1,45 @@
+- name: create manifests for openshift-monitoring namespace
+  ansible.builtin.template:
+    src: cluster-monitoring-config.yaml.j2
+    dest: "{{ home_dir }}/cluster-monitoring-config.yaml"
+- name: Apply configMap for openshift-monitoring namespace and check they are running.
+  kubernetes.core.k8s:
+    state: present
+    src: "{{ home_dir }}/cluster-monitoring-config.yaml"
+    wait: yes
+    wait_timeout: 100
+
+# Check that prometheus PVC is created on openstack
+- name: Get created PVCs on openshift-monitoring
+  kubernetes.core.k8s_info:
+    kind: pvc
+    namespace: "openshift-monitoring"
+  register: monitoring_pvcs
+  retries: 25
+  delay: 15
+  until:
+    - monitoring_pvcs.resources|length >= 2
+    - monitoring_pvcs|json_query('resources[*].status') is defined
+    - monitoring_pvcs|json_query('resources[*].status.phase') | unique == ["Bound"]
+
+- set_fact:
+    monitoring_pvc_ids: "{{ monitoring_pvcs | json_query('resources[].spec.volumeName') | list }}"
+
+- name: Check cinder volume for PVC exist
+  shell: openstack volume list -f csv | grep  "{{ item }}"
+  environment:
+    OS_CLOUD: "{{ user_cloud }}"
+  loop: "{{ monitoring_pvc_ids }}"
+
+- name: Wait until prometheus pods are recreated
+  kubernetes.core.k8s_info:
+    kind: Pod
+    namespace: "openshift-monitoring"
+    label_selectors:
+      - prometheus=k8s
+    field_selectors:
+      - status.phase=Running
+  register: mon_pods
+  retries: 40
+  delay: 15
+  until: mon_pods.resources|length == monitoring_pvc_ids|length

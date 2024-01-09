@@ -1,0 +1,6 @@
+---
+# defaults file for tools_must-gather
+must_gather_dir_base: "{{ home_dir }}"
+fetch_to_inventory: False # must be defined when calling the role
+must_gather_dir_suffix: None # must be defined when calling the role
+must_gather_dir: "{{ must_gather_dir_base }}/{{ must_gather_dir_suffix }}"

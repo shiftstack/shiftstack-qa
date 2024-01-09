@@ -25,8 +25,3 @@ infra: # Store required Openstack deployment info for deploying OCP
   region: regionOne
   dns_servers:
     - '10.47.242.10'
-openshift_release: 4.15 # It can be "4.10", "4.11", etc. or "4-stable"
-openshift_build_name: ""
-# ^ It can be an empty value "" (latest nightly), a given build
-# "4.11.0-0.nightly-2022-08-26-005549" or "4.6.46", or any
-# upgrade channel "candidate", "fast", "stable" or "eus".
