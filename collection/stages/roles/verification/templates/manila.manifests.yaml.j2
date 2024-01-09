@@ -1,0 +1,52 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: "pvc-manila"
+  namespace: "{{ manila_project_name }}"
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: csi-manila-default
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo
+  namespace: "{{ manila_project_name }}"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: demo
+  template:
+    metadata:
+      labels:
+        app: demo
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+      - name: demo
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+        image: "{{ demo_image }}"
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        volumeMounts:
+          - mountPath: /var/lib/www/data
+            name: mydata
+      volumes:
+        - name: mydata
+          persistentVolumeClaim:
+            claimName: pvc-manila
+            readOnly: false

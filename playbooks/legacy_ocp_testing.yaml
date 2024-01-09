@@ -4,8 +4,12 @@
   gather_facts: no
   # debugger: on_failed # https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_debugger.html#playbook-debugger
   vars_files:
+    - "../group_vars/all.yml"
     - "../configs/secret.yaml"
     - "../configs/legacy_ocp_testing.yaml"
+
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
 
   pre_tasks:
     - name: Preparing for the run
@@ -17,29 +21,58 @@
         gather_subset:
           - env
 
-  roles:
+    - name: Cleanup workspace flags - Remove the stage_unstable_flag if it exists
+      file:
+        path: "{{ stage_unstable_flag }}"
+        state: absent
+
+  tasks:
+    - name: Discover OSP version
+      include_role:
+        name: shiftstack.tools.get_deploy_info
+        tasks_from: discover_osp_version.yml
+
     - name: Cleanup setup
-      role: shiftstack.stages.cleanup
+      include_role:
+        name: shiftstack.stages.cleanup
+      when: "'cleanup' in stages"
 
     - name: Prepare setup
-      role: shiftstack.stages.prepare
+      include_role:
+        name: shiftstack.stages.prepare
+      when: "'prepare' in stages"
 
     - name: Install OCP on setup
-      role: shiftstack.stages.install
+      include_role:
+        name: shiftstack.stages.install
+      when: "'install' in stages"
+
+    - name: Discover OCP version and networkType
+      include_role:
+        name: shiftstack.tools.get_deploy_info
+        tasks_from: discover_ocp_version.yml
+
+    - name: Run post operations and OCP verification checks on setup
+      include_role:
+        name: shiftstack.stages.post
+      when: "'post' in stages"
+
+    - name: Run OCP verification checks
+      include_role:
+        name: shiftstack.stages.verification
       vars:
-        installation_type: ipi
-
-    - name: Run post operations on setup
-      role: shiftstack.stages.post
-
-    - name: Run post operations on setup
-      role: shiftstack.stages.verification
+        post_installatin: True
+      when: "'verification' in stages"
 
     - name: Run tests on OCP
-      role: shiftstack.stages.test
+      include_role:
+        name: shiftstack.stages.test
+      when: "'test' in stages"
 
     - name: Run day2ops
-      role: shiftstack.stages.day2ops
+      include_role:
+        name: shiftstack.stages.day2ops
+      when: "'day2ops' in stages"
 
   post_tasks:
     - name: Gathering resources
