@@ -1,0 +1,54 @@
+---
+apiVersion: project.openshift.io/v1
+kind: Project
+metadata:
+  name: {{ test_id }}-ns
+  labels:
+    kubernetes.io/metadata.name: {{ test_id }}-ns
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ test_id }}-dep
+  namespace: {{ test_id }}-ns
+  labels:
+    app: {{ test_id }}-dep
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: {{ test_id }}-dep
+  template:
+    metadata:
+      labels:
+        app: {{ test_id }}-dep
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+      - image: "{{ demo_image }}"
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+        name: demo
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ test_id }}-svc
+  namespace: {{ test_id }}-ns
+  labels:
+    app: {{ test_id }}-dep
+  annotations:
+    service.beta.kubernetes.io/openstack-internal-load-balancer: "{{ internal_lb| string| lower }}"
+spec:
+  ports:
+  - port: 80
+    targetPort: 8080
+  selector:
+    app: {{ test_id }}-dep
+  type: LoadBalancer

@@ -1,57 +1,7 @@
 ---
-admin_cloud: overcloud
-user_cloud: shiftstack
-# Below cacert path includes a file too long for the installer. Options:
-# - Long term solution: find the exact cert needed.
-# - temporary solution: set verify:False on the clouds.yaml for both admin and user cloud
-cacert: //etc/pki/ca-trust/source/anchors/undercloud-cacert.pem
-ocp_cluster_name: ostest
-project:
-  name: "{{ user_cloud }}"
-  user: user
-  password: redhat
-  role: member
-  swift_role: swiftoperator
-  domain_name: Default
-  region: 'regionOne'
-  os_quota:   # https://github.com/openshift/installer/tree/master/docs/user/openstack#openstack-requirements
-    ram: 147456
-    cores: 50
-    network: 250
-    subnet: 250
-    security_group: 250
-    security_group_rule: 1000
-    port: 1510
-    volumes: 100
-    snapshots: 100
-    gigabytes: 1000
-    load_balancers: 1000
-    load_balancer_listeners: 5000
-    load_balancer_pools: 5000
-topology: # Store required params for deploying OCP
-  flavors:
-    master:
-      name: master
-      ram: 16384
-      vcpus: 4
-      disk: 25
-    worker:
-      name: worker
-      ram: 8192
-      vcpus: 2
-      disk: 25
-  replicas:
-    master: 3
-    worker: 3
-  network_type: OVNKubernetes
-  machine_cidr: 10.196.0.0/16
+cacert: /etc/pki/ca-trust/source/anchors/undercloud-cacert.pem
 infra: # Store required Openstack deployment info for deploying OCP
   external_network: nova
   region: regionOne
   dns_servers:
     - '10.47.242.10'
-openshift_release: 4.15 # It can be "4.10", "4.11", etc. or "4-stable"
-openshift_build_name: ""
-# ^ It can be an empty value "" (latest nightly), a given build
-# "4.11.0-0.nightly-2022-08-26-005549" or "4.6.46", or any
-# upgrade channel "candidate", "fast", "stable" or "eus".

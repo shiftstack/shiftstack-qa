@@ -16,18 +16,18 @@
     dest: "{{ home_dir }}/install-config.yaml"
     mode: u=rw,g=rw,o=r
   vars:
-    cluster_name: "{{ ocp_cluster_name }}"
-    worker_flavor: "{{ topology.flavors.worker.name }}"
-    worker_replicas: "{{ topology.replicas.worker }}"
-    master_flavor: "{{ topology.flavors.master.name }}"
-    master_replicas: "{{ topology.replicas.master }}"
-    machine_cidr: "{{ topology.machine_cidr }}"
-    network_type: "{{ topology.network_type }}"
-    external_network: "{{ infra.external_network }}"
-    region: "{{ infra.region }}"
-    dns_servers: "{{ infra.dns_servers }}"
-    lb_floating_ip: "{{ precreated_lb_fip }}"
-    ingress_floating_ip: "{{ precreated_ingress_fip }}"
+    installcfg_cluster_name: "{{ ocp_cluster_name }}"
+    installcfg_worker_flavor: "{{ topology.flavors.worker.name }}"
+    installcfg_worker_replicas: "{{ topology.replicas.worker }}"
+    installcfg_master_flavor: "{{ topology.flavors.master.name }}"
+    installcfg_master_replicas: "{{ topology.replicas.master }}"
+    installcfg_machine_cidr: "{{ topology.machine_cidr }}"
+    installcfg_network_type: "{{ openshift_network_type }}"
+    installcfg_external_network: "{{ infra.external_network }}"
+    installcfg_region: "{{ infra.region }}"
+    installcfg_dns_servers: "{{ infra.dns_servers }}"
+    installcfg_lb_floating_ip: "{{ precreated_lb_fip }}"
+    installcfg_ingress_floating_ip: "{{ precreated_ingress_fip }}"
 
 - name: Copy the install-config.yaml to installation dir
   ansible.builtin.copy:

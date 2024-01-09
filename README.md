@@ -30,11 +30,12 @@ oc rsh shiftstackclient -n openstack \
 For running:
 ```
 oc rsh shiftstackclient -n openstack \
-  ansible-navigator run shiftstack-qa/playbooks/{playbook_name}.yaml
+  ansible-navigator run shiftstack-qa/playbooks/{playbook_name}.yaml --extra-vars @shiftstack-qa/jobs_definitions/{job_definition_name}.yaml
 ```
 
 where:
-- [playbooks](./playbooks) includes 1 playbook per scenario to be tested (formerly known as Job).
+- [playbooks](./playbooks) includes one playbook per scenario to be tested (formerly known as a job template).
+- [jobs_definitions](./jobs_definitions) includes one job configuration to be tested using the playbook (formerly known as job pipeline).
 
 ## Troubleshooting
 Thanks to ``ansible-navigator``, the run generates JSON file with format:

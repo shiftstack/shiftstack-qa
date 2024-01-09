@@ -5,16 +5,16 @@ compute:
 - name: worker
   platform:
     openstack:
-      type: "{{ worker_flavor }}"
-  replicas: {{ worker_replicas }}
+      type: "{{ installcfg_worker_flavor }}"
+  replicas: {{ installcfg_worker_replicas }}
 controlPlane:
   name: master
   platform:
     openstack:
-      type: "{{ master_flavor }}"
-  replicas: {{ master_replicas }}
+      type: "{{ installcfg_master_flavor }}"
+  replicas: {{ installcfg_master_replicas }}
 metadata:
-  name: "{{ cluster_name }}"
+  name: "{{ installcfg_cluster_name }}"
 networking:
   clusterNetworks:
   - cidr: 10.128.0.0/14
@@ -22,16 +22,16 @@ networking:
   serviceNetwork:
     - 172.30.0.0/16
   machineNetwork:
-    - cidr: "{{ machine_cidr }}"
-  networkType: "{{ network_type }}"
+    - cidr: "{{ installcfg_machine_cidr }}"
+  networkType: "{{ installcfg_network_type }}"
 platform:
   openstack:
     cloud:            "{{ user_cloud }}"
-    externalNetwork:  "{{ external_network }}"
-    region:           "{{ region }}"
-    lbFloatingIP:     "{{ lb_floating_ip }}"
-    ingressFloatingIP:     "{{ ingress_floating_ip }}"
-    externalDNS:      {{ dns_servers }}
+    externalNetwork:  "{{ installcfg_external_network }}"
+    region:           "{{ installcfg_region }}"
+    lbFloatingIP:     "{{ installcfg_lb_floating_ip }}"
+    ingressFloatingIP:     "{{ installcfg_ingress_floating_ip }}"
+    externalDNS:      {{ installcfg_dns_servers }}
 pullSecret: |
   {{ ocp_pull_secret }}
 sshKey: |
