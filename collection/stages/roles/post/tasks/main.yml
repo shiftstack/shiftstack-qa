@@ -1,2 +1,12 @@
 ---
 # tasks file for post
+- name: Set the update channel to null (To avoid CannotRetrieveUpdates alert)
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: config.openshift.io/v1
+      kind: ClusterVersion
+      metadata:
+        name: version
+      spec:
+        channel: ""
