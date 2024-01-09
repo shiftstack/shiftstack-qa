@@ -1,0 +1,64 @@
+---
+- name: "'check_pods' action"
+  block:
+    - name: Wait for pods to become 'Running' or 'Succeeded' and check for failed Pods
+      kubernetes.core.k8s_info:
+        api_version: v1
+        kind: Pod
+        field_selectors:
+          - status.phase!=Running,status.phase!=Succeeded
+      register: failed_pods
+      until:
+        - failed_pods.resources is defined
+        - failed_pods.resources | selectattr('status.phase', 'in', ['Pending', 'ContainerCreating']) | list | length == 0
+      retries: "{{ wait_retries }}"
+      delay: "{{ wait_delay }}"
+
+    - name: Set pods list facts
+      set_fact:
+        failed_pods_names: >-
+          {{ failed_pods | json_query('resources[*].metadata.name') | flatten }}
+        pods_expected_to_fail:
+          #https://bugzilla.redhat.com/show_bug.cgi?id=2035311#c30
+          - "installer.*"
+          - "collect-profiles.*"
+          - ".*pruner.*" #BZ 1990125
+
+    - name: Set a list of failed pods (Expected fail pods)
+      shiftstack.tools.list_filter:
+        list: "{{ failed_pods_names }}"
+        filter_type: match
+        filter_list: "{{ pods_expected_to_fail }}"
+      register: expected_failed_pods
+
+    - name: Set buildmark if expected failed pods are found on error state
+      debug:
+        msg: |
+          Build mark: openshift_pods_not_ready=true
+          {{ expected_failed_pods.filtered_list }}
+      when: expected_failed_pods.filtered_list | length > 0
+
+    - name: Set a list of failed pods (Unexpected fail pods)
+      shiftstack.tools.list_filter:
+        list: "{{ failed_pods_names }}"
+        filter_type: notmatch
+        filter_list: "{{ pods_expected_to_fail }}"
+      register: unexpected_failed_pods
+
+    - name: Set UNSTABLE and debug if unexpected pods in error state
+      block:
+        - name: Check the unready pods
+          include_role:
+            name: cluster_checks
+            tasks_from: debug_pods.yml
+
+        - name: Set an UNSTABLE flag if unexpected pods in error state
+          include_role:
+            name: utils
+            tasks_from: mark_stage_unstable.yml
+          vars:
+            unstable_msg: >-
+              Unexpected pods in failed state:
+              {{ unexpected_failed_pods.filtered_list }}
+              Please check the details in the logs and must-gather.
+      when: unexpected_failed_pods.filtered_list|default([]) | length > 0

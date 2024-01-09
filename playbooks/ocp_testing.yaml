@@ -3,6 +3,7 @@
   hosts: localhost
   gather_facts: no
   vars_files:
+    - "../group_vars/all.yml"
     - "../configs/secret.yaml"
     - "../configs/ocp_testing.yaml"
 
@@ -16,6 +17,11 @@
         gather_subset:
           - env
 
+    - name: Cleanup workspace flags - Remove the stage_unstable_flag if it exists
+      file:
+        path: "{{ stage_unstable_flag }}"
+        state: absent
+
     - name: Make a copy of the original config directory
       vars:
         home_dir: "{{ ansible_facts.env['HOME'] }}"
@@ -26,6 +32,9 @@
         mode: u=rw,g=rw,o=r
 
   roles:
+    - name: Discover OSP version
+      role: shiftstack.tools.discover_osp_version
+
     - name: Cleanup setup
       role: shiftstack.stages.cleanup
 
@@ -37,11 +46,15 @@
       vars:
         installation_type: ipi
 
-    - name: Run post operations on setup
-      role: shiftstack.stages.post
+    - name: Discover OCP version and networkType
+      role: shiftstack.tools.discover_ocp_version
+      environment:
+        KUBECONFIG: "{{ kubeconfig }}"
 
-    - name: Run post operations on setup
-      role: shiftstack.stages.verification
+    - name: Run post operations and OCP verification checks on setup
+      role: shiftstack.stages.post
+      environment:
+        KUBECONFIG: "{{ kubeconfig }}"
 
     - name: Run tests on OCP
       role: shiftstack.stages.test

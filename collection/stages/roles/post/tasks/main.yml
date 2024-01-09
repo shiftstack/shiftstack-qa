@@ -1,2 +1,65 @@
 ---
 # tasks file for post
+- name: Disable Marketplace Catalog sources and install an operator
+  import_role:
+    name: day2ops
+    tasks_from: mirror_catalogs.yml
+  when: openshift_mirror
+
+- name: Apply the DHCP machineset for IPv6 secondary interface
+  block:
+    - name: Apply the DHCP machineset for IPv6 secondary interface
+      import_role:
+        name: day2ops
+        tasks_from: apply-worker-machineset-ipv6.yml
+
+    - name: Configure IPv6 networks in CNO
+      import_role:
+        name: day2ops
+        tasks_from: configure-ipv6-networks.cno.yml
+  when: ipv6_openshift_secondary
+
+- name: Set the update channel to null (To avoid CannotRetrieveUpdates alert)
+  shell: oc patch clusterversion/version --patch '{"spec":{"channel":""}}' --type=merge
+
+
+- name: Set the workers and masters NTP server
+  import_role:
+    name: day2ops
+    tasks_from: set_ntp.yml
+  when:
+    - openshift_proxy or openshift_mirror
+
+
+- name: Run OCP verification checks
+  import_role:
+    name: verification
+  vars:
+    post_installatin: True
+
+- name: Move and verify Infrastructure resources to the infra machineset
+  block:
+    - name: Move infrastructure resources to the infrastructure machineset
+      include_role:
+        name: day2ops
+        tasks_from: move_infra_resources.yml
+
+    - name: Run OCP verification checks
+      import_role:
+        name: verification
+      vars:
+        verify_existing_namespace: true
+  rescue:
+    - name: Get cluster debug information for the failed ocp installation
+      include_role:
+        name: cluster_checks
+        tasks_from: print_cluster_status.yml
+
+    - name: Fail the playbook due to the Infrastructure resources movement failure
+      fail:
+        msg: >
+          Failed to move infrastructure resources to the infrastructure machineset.
+          See the above logs for more information.
+  when:
+    - openshift_install_with_infra_nodes|default(False)
+

@@ -1,0 +1,73 @@
+---
+- name: "'check_nodes_services' action"
+  block:
+    - name: initialize variables
+      set_fact:
+        failed_units_msg_list: []
+        unstable_msg: ""
+        ignore_services_failing:
+        # https://issues.redhat.com/browse/OCPBUGS-11936
+          - ".*afterburn-hostname.*"
+
+    - name: Get existing nodes
+      kubernetes.core.k8s_info:
+        api_version: v1
+        kind: Node
+      register: nodes
+
+    - name: Set a list of nodes
+      set_fact:
+        ocp_nodes: "{{ nodes | json_query('resources[*].metadata.name') | list }}"
+
+    - name: Check OCP nodes for failed systemd services
+      shell: "oc debug -q node/{{ ocp_node }} -- chroot /host sudo systemctl list-units --failed | grep '●' | awk '{print $2}'"
+      until: not units_result.failed
+      register: units_result
+      retries: 3
+      delay: 10
+      loop: "{{ ocp_nodes|list }}"
+      loop_control:
+        pause: 2
+        loop_var: ocp_node
+
+    - name: Set a list of failed services (Ignore services failing)
+      shiftstack.tools.list_filter:
+        list: "{{ units_result.results | map(attribute='stdout_lines') | flatten }}"
+        filter_type: match
+        filter_list: "{{ ignore_services_failing }}"
+      register: ignore_services_failing_list
+
+    - name: Debug if expected failed services are found
+      debug:
+        msg: |
+          Expected failed services found:
+          {{ ignore_services_failing_list.filtered_list }}
+      when: ignore_services_failing_list.filtered_list | length > 0
+
+    - name: Set a list of failed services (Unexpected fail services)
+      shiftstack.tools.list_filter:
+        list: "{{ units_result.results | map(attribute='stdout_lines') | flatten }}"
+        filter_type: notmatch
+        filter_list: "{{ ignore_services_failing }}"
+      register: unexpected_failed_services
+
+    - name: Build the failed units msg list if there are failed units at any OCP node
+      set_fact:
+        failed_units_msg_list: "{{ failed_units_msg_list | default([]) + ['%s' | format(systemctl_result.cmd +
+          ' --> ' + systemctl_result.stdout_lines | join(', ')) ] }}"
+      when:
+        - 'not systemctl_result is skipped'
+        - '(systemctl_result.stdout_lines | length) > 0'
+      loop: "{{ units_result.results | list }}"
+      loop_control:
+        loop_var: systemctl_result
+
+    - name: Mark the installation as UNSTABLE as a node has failed services
+      include_role:
+        name: utils
+        tasks_from: mark_stage_unstable.yml
+      vars:
+        unstable_msg: >-
+          Found failed unit(s) running command(s):
+          {{ unexpected_failed_services.filtered_list }}
+      when: unexpected_failed_services.filtered_list|default([]) | length > 0

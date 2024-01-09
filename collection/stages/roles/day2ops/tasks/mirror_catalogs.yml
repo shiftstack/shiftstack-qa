@@ -1,0 +1,48 @@
+- name: Disable the default OperatorHub sources
+  shell: |
+    oc patch operatorhubs/cluster --type merge --patch '{"spec":{"sources":[{"disabled": true,"name": "community-operators"},{"disabled": true,"name": "certified-operators"}, {"disabled": true,"name": "redhat-operators"}, {"disabled": true,"name": "redhat-marketplace"}]}}'
+
+- name: Look for v{{openshift_release}} tag for community-operator-index
+  shell: podman image search --list-tags  registry.redhat.io/redhat/community-operator-index --authfile secrets.json | grep "{{ discovered_openshift_release }}"
+  register: result
+  ignore_errors: true
+
+- name: Set the release tag for community-operator index
+  set_fact:
+    release_tag: "{{ result.rc |bool | ternary('latest', 'v' + discovered_openshift_release) }}"
+
+- name: Copy Community Catalog file
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ home_dir }}/{{ item }}"
+  loop:
+      - catalog-community.yml
+
+- name: Copy Redhat Catalog file
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ home_dir }}/{{ item }}"
+  loop:
+      - catalog-redhat.yml
+
+- name: Apply the marketplace and community catalog sources manifests
+  shell: oc apply -f "{{ item }}"
+  loop:
+    - catalog-redhat.yml
+    - catalog-community.yml
+
+- name: Wait for the catalogs sources to be ready
+  shell: "oc get catalogsources.operators.coreos.com {{ item }} -n openshift-marketplace -o json | jq '.status.connectionState.lastObservedState'"
+  register: catalog_status
+  until: catalog_status.stdout.find('READY') != -1
+  delay: 30
+  retries: 5
+  loop:
+    - redhat-operator-catalog
+    - community-operator-catalog
+
+- name: Make sure we are in the default project
+  shell: oc project default
+  environment:
+    OS_CLOUD: "{{ user_cloud }}"
+  ignore_errors: yes

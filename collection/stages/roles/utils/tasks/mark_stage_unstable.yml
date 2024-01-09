@@ -1,0 +1,18 @@
+---
+- name: "'mark_stage_unstable' action"
+  block:
+    - name: Set the stage unstable var as true
+      set_fact:
+        stage_unstable: True
+        unstable_warning: "Warning! {{ unstable_msg }}"
+
+    - name: Print the stage UNSTABLE message
+      debug:
+        msg: "{{ unstable_warning }}"
+
+    - name: Mark the stage result as UNSTABLE
+      lineinfile:
+        path: "{{ stage_unstable_flag }}"
+        line: "{{ unstable_warning }}"
+        create: yes
+      delegate_to: localhost

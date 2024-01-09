@@ -1,0 +1,136 @@
+---
+# Goal: Check that nova az and cinder az are correctly applied to the VMs that make up the OCP Cluster.
+
+# Gathering expected values based on existing nodes
+- name: gather master VMs details from OSP perspective
+  openstack.cloud.server_info:
+      cloud: "{{ user_cloud }}"
+      server: "*master*"
+  delegate_to: "{{ groups.undercloud | first }}"
+  register: openstack_server_info
+
+- name: store masters info
+  set_fact:
+    masters: "{{ openstack_server_info.openstack_servers | sort(attribute='name') | list }}"
+
+- name: gather worker VMs details from OSP perspective
+  openstack.cloud.server_info:
+      cloud: "{{ user_cloud }}"
+      server: "*worker*"
+  delegate_to: "{{ groups.undercloud | first }}"
+  register: openstack_server_info
+
+- name: store workers info
+  set_fact:
+    workers: "{{ openstack_server_info.openstack_servers | sort(attribute='name') | list }}"
+
+- name: get configured AZs on installation ([nova|cinder]_az_for_workers and [nova|cinder]_az_for_masters)
+  include_role:
+    name: cluster_checks
+    tasks_from: discover_az.yml
+  vars:
+    ocp_worker_replicas: "{{ workers | length | int }}"
+    ocp_master_replicas: "{{ masters | length | int }}"
+
+- name: set expected nova assignations
+  set_fact:
+    expected_nova_az_for_masters: "{{ nova_az_for_masters }}"
+    expected_nova_az_for_workers: "{{ nova_az_for_workers }}"
+
+- name: set expected cinder assignations
+  set_fact:
+    expected_cinder_az_for_masters: "{{ cinder_az_for_masters }}"
+    expected_cinder_az_for_workers: "{{ cinder_az_for_workers }}"
+  when: openshift_root_volumes
+
+# Obtain expected values for masters
+- name: get current nova AZs for masters
+  set_fact:
+    current_nova_az_for_masters: "{{ current_nova_az_for_masters|default([]) }} + ['{{ item.location.zone }}']"
+  loop: "{{ masters }}"
+
+- block:
+  - name: get cinder volumes ids for masters
+    set_fact:
+      cinder_volumes_for_masters: "{{ cinder_volumes_for_masters|default([]) }} + ['{{ item.volumes[0].id }}']"
+    loop: "{{ masters }}"
+
+  - name: get cinder AZs for masters
+    shell: openstack volume show "{{ item }}" -c availability_zone -f value
+    environment:
+      OS_CLOUD: "{{ user_cloud }}"
+    loop: "{{ cinder_volumes_for_masters }}"
+    register: temporary_output
+
+  - name: convert output on a list
+    set_fact:
+      current_cinder_az_for_masters: "{{ current_cinder_az_for_masters|default([]) }} + ['{{ item.stdout }}']"
+    loop: "{{ temporary_output.results | list }}"
+  when: openshift_root_volumes
+
+# Obtain expected values for workers
+- name: get nova AZs for workers
+  set_fact:
+    current_nova_az_for_workers: "{{ current_nova_az_for_workers|default([]) }} + ['{{ item.location.zone }}']"
+  loop: "{{ workers }}"
+
+- block:
+  - name: get cinder volumes ids for workers
+    set_fact:
+      cinder_volumes_for_workers: "{{ cinder_volumes_for_workers|default([]) }} + ['{{ item.volumes[0].id }}']"
+    loop: "{{ workers }}"
+
+  - name: get cinder AZs for workers
+    shell: openstack volume show "{{ item }}" -c availability_zone -f value
+    environment:
+      OS_CLOUD: "{{ user_cloud }}"
+    loop: "{{ cinder_volumes_for_workers }}"
+    register: temporary_output
+
+  - name: convert output on a list
+    set_fact:
+      current_cinder_az_for_workers: "{{ current_cinder_az_for_workers|default([]) }} + ['{{ item.stdout }}']"
+    loop: "{{ temporary_output.results | list }}"
+  when: openshift_root_volumes
+
+# Checks for nova zones on masters
+- name: Check masters get the expected nova AZ
+  assert:
+    that:
+    - current_nova_az_for_masters|sort == expected_nova_az_for_masters|sort
+    fail_msg: |
+      unexpected nova AZs:
+       obtained nova AZ: {{ current_nova_az_for_masters|sort }}
+       expected nova AZ: {{ expected_nova_az_for_masters|sort }}
+
+  # Checks for nova zones on workers
+- name: Check - workers get the expected nova AZ
+  assert:
+    that:
+    - current_nova_az_for_workers|sort == expected_nova_az_for_workers|sort
+    fail_msg: |
+      unexpected nova AZs:
+       obtained nova AZ: {{ current_nova_az_for_workers|sort }}
+       expected nova AZ: {{ expected_nova_az_for_workers|sort }}
+
+# Check the cinder zones for both masters and workers
+- block:
+  - name: Check - masters get the expected cinder AZ
+    assert:
+      that:
+      - current_cinder_az_for_masters|sort == expected_cinder_az_for_masters|sort
+      fail_msg: |
+        unexpected cinder AZs on masters:
+         obtained cinder AZ: {{ current_cinder_az_for_masters|sort }}
+         expected cinder AZ: {{ expected_cinder_az_for_masters|sort }}
+
+  - name: Check - workers get the expected cinder AZ
+    assert:
+      that:
+      - current_cinder_az_for_workers|sort == expected_cinder_az_for_workers|sort
+      fail_msg: |
+        unexpected cinder AZs on workers:
+         obtained cinder AZ: {{ current_cinder_az_for_workers|sort }}
+         expected cinder AZ: {{ expected_cinder_az_for_workers|sort }}
+    loop: "{{ range(workers|length) | list }}"
+

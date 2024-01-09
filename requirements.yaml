@@ -1,7 +1,9 @@
 ---
 collections:
+  - name: community.general
   - name: openstack.cloud
     version: 1.10.0
   - name: kubernetes.core
     version: 2.3.2
+  - name: ./collection/tools
   - name: ./collection/stages

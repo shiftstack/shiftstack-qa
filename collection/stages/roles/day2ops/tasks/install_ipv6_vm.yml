@@ -1,0 +1,178 @@
+- name: Get the SHA256 corresponding to the RHEL image
+  block:
+    - name: Download the SHA256 of the RHEL image from {{ ipv6vm.image.sha_url }}
+      get_url:
+        url: "{{ ipv6vm.image.sha_url }}"
+        dest: "/tmp/{{ ipv6vm.image.sha_info_file }}"
+        force: yes
+      delegate_to: localhost
+
+    - name: Register the SHA256 of the RHEL image
+      shell: cat /tmp/{{ ipv6vm.image.sha_info_file }} | tail -1 | awk '{print $NF}'
+      delegate_to: localhost
+      register: rhel_sha_result
+
+- name: Check if the RHEL image file has already been downloaded and get it's SHA256
+  stat:
+    path: "/tmp/{{ ipv6vm.image.name }}"
+    checksum_algorithm: sha256
+  register: downloaded_image_sha_result
+
+- name: Gather information about the RHEL image on Glance (if any)
+  openstack.cloud.image_info:
+    cloud: "{{ admin_cloud }}"
+    image: "{{ ipv6vm.image.name }}"
+  register: glance_image_sha_result
+
+- name: Download {{ ipv6vm.image.name }} image for the IPv6 VM if it is not on both Glance and /tmp/
+  get_url:
+    url: "{{ ipv6vm.image.url }}"
+    dest: "/tmp/{{ ipv6vm.image.name }}"
+  when:
+    - glance_image_sha_result.openstack_images['owner_specified.openstack.sha256'] is not defined or
+      glance_image_sha_result.openstack_images['owner_specified.openstack.sha256'] != rhel_sha_result.stdout
+    - downloaded_image_sha_result.stat.checksum is not defined or
+      downloaded_image_sha_result.stat.checksum != rhel_sha_result.stdout
+
+- name: Provision the resources for the IPv6 VM
+  block:
+    - name: Create network {{ ipv6vm.network.net_name }}
+      openstack.cloud.network:
+        cloud: "{{ user_cloud }}"
+        name: "{{ ipv6vm.network.net_name }}"
+        state: present
+      when: custom_network == ''
+
+    - name: Register externally accessible networks
+      openstack.cloud.networks_info:
+        cloud: "{{ user_cloud }}"
+        filters:
+          router:external: true
+      register: openstack_networks_info
+
+    - name: Create subnet {{ ipv6vm.subnet.subnet_name }}
+      openstack.cloud.subnet:
+        cloud: "{{ user_cloud }}"
+        name: "{{ ipv6vm.subnet.subnet_name }}"
+        cidr: "{{ ipv6vm.subnet.cidr }}"
+        dns_nameservers: "{{ ipv6vm.subnet.dns }}"
+        network_name: "{{ ipv6vm.network.net_name }}"
+        enable_dhcp: True
+        state: present
+      when: custom_network == ''
+
+    - name: Create security group {{ ipv6vm.sec_group.name }}
+      openstack.cloud.security_group:
+        cloud: "{{ user_cloud }}"
+        name: "{{ ipv6vm.sec_group.name }}"
+        description: "ir: {{ lookup('env','BUILD_URL') }} at {{ansible_date_time.iso8601 }}"
+        state: present
+
+    - name: Add rules to the security group {{ ipv6vm.sec_group.name }}
+      openstack.cloud.security_group_rule:
+        cloud: "{{ user_cloud }}"
+        security_group: "{{ ipv6vm.sec_group.name }}"
+        direction: "{{ item.direction }}"
+        ethertype: "{{ item.ethertype }}"
+        remote_ip_prefix: "{{ item.remote_ip_prefix }}"
+        protocol: "{{ item.protocol|default(omit) }}"
+        port_range_min: "{{ item.port_range_min|default(omit) }}"
+        port_range_max: "{{ item.port_range_max|default(omit) }}"
+      with_items: "{{ ipv6vm.sg_rules }}"
+
+    - name: Create the flavor {{ ipv6vm.flavor.name }} for the IPv6 VM
+      openstack.cloud.compute_flavor:
+        cloud: "{{ admin_cloud }}"
+        name: "{{ ipv6vm.flavor.name }}"
+        ram: "{{ ipv6vm.flavor.ram }}"
+        vcpus: "{{ ipv6vm.flavor.vcpus }}"
+        disk: "{{ ipv6vm.flavor.disk }}"
+        state: present
+
+    - name: Upload the required RHEL image to Glance if there is no RHEL image on Glance yet or its SHA256 is not equal to the RHEL's SHA256 on Glance
+      block:
+        - name: Remove the RHEL image from Glance
+          openstack.cloud.image:
+            cloud: "{{ admin_cloud }}"
+            name: "{{ ipv6vm.image.name }}"
+            state: absent
+
+        - name: Upload the {{ ipv6vm.image.name }} image to Glance
+          openstack.cloud.image:
+            cloud: "{{ admin_cloud }}"
+            name: "{{ ipv6vm.image.name }}"
+            checksum: sha256
+            container_format: bare
+            disk_format: "{{ ipv6vm.image.name.split('.')[-1] }}"
+            state: present
+            filename: "/tmp/{{ ipv6vm.image.name }}"
+            is_public: yes
+          register: uploaded_image
+      when: >
+        glance_image_sha_result.openstack_images['owner_specified.openstack.sha256'] is not defined or
+        glance_image_sha_result.openstack_images['owner_specified.openstack.sha256'] != rhel_sha_result.stdout
+
+    - name: Add subnet "{{ ipv6vm.subnet.subnet_name }}" to Router "{{ ipv6.router_name }}"
+      shell: "openstack router add subnet {{ ipv6.router_name }} {{ item }}"
+      environment:
+        OS_CLOUD: "{{ user_cloud }}"
+      loop:
+        - "{{ ipv6vm.subnet.subnet_name }}"
+
+    - name: Add external network to IPv6 vm
+      shell: "source {{ admin_env_file }} && openstack router set --external-gateway {{ openstack_networks_info.openstack_networks[0].id }} {{ ipv6.router_name }}"
+
+    - name: Create the IPv6 VM instance
+      openstack.cloud.server:
+        cloud: "{{ user_cloud }}"
+        name: "{{ ipv6vm.name }}"
+        flavor: "{{ ipv6vm.flavor.name }}"
+        image: "{{ ipv6vm.image.name }}"
+        nics:
+          - net-name: "{{ ipv6vm.network.net_name }}"
+          - net-name: "{{ ipv6.networks[0].net_name }}"
+          - net-name: "{{ ipv6.networks[1].net_name }}"
+
+        key_name: "{{ openstack_key_file | basename }}"
+        security_groups: "{{ ipv6vm.sec_group.name }}"
+        auto_ip: no
+        state: present
+        wait: yes
+        meta:
+          hostname: "{{ ipv6vm.name }}"
+        config_drive: true
+        user_data: |
+          #cloud-config
+          bootcmd:
+            - "sudo yum-config-manager --add-repo {{ ipv6vm.repo_prefix }}/baseos/os/"
+            - "sudo yum-config-manager --add-repo {{ ipv6vm.repo_prefix }}/appstream/os/"
+            - sudo yum-config-manager --save --setopt=*rhsm*.gpgcheck=0
+            - "curl {{ redhat_ca_file }} -o /tmp/custom-ssl-ca.crt"
+            - "sudo cp /tmp/custom-ssl-ca.crt /etc/pki/ca-trust/source/anchors/custom-ssl-ca.crt"
+            - "sudo update-ca-trust"
+            - sudo yum -y install httpd && systemctl enable --now httpd
+            - echo 'Hello Openshift!' |sudo tee  /var/www/html/index.html
+
+    - name: Create floating IPs
+      openstack.cloud.floating_ip:
+        cloud: "{{ user_cloud }}"
+        network: "{{ openstack_networks_info.openstack_networks[0].id }}"
+        nat_destination: "{{ ipv6vm.network.net_name }}"
+        server: "{{ ipv6vm.name }}"
+        state: present
+        wait: yes
+      register: ipv6vm_fip
+
+    - name: Verify the IPv6 VM is reachable via fip {{ ipv6vm_fip.floating_ip.floating_ip_address }}
+      command: ping -c1 {{ ipv6vm_fip.floating_ip.floating_ip_address }}
+      register: ping_result
+      retries: 10
+      delay: 5
+      until: ping_result.rc == 0
+
+    - name: Verify the ssh connection to the IPv6 VM
+      command: ssh {{ ipv6vm.ssh_user }}@{{ ipv6vm_fip.floating_ip.floating_ip_address }} hostname
+      register: ssh_result
+      retries: 60
+      delay: 5
+      until: ssh_result.rc == 0

@@ -1,0 +1,51 @@
+- name: Set a OCP Cluster ID fact
+  block:
+    - name: Get the OCP Cluster ID
+      shell: oc get -o jsonpath='{.status.infrastructureName}{"\n"}' infrastructure cluster
+      register: command_output
+
+    - name: Set a fact for the OCP Cluster ID
+      set_fact:
+        infrastructure_id: "{{ command_output.stdout }}"
+
+- name: Make sure the OCP cluster is installed with infrastructure nodes
+  block:
+    - name: Get the infrastructure MachineSet status
+      kubernetes.core.k8s_info:
+        api_version: machine.openshift.io/v1beta1
+        kind: MachineSet
+        name: "{{ infrastructure_id }}-infra-0"
+        namespace: openshift-machine-api
+      register: oc_machines
+
+    - name: Fail if the infrastructure MachineSet doesn't exist
+      fail:
+        msg: >
+          Failed! The {{ infrastructure_id }}-infra-0 MachineSet doesn't exist.
+      when: oc_machines.resources == []
+
+    - name: Fail if the number of infrastructure machines is not equal to the required replicas
+      vars:
+        error_msg: >
+          Failed! The replicas value of MachineSet {{ item.metadata.name }} is
+          not corresponding with the MachineSet available replicas status.
+      fail:
+        msg: "{{ error_msg }}"
+      when: item.status.availableReplicas is not defined or
+            item.status.replicas != item.status.availableReplicas
+      loop: "{{ oc_machines.resources }}"
+  rescue:
+      - name: Check the project's instances healthy
+        include_role:
+            name: cluster_checks
+            tasks_from: check_instances.yml
+
+      - name: Check the MachineSets healthy
+        include_role:
+            name: cluster_checks
+            tasks_from: check_machinesets.yml
+
+      - name: Check the Control Plane MachineSet is healthy
+        include_role:
+          name: cluster_checks
+          tasks_from: check_controlplane_machinesets.yml
