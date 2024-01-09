@@ -1,6 +1,4 @@
 ---
-admin_cloud: undefined
-user_cloud: undefined
 clouds_yaml_file_path: "{{ ansible_facts.env['HOME'] }}/.config/openstack/clouds.yaml"
 admin_verify_cacert: false
 project:

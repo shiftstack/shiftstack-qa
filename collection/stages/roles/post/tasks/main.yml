@@ -1,2 +1,4 @@
 ---
 # tasks file for post
+- name: Set the update channel to null (To avoid CannotRetrieveUpdates alert)
+  shell: oc patch clusterversion/version --patch '{"spec":{"channel":""}}' --type=merge

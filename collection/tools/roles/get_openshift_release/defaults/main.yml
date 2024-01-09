@@ -1,5 +1,5 @@
 ---
-# defaults file for utils
+# defaults file for get_openshift_release
 openshift_releasestream_url: "https://openshift-release.apps.ci.l2s4.p1.openshiftapps.com/api/v1/releasestream"
 release_name: "{{ openshift_release_build_name | default('') }}"
 openshift_download_url: "{{ 'https://openshift-release-artifacts.apps.ci.l2s4.p1.openshiftapps.com' + '/' + release_name }}"
