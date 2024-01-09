@@ -1,0 +1,224 @@
+---
+# Playbook for moving infra resources, deployed on workers by default, to the infra nodes already existing on the cluster.
+#Refs:
+# - https://issues.redhat.com/browse/KURYRQE-690
+# - https://docs.google.com/document/d/1elpaUQN0xmikEPH-isSS-udSjyFcXOohFai28j_ErWw/edit#heading=h.a9zrxcy2qv4l
+# - https://docs.openshift.com/container-platform/4.10/machine_management/creating-infrastructure-machinesets.html
+
+- name: Move the Default Router to the Infrastructure machines
+  block:
+    - name: Move the Default Ingress-Controller to an infra node by setting the nodeSelector
+      shell: >
+        oc patch -n openshift-ingress-operator ingresscontroller/default --type merge -p
+        '{"spec":{"nodePlacement":{"nodeSelector":{"matchLabels":{"node-role.kubernetes.io/infra":""}}}}}'
+      environment:
+        KUBECONFIG: .kube/config
+
+    - name: Add Toleration to the Default Ingress-Controller - The Toleration matches the Taint assigned to the infrastructure Machineset
+      shell: >
+        oc patch -n openshift-ingress-operator ingresscontroller/default --type merge -p
+        '{"spec":{"nodePlacement":{"tolerations":[{"effect":"NoSchedule", "key":"node-role.kubernetes.io/infra", "operator":"Exists"}]}}}'
+      environment:
+        KUBECONFIG: .kube/config
+
+- name: Active wait until the IngressController operator is ready
+  kubernetes.core.k8s_info:
+    api_version: operator.openshift.io/v1
+    kind: IngressController
+    namespace: openshift-ingress-operator
+  register: ingress_controller
+  until:
+    - ingress_controller is not failed
+    - ingress_controller.resources is defined
+    - ingress_controller | json_query('resources[*].status.conditions[?type==`Admitted`].status') | unique == [["True"]]
+    - ingress_controller | json_query('resources[*].status.conditions[?type==`DeploymentAvailable`].status') | unique == [["True"]]
+    - ingress_controller | json_query('resources[*].status.conditions[?type==`DeploymentReplicasMinAvailable`].status') | unique == [["True"]]
+    - ingress_controller | json_query('resources[*].status.conditions[?type==`DeploymentReplicasAllAvailable`].status') | unique == [["True"]]
+    - ingress_controller | json_query('resources[*].status.conditions[?type==`Available`].status') | unique == [["True"]]
+    - ingress_controller | json_query('resources[*].status.conditions[?type==`Progressing`].status') | unique == [["False"]]
+    - ingress_controller | json_query('resources[*].status.conditions[?type==`Degraded`].status') | unique == [["False"]]
+  retries: 30
+  delay: 30
+
+- name: Wait until all the Default Router Pods moved to the infra nodes
+  block:
+    - name: Active wait until all the Default Router Pods are ready
+      kubernetes.core.k8s_info:
+        api_version: v1
+        kind: Pod
+        namespace: openshift-ingress
+        label_selectors:
+          - ingresscontroller.operator.openshift.io/deployment-ingresscontroller=default
+      register: default_router
+      until:
+        - default_router is not failed
+        - default_router.resources is defined
+        - default_router | json_query('resources[*].status.conditions[?type==`Initialized`].status') | unique == [["True"]]
+        - default_router | json_query('resources[*].status.conditions[?type==`Ready`].status') | unique == [["True"]]
+        - default_router | json_query('resources[*].status.conditions[?type==`ContainersReady`].status') | unique == [["True"]]
+        - default_router | json_query('resources[*].status.conditions[?type==`PodScheduled`].status') | unique == [["True"]]
+      retries: 30
+      delay: 30
+
+    - name: Active wait until the Default Router Pods leftovers are cleaned
+      shell: "oc get pod -n openshift-ingress -o wide --no-headers | grep -v Running"
+      register: result
+      # The RC is 1 if no lines were found and 2 if an error occurred
+      failed_when: result.rc == 2
+      until: result.rc == 1
+      retries: 30
+      delay: 30
+
+- name: Get the the Default Router Pods
+  kubernetes.core.k8s_info:
+    api_version: v1
+    kind: Pod
+    namespace: openshift-ingress
+    label_selectors:
+      - ingresscontroller.operator.openshift.io/deployment-ingresscontroller=default
+  register: default_router
+
+- name: Fail if a Default Router Pod is not running on an Infra node
+  vars:
+    router_nodes: "{{ default_router | json_query('resources[*].spec.nodeName') | unique }}"
+    error_msg: >
+      Failed! A Default Router Pod is not running on an infra node.
+      The pod running on {{ item }}.
+  fail:
+    msg: "{{ error_msg }}"
+  when: item is not search("infra")
+  loop: "{{ router_nodes }}"
+
+- name: Move the Default Image Registry to the Infrastructure machines
+  block:
+    - name: Move the Default Image Registry to an infra node by setting the nodeSelector
+      shell: >
+        oc patch configs.imageregistry.operator.openshift.io/cluster --type merge -p
+        '{"spec":{"nodeSelector":{"node-role.kubernetes.io/infra":""}}}'
+      environment:
+        KUBECONFIG: .kube/config
+
+    - name: Add Toleration to the Default Image Registry - The Toleration matches the Taint assigned to the infrastructure Machineset
+      shell: >
+        oc patch configs.imageregistry.operator.openshift.io/cluster --type merge -p
+        '{"spec":{"tolerations":[{"effect":"NoSchedule", "key":"node-role.kubernetes.io/infra", "operator":"Exists"}]}}'
+      environment:
+        KUBECONFIG: .kube/config
+
+- name: Active wait until the Image Registry operator is ready
+  kubernetes.core.k8s_info:
+    api_version: imageregistry.operator.openshift.io/v1
+    kind: Config
+    namespace: openshift-image-registry
+  register: image_registry
+  until:
+    - image_registry is not failed
+    - image_registry.resources is defined
+    - image_registry | json_query('resources[*].status.conditions[?type==`Available`].status') | unique == [["True"]]
+    - image_registry | json_query('resources[*].status.conditions[?type==`Progressing`].status') | unique == [["False"]]
+    - image_registry | json_query('resources[*].status.conditions[?type==`Degraded`].status') | unique == [["False"]]
+  retries: 30
+  delay: 30
+
+- name: Wait until all the Default Image Registry moved to the infra nodes
+  block:
+    - name: Active wait until all the Default Image Registry Pods are ready
+      kubernetes.core.k8s_info:
+        api_version: v1
+        kind: Pod
+        namespace: openshift-image-registry
+        label_selectors:
+          - docker-registry=default
+      register: default_registry
+      until:
+        - default_registry is not failed
+        - default_registry.resources is defined
+        - default_registry | json_query('resources[*].status.conditions[?type==`Initialized`].status') | unique == [["True"]]
+        - default_registry | json_query('resources[*].status.conditions[?type==`Ready`].status') | unique == [["True"]]
+        - default_registry | json_query('resources[*].status.conditions[?type==`ContainersReady`].status') | unique == [["True"]]
+        - default_registry | json_query('resources[*].status.conditions[?type==`PodScheduled`].status') | unique == [["True"]]
+      retries: 30
+      delay: 30
+
+    - name: Active wait until the Default Image Registry leftovers are cleaned
+      shell: "oc get pod -n openshift-image-registry -o wide --no-headers | grep -v Running"
+      register: result
+      # The RC is 1 if no lines were found and 2 if an error occurred
+      failed_when: result.rc == 2
+      until: result.rc == 1
+      retries: 30
+      delay: 30
+
+- name: Make sure Default Image Registry Pods are running on the infra nodes (Wait for 10 mins)
+  kubernetes.core.k8s_info:
+    api_version: v1
+    kind: Pod
+    namespace: openshift-image-registry
+    label_selectors:
+      - docker-registry=default
+  register: default_registry
+  retries: "{{ wait_retries }}"
+  delay: "{{ wait_delay }}"
+  until: default_registry | json_query('resources[*].spec') | selectattr('nodeName', 'match', '.*worker|master.*') | list | length == 0
+
+- name: Fail if a Default Image Registry Pod is not running on an Infra node
+  vars:
+    image_nodes: "{{ default_registry | json_query('resources[*].spec.nodeName') | unique }}"
+    error_msg: >
+      Failed! A Default Image Registry Pod is not running on an infra node.
+      The pod running on {{ item }}.
+  fail:
+    msg: "{{ error_msg }}"
+  when: item is not search("infra")
+  loop: "{{ image_nodes }}"
+
+- name: Apply a Cluster Monitoring ConfigMap to redeploy the Monitoring components into the Infrastructure machines
+# Ref: https://docs.openshift.com/container-platform/4.10/machine_management/creating-infrastructure-machinesets.html#infrastructure-moving-logging_creating-infrastructure-machinesets
+  kubernetes.core.k8s:
+    state: present
+    definition: "{{ lookup('file', '../files/cluster-monitoring-configmap.yaml') | from_yaml }}"
+
+- name: Wait until all the Monitoring Pods moved to the infra nodes
+  block:
+    - name: Active wait until all the Monitoring Pods are ready
+      kubernetes.core.k8s_info:
+        api_version: v1
+        kind: Pod
+        namespace: openshift-monitoring
+      register: openshift_monitoring
+      until:
+        - openshift_monitoring is not failed
+        - openshift_monitoring.resources is defined
+        - openshift_monitoring | json_query('resources[*].status.conditions[?type==`Initialized`].status') | unique == [["True"]]
+        - openshift_monitoring | json_query('resources[*].status.conditions[?type==`Ready`].status') | unique == [["True"]]
+        - openshift_monitoring | json_query('resources[*].status.conditions[?type==`ContainersReady`].status') | unique == [["True"]]
+        - openshift_monitoring | json_query('resources[*].status.conditions[?type==`PodScheduled`].status') | unique == [["True"]]
+      retries: 30
+      delay: 30
+
+    - name: Active wait until the Monitoring Pods leftovers are cleaned
+      shell: "oc get pod -n openshift-monitoring -o wide --no-headers | grep -v Running"
+      register: result
+      # The RC is 1 if no lines were found and 2 if an error occurred
+      failed_when: result.rc == 2
+      until: result.rc == 1
+      retries: 30
+      delay: 30
+
+- name: Get the nodes running Monitoring components
+  vars:
+    custom_column: "-o=custom-columns=':.metadata.name,:.spec.nodeName'"
+    non_matching_pods: "grep -v node-exporter | grep -v cluster-monitoring-operator"
+    filters: "awk {'print $2'} | awk NF | sort | uniq"
+  shell: oc get pods -n openshift-monitoring {{ custom_column }} | {{ non_matching_pods }} | {{ filters }}
+  register: monitoring_nodes
+
+- name: Fail if a Monitoring Pod is not running on an Infra node
+  vars:
+    error_msg: >
+      Failed! A Monitoring Pod is not running on an infra node.
+      The pod running on {{ item }}.
+  fail:
+    msg: "{{ error_msg }}"
+  when: item is not search("infra")
+  loop: "{{ monitoring_nodes.stdout_lines }}"

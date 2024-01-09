@@ -1,0 +1,26 @@
+---
+- name: Check the MachineSets healthy
+  block:
+    - name: Get the MachineSets status
+      kubernetes.core.k8s_info:
+        api_version: machine.openshift.io/v1beta1
+        kind: MachineSet
+      register: oc_machines
+
+    - name: Fail if the number of OCP desired machines is not equal to the available machines
+      vars:
+        error_msg: >
+          Failed! The replicas value of MachineSet {{ item.metadata.name }} is
+          not corresponding with the MachineSet available replicas status.
+      fail:
+        msg: "{{ error_msg }}"
+      when: item.status.availableReplicas is not defined or
+            item.status.replicas != item.status.availableReplicas
+      loop: "{{ oc_machines.resources }}"
+  rescue:
+    - name: Get Instances, Machines, and MachineSets information for unhealthy MachineSets
+      include_tasks: debug_machines.yml
+
+    - name: Fail inside rescue block
+      fail:
+        msg: "The MachineSets health check failed. See above commands output for more information."

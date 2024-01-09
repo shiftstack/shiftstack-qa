@@ -1,0 +1,149 @@
+- name: Get workers instances info
+  openstack.cloud.server_info:
+    cloud: "{{ user_cloud | default(omit) }}"
+    server: "*worker*"
+    filters:
+      vm_state: active
+  register: result
+
+- name: Init workers fact
+  set_fact:
+    workers: []
+
+- name: store workers info
+  set_fact:
+    workers: "{{ workers|default([]) }} + ['{{ item.name }}']"
+  loop: "{{ result.openstack_servers | sort(attribute='name') | list }}"
+
+# This will let us use the vlan ID used per setup which is in use in the cidr
+- name: Include variables from extra_vars.yaml
+  include_vars:
+    file: "{{ inventory_dir }}/../../../rhos-infrared/settings/installer/ospd/deployment/shiftstack/{{ hostvars['hypervisor'].ansible_host |  regex_search('.+?(?=\\.)') }}-hybrid-osp{{ openstack_version | int }}-{{ ( openstack_version|int < 17) | ternary('3', '0') }}_net-routed/extra_vars.yaml"
+  delegate_to: localhost
+
+- name: Set provider network address
+  set_fact:
+    prov_cidr: 192.168.{{ provider_vid }}.0/24
+    prov_range_start: 192.168.{{ provider_vid }}.101
+    prov_range_end: 192.168.{{ provider_vid }}.199
+
+- name: Get NIC from workers for provider network
+  shell: |
+      oc adm node-logs -u NetworkManager {{ workers[0] }} | grep 192.168.{{ provider_vid }} |  sed 's/.*(\(\S\+\)).*/\1/g' | uniq
+  register: prov_nic
+
+# This will allow us to edit the network operator on deploy of the cluster and add the additional network for the pods
+# The following will be added to the CNO
+#spec:
+#  additionalNetworks:
+#  - name: test-network-1
+#    namespace: default
+#    rawCNIConfig: |-
+#      {
+#        "cniVersion": "0.3.1",
+#        "name": "test-network-1",
+#        "type": "ipvlan",
+#        "master": "ens5"
+#        "ipam": {
+#            "type": "whereabouts",
+#            "range": "192.168.208.0/24",
+#            "range_start": "192.168.208.101",
+#            "range_end": "192.168.208.199"
+#         }
+#      }
+- name: Create the provider network file
+  template:
+    src: provider_network_cno.yaml.j2
+    dest: provider_network_cno.yaml
+
+#TODO(itzikb): There is a problem in OCP<4.12 and in Kuryr 4.12 that spec/additionalNetoworls in the network
+# cluster configuration doesn't exist, we need to check that and then consider removing this w/a
+- name: Check if the path /spec/additionalNetworks exists in the cluster network configuration
+  shell: oc get  network.operator cluster -o json | jq ".spec.additionalNetworks"
+  register: network_operator_result
+
+- name: Create the /spec/additionalNetworks with an empty array path in case it doesn't exist
+  shell: |
+    oc patch network.operator cluster --patch '{"spec":{"additionalNetworks": []}}' --type=merge
+  when: network_operator_result.stdout == "null"
+
+- name: Add the additional networks to the CNO
+  shell: oc patch network.operator cluster --patch-file provider_network_cno.yaml --type json
+
+- name: Gather information about a previously created network by name
+  openstack.cloud.networks_info:
+    cloud: "{{ user_cloud | default(omit) }}"
+    name: "provider-net-vlan{{ provider_vid }}"
+  register: openstack_networks_info
+
+- name: store provider network id
+  set_fact:
+    prov_net_id: "{{ openstack_networks_info.openstack_networks[0].id }}"
+
+- name: create manifests for provider demo pods
+  vars:
+    num_workers: "{{ workers | length }}"
+  template:
+    src: provider_demo.manifest.yaml.j2
+    dest: "{{ home_dir }}/provider_demo_manifest.yaml"
+
+- name: Apply manifests for provider demo pods
+  kubernetes.core.k8s:
+    namespace: default
+    state: present
+    src: "{{ home_dir }}/provider_demo_manifest.yaml"
+    wait: yes
+    wait_timeout: 100
+
+- name: Get Pods IP per Compute
+  kubernetes.core.k8s_info:
+    kind: Pod
+    name: "pod-{{ item }}"
+    namespace: default
+  register: pods
+  loop: "{{ workers }}"
+
+- name: Set pods Name+IP list
+  set_fact:
+    pods_ip:
+  loop: "{{ pods.results }}"
+
+- name: Set the workers ports name suffix based on the OCP version
+  block:
+    - name: Get the ID fit with the provider network if the OCP version equal to 4.11 or higher
+      vars:
+        port_list: "openstack port list -f value -c Name -c 'Fixed IP Addresses'"
+        prov_net_subnet: "$(openstack network show {{ prov_net_id }} -f value -c subnets | tr -d [\\'])"
+        filters_to_obtain_id: "grep worker | head -1 | awk '{print $1}' | awk -F- '{print $NF}'"
+      shell: |-
+        {{ port_list }} | grep {{ prov_net_subnet }} | {{ filters_to_obtain_id }}
+      environment:
+        OS_CLOUD: "{{ user_cloud }}"
+      register: port_id_fits_with_prov
+
+    - name: Set the workers ports name suffix
+      set_fact:
+        port_name_suffix: "{{ port_id_fits_with_prov.stdout }}"
+
+- name: Collect facts about worker servers
+  openstack.cloud.server_info:
+   cloud: "{{ user_cloud }}"
+   server: "{{ ocp_cluster_name }}*worker*"
+  register: result
+
+- name: Open 8080 port in workers security group
+  openstack.cloud.security_group_rule:
+    cloud: "{{ user_cloud }}"
+    security_group: "{{ result.openstack_servers[0].security_groups[0].name }}"
+    protocol: tcp
+    port_range_min: 8080
+    port_range_max: 8080
+    remote_ip_prefix: 0.0.0.0/0
+
+- name: Check pod-2-pod connectivity provider secondary pods
+  import_role:
+    name: day2ops
+    tasks_from: provider_demo_pods_check_connectivity.yaml
+  vars:
+    app_label: 'pod-provider'
+    namespace: 'default'

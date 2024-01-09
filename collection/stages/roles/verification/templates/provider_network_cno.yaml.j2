@@ -1,0 +1,7 @@
+- op: add
+  path: "/spec/additionalNetworks/-"
+  value: {name: {{ provider_secondary.network.name }}, namespace: {{ provider_secondary.network.namespace }}, rawCNIConfig: "{\n  \"cniVersion\": \"\
+      0.3.1\",\n  \"name\": \"{{ provider_secondary.network.name }}\",\n  \"type\": \"{{ provider_secondary.network.type }}\",\n  \"master\"\
+      : \"{{ prov_nic.stdout | string }}\",\n  \"ipam\": {\n      \"type\": \"whereabouts\",\n      \"range\":\
+      \ \"{{prov_cidr | string }}\",\n      \"range_start\": \"{{ prov_range_start | string }}\",\n      \"\
+      range_end\": \"{{ prov_range_end | string }}\"\n   }\n}", type: Raw}

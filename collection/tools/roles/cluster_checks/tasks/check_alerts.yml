@@ -1,0 +1,43 @@
+---
+- name: Check cluster alerts
+  block:
+    - name: initialize vars
+      set_fact:
+        alerts_list: []
+
+    - name: Create a Prometheus token
+      shell: oc create token prometheus-k8s -n openshift-monitoring
+      register: token
+
+    - name: Get alerts from Prometheus API
+      uri:
+        url: https://prometheus-k8s-openshift-monitoring.apps.{{ ocp_cluster_name }}.shiftstack.com/api/v1/alerts
+        headers:
+          Authorization: "Bearer {{ token.stdout }}"
+        validate_certs: false
+      register: alerts_response
+      until: "alerts_response.status == 200"
+      retries: 5
+      delay: 10
+
+    - name: Set the alerts_list facts to include all the firing alerts (Not including skipped ones)
+      set_fact:
+        alerts_list: "{{ (alerts_list|default([]) + [item.labels.alertname]) | unique }}"
+      loop: "{{ alerts_response.json.data.alerts }}"
+      when: # https://docs.openshift.com/container-platform/4.13/monitoring/managing-alerts.html#searching-alerts-silences-and-alerting-rules_managing-alerts
+        - item.state is match("firing")
+        - item.labels.severity is match("critical")
+        - item.labels.alertname not in alerts_to_ignore
+
+    - name: Mark the installation as UNSTABLE as we have firing alerts
+      include_role:
+        name: utils
+        tasks_from: mark_stage_unstable.yml
+      vars:
+        unstable_msg: >-
+          "Found firing alerts: "
+          {{ alerts_list | default("") }}
+      when:
+        - alerts_list
+        - alerts_response is not skipped
+        - alerts_response.json.data.alerts|length > 0

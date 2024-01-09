@@ -1,0 +1,338 @@
+home_dir: "{{ lookup('ansible.builtin.env', 'HOME') }}"
+installation_dir: "{{ home_dir }}/{{ ocp_cluster_name }}"
+kubeconfig: "{{ installation_dir }}/auth/kubeconfig"
+
+openshift_releasestream_url: "https://openshift-release.apps.ci.l2s4.p1.openshiftapps.com/api/v1/releasestream"
+release_name: "{{ openshift_release_build_name | default('') }}"
+openshift_download_url: "{{ 'https://openshift-release-artifacts.apps.ci.l2s4.p1.openshiftapps.com' + '/' + release_name }}"
+openshift_mirror_url: "https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp"
+
+openshift_upi: False
+openshift_proxy: False
+external_lb: False
+openshift_mirror: False
+az_enable: False
+openshift_install_with_infra_nodes: False
+bm_workers: False
+provider_network_primary: False
+provider_network_secondary: False
+
+stage_unstable_flag: "{{ home_dir }}/stage_unstable_flag"
+
+admin_cloud: "overcloud}"
+admin_env_file: "~/overcloudrc"
+openshift_separated_project: True
+user_cloud: "{{ openshift_separated_project | ternary('shiftstack', admin_cloud) }}"
+user_env_file: "{{ openshift_separated_project | ternary('~/shiftstackrc', admin_env_file) }}"
+provision_prefix: ""
+provision_key:
+    file: "~/.ssh/id_rsa"
+    name: ''
+ocp_cluster_name: "ostest"
+osp_external_network: "nova"
+ocp_base_domain: "shiftstack.com"
+ocp_api_description: "API {{ ocp_cluster_name}}.{{ocp_base_domain }}"
+ocp_apps_description: "APPS {{ ocp_cluster_name}}.{{ocp_base_domain }}"
+ocp_pull_secret: '{"auths":{"cloud.openshift.com":{"auth":"b3BlbnNoaWZ0LXJlbGVhc2UtZGV2K2l0YnJvd25yZWRoYXRjb20xamxkZXV2bGFpMzNnajd4OXBnazUyZzZmZWM6RVVCVFpJNjBTNjZGNVBDVkIwR1JDSUQ3Wkw5SjlDR0NFRzVFWFQ5QlhWUzM4OUg4WFpQNEtZUktOSzRIQlNKWQ==","email":"itbrown@redhat.com"},"docker.io":{"auth":"c2hpZnRzdGFjazphYjg0MWRhYS1mOGU2LTQ3Y2EtYTFkNC00ZjIxOGY0NWJlZTY=","email":"imatza@redhat.com"},"quay.io":{"auth":"b3BlbnNoaWZ0LXJlbGVhc2UtZGV2K2l0YnJvd25yZWRoYXRjb20xamxkZXV2bGFpMzNnajd4OXBnazUyZzZmZWM6RVVCVFpJNjBTNjZGNVBDVkIwR1JDSUQ3Wkw5SjlDR0NFRzVFWFQ5QlhWUzM4OUg4WFpQNEtZUktOSzRIQlNKWQ==","email":"itbrown@redhat.com"},"registry.connect.redhat.com":{"auth":"NzU2NzIzNXx1aGMtMUpMZEV1VmxBSTMzZ2o3eDlwR2s1Mkc2ZmVjOmV5SmhiR2NpT2lKU1V6VXhNaUo5LmV5SnpkV0lpT2lJNVlqVTFObVkzWVdaallUQTBNVEJqWVRnNE1tUmpaV1V6TXpZNE5XTTVPU0o5LlktbWhFRElVVHA4U1UySWI2Yno2Qy1NekFrS2EzU1RzSWdaUmRPTmR6ZjhkdzI3d001RkQ3ampXcjh4dnR2Yl9fVm96S002Vl9CbDZta2tLQk5xUlNiVDhkNi1oZG9KZWJueXJaU3lhNENFcVI1bWZobWFkTmVKOE1wV19qRkVXTGJDY3NYejJqczlSSlA5Y2tVdVR5ZFprZzM1TnZYTW02YnpES3JPV015U185MHdGU1czakVwVF9qc1R4cHhlU3VLXzVjZUZwMnZTNkVjeDlxNlQwX0lvTU83cks1VWU5bFVkSUF0RDlsbU9rRC1TVDlJaXZtZ0tyTi1nSnRDRVV0UVYxQnFBUHZINUxwYnNfTEM3NUY3MDg0SktJLTNQeVFOMTYtV19oY1FzYjVPbHFTNWhLVVpSd1BJYmJsbHlCbzJJRlNNbm01OEY0ckZ5U1UybTZNMTk0TktFUEw3S3J1OWNqMmt5eWdDNm1SN2RqcUNrWlJrZmh6QWZURUQ2RDhlMmJNVWJKZ0ZhLUxjSm92QXN5R2xZVnQyZGtQV2pmcDdfWW4yMmRXVDRPME5SMTlGSHpCSkdaZXpoTS0wMUJ5RGVyQkpodFR3X096OUpwcmVZdmJLVWVia21aYS1oejZPcFhyX0F1ZHlrZGNNY21TTFpxMG5aS0UyR2hPMGEyU1owbjBlWVpCd3J6eXNLOTlXZWFrZlNKU0V6ZEpXT1JkNjhpdnRnV0d1ejd4eEJ1aDNKbnRfcUhkRVk5UEx1MlRtbGlsYTE2ZkUyb3RGVkFaeE1YVEI2QTJqd2FoN25GQmt6TzdzTHF1NDVEVmk2NWtWaHdMWjBBcklORnFlSnpRaVRQQ0Y1MU9jTnd4N2dVQ2UtampBVFdWb3p5Szd2RDd0T3cwNm1ZRFVV","email":"itbrown@redhat.com"},"registry.redhat.io":{"auth":"NzU2NzIzNXx1aGMtMUpMZEV1VmxBSTMzZ2o3eDlwR2s1Mkc2ZmVjOmV5SmhiR2NpT2lKU1V6VXhNaUo5LmV5SnpkV0lpT2lJNVlqVTFObVkzWVdaallUQTBNVEJqWVRnNE1tUmpaV1V6TXpZNE5XTTVPU0o5LlktbWhFRElVVHA4U1UySWI2Yno2Qy1NekFrS2EzU1RzSWdaUmRPTmR6ZjhkdzI3d001RkQ3ampXcjh4dnR2Yl9fVm96S002Vl9CbDZta2tLQk5xUlNiVDhkNi1oZG9KZWJueXJaU3lhNENFcVI1bWZobWFkTmVKOE1wV19qRkVXTGJDY3NYejJqczlSSlA5Y2tVdVR5ZFprZzM1TnZYTW02YnpES3JPV015U185MHdGU1czakVwVF9qc1R4cHhlU3VLXzVjZUZwMnZTNkVjeDlxNlQwX0lvTU83cks1VWU5bFVkSUF0RDlsbU9rRC1TVDlJaXZtZ0tyTi1nSnRDRVV0UVYxQnFBUHZINUxwYnNfTEM3NUY3MDg0SktJLTNQeVFOMTYtV19oY1FzYjVPbHFTNWhLVVpSd1BJYmJsbHlCbzJJRlNNbm01OEY0ckZ5U1UybTZNMTk0TktFUEw3S3J1OWNqMmt5eWdDNm1SN2RqcUNrWlJrZmh6QWZURUQ2RDhlMmJNVWJKZ0ZhLUxjSm92QXN5R2xZVnQyZGtQV2pmcDdfWW4yMmRXVDRPME5SMTlGSHpCSkdaZXpoTS0wMUJ5RGVyQkpodFR3X096OUpwcmVZdmJLVWVia21aYS1oejZPcFhyX0F1ZHlrZGNNY21TTFpxMG5aS0UyR2hPMGEyU1owbjBlWVpCd3J6eXNLOTlXZWFrZlNKU0V6ZEpXT1JkNjhpdnRnV0d1ejd4eEJ1aDNKbnRfcUhkRVk5UEx1MlRtbGlsYTE2ZkUyb3RGVkFaeE1YVEI2QTJqd2FoN25GQmt6TzdzTHF1NDVEVmk2NWtWaHdMWjBBcklORnFlSnpRaVRQQ0Y1MU9jTnd4N2dVQ2UtampBVFdWb3p5Szd2RDd0T3cwNm1ZRFVV","email":"itbrown@redhat.com"},"registry.ci.openshift.org":{"auth":"dXNlcjpzaGEyNTZ+bk5iUzd2c00wSE1wRUZWZHpvbVlvemJUUmgyYnUtNjdjS3RONnVKNGd6Yw=="}}}'
+fip_hosts:
+    - { regex: 'api\..*\.shiftstack.com', row: '{{ api_fip.stdout }} api.{{ ocp_cluster_name }}.shiftstack.com' }
+    - { regex: 'oauth-openshift.apps\..*\.shiftstack.com', row: '{{ apps_fip.stdout }} oauth-openshift.apps.{{ ocp_cluster_name }}.shiftstack.com' }
+    - { regex: 'console-openshift-console.apps\..*\.shiftstack.com', row: '{{ apps_fip.stdout }} console-openshift-console.apps.{{ ocp_cluster_name }}.shiftstack.com' }
+    - { regex: 'downloads-openshift-console.apps\..*\.shiftstack.com', row: '{{ apps_fip.stdout }} downloads-openshift-console.apps.{{ ocp_cluster_name }}.shiftstack.com' }
+    - { regex: 'canary-openshift-ingress-canary.apps\..*\.shiftstack.com', row: '{{ apps_fip.stdout }} canary-openshift-ingress-canary.apps.{{ ocp_cluster_name }}.shiftstack.com' }
+    - { regex: 'alertmanager-main-openshift-monitoring.apps\..*\.shiftstack.com', row: '{{ apps_fip.stdout }} alertmanager-main-openshift-monitoring.apps.{{ ocp_cluster_name }}.shiftstack.com' }
+    - { regex: 'grafana-openshift-monitoring.apps\..*\.shiftstack.com', row: '{{ apps_fip.stdout }} grafana-openshift-monitoring.apps.{{ ocp_cluster_name }}.shiftstack.com' }
+    - { regex: 'prometheus-k8s-openshift-monitoring.apps\..*\.shiftstack.com', row: '{{ apps_fip.stdout }} prometheus-k8s-openshift-monitoring.apps.{{ ocp_cluster_name }}.shiftstack.com' }
+    - { regex: 'thanos-querier-openshift-monitoring.apps\..*\.shiftstack.com', row: '{{ apps_fip.stdout }} thanos-querier-openshift-monitoring.apps.{{ ocp_cluster_name }}.shiftstack.com' }
+ocp_network_type: "OpenShiftSDN"
+openshift_openstack_clusterid: "{{ provision_prefix + 'openshift' }}"
+openshift_openstack_public_dns_domain: "example.com"
+openshift_clusterid_dns_domain: "{{ openshift_openstack_clusterid }}.{{ openshift_openstack_public_dns_domain }}"
+openshift_release: ""
+openshift_build_name: ""
+openshift_puddle: "latest"
+openshift_repo_url: 'http://download-node-02.eng.bos.redhat.com/rcm-guest/puddles/RHAOS/AtomicOpenShift/{{ openshift_release }}/{{ openshift_puddle }}'
+openshift_htpasswd_user: "user1"
+openshift_htpasswd_password: "redhat"
+openshift_hello_application_json: https://raw.githubusercontent.com/openshift/origin/master/examples/hello-openshift/hello-pod.json
+lab_dns: 10.47.242.10
+machine_cidr: '10.196.0.0/16'
+openshift_mirror_registry_url: https://developers.redhat.com/content-gateway/file/pub/openshift-v4/clients/mirror-registry/1.2.0/mirror-registry.tar.gz
+openshift_mirror_registry_sha256: https://developers.redhat.com/content-gateway/file/pub/openshift-v4/clients/mirror-registry/1.2.0/sha256sum.txt
+rhcos_image_name: "rhcos"
+demo_image: "{{ openshift_mirror | ternary(installer_vm.installer_fqdn_port+'/quay.io/kuryr/demo', 'quay.io/kuryr/demo') }}"
+installer_group: installer
+installer_host: False
+custom_network: ""
+custom_subnet: ""
+custom_router: ""
+custom_ports: []
+installer_network: "installer_host-network"
+installer_subnet: "installer_host-subnet"
+installer_router: "installer_host-router"
+installer_custom_flavor: ""
+installer_flavor_name: "m1.medium"
+topology:
+    flavors:
+      bootstrap:
+        name: "bootstrap"
+        ram: 16384
+        vcpus: 4
+        disk: 100
+      master:
+        name: "master"
+        ram: 16384
+        vcpus: 4
+        disk: 100
+      worker:
+        name: "worker"
+        ram: 8192
+        vcpus: 2
+        disk: 100
+      m4.xlarge:
+        name: "m4.xlarge"
+        ram: 16384
+        vcpus: 4
+        disk: 40
+
+osp_master_flavor: "{{ topology.flavors.master.name }}"
+osp_worker_flavor: "{{ topology.flavors.worker.name }}"
+osp_bootstrap_flavor: "{{ topology.flavors.bootstrap.name }}"
+root_volume_size: 100
+
+mirror:
+  sg_rules:
+    - direction: 'ingress'
+      ethertype: 'IPv4'
+      remote_ip_prefix: '0.0.0.0/0'
+      protocol: udp
+      port_range_min: '53'
+      port_range_max: '53'
+    - direction: 'ingress'
+      ethertype: 'IPv4'
+      remote_ip_prefix: '0.0.0.0/0'
+      protocol: tcp
+      port_range_min: '8443'
+      port_range_max: '8443'
+
+osp_rhel_matrix:
+  '16.1': 'http://download.eng.tlv.redhat.com/rhel-8/rel-eng/RHEL-8/latest-RHEL-8.5.0/compose/BaseOS/x86_64/images/rhel-guest-image-8.5-1174.x86_64.qcow2'
+  '16.2': 'http://download.eng.tlv.redhat.com/rhel-8/rel-eng/RHEL-8/latest-RHEL-8.5.0/compose/BaseOS/x86_64/images/rhel-guest-image-8.5-1174.x86_64.qcow2'
+  '17.1': 'http://download.devel.redhat.com/rhel-9/rel-eng/RHEL-9/latest-RHEL-9.2.0/compose/BaseOS/x86_64/images/rhel-guest-image-9.2-20230414.17.x86_64.qcow2'
+
+installer_image: "{{ osp_rhel_matrix[openstack_version] }}"
+
+installer_vm:
+    name: installer_host
+    installer_fqdn: "installer-host.example.com"
+    installer_fqdn_port: "installer-host.example.com:8443"
+    image:
+        url: "{{ installer_image }}"
+        name: "{{ installer_image | basename }}"
+        sha_url: "{{ installer_image }}.SHA256SUM"
+        sha_info_file: "{{ installer_image | basename }}.SHA256SUM"
+    ssh_user: "cloud-user"
+    flavor:
+        name: "{{ installer_flavor_name }}"
+        ram: 8192
+        vcpus: 4
+        disk: 60
+    network:
+      name: "{{ installer_network }}"
+    subnet:
+        name: "{{ installer_subnet }}"
+        cidr: 172.16.40.0/24
+        dns: "{{ lab_dns }}"
+    router:
+        name: "{{ installer_router }}"
+    sec_group:
+        name: installer_host-sg
+    sg_rules:
+        - direction: 'ingress'
+          ethertype: 'IPv4'
+          remote_ip_prefix: '0.0.0.0/0'
+          protocol: icmp
+          port_range_min: -1
+          port_range_max: -1
+        - direction: 'ingress'
+          ethertype: 'IPv4'
+          remote_ip_prefix: '0.0.0.0/0'
+          protocol: tcp
+          port_range_min: '22'
+          port_range_max: '22'
+        - direction: 'ingress'
+          ethertype: 'IPv4'
+          remote_ip_prefix: '0.0.0.0/0'
+          protocol: tcp
+          port_range_min: '3128'
+          port_range_max: '3128'
+        - direction: 'ingress'
+          ethertype: 'IPv4'
+          remote_ip_prefix: '0.0.0.0/0'
+          protocol: tcp
+          port_range_min: '3130'
+          port_range_max: '3130'
+        - direction: 'ingress'
+          ethertype: 'IPv4'
+          remote_ip_prefix: '0.0.0.0/0'
+          protocol: udp
+          port_range_min: '53'
+          port_range_max: '53'
+    ntp:
+      sg_rules:
+        - direction: 'ingress'
+          ethertype: 'IPv4'
+          remote_ip_prefix: '0.0.0.0/0'
+          protocol: udp
+          port_range_min: '123'
+          port_range_max: '123'
+
+restricted_network:
+  network_name: 'restricted_network'
+  subnet_name: 'restricted_subnet'
+  installer_port_name: 'installer_restricted_network_port'
+  cidr: '172.16.0.0/24'
+  pool_start: '172.16.0.8'
+  pool_end: '172.16.0.254'
+  installer_ip: '172.16.0.3'
+  default_gw: '172.16.0.1' # Used with Kuryr and OpenshiftSDN networking types
+  ocp_api_ip: '172.16.0.5'
+  ocp_apps_ip: '172.16.0.7'
+
+baremetal:
+  flavor:
+    name: baremetal
+    ram: 4096
+    vcpus: 2
+    disk: 39
+  network:
+    # Do not change the name
+    name: provisioning
+    cidr: '172.27.7.0/24'
+    range_start: '172.27.7.153'
+    range_end: '172.27.7.200'
+    ocp_api_ip: '172.27.7.251'
+    ocp_apps_ip: '172.27.7.252'
+    undercloud_ip: '172.27.7.9'
+  virt_machineset: workervirt
+undercloud_user_dir: '/home/stack'
+ipv6:
+  openshift_secondary: False
+  router_name: 'router1'
+  networks:
+  - net_name: slaac
+    subnet_name: slaac
+    subnet_cidr_ipv6: '2001:db8:2222:5555::/64'
+    subnet_cidr_ipv6_prefix: '2001:db8:2222:5555'
+    subnet_cidr_ipv6_mask: '64'
+    ipv6_ra_mode: 'slaac'
+    ipv6_address_mode: 'slaac'
+
+  - net_name: dhcpstateless
+    subnet_name: dhcpstateless
+    subnet_cidr_ipv6: '2001:db8:2222:6666::/64'
+    subnet_cidr_ipv6_prefix: '2001:db8:2222:6666'
+    subnet_cidr_ipv6_mask: '64'
+    ipv6_ra_mode: 'dhcpv6-stateless'
+    ipv6_address_mode: 'dhcpv6-stateless'
+  ipv6vm_image: "http://download.devel.redhat.com/released/RHEL-8/8.2.0/BaseOS/x86_64/images/rhel-guest-image-8.2-290.x86_64.qcow2"
+  projects:
+    - slaac
+    - dhcpstateless
+ipv6vm:
+  ssh_user: 'cloud-user'
+  sec_group:
+    name: 'ipv6vm_sg'
+  sg_rules:
+      - direction: 'ingress'
+        ethertype: 'IPv4'
+        remote_ip_prefix: '0.0.0.0/0'
+        protocol: icmp
+        port_range_min: -1
+        port_range_max: -1
+      - direction: 'ingress'
+        ethertype: 'IPv4'
+        remote_ip_prefix: '0.0.0.0/0'
+        protocol: tcp
+        port_range_min: '22'
+        port_range_max: '22'
+      - direction: 'ingress'
+        ethertype: 'IPv4'
+        remote_ip_prefix: '0.0.0.0/0'
+        protocol: tcp
+        port_range_min: '80'
+        port_range_max: '80'
+      - direction: 'ingress'
+        ethertype: 'IPv6'
+        remote_ip_prefix: '::/0'
+        protocol: tcp
+        port_range_min: '80'
+        port_range_max: '80'
+  name: ipv6vm
+  network:
+    net_name: ipv6vm-net
+  repo_prefix: "http://rhsm-pulp.corp.redhat.com/content/dist/rhel8/8.2/x86_64"
+  subnet:
+    subnet_name: "ipv6vm-subnet1"
+    cidr: 192.168.40.0/24
+    dns: "{{ lab_dns }}"
+
+  flavor:
+      name: "ipv6vm-flavor"
+      ram: 8192
+      vcpus: 4
+      disk: 50
+  image:
+    url: "{{ ipv6.ipv6vm_image }}"
+    name: "{{ ipv6.ipv6vm_image | basename }}"
+    sha_url: "{{ ipv6.ipv6vm_image }}.SHA256SUM"
+    sha_info_file: "{{ ipv6.ipv6vm_image | basename }}.SHA256SUM"
+
+
+provider_secondary:
+  network:
+    name: "test-network-1"
+    namespace: "default"
+    type: "ipvlan"
+
+wait_retries: 30
+wait_delay: 30
+manifests_wait_timeout: 300
+redhat_ca_file: "https://certs.corp.redhat.com/RH-IT-Root-CA.crt"
+
+cpms_replacements:
+  network_name: "dummy"
+  subnet_name: "dummy"
+  sg_name: "dummy"
+  cidr: "1.1.1.1/29"
+
+openshift_dualstack_ipv4primary: False
+openshift_dualstack_ipv6primary: False
+openshift_dualstack_ipv6mode: slaac
+openshift_dualstack:
+  enabled: "{{ openshift_dualstack_ipv4primary or openshift_dualstack_ipv6primary }}"
+  primary: "{{ (openshift_dualstack_ipv6primary)| ternary('ipv6', 'ipv4') }}"
+  network:
+    name: network-dualstack
+  subnets:
+    ipv4:
+      cidr: '192.168.192.0/24'
+      name: subnet-dualstack-v4
+    ipv6:
+      cidr: 'fd2e:6f44:5dd8:c956::/64'
+      name: subnet-dualstack-v6
+      ra_mode: "{{ openshift_dualstack_ipv6mode }}"
+      addr_mode: "{{ openshift_dualstack_ipv6mode }}"
+  api_vip_port:
+    name: api-dualstack
+    ipv4: '192.168.192.5'
+    ipv6: " {{ (openshift_dualstack_ipv6mode == 'dhcpv6-stateful')| ternary('fd2e:6f44:5dd8:c956::5', omit) }}"
+  ingress_vip_port:
+    name: ingress-dualstack
+    ipv4: '192.168.192.7'
+    ipv6: " {{ (openshift_dualstack_ipv6mode == 'dhcpv6-stateful')| ternary('fd2e:6f44:5dd8:c956::7', omit) }}"
+  router:
+    name: router-dualstack
+
+ipv4_regex: '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$'
+ipv6_regex: '^[0-9a-fA-F:]+$'

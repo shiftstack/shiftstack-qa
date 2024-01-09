@@ -1,0 +1,71 @@
+---
+- name: OCP testing for new candidate on legacy OSP (17.1 or 16.2)
+  hosts: localhost
+  gather_facts: no
+  # debugger: on_failed # https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_debugger.html#playbook-debugger
+  vars_files:
+    - "../group_vars/all.yml"
+    - "../configs/secret.yaml"
+    - "../configs/legacy_ocp_testing.yaml"
+
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+
+  pre_tasks:
+    - name: Preparing for the run
+      ansible.builtin.debug:
+        msg: "Preparing for the run..."
+
+    - name: Gather host environment variables
+      ansible.builtin.setup:
+        gather_subset:
+          - env
+
+    - name: Cleanup workspace flags - Remove the stage_unstable_flag if it exists
+      file:
+        path: "{{ stage_unstable_flag }}"
+        state: absent
+
+  tasks:
+    - name: Discover OSP version
+      include_role:
+        name: shiftstack.tools.discover_osp_version
+
+    - name: Cleanup setup
+      include_role:
+        name: shiftstack.stages.cleanup
+      when: "'cleanup' in stages"
+
+    - name: Prepare setup
+      include_role:
+        name: shiftstack.stages.prepare
+      when: "'prepare' in stages"
+
+    - name: Install OCP on setup
+      include_role:
+        name: shiftstack.stages.install
+      when: "'install' in stages"
+
+    - name: Discover OCP version and networkType
+      include_role:
+        name: shiftstack.tools.discover_ocp_version
+
+    - name: Run post operations and OCP verification checks on setup
+      include_role:
+        name: shiftstack.stages.post
+      when: "'post' in stages"
+
+    - name: Run tests on OCP
+      include_role:
+        name: shiftstack.stages.test
+      when: "'test' in stages"
+
+    - name: Run day2ops
+      include_role:
+        name: shiftstack.stages.day2ops
+      when: "'day2ops' in stages"
+
+  post_tasks:
+    - name: Gathering resources
+      ansible.builtin.debug:
+        msg: "Gathering resources..."

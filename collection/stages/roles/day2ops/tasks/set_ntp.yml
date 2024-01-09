@@ -1,0 +1,95 @@
+# We follow the procedure at https://docs.openshift.com/container-platform/4.10/post_installation_configuration/machine-configuration-tasks.html#installation-special-config-chrony_post-install-machine-configuration-tasks
+- name: Install Butane
+  become: yes
+  get_url:
+    url: https://mirror.openshift.com/pub/openshift-v4/clients/butane/latest/butane
+    dest: /usr/local/bin/butane
+    mode: 0755
+
+- name: Get OCP GA version from release.txt and Build the chronyc manifest
+  block:
+    - name: Download the OCP GA version from openshift mirror
+      get_url:
+        url: https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/stable/release.txt
+        dest: /tmp/release.txt
+
+    - name: Extract OpenShift version
+      shell: 'grep -oP "Version:\s*\K4\.\d+" /tmp/release.txt'
+      register: openshift_GA_version
+
+    - name: Set ocp_latest_ga variable
+      set_fact:
+        ocp_latest_ga: "{{ openshift_GA_version.stdout }}"
+
+    - name: Build the chronyc manifest
+      vars:
+        ntp_server: "{{ openshift_mirror| ternary(installer_vm.installer_fqdn, restricted_network.installer_ip) }}"
+      template:
+        src: 99-node-chronyc.j2
+        dest: "{{ home_dir }}/99-{{ item }}-chrony"
+      loop:
+        - worker
+        - master
+        
+# Use Butane to translate a human readable Butane config into a machine readable Ignition config
+- name: Build the chrony machine config
+  shell: "butane /home/{{ installer_vm.ssh_user }}/99-{{ item }}-chrony -o {{ home_dir }}/99-{{ item }}-chrony.yaml"
+  loop:
+    - worker
+    - master
+
+- name: Apply the chrony manifest
+  kubernetes.core.k8s:
+    state: present
+    src: "/home/{{ installer_vm.ssh_user }}/99-{{ item }}-chrony.yaml"
+  loop:
+    - worker
+    - master
+
+- name: Wait 5 minutes before checking nodes and MCP
+  pause:
+    minutes: 5
+
+- name: Wait for the machine config pool to finish the cluster updates
+  shell: |
+    oc wait --all --for=condition=Updated --timeout=1200s mcp
+  retries: 3
+  delay: 120
+  register: result
+  until: result.rc == 0
+
+- name: Wait for all the nodes to be ready
+  shell: |
+    oc wait --all --for=condition=Ready --timeout=1200s nodes
+  retries: 2
+  delay: 120
+  register: result
+  until: result.rc == 0
+
+
+- name: Check cluster health
+  block:
+  - name: Wait until OCP cluster is healthy
+    include_role:
+      name: cluster_checks
+      tasks_from: wait_until_cluster_is_healthy.yml
+    vars:
+      wait_retries: 30
+      wait_delay: 60
+
+  - name: Wait until cluster nodes are ready
+    include_role:
+      name: cluster_checks
+      tasks_from: wait_until_nodes_ready
+  when: openshift_mirror
+
+# Go over all the OCP nodes and check that NTP is configured correctly by checking that the Stratum from
+# The chronyc tracking command is not 0 in any of them
+- name: Check that the NTP server is reachable from all the OCP nodes
+  shell: for i in $(oc get nodes -o name); do  oc debug -q $i -- chroot /host sudo chronyc tracking|awk '/Stratum/{print $3}'; done | tr -d '\n' |  awk '/0/{exit 1}'
+  environment:
+    KUBECONFIG: "/home/{{ installer_vm.ssh_user }}/{{ ocp_cluster_name }}/auth/kubeconfig"
+  register: ntp_output
+  until: ntp_output is not failed
+  retries: 5
+  delay: 30

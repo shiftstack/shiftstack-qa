@@ -1,2 +1,12 @@
 ---
 # defaults file for day2ops
+registry_test_project: registry-test
+project: shiftstack
+app_creds:
+    openstack_user:
+        username: shiftstack_user
+        new_password: new_pass
+cloud_provider_config:
+    lb_monitor_delay: "10s"
+    lb_monitor_timeout: "10s"
+    lb_monitor_max_retries: "1"

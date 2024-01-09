@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-openshift
+spec:
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+         - labelSelector:
+            matchExpressions:
+            - key: app
+              operator: In
+              values:
+              - hello-openshift
+  replicas: {{ num_workers }}
+  selector:
+    matchLabels:
+      app: hello-openshift
+  template:
+    metadata:
+      labels:
+        app: hello-openshift
+      annotations:
+        k8s.v1.cni.cncf.io/networks: "{{ item }}"
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+      - name: hello-openshift
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+        image: quay.io/openshift/origin-hello-openshift
+        ports:
+        - containerPort: 8080
