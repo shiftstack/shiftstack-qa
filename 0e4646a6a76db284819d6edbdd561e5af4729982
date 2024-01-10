@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7bc9bb1a_fe153e49",
+        "filename": "collection/stages/roles/install/defaults/main.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-01-10T09:21:56Z",
+      "side": 0,
+      "message": "why we don\u0027t need this anymore?",
+      "range": {
+        "startLine": 3,
+        "startChar": 0,
+        "endLine": 3,
+        "endChar": 43
+      },
+      "revId": "0e4646a6a76db284819d6edbdd561e5af4729982",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}

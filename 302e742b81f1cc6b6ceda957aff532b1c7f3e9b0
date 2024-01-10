@@ -20,6 +20,29 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "e4f36725_ffa7c0b8",
+        "filename": "collection/stages/roles/day2ops/tasks/mirror_catalogs.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-01-10T09:21:56Z",
+      "side": 1,
+      "message": "not needed",
+      "range": {
+        "startLine": 46,
+        "startChar": 0,
+        "endLine": 47,
+        "endChar": 32
+      },
+      "revId": "302e742b81f1cc6b6ceda957aff532b1c7f3e9b0",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "c7fe2c0b_a6c72554",
         "filename": "collection/tools/galaxy.yml",
         "patchSetId": 1
@@ -48,6 +71,24 @@
       "writtenOn": "2024-01-09T15:36:55Z",
       "side": 1,
       "message": "do we need this file?",
+      "revId": "302e742b81f1cc6b6ceda957aff532b1c7f3e9b0",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "59f1862f_fcd47bc9",
+        "filename": "group_vars/all.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-01-10T09:21:56Z",
+      "side": 1,
+      "message": "oh I saw it now. We need at least to get rid of the ocp_pull_secret var :)",
+      "parentUuid": "c99873e9_6cfe57be",
       "revId": "302e742b81f1cc6b6ceda957aff532b1c7f3e9b0",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
