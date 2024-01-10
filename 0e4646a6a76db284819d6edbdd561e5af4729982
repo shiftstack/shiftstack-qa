@@ -22,6 +22,30 @@
       },
       "revId": "0e4646a6a76db284819d6edbdd561e5af4729982",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "eea67c70_400dd934",
+        "filename": "collection/stages/roles/install/defaults/main.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-01-10T14:35:47Z",
+      "side": 0,
+      "message": "moved it to group_vars/all.yml as we need it for other roles as well.",
+      "parentUuid": "7bc9bb1a_fe153e49",
+      "range": {
+        "startLine": 3,
+        "startChar": 0,
+        "endLine": 3,
+        "endChar": 43
+      },
+      "revId": "0e4646a6a76db284819d6edbdd561e5af4729982",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
