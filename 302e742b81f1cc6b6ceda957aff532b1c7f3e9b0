@@ -91,6 +91,29 @@
       "parentUuid": "c99873e9_6cfe57be",
       "revId": "302e742b81f1cc6b6ceda957aff532b1c7f3e9b0",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "efbf62e4_bd7df3dc",
+        "filename": "group_vars/all.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-01-10T09:53:51Z",
+      "side": 1,
+      "message": "Let\u0027s have it in the roles inside the default folders. With this we can have a view of what params are configurable in the role.",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 18,
+        "endChar": 33
+      },
+      "revId": "302e742b81f1cc6b6ceda957aff532b1c7f3e9b0",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
