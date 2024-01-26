@@ -16,6 +16,69 @@
       "message": "Verified locally",
       "revId": "bfa242025cd5ef524d6c001c43133b2c2a95ace3",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "50739a59_9a1bf935",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-01-26T15:35:07Z",
+      "side": 1,
+      "message": "Hi Itay!\n\nI didn\u0027t finish the review. Just sharing with you my first thoughts:\n\n- Please update README.md with the idea you have to trigger the jobs. Jon will configure the pod to trigger the jobs and he needs to know the inputs: It\u0027s a playbook file and a configuration file, isn\u0027t it? Some explanation in the README will help. We are thinking to, instead of launching the pod with a sleep and then connect and run the commands, we can directly set the commands in the spec so the trigger will run until the automation is finished ;).\n\n- Next time we meet we need to work on configuring ansible-lint. It will help to identify the tasks that we are taking from the plugin that are not idempotent. I believe that trying to make all the tasks idempotent will help us a lot in the future.",
+      "revId": "bfa242025cd5ef524d6c001c43133b2c2a95ace3",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bdc488d3_01a79015",
+        "filename": "collection/stages/roles/post/tasks/main.yml",
+        "patchSetId": 6
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-01-26T15:35:07Z",
+      "side": 1,
+      "message": "is it possible to do this with kubernetes.core.k8s module?",
+      "range": {
+        "startLine": 4,
+        "startChar": 0,
+        "endLine": 4,
+        "endChar": 87
+      },
+      "revId": "bfa242025cd5ef524d6c001c43133b2c2a95ace3",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "52fbb2a9_8fdc2c68",
+        "filename": "collection/stages/roles/prepare/tasks/get_installer.yml",
+        "patchSetId": 6
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-01-26T15:35:07Z",
+      "side": 1,
+      "message": "home_dir",
+      "range": {
+        "startLine": 22,
+        "startChar": 20,
+        "endLine": 22,
+        "endChar": 45
+      },
+      "revId": "bfa242025cd5ef524d6c001c43133b2c2a95ace3",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
