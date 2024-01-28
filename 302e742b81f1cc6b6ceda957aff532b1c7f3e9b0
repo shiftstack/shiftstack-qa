@@ -41,6 +41,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "481f958e_727305f1",
+        "filename": "collection/stages/roles/day2ops/tasks/mirror_catalogs.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-01-28T10:25:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e4f36725_ffa7c0b8",
+      "range": {
+        "startLine": 46,
+        "startChar": 0,
+        "endLine": 47,
+        "endChar": 32
+      },
+      "revId": "302e742b81f1cc6b6ceda957aff532b1c7f3e9b0",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c7fe2c0b_a6c72554",
@@ -54,6 +78,24 @@
       "writtenOn": "2024-01-09T15:39:31Z",
       "side": 1,
       "message": "What\u0027s the difference between tools collection and utils role in stages collection? \n\nI like the tools collection probably we need to move the utils role to the tools collection.",
+      "revId": "302e742b81f1cc6b6ceda957aff532b1c7f3e9b0",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ded1fc44_81a39c88",
+        "filename": "collection/tools/galaxy.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-01-28T10:25:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c7fe2c0b_a6c72554",
       "revId": "302e742b81f1cc6b6ceda957aff532b1c7f3e9b0",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
@@ -124,6 +166,30 @@
       "writtenOn": "2024-01-10T09:53:51Z",
       "side": 1,
       "message": "Let\u0027s have it in the roles inside the default folders. With this we can have a view of what params are configurable in the role.",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 18,
+        "endChar": 33
+      },
+      "revId": "302e742b81f1cc6b6ceda957aff532b1c7f3e9b0",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b51d29bc_5fca026f",
+        "filename": "group_vars/all.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-01-28T10:25:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "efbf62e4_bd7df3dc",
       "range": {
         "startLine": 10,
         "startChar": 0,

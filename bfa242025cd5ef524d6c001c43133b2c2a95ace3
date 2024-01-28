@@ -58,6 +58,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a505aa29_a567c9b7",
+        "filename": "collection/stages/roles/post/tasks/main.yml",
+        "patchSetId": 6
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-01-28T10:25:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bdc488d3_01a79015",
+      "range": {
+        "startLine": 4,
+        "startChar": 0,
+        "endLine": 4,
+        "endChar": 87
+      },
+      "revId": "bfa242025cd5ef524d6c001c43133b2c2a95ace3",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "52fbb2a9_8fdc2c68",
@@ -71,6 +95,30 @@
       "writtenOn": "2024-01-26T15:35:07Z",
       "side": 1,
       "message": "home_dir",
+      "range": {
+        "startLine": 22,
+        "startChar": 20,
+        "endLine": 22,
+        "endChar": 45
+      },
+      "revId": "bfa242025cd5ef524d6c001c43133b2c2a95ace3",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "805dcff2_d3152215",
+        "filename": "collection/stages/roles/prepare/tasks/get_installer.yml",
+        "patchSetId": 6
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-01-28T10:25:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "52fbb2a9_8fdc2c68",
       "range": {
         "startLine": 22,
         "startChar": 20,
