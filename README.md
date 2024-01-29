@@ -50,5 +50,5 @@ oc rsh shiftstackclient -n openstack \
 ## Enable hooks in your setup
 
 ```
-pip install pre-commit &&  git config --global init.templateDir ~/.git-template && pre-commit init-templatedir ~/.git-template
+pip install pre-commit &&  git config --global init.templateDir ~/.git-template && pre-commit init-templatedir ~/.git-template && pre-commit install
 ```
