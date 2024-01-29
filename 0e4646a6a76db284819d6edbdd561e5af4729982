@@ -93,6 +93,30 @@
       },
       "revId": "0e4646a6a76db284819d6edbdd561e5af4729982",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "288ed5bc_f25212f0",
+        "filename": "collection/stages/roles/install/tasks/ipi_tenant.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-01-29T14:12:18Z",
+      "side": 0,
+      "message": "can you please clarify your suggestion?",
+      "parentUuid": "bd129177_5168a631",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 25,
+        "endChar": 47
+      },
+      "revId": "0e4646a6a76db284819d6edbdd561e5af4729982",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }

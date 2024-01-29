@@ -18,6 +18,24 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a2ed7456_eb9709f7",
+        "filename": "collection/stages/roles/verification/tasks/check_manila.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-01-29T14:12:18Z",
+      "side": 1,
+      "message": "OS_CLOUD is not enough for the manila api:\n```\n[stack@undercloud-0 ~]$ export OS_CLOUD\u003dshiftstack\n[stack@undercloud-0 ~]$ manila show pvc-34b3ad54-4103-4038-be52-86509c6886d3\nERROR: You must provide a tenant_name, tenant_id, project_id or project_name (with project_domain_name or project_domain_id) via --os-tenant-name or env[OS_TENANT_NAME], --os-tenant-id or env[OS_TENANT_ID], --os-project-id or env[OS_PROJECT_ID], --os-project-name or env[OS_PROJECT_NAME], --os-project-domain-id or env[OS_PROJECT_DOMAIN_ID] and --os-project-domain-name or env[OS_PROJECT_DOMAIN_NAME].\n```",
+      "parentUuid": "d1649fc9_72b222f4",
+      "revId": "5ada2c119a559476758f00f94c556ed2bca29ba8",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "921674f8_093cfae9",
@@ -31,6 +49,30 @@
       "writtenOn": "2024-01-29T10:51:58Z",
       "side": 1,
       "message": "typo",
+      "range": {
+        "startLine": 76,
+        "startChar": 38,
+        "endLine": 76,
+        "endChar": 40
+      },
+      "revId": "5ada2c119a559476758f00f94c556ed2bca29ba8",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9dc6e7f8_b405df57",
+        "filename": "collection/stages/roles/verification/tasks/check_registry.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-01-29T14:12:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "921674f8_093cfae9",
       "range": {
         "startLine": 76,
         "startChar": 38,
@@ -60,6 +102,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "119c4560_52ad3d17",
+        "filename": "collection/stages/roles/verification/tasks/check_registry.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-01-29T14:12:18Z",
+      "side": 1,
+      "message": "this is how we are doing it in the current plugin.\nI think it is better to address it with another patch, I can create a task for it. wdyt?",
+      "parentUuid": "7a580dbf_95bb72bc",
+      "revId": "5ada2c119a559476758f00f94c556ed2bca29ba8",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "54586fdb_80b5d035",
         "filename": "collection/stages/roles/verification/tasks/main.yml",
         "patchSetId": 8
@@ -71,6 +131,30 @@
       "writtenOn": "2024-01-29T10:51:58Z",
       "side": 1,
       "message": "There are things here that are coming from kuryr, for example checking the disabled loadbalancers. Furthermore, we needed to read the output from the ansible playbook. I think it\u0027s better to dump it into a file that will be part of the artifacts (equivalent to the must-gather).\n\nI would rename the role (or create another one) to something oriented to openstack: Check the VMs status, ports, trunks, routers, loadbalancers. We can call it \"openstack-must-gather\" [OSP18 will have something like that: https://github.com/openstack-k8s-operators/openstack-must-gather]\n\nI think it\u0027s good moment to build a role that will gather all that information and put it in a file. WDYT?",
+      "range": {
+        "startLine": 166,
+        "startChar": 0,
+        "endLine": 171,
+        "endChar": 31
+      },
+      "revId": "5ada2c119a559476758f00f94c556ed2bca29ba8",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "afa33743_cdefe95e",
+        "filename": "collection/stages/roles/verification/tasks/main.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-01-29T14:12:18Z",
+      "side": 1,
+      "message": "agree! can you please create a new subtask in https://issues.redhat.com/browse/OSPRH-2476 so we will address it with another patch (or maybe also for the IR plugin as part of stage7?)",
+      "parentUuid": "54586fdb_80b5d035",
       "range": {
         "startLine": 166,
         "startChar": 0,
@@ -100,6 +184,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "c251f79a_bcfe94fa",
+        "filename": "collection/tools/plugins/README.md",
+        "patchSetId": 8
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-01-29T14:12:18Z",
+      "side": 1,
+      "message": "I removed the readme docs of the roles.\nThe ones that are left are:\n```\n(overcloud) [stack@undercloud-0 shiftstack-qa]$ find -name README.md\n./collection/stages/README.md\n./collection/stages/plugins/README.md\n./collection/tools/README.md\n./collection/tools/plugins/README.md\n./README.md\n```\nWDYT?",
+      "parentUuid": "e211fae0_c7172820",
+      "revId": "5ada2c119a559476758f00f94c556ed2bca29ba8",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "2581f45e_95bac165",
         "filename": "collection/tools/plugins/modules/filter_tests_list.py",
         "patchSetId": 8
@@ -111,6 +213,24 @@
       "writtenOn": "2024-01-29T10:51:58Z",
       "side": 1,
       "message": "As we are not adding plugins in the stages collection but in the tools collection, I think we can remove that \"plugin\" folder stages collection 😊.",
+      "revId": "5ada2c119a559476758f00f94c556ed2bca29ba8",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fc6f0aa7_619ad9e4",
+        "filename": "collection/tools/plugins/modules/filter_tests_list.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-01-29T14:12:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2581f45e_95bac165",
       "revId": "5ada2c119a559476758f00f94c556ed2bca29ba8",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
@@ -134,6 +254,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "2993e7b6_a0dd91f1",
+        "filename": "collection/tools/roles/cluster_checks/defaults/main.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-01-29T14:12:18Z",
+      "side": 1,
+      "message": "do you mean, for example, rename to - `collection/tools/roles/tools_cluster_checks/defaults/main.yml`\nand `\ncollection/tools/roles/tools_get_deploy_info/tasks/discover_osp_version.yml`?\n\nDoesn\u0027t it feel a bit clumsy?",
+      "parentUuid": "5fc6afac_a44e4e32",
+      "revId": "5ada2c119a559476758f00f94c556ed2bca29ba8",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "89183a23_9d169f56",
         "filename": "collection/tools/roles/discover_osp_version/defaults/main.yml",
         "patchSetId": 8
@@ -145,6 +283,24 @@
       "writtenOn": "2024-01-29T10:51:58Z",
       "side": 1,
       "message": "We can remove the discover_osp_version role, right?",
+      "revId": "5ada2c119a559476758f00f94c556ed2bca29ba8",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "db6fe16f_f8075791",
+        "filename": "collection/tools/roles/discover_osp_version/defaults/main.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-01-29T14:12:18Z",
+      "side": 1,
+      "message": "right. thanks\nDone",
+      "parentUuid": "89183a23_9d169f56",
       "revId": "5ada2c119a559476758f00f94c556ed2bca29ba8",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
@@ -162,6 +318,24 @@
       "writtenOn": "2024-01-29T10:51:58Z",
       "side": 1,
       "message": "Let\u0027s confirm that must_gather_dir does not exist before.",
+      "revId": "5ada2c119a559476758f00f94c556ed2bca29ba8",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dcf831be_fae5c160",
+        "filename": "collection/tools/roles/must-gather/tasks/main.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-01-29T14:12:18Z",
+      "side": 1,
+      "message": "The file module creates a directory just if it does not exist.\n\n[0] https://docs.ansible.com/ansible/latest/collections/ansible/builtin/file_module.html",
+      "parentUuid": "d007340d_829729f3",
       "revId": "5ada2c119a559476758f00f94c556ed2bca29ba8",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
@@ -185,6 +359,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "f673fe6d_fd047064",
+        "filename": "group_vars/all.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-01-29T14:12:18Z",
+      "side": 1,
+      "message": "wdyt about `configs/global_config.yml`?",
+      "parentUuid": "7fe30050_fc329e17",
+      "revId": "5ada2c119a559476758f00f94c556ed2bca29ba8",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "0d45a42d_1439f182",
         "filename": "jobs_definitions/4.15_openshiftsdn_ipi.yaml",
         "patchSetId": 8
@@ -196,6 +388,24 @@
       "writtenOn": "2024-01-29T10:51:58Z",
       "side": 1,
       "message": "I\u0027d prefer to rename the folder \"jobs_definitions\" to \"scenarios\". WDYT? I would get rid of \"jobs\" as it is jenkins naming.",
+      "revId": "5ada2c119a559476758f00f94c556ed2bca29ba8",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "20361a65_47c68130",
+        "filename": "jobs_definitions/4.15_openshiftsdn_ipi.yaml",
+        "patchSetId": 8
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-01-29T14:12:18Z",
+      "side": 1,
+      "message": "I\u0027m not sure `scenarios` is clear enough.\ndo you have another idea? maybe we should have a subdir under the `configs` dir?",
+      "parentUuid": "0d45a42d_1439f182",
       "revId": "5ada2c119a559476758f00f94c556ed2bca29ba8",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
