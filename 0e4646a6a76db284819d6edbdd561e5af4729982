@@ -70,6 +70,29 @@
       },
       "revId": "0e4646a6a76db284819d6edbdd561e5af4729982",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bd129177_5168a631",
+        "filename": "collection/stages/roles/install/tasks/ipi_tenant.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-01-29T10:51:58Z",
+      "side": 0,
+      "message": "I wouldn\u0027t remove this from here but state explicitly the assignation. I think it\u0027s clearer if we pass the variable always and not let it be discovered in the template.\n\nMaybe we can add a prefix to all the template vars to something like installcfg_*. With this, you will always need to explicity define the var if you want it to be used inside the template, wdyt?",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 25,
+        "endChar": 47
+      },
+      "revId": "0e4646a6a76db284819d6edbdd561e5af4729982",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }

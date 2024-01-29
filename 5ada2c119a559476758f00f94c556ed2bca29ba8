@@ -1,0 +1,203 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d1649fc9_72b222f4",
+        "filename": "collection/stages/roles/verification/tasks/check_manila.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-01-29T10:51:58Z",
+      "side": 1,
+      "message": "can we set here:\n\n  env:\n    OS_CLOUD: {{ user_cloud }}\n\n?",
+      "revId": "5ada2c119a559476758f00f94c556ed2bca29ba8",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "921674f8_093cfae9",
+        "filename": "collection/stages/roles/verification/tasks/check_registry.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-01-29T10:51:58Z",
+      "side": 1,
+      "message": "typo",
+      "range": {
+        "startLine": 76,
+        "startChar": 38,
+        "endLine": 76,
+        "endChar": 40
+      },
+      "revId": "5ada2c119a559476758f00f94c556ed2bca29ba8",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7a580dbf_95bb72bc",
+        "filename": "collection/stages/roles/verification/tasks/check_registry.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-01-29T10:51:58Z",
+      "side": 1,
+      "message": "it would be great if we can do this with the k8s module.",
+      "revId": "5ada2c119a559476758f00f94c556ed2bca29ba8",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "54586fdb_80b5d035",
+        "filename": "collection/stages/roles/verification/tasks/main.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-01-29T10:51:58Z",
+      "side": 1,
+      "message": "There are things here that are coming from kuryr, for example checking the disabled loadbalancers. Furthermore, we needed to read the output from the ansible playbook. I think it\u0027s better to dump it into a file that will be part of the artifacts (equivalent to the must-gather).\n\nI would rename the role (or create another one) to something oriented to openstack: Check the VMs status, ports, trunks, routers, loadbalancers. We can call it \"openstack-must-gather\" [OSP18 will have something like that: https://github.com/openstack-k8s-operators/openstack-must-gather]\n\nI think it\u0027s good moment to build a role that will gather all that information and put it in a file. WDYT?",
+      "range": {
+        "startLine": 166,
+        "startChar": 0,
+        "endLine": 171,
+        "endChar": 31
+      },
+      "revId": "5ada2c119a559476758f00f94c556ed2bca29ba8",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e211fae0_c7172820",
+        "filename": "collection/tools/plugins/README.md",
+        "patchSetId": 8
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-01-29T10:51:58Z",
+      "side": 1,
+      "message": "Please remove the README.md that does not contain any interesting info. I don\u0027t think we can maintain them so better to have only one README: the general one and that\u0027s all.",
+      "revId": "5ada2c119a559476758f00f94c556ed2bca29ba8",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2581f45e_95bac165",
+        "filename": "collection/tools/plugins/modules/filter_tests_list.py",
+        "patchSetId": 8
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-01-29T10:51:58Z",
+      "side": 1,
+      "message": "As we are not adding plugins in the stages collection but in the tools collection, I think we can remove that \"plugin\" folder stages collection 😊.",
+      "revId": "5ada2c119a559476758f00f94c556ed2bca29ba8",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5fc6afac_a44e4e32",
+        "filename": "collection/tools/roles/cluster_checks/defaults/main.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-01-29T10:51:58Z",
+      "side": 1,
+      "message": "Let\u0027s add the prefix tools_ to the roles inside the tools collection, WDYT?",
+      "revId": "5ada2c119a559476758f00f94c556ed2bca29ba8",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "89183a23_9d169f56",
+        "filename": "collection/tools/roles/discover_osp_version/defaults/main.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-01-29T10:51:58Z",
+      "side": 1,
+      "message": "We can remove the discover_osp_version role, right?",
+      "revId": "5ada2c119a559476758f00f94c556ed2bca29ba8",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d007340d_829729f3",
+        "filename": "collection/tools/roles/must-gather/tasks/main.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-01-29T10:51:58Z",
+      "side": 1,
+      "message": "Let\u0027s confirm that must_gather_dir does not exist before.",
+      "revId": "5ada2c119a559476758f00f94c556ed2bca29ba8",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7fe30050_fc329e17",
+        "filename": "group_vars/all.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-01-29T10:51:58Z",
+      "side": 1,
+      "message": "I\u0027d move this file into the configs directory, rename it to common.yaml (for example) and remove the group_vars directory.",
+      "revId": "5ada2c119a559476758f00f94c556ed2bca29ba8",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0d45a42d_1439f182",
+        "filename": "jobs_definitions/4.15_openshiftsdn_ipi.yaml",
+        "patchSetId": 8
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-01-29T10:51:58Z",
+      "side": 1,
+      "message": "I\u0027d prefer to rename the folder \"jobs_definitions\" to \"scenarios\". WDYT? I would get rid of \"jobs\" as it is jenkins naming.",
+      "revId": "5ada2c119a559476758f00f94c556ed2bca29ba8",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
