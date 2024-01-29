@@ -377,6 +377,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "f4de6dd2_25ffb096",
+        "filename": "group_vars/all.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-01-29T14:13:18Z",
+      "side": 1,
+      "message": "https://review.gerrithub.io/c/shiftstack/shiftstack-qa/+/1174352/9/configs/global_config.yml",
+      "parentUuid": "f673fe6d_fd047064",
+      "revId": "5ada2c119a559476758f00f94c556ed2bca29ba8",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "0d45a42d_1439f182",
         "filename": "jobs_definitions/4.15_openshiftsdn_ipi.yaml",
         "patchSetId": 8
