@@ -36,6 +36,24 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e39a2ec8_fd9c5652",
+        "filename": "collection/stages/roles/verification/tasks/check_manila.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-01-30T09:17:42Z",
+      "side": 1,
+      "message": "ok!",
+      "parentUuid": "a2ed7456_eb9709f7",
+      "revId": "5ada2c119a559476758f00f94c556ed2bca29ba8",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "921674f8_093cfae9",
@@ -120,6 +138,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "4276dc98_af88d898",
+        "filename": "collection/stages/roles/verification/tasks/check_registry.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-01-30T09:17:42Z",
+      "side": 1,
+      "message": "sure! We relaxed with the plugin and now we are full of dreams...",
+      "parentUuid": "119c4560_52ad3d17",
+      "revId": "5ada2c119a559476758f00f94c556ed2bca29ba8",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "54586fdb_80b5d035",
         "filename": "collection/stages/roles/verification/tasks/main.yml",
         "patchSetId": 8
@@ -167,6 +203,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "d5559ad3_4bb5807d",
+        "filename": "collection/stages/roles/verification/tasks/main.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-01-30T09:17:42Z",
+      "side": 1,
+      "message": "I created this one: https://issues.redhat.com/browse/OSPRH-4273\n\nIn the meantime, would you mind to remove the print_cluster_status then?",
+      "parentUuid": "afa33743_cdefe95e",
+      "range": {
+        "startLine": 166,
+        "startChar": 0,
+        "endLine": 171,
+        "endChar": 31
+      },
+      "revId": "5ada2c119a559476758f00f94c556ed2bca29ba8",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "e211fae0_c7172820",
         "filename": "collection/tools/plugins/README.md",
         "patchSetId": 8
@@ -196,6 +256,24 @@
       "side": 1,
       "message": "I removed the readme docs of the roles.\nThe ones that are left are:\n```\n(overcloud) [stack@undercloud-0 shiftstack-qa]$ find -name README.md\n./collection/stages/README.md\n./collection/stages/plugins/README.md\n./collection/tools/README.md\n./collection/tools/plugins/README.md\n./README.md\n```\nWDYT?",
       "parentUuid": "e211fae0_c7172820",
+      "revId": "5ada2c119a559476758f00f94c556ed2bca29ba8",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "22699dc7_18ba6385",
+        "filename": "collection/tools/plugins/README.md",
+        "patchSetId": 8
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-01-30T09:17:42Z",
+      "side": 1,
+      "message": "great!",
+      "parentUuid": "c251f79a_bcfe94fa",
       "revId": "5ada2c119a559476758f00f94c556ed2bca29ba8",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
@@ -272,6 +350,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "e7a811c7_a1ce324b",
+        "filename": "collection/tools/roles/cluster_checks/defaults/main.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-01-30T09:17:42Z",
+      "side": 1,
+      "message": "From that perspective it might be, yes. But I think it\u0027s important to highlight that we are calling a tools role inside the stages roles.\n\nAdding the tools_ prefix will make the code more readable, imho.",
+      "parentUuid": "2993e7b6_a0dd91f1",
+      "revId": "5ada2c119a559476758f00f94c556ed2bca29ba8",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "89183a23_9d169f56",
         "filename": "collection/tools/roles/discover_osp_version/defaults/main.yml",
         "patchSetId": 8
@@ -340,6 +436,24 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3839dbe6_d1c96884",
+        "filename": "collection/tools/roles/must-gather/tasks/main.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-01-30T09:17:42Z",
+      "side": 1,
+      "message": "yep but it might happen that the directory already exists and then we are adding another subfoder inside. That is currently happening in the plugin and it\u0027s not good.",
+      "parentUuid": "dcf831be_fae5c160",
+      "revId": "5ada2c119a559476758f00f94c556ed2bca29ba8",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7fe30050_fc329e17",
@@ -395,6 +509,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "ef476417_5fd0146f",
+        "filename": "group_vars/all.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-01-30T09:17:42Z",
+      "side": 1,
+      "message": "config is kind of redundant here, isn\u0027t it? What about global.yaml?",
+      "parentUuid": "f4de6dd2_25ffb096",
+      "revId": "5ada2c119a559476758f00f94c556ed2bca29ba8",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "0d45a42d_1439f182",
         "filename": "jobs_definitions/4.15_openshiftsdn_ipi.yaml",
         "patchSetId": 8
@@ -424,6 +556,24 @@
       "side": 1,
       "message": "I\u0027m not sure `scenarios` is clear enough.\ndo you have another idea? maybe we should have a subdir under the `configs` dir?",
       "parentUuid": "0d45a42d_1439f182",
+      "revId": "5ada2c119a559476758f00f94c556ed2bca29ba8",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "773f2511_3226dea7",
+        "filename": "jobs_definitions/4.15_openshiftsdn_ipi.yaml",
+        "patchSetId": 8
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-01-30T09:17:42Z",
+      "side": 1,
+      "message": "what about \"schema\"? 😊",
+      "parentUuid": "20361a65_47c68130",
       "revId": "5ada2c119a559476758f00f94c556ed2bca29ba8",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }

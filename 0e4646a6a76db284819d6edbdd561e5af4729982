@@ -117,6 +117,30 @@
       },
       "revId": "0e4646a6a76db284819d6edbdd561e5af4729982",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "01462339_883a8059",
+        "filename": "collection/stages/roles/install/tasks/ipi_tenant.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-01-30T09:17:42Z",
+      "side": 0,
+      "message": "currently in the plugin the template is making use of variables that are created all along the install role. They can be either passed by parameter, or calculated on run time depending on other parameters... That\u0027s very confusing.\n\nMy proposal is to state variables in the install.config.yaml.j2 that are only set in the vars section of the template task that is creating the install-config.yaml. Therefore, we can evolve the conditions that will calculate those variables, but they should be explicitly defined in the install role and finally passed to the template task.\n\nThe goal is to make the code more readable. \n\nI hope I clarifies. We can chat about that.",
+      "parentUuid": "288ed5bc_f25212f0",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 25,
+        "endChar": 47
+      },
+      "revId": "0e4646a6a76db284819d6edbdd561e5af4729982",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
