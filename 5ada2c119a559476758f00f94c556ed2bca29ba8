@@ -154,6 +154,24 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "88be4b10_332a56fc",
+        "filename": "collection/stages/roles/verification/tasks/check_registry.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-01-31T10:39:59Z",
+      "side": 1,
+      "message": "Created a task - https://issues.redhat.com/browse/OSPRH-4289",
+      "parentUuid": "4276dc98_af88d898",
+      "revId": "5ada2c119a559476758f00f94c556ed2bca29ba8",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "54586fdb_80b5d035",
@@ -215,6 +233,30 @@
       "side": 1,
       "message": "I created this one: https://issues.redhat.com/browse/OSPRH-4273\n\nIn the meantime, would you mind to remove the print_cluster_status then?",
       "parentUuid": "afa33743_cdefe95e",
+      "range": {
+        "startLine": 166,
+        "startChar": 0,
+        "endLine": 171,
+        "endChar": 31
+      },
+      "revId": "5ada2c119a559476758f00f94c556ed2bca29ba8",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "652d5093_a83471a3",
+        "filename": "collection/stages/roles/verification/tasks/main.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-01-31T10:39:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d5559ad3_4bb5807d",
       "range": {
         "startLine": 166,
         "startChar": 0,
@@ -362,6 +404,24 @@
       "side": 1,
       "message": "From that perspective it might be, yes. But I think it\u0027s important to highlight that we are calling a tools role inside the stages roles.\n\nAdding the tools_ prefix will make the code more readable, imho.",
       "parentUuid": "2993e7b6_a0dd91f1",
+      "revId": "5ada2c119a559476758f00f94c556ed2bca29ba8",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cc56576c_153a5229",
+        "filename": "collection/tools/roles/cluster_checks/defaults/main.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-01-31T10:39:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e7a811c7_a1ce324b",
       "revId": "5ada2c119a559476758f00f94c556ed2bca29ba8",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
@@ -525,6 +585,24 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "453806ac_256204dd",
+        "filename": "group_vars/all.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-01-31T10:39:59Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ef476417_5fd0146f",
+      "revId": "5ada2c119a559476758f00f94c556ed2bca29ba8",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0d45a42d_1439f182",
@@ -574,6 +652,24 @@
       "side": 1,
       "message": "what about \"schema\"? 😊",
       "parentUuid": "20361a65_47c68130",
+      "revId": "5ada2c119a559476758f00f94c556ed2bca29ba8",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "76fde739_7d68823c",
+        "filename": "jobs_definitions/4.15_openshiftsdn_ipi.yaml",
+        "patchSetId": 8
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-01-31T10:39:59Z",
+      "side": 1,
+      "message": "I\u0027m not sure if \"schema\" is better than\"jobs_definitions\" or \"scenarios\".\nmaybe we should have a vote on this term together with the team? \u003d]",
+      "parentUuid": "773f2511_3226dea7",
       "revId": "5ada2c119a559476758f00f94c556ed2bca29ba8",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
