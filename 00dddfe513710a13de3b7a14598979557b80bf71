@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c5cc8b75_81f52ac6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 12
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-02-05T08:25:32Z",
+      "side": 1,
+      "message": "Verified locally with quay.io/shiftstack-qe/shiftstack-client:dev",
+      "revId": "00dddfe513710a13de3b7a14598979557b80bf71",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "52e65e23_6f1e5fb6",
+        "filename": "collection/stages/roles/prepare/templates/clouds.yml.j2",
+        "patchSetId": 12
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-02-05T08:25:32Z",
+      "side": 1,
+      "message": "There is a difference between the clouds.yml for OSP 16.x and 17.1 - in 16.x the indentation is just one space and in 17.1 it is four.\n\nWe should find a smart way to w/a it.\nIn the current plugin, we have different tasks for 16 and 17. [0]\n\n[0] https://code.engineering.redhat.com/gerrit/plugins/gitiles/openshift-ir-plugin/+/refs/heads/master/roles/prepare/tasks/project/clouds.yml",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 1
+      },
+      "revId": "00dddfe513710a13de3b7a14598979557b80bf71",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}

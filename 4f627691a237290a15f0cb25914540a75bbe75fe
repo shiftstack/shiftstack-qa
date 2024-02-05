@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1f1f8fd6_5bcf3ad1",
+        "filename": "jobs_definitions/4.15_ovnkubernetes_ipi.yaml",
+        "patchSetId": 11
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-02-05T08:25:32Z",
+      "side": 1,
+      "message": "OVNKubernetes\n\n@rlobillo@redhat.com this typo caused the issue.",
+      "range": {
+        "startLine": 3,
+        "startChar": 24,
+        "endLine": 3,
+        "endChar": 38
+      },
+      "revId": "4f627691a237290a15f0cb25914540a75bbe75fe",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
