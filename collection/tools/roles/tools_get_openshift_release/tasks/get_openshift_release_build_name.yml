@@ -1,3 +1,4 @@
+---
 # Obtain the OCP release build name and set the 'openshift_release_build_name' fact
 
 # Calculate and set the the release name in the fact "openshift_release_build_name"

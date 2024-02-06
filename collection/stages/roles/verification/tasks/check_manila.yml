@@ -1,18 +1,19 @@
 ---
 # Goal: Create pvcs using manila storage class and confirms they behave as expected
 
-- name: re-create {{ manila_project_name }} project
-  include_role:
+- name: Re-create {{ manila_project_name }} project
+  ansible.builtin.include_role:
     name: tools_ocp_project
     tasks_from: recreate_ocp_project.yml
   vars:
     project_name: "{{ manila_project_name }}"
     force_delete: true
 
-- name: create manifests for {{ manila_project_name }} namespace
-  template:
+- name: Create manifests for {{ manila_project_name }} namespace
+  ansible.builtin.template:
     src: manila.manifests.yaml.j2
     dest: "{{ home_dir }}/manila.manifests.yaml"
+    mode: u=rw,g=rw,o=r
 
 - name: Apply manifests for {{ manila_project_name }} namespace and check they are running.
   kubernetes.core.k8s:
@@ -28,11 +29,13 @@
     namespace: "{{ manila_project_name }}"
   register: existing_pvcs
 
-- set_fact:
+- name: Set existing PVC IDs fact
+  ansible.builtin.set_fact:
     existing_pvc_ids: "{{ existing_pvcs | json_query('resources[].spec.volumeName') | list }}"
 
 - name: Check manila volume for PVC exist
-  shell: source {{ user_env_file }} && manila show "{{ item }}"
+  ansible.builtin.shell: source {{ user_env_file }} && manila show "{{ item }}"
+  changed_when: false
   loop: "{{ existing_pvc_ids }}"
 
 # Check that writes/reads on the manila PVC are persistent across the pods (ReadWriteMany)
@@ -42,15 +45,17 @@
     namespace: "{{ manila_project_name }}"
   register: demo_pods
 
-- name: store name of pods
-  set_fact:
+- name: Store name of pods
+  ansible.builtin.set_fact:
     pod_names: "{{ demo_pods | json_query('resources[*].metadata.name') | list }}"
 
-- name: create file on the PVC running on the first pod
-  shell: "oc exec -t {{ pod_names[0] }} -n {{ manila_project_name }} -- touch /var/lib/www/data/hello-{{pod_names[0]}}"
+- name: Create file on the PVC running on the first pod
+  ansible.builtin.command: "oc exec -t {{ pod_names[0] }} -n {{ manila_project_name }} -- touch /var/lib/www/data/hello-{{ pod_names[0] }}"
+  changed_when: true
 
-- name: read file on the PVC running on the last pod
-  shell: "oc exec -t {{ pod_names[-1] }} -n {{ manila_project_name }} -- ls /var/lib/www/data/hello-{{pod_names[0]}}"
+- name: Read file on the PVC running on the last pod
+  ansible.builtin.command: "oc exec -t {{ pod_names[-1] }} -n {{ manila_project_name }} -- ls /var/lib/www/data/hello-{{ pod_names[0] }}"
+  changed_when: false
   register: output
   until: output.rc == 0
   retries: 6

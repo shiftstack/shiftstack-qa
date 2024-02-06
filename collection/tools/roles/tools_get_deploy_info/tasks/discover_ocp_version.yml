@@ -2,28 +2,31 @@
 # tasks file for discover_ocp_version
 
 - name: Discover running OCP release
-  command: "oc --request-timeout=2s get clusterversion"
+  ansible.builtin.command: "oc --request-timeout=2s get clusterversion"
   register: oc_get_clusterversion
+  changed_when: false
   ignore_errors: true
 
 - name: Discover the running OCP network type in a case discovered a running OCP release
+  when: oc_get_clusterversion.rc == 0
   block:
     - name: Discover running OCP network Type
-      shell: |
+      ansible.builtin.shell: |
+        set -o pipefail
         oc --request-timeout=2s get network cluster -o json \
-        | jq --raw-output '.spec.networkType'
+          | jq --raw-output '.spec.networkType'
+      changed_when: false
       register: oc_network
 
     - name: Defining discovered_openshift_release and discovered_ocp_network_type
-      set_fact:
+      ansible.builtin.set_fact:
         discovered_openshift_release:
           "{{ oc_get_clusterversion.stdout_lines[-1] |
-            regex_replace('version +([0-9]+.[0-9]+).*$','\\1') }}"
+            regex_replace('version +([0-9]+.[0-9]+).*$', '\\1') }}"
         discovered_ocp_network_type: "{{ oc_network.stdout }}"
 
     - name: Print the discover running OCP release
-      debug:
+      ansible.builtin.debug:
         msg: >
           OCP Cluster with {{ discovered_openshift_release }} release
           and {{ discovered_ocp_network_type }} NetworkType discovered.
-  when: oc_get_clusterversion.rc == 0

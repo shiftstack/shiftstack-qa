@@ -1,7 +1,7 @@
 ---
 # Goal: Create pvcs using topology aware storage class and confirms they behave as expected
-- name: re-create {{ cinder_csi_project_name }} project
-  include_role:
+- name: "Re-create project {{ cinder_csi_project_name }}"
+  ansible.builtin.include_role:
     name: tools_ocp_project
     tasks_from: recreate_ocp_project.yml
   vars:
@@ -13,8 +13,8 @@
 # - nova_az_for_sc [list]: ordered by worker, indicates the nova zone for that worker.
 # - cinder_az_for_sc [list]: ordered by worker, indicates the cinder zone for that worker.
 #     If no cinder az is found for a worker default one 'nova' is assumed.
-- name: reset variables
-  set_fact:
+- name: Reset variables
+  ansible.builtin.set_fact:
     worker_names: []
     nova_az_for_sc: []
     cinder_az_for_sc: []
@@ -28,28 +28,29 @@
       - node-role.kubernetes.io/worker
   register: workers
 
-- name: declare list of workers names and their nova zone
-  set_fact:
-    worker_names: "{{ worker_names|default([]) + [ item.metadata.labels['kubernetes.io/hostname'] ] }}"
-    nova_az_for_sc: "{{ nova_az_for_sc|default([]) + [ item.metadata.labels['topology.cinder.csi.openstack.org/zone'] ] }}"
+- name: Declare list of workers names and their nova zone
+  ansible.builtin.set_fact:
+    worker_names: "{{ worker_names | default([]) + [item.metadata.labels['kubernetes.io/hostname']] }}"
+    nova_az_for_sc: "{{ nova_az_for_sc | default([]) + [item.metadata.labels['topology.cinder.csi.openstack.org/zone']] }}"
   loop: "{{ workers.resources | sort(attribute='metadata.name') | list }}"
   no_log: true
 
-- name: set number of workers
-  set_fact:
+- name: Set number of workers
+  ansible.builtin.set_fact:
     number_of_workers: "{{ worker_names | length }}"
 
-- name: get volume az for workers (if any)
-  shell: |
+- name: Get volume az for workers (if any)
+  ansible.builtin.shell: |
     openstack volume show $(openstack volume list -c ID -c Name -f value | grep "{{ item }}" | cut -d' ' -f2) -c availability_zone -f value
   environment:
     OS_CLOUD: "{{ user_cloud }}"
   loop: "{{ worker_names }}"
   register: temporary_output
   ignore_errors: yes
+  changed_when: false
 
-- name: convert output on a list
-  set_fact:
+- name: Convert output on a list
+  ansible.builtin.set_fact:
     cinder_az_for_sc: "{{ cinder_az_for_sc + [item.stdout if item.stdout != '' else 'nova'] }}"
   loop: "{{ temporary_output.results | list }}"
   when: edge_nova_az is not defined
@@ -57,7 +58,7 @@
 # At the Edge environment, the Cinder AZ name is identical to the Nova AZ.
 # There is no need to look it up.
 - name: Set the Cinder AZ parameter (Edge case)
-  set_fact:
+  ansible.builtin.set_fact:
     cinder_az_for_sc: "{{ [edge_nova_az] * (number_of_workers | int) }}"
   when: edge_nova_az is defined
 
@@ -71,19 +72,20 @@
     state: absent
     api_version: storage.k8s.io/v1
     kind: StorageClass
-    name: topology-aware-{{item}}
+    name: topology-aware-{{ item }}
   loop: "{{ range(number_of_workers | int) | list }}"
 
-- name: create manifests for {{ cinder_csi_project_name }} namespace
-  template:
+- name: "Create manifests for namespace {{ cinder_csi_project_name }}"
+  ansible.builtin.template:
     src: cinder_csi.manifests.yaml.j2
-    dest: "{{ home_dir }}/cinder_csi_{{item}}.yaml"
+    dest: "{{ home_dir }}/cinder_csi_{{ item }}.yaml"
+    mode: u=rw,g=rw,o=r
   loop: "{{ range(number_of_workers | int) | list }}"
 
-- name: Apply manifests for {{ cinder_csi_project_name }} namespace and check they are running.
+- name: "Apply manifests for namespace and check they are running: {{ cinder_csi_project_name }}"
   kubernetes.core.k8s:
     state: present
-    src: "{{ home_dir }}/cinder_csi_{{item}}.yaml"
+    src: "{{ home_dir }}/cinder_csi_{{ item }}.yaml"
     wait: yes
     wait_timeout: "{{ manifests_wait_timeout }}"
   loop: "{{ range(number_of_workers | int) | list }}"
@@ -95,30 +97,32 @@
     namespace: "{{ cinder_csi_project_name }}"
   register: existing_pvcs
 
-- set_fact:
+- name: Set existing PVCs fact
+  ansible.builtin.set_fact:
     existing_pvc_ids: "{{ existing_pvcs | json_query('resources[].spec.volumeName') | list }}"
 
-- name: get cinder volumes for PVCs
-  shell: |
+- name: Get cinder volumes for PVCs
+  ansible.builtin.shell: |
     openstack volume show "{{ item }}" -c availability_zone -f value
   environment:
     OS_CLOUD: "{{ user_cloud }}"
   loop: "{{ existing_pvc_ids }}"
   register: temporary_output
+  changed_when: false
 
-- name: convert output on a list
-  set_fact:
+- name: Convert output on a list
+  ansible.builtin.set_fact:
     existing_pvc_azs: "{{ existing_pvc_azs + [item.stdout] }}"
   loop: "{{ temporary_output.results | list }}"
 
 - name: Check - expected cinder AZs on PVCs
-  assert:
+  ansible.builtin.assert:
     that:
-    - existing_pvc_azs[item] == cinder_az_for_sc[item]
+      - existing_pvc_azs[item] == cinder_az_for_sc[item]
     fail_msg: |
       unexpected cinder AZs created for PVCs:
-      List expected AZs for PVCs: {{cinder_az_for_sc}}
-      List obtained AZs for PVCs: {{existing_pvc_azs}}
+      List expected AZs for PVCs: {{ cinder_az_for_sc }}
+      List obtained AZs for PVCs: {{ existing_pvc_azs }}
   loop: "{{ range(number_of_workers | int) | list }}"
 
 # Check that writes on the PVC are persistent (ReadWriteOnce)
@@ -128,13 +132,14 @@
     namespace: "{{ cinder_csi_project_name }}"
   register: demo_pods
 
-- name: store name of pods
-  set_fact:
+- name: Store name of pods
+  ansible.builtin.set_fact:
     pod_names: "{{ demo_pods | json_query('resources[*].metadata.name') | list }}"
 
-- name: create file on the PVC running on the pod
-  shell: "oc exec -t {{ pod_names[item] }} -n {{ cinder_csi_project_name }} -- touch /var/lib/www/data/hello-{{item}}"
+- name: Create file on the PVC running on the pod
+  ansible.builtin.command: "oc exec -t {{ pod_names[item] }} -n {{ cinder_csi_project_name }} -- touch /var/lib/www/data/hello-{{ item }}"
   loop: "{{ range(number_of_workers | int) | list }}"
+  changed_when: true
 
 - name: Delete pods
   kubernetes.core.k8s:
@@ -158,10 +163,11 @@
   delay: 15
   until: demo_pods.resources|length == number_of_workers|int
 
-- name: store name of pods after recreation
-  set_fact:
+- name: Store name of pods after recreation
+  ansible.builtin.set_fact:
     pod_names: "{{ demo_pods | json_query('resources[*].metadata.name') | list }}"
 
-- name: read file on the PVC running on the pod
-  shell: "oc exec -t {{ pod_names[item] }} -n {{ cinder_csi_project_name }} -- ls /var/lib/www/data/hello-{{item}}"
+- name: Read file on the PVC running on the pod
+  ansible.builtin.command: "oc exec -t {{ pod_names[item] }} -n {{ cinder_csi_project_name }} -- ls /var/lib/www/data/hello-{{ item }}"
   loop: "{{ range(number_of_workers | int) | list }}"
+  changed_when: false
