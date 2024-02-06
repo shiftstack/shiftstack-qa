@@ -79,10 +79,10 @@ def _filter_list(original_list: list, filter_type: str, filter_list: list) -> li
 
     elif filter_type == 'notmatch':
         for item in original_list:
-            match = False
+            match = false
             for pattern in filter_list:
                 if re.fullmatch(pattern, item):
-                    match = True
+                    match = true
                     break
             if not match:
                 new_list.append(item)

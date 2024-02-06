@@ -145,13 +145,13 @@ def run_module():
             module.fail_json(msg="Error opening the allowlist file")
 
         for allowlist_test in allowlist:
-            allowlist_test_in_input_tests = False
+            allowlist_test_in_input_tests = false
 
             for test in input_tests:
                 escaped_allow_test = escape_special_characters(allowlist_test)
                 if re.fullmatch(escaped_allow_test, test):
                     tests_to_run.append(test)
-                    allowlist_test_in_input_tests = True
+                    allowlist_test_in_input_tests = true
 
             if not allowlist_test_in_input_tests:
                 module.fail_json(msg="Error: Found a test that exists in {} but not in {} -"
@@ -167,7 +167,7 @@ def run_module():
 
         result['filter_type'] = 'allowlist'
         result['filter_tests_file'] = allowlist_file
-        result['changed'] = True
+        result['changed'] = true
 
     elif blocklist_file:
         try:
@@ -183,12 +183,12 @@ def run_module():
 
         # iterate over the list of tests and set the tests to run
         for test in input_tests:
-            test_in_blocklist = False
+            test_in_blocklist = false
 
             for blocklist_test in blocklist:
                 escaped_block_test = escape_special_characters(blocklist_test)
                 if re.fullmatch(escaped_block_test, test):
-                    test_in_blocklist = True
+                    test_in_blocklist = true
                     break
 
             if test_in_blocklist:
@@ -224,13 +224,13 @@ def run_module():
 
         result['filter_type'] = 'blocklist'
         result['filter_tests_file'] = blocklist_file
-        result['changed'] = True
+        result['changed'] = true
 
     else:
         shutil.copyfile(input_tests_file, output_file)
 
         result['filter_type'] = 'no filter applied'
-        result['changed'] = True
+        result['changed'] = true
 
     # in the event of a successful module execution
     if result['changed']:
