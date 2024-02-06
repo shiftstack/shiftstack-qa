@@ -36,7 +36,7 @@ EXAMPLES = r'''
       register: test_results
 
     - name: Display the number of disabled tests
-      debug:
+      ansible.builtin.debug:
         var: test_results.disabled_tests
 '''
 

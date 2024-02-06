@@ -17,8 +17,8 @@
       no_log: true
   rescue:
     - name: Check the unready Cluster Operators
-      include_tasks: debug_clusteroperators.yml
+      ansible.builtin.include_tasks: debug_clusteroperators.yml
 
     - name: Fail inside rescue block
-      fail:
+      ansible.builtin.fail:
         msg: "Not expected cluster operator status, check failed task logs. Failed task: '{{ ansible_failed_task.name }}'"
