@@ -2,17 +2,18 @@
 - name: "'mark_stage_unstable' action"
   block:
     - name: Set the stage unstable var as true
-      set_fact:
-        stage_unstable: True
+      ansible.builtin.set_fact:
+        stage_unstable: true
         unstable_warning: "Warning! {{ unstable_msg }}"
 
     - name: Print the stage UNSTABLE message
-      debug:
+      ansible.builtin.debug:
         msg: "{{ unstable_warning }}"
 
     - name: Mark the stage result as UNSTABLE
-      lineinfile:
+      ansible.builtin.lineinfile:
         path: "{{ stage_unstable_flag }}"
         line: "{{ unstable_warning }}"
         create: yes
+        mode: u=rw,g=rw,o=r
       delegate_to: localhost

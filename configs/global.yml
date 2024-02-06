@@ -1,3 +1,4 @@
+---
 home_dir: "{{ lookup('ansible.builtin.env', 'HOME') }}"
 installation_dir: "{{ home_dir }}/{{ ocp_cluster_name }}"
 kubeconfig: "{{ installation_dir }}/auth/kubeconfig"
@@ -11,21 +12,21 @@ user_env_file: "{{ home_dir }}/{{ user_cloud }}rc"
 ocp_cluster_name: "ostest"
 
 topology:
-    flavors:
-      master:
-        name: "master"
-        ram: 16384
-        vcpus: 4
-        disk: 100
-      worker:
-        name: "worker"
-        ram: 8192
-        vcpus: 2
-        disk: 100
-    replicas:
-      master: 3
-      worker: 3
-    machine_cidr: 10.196.0.0/16
+  flavors:
+    master:
+      name: "master"
+      ram: 16384
+      vcpus: 4
+      disk: 100
+    worker:
+      name: "worker"
+      ram: 8192
+      vcpus: 2
+      disk: 100
+  replicas:
+    master: 3
+    worker: 3
+  machine_cidr: 10.196.0.0/16
 
 wait_retries: 30
 wait_delay: 30

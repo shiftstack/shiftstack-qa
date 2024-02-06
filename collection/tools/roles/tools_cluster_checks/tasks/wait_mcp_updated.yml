@@ -2,11 +2,11 @@
 - name: Check MCP is updated
   block:
     - name: Wait 1 minute before checking nodes and MCP
-      pause:
+      ansible.builtin.pause:
         minutes: 1
 
     - name: Wait for the machine config pool to finish the cluster updates
-      shell: |
+      ansible.builtin.shell: |
         oc wait --all --for=condition=Updated --timeout=1200s mcp
       retries: "{{ wait_retries }}"
       delay: "{{ wait_delay }}"

@@ -5,50 +5,51 @@
     - name: Check cluster health before the verification actions
       block:
         - name: Wait until OCP cluster is healthy
-          include_role:
+          ansible.builtin.include_role:
             name: tools_cluster_checks
             tasks_from: wait_until_cluster_is_healthy.yml
 
         - name: Wait until cluster nodes are ready
-          include_role:
+          ansible.builtin.include_role:
             name: tools_cluster_checks
             tasks_from: wait_until_nodes_ready.yml
 
         - name: Wait until there are no unschedulable nodes
-          include_role:
+          ansible.builtin.include_role:
             name: tools_cluster_checks
             tasks_from: wait_until_no_unschedulable_nodes.yml
 
         - name: Check the project's instances healthy
-          include_role:
+          ansible.builtin.include_role:
             name: tools_cluster_checks
             tasks_from: check_instances.yml
 
         - name: Check the MachineSets healthy
-          include_role:
+          ansible.builtin.include_role:
             name: tools_cluster_checks
             tasks_from: check_machinesets.yml
 
         - name: Check there are no pods in CrashLoopBackOff
-          include_role:
+          ansible.builtin.include_role:
             name: tools_cluster_checks
             tasks_from: check_no_crashloopbackoff.yml
 
         - name: Active wait until all the ClusterOperators are ready
-          include_role:
+          ansible.builtin.include_role:
             name: tools_cluster_checks
             tasks_from: wait_until_cluster_operators_ready.yml
 
     - name: Check the Control Plane MachineSet is healthy
-      include_role:
+      ansible.builtin.include_role:
         name: tools_cluster_checks
         tasks_from: check_controlplane_machinesets.yml
       when: not openshift_upi|default(False)
 
     - name: Soft Checks that can mark the installation as unstable
+      when: soft_checks
       block:
         - name: Check the pods are healthy
-          include_role:
+          ansible.builtin.include_role:
             name: tools_cluster_checks
             tasks_from: check_pods.yml
           vars:
@@ -56,57 +57,54 @@
             wait_delay: 10
 
         - name: Check cluster alerts
-          include_role:
+          ansible.builtin.include_role:
             name: tools_cluster_checks
             tasks_from: check_alerts.yml
 
         - name: Check cluster services
-          include_role:
+          ansible.builtin.include_role:
             name: tools_cluster_checks
             tasks_from: check_nodes_services.yml
-      when: soft_checks
 
     - name: Check registry pods status
-      include_tasks: check_registry.yml
+      ansible.builtin.include_tasks: check_registry.yml
 
     - name: Enable prometheus PVCs
-      include_tasks: check_prometheus_pvcs.yml
+      ansible.builtin.include_tasks: check_prometheus_pvcs.yml
       when:
         - bm_workers|default(False) is false
 
     - name: Active wait until all the ClusterOperators are ready
-      include_role:
-            name: tools_cluster_checks
-            tasks_from: wait_until_cluster_operators_ready.yml
+      ansible.builtin.include_role:
+        name: tools_cluster_checks
+        tasks_from: wait_until_cluster_operators_ready.yml
 
     - name: Create a demo app and check connectivity
-      include_tasks: check_demo_app.yml
+      ansible.builtin.include_tasks: check_demo_app.yml
 
     - name: Create a LB type svc and check connectivity
       vars:
         # Using internal-lb annotation when cluster is deployed on restricted or provider network (FIPless):
-        internal_lb: "{{ (openshift_proxy|default(False) or
-          bm_workers|default(False) or
-          provider_network_primary|default(False)
-          )|bool }}"
-      include_tasks: check_lb_svc.yml
+        internal_lb: |
+          {{ (openshift_proxy | default(False) or bm_workers | default(False) or provider_network_primary | default(False)) | bool }}
+      ansible.builtin.include_tasks: check_lb_svc.yml
       when:
         - edge_nova_az is not defined # Skip due to Openstack Manila is not supported at the Edge
 
     - name: Run cinder checks
-      include_tasks: check_cinder_csi.yml
+      ansible.builtin.include_tasks: check_cinder_csi.yml
       when:
         - bm_workers|default(False) is false
 
     - name: Check if manila is present on the OSP installation
-      shell: openstack catalog show manila -c name
+      ansible.builtin.command: openstack catalog show manila -c name
       environment:
         OS_CLOUD: "{{ user_cloud }}"
       ignore_errors: yes
       register: manila_enabled
 
     - name: Run manila checks if it is enabled on OSP
-      include_tasks: check_manila.yml
+      ansible.builtin.include_tasks: check_manila.yml
       when:
         - not openshift_upi|default(False)
         - manila_enabled.rc == 0
@@ -115,58 +113,58 @@
     - name: Check cluster health after the verification actions
       block:
         - name: Wait until OCP cluster is healthy
-          include_role:
+          ansible.builtin.include_role:
             name: tools_cluster_checks
             tasks_from: wait_until_cluster_is_healthy.yml
 
         - name: Wait until cluster nodes are ready
-          include_role:
+          ansible.builtin.include_role:
             name: tools_cluster_checks
             tasks_from: wait_until_nodes_ready.yml
 
         - name: Wait until there are no unschedulable nodes
-          include_role:
+          ansible.builtin.include_role:
             name: tools_cluster_checks
             tasks_from: wait_until_no_unschedulable_nodes.yml
 
         - name: Check the project's instances healthy
-          include_role:
+          ansible.builtin.include_role:
             name: tools_cluster_checks
             tasks_from: check_instances.yml
 
         - name: Check the MachineSets healthy
-          include_role:
+          ansible.builtin.include_role:
             name: tools_cluster_checks
             tasks_from: check_machinesets.yml
 
         - name: Check there are no pods in CrashLoopBackOff
-          include_role:
+          ansible.builtin.include_role:
             name: tools_cluster_checks
             tasks_from: check_no_crashloopbackoff.yml
 
         - name: Active wait until all the ClusterOperators are ready
-          include_role:
+          ansible.builtin.include_role:
             name: tools_cluster_checks
             tasks_from: wait_until_cluster_operators_ready.yml
   rescue:
     - name: Set the verification failed flag
-      set_fact:
-        verification_failed: True
+      ansible.builtin.set_fact:
+        verification_failed: true
         failed_task: "{{ (ansible_failed_task is defined) | ternary(ansible_failed_task.name, 'UNKNOWN') }}"
 
 - name: Collect cluster information if any error occurred
-  block:
-    - name: Run must-gather
-      include_role:
-        name: tools_must-gather
-      vars:
-        fetch_to_inventory: True
-        must_gather_dir_suffix: "must-gather-verification"
   when: stage_unstable|default(False) or
         verification_failed|default(False)
+  block:
+    - name: Run must-gather
+      ansible.builtin.include_role:
+        name: tools_must-gather
+      vars:
+        fetch_to_inventory: true
+        must_gather_dir_suffix: "must-gather-verification"
 
 - name: Fail the playbook in a case of a cluster verification test failure
-  fail:
+  ansible.builtin.fail:
     msg: >
       Failed! See logs and must-gather for more information.
       Failed task: '{{ failed_task }}'.

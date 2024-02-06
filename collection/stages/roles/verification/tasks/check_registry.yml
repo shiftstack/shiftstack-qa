@@ -1,16 +1,18 @@
+---
 - name: Get PODs statuses
-  shell: 'oc get pods --all-namespaces -o json'
+  ansible.builtin.command: 'oc get pods --all-namespaces -o json'
   no_log: true
   register: oc_pods
 
-- set_fact:
+- name: Set the pods result fact
+  ansible.builtin.set_fact:
     oc_get_pods_result: "{{ oc_pods.stdout | from_json }}"
   no_log: true
 
 - name: Check we have at least one registry pod
   vars:
     query: "items[?starts_with(metadata.name, 'image-registry')]"
-  fail:
+  ansible.builtin.fail:
     msg: "There should be at least one image-registry pod"
   # the to_json | from_json w/a is to avoid a known issue of ansible:
   # https://github.com/ansible/ansible/issues/20379#issuecomment-284034650
@@ -19,114 +21,119 @@
 - name: Check we have at least one router pod
   vars:
     query: "items[?starts_with(metadata.name, 'router')]"
-  fail:
+  ansible.builtin.fail:
     msg: "There should be at least one router pod"
   when: oc_get_pods_result | to_json | from_json | json_query(query) | length == 0
 
 - name: Get the Image registry config
-  k8s_info:
-     api_version: imageregistry.operator.openshift.io/v1
-     kind: Config
-     name: cluster
+  kubernetes.core.k8s_info:
+    api_version: imageregistry.operator.openshift.io/v1
+    kind: Config
+    name: cluster
   register: image_registry_config
 
 # We assume that Swift is the baceknd for the image registry
 # Reference: https://issues.redhat.com/browse/OSASINFRA-3177
-- block:
-  - name: Setting Swift check project name and image
-    set_fact:
-      swift_check_ns: "swift-check-{{ 10000 | random }}"
-      swift_check_image: "fooapp"
-
-  - name: "re-create {{ swift_check_ns }}"
-    include_role:
-      name: tools_ocp_project
-      tasks_from: recreate_ocp_project.yml
-    vars:
-      project_name: "{{ swift_check_ns }}"
-
-   # https://docs.openshift.com/container-platform/4.10/registry/configuring_registry_storage/configuring-registry-storage-openstack-user-infrastructure.html
-  - name: Set image-registry to trust Swift
-    kubernetes.core.k8s:
-      state: present
-      definition:
-        apiVersion: imageregistry.operator.openshift.io/v1
-        kind: Config
-        metadata:
-          name: cluster
-        spec:
-          disableRedirect: true
-
-  - name: Wait until the operator image-registry is available and not progressing or degraded
-    kubernetes.core.k8s_info:
-      kind: ClusterOperator
-      api_version: config.openshift.io/v1
-      name: image-registry
-    register: operator_status
-    until:
-      - operator_status.resources[0].status.conditions | selectattr('type', 'equalto', 'Available') | map(attribute='status') | first == "True"
-      - operator_status.resources[0].status.conditions | selectattr('type', 'equalto', 'Progressing') | map(attribute='status') | first == "False"
-      - operator_status.resources[0].status.conditions | selectattr('type', 'equalto', 'Degraded') | map(attribute='status') | first == "False"
-    retries: 80
-    delay: 15
-
-  - name: Create a new application to check image registry
-    shell: "oc project {{ swift_check_ns }} && oc new-app  https://github.com/itzikb/fooapp --name {{ swift_check_image }}"
-
-  - name: Set the Security context of the {{ swift_check_image}} app
-    shell: |
-      oc patch deployment/{{ swift_check_image }} -p '
-        {
-          "spec": {
-            "template": {
-              "spec": {
-                "securityContext": {
-                  "runAsNonRoot": true,
-                  "seccompProfile": {
-                    "type": "RuntimeDefault"
-                  }
-                },
-                "containers": [
-                  {
-                    "name": "{{ swift_check_image }}",
-                    "securityContext": {
-                      "allowPrivilegeEscalation": false,
-                      "capabilities": {
-                        "drop": ["ALL"]
-                      }
-                    }
-                  }
-                ]
-              }
-            }
-          }
-        }'
-
-# Iterate all swift containers - W/A until https://issues.redhat.com/browse/OCPBUGS-15967 is fixed
-  - name: Get the images objects in swift for the {{ swift_check_ns }} namespace from the containers
-    shell: "openstack container list -c Name -f value | xargs -I% openstack object list % -c Name -f value | grep {{ swift_check_ns }}.{{ swift_check_image }}"
-    environment:
-      OS_CLOUD: "{{ user_cloud }}"
-    register: image_registry_objects
-    until: image_registry_objects.stdout_lines|length|int != 0
-    retries: 30
-    delay: 30
+- name: Check registry in post installation
   when:
     - post_installatin|default(False)
     - "'swift' in image_registry_config.resources[0].spec.storage"
     - not openshift_mirror|default(False)
+  block:
+    - name: Setting Swift check project name and image
+      ansible.builtin.set_fact:
+        swift_check_ns: "swift-check-{{ 10000 | random }}"
+        swift_check_image: "fooapp"
+
+    - name: "Re-create {{ swift_check_ns }}"
+      ansible.builtin.include_role:
+        name: tools_ocp_project
+        tasks_from: recreate_ocp_project.yml
+      vars:
+        project_name: "{{ swift_check_ns }}"
+
+    # https://docs.openshift.com/container-platform/4.10/registry/configuring_registry_storage/configuring-registry-storage-openstack-user-infrastructure.html
+    - name: Set image-registry to trust Swift
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: imageregistry.operator.openshift.io/v1
+          kind: Config
+          metadata:
+            name: cluster
+          spec:
+            disableRedirect: true
+
+    - name: Wait until the operator image-registry is available and not progressing or degraded
+      kubernetes.core.k8s_info:
+        kind: ClusterOperator
+        api_version: config.openshift.io/v1
+        name: image-registry
+      register: operator_status
+      until:
+        - operator_status.resources[0].status.conditions | selectattr('type', 'equalto', 'Available') | map(attribute='status') | first == "True"
+        - operator_status.resources[0].status.conditions | selectattr('type', 'equalto', 'Progressing') | map(attribute='status') | first == "False"
+        - operator_status.resources[0].status.conditions | selectattr('type', 'equalto', 'Degraded') | map(attribute='status') | first == "False"
+      retries: 80
+      delay: 15
+
+    - name: Create a new application to check image registry
+      ansible.builtin.shell: "oc project {{ swift_check_ns }} && oc new-app  https://github.com/itzikb/fooapp --name {{ swift_check_image }}"
+
+    - name: Set the Security context of the {{ swift_check_image }} app
+      ansible.builtin.shell: |
+        oc patch deployment/{{ swift_check_image }} -p '
+          {
+            "spec": {
+              "template": {
+                "spec": {
+                  "securityContext": {
+                    "runAsNonRoot": true,
+                    "seccompProfile": {
+                      "type": "RuntimeDefault"
+                    }
+                  },
+                  "containers": [
+                    {
+                      "name": "{{ swift_check_image }}",
+                      "securityContext": {
+                        "allowPrivilegeEscalation": false,
+                        "capabilities": {
+                          "drop": ["ALL"]
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }'
+
+  # Iterate all swift containers - W/A until https://issues.redhat.com/browse/OCPBUGS-15967 is fixed
+    - name: Get the images objects in swift for the {{ swift_check_ns }} namespace from the containers
+      ansible.builtin.shell: |
+        set -o pipefail
+        openstack container list -c Name -f value | xargs -I% openstack object list % -c Name -f value | grep {{ swift_check_ns }}.{{ swift_check_image }}
+      environment:
+        OS_CLOUD: "{{ user_cloud }}"
+      register: image_registry_objects
+      until: image_registry_objects.stdout_lines|length|int != 0
+      retries: 30
+      delay: 30
   rescue:
     - name: List objects in case of failure from the containers
-      shell: "openstack container list -c Name -f value | xargs -I% openstack object list % -c Name -f value"
+      ansible.builtin.shell: |
+        set -o pipefail
+        openstack container list -c Name -f value | xargs -I% openstack object list % -c Name -f value
       environment:
         OS_CLOUD: "{{ user_cloud }}"
 
     - name: Fail the task
-      fail:
+      ansible.builtin.fail:
         msg: "Failed to get the images objects in swift for the {{ swift_check_ns }} namespace"
   always:
     - name: Make sure we are in the default project
-      shell: oc project default
+      ansible.builtin.command: oc project default
 
     - name: Delete {{ swift_check_ns }} project
       kubernetes.core.k8s:

@@ -2,11 +2,11 @@
 - name: Check LB type svc
   block:
     - name: Generate a test ID for resource naming
-      set_fact:
+      ansible.builtin.set_fact:
         test_id: "lb-tcp-verification"
 
     - name: Ensure the "{{ test_id }}-ns" project is not already present
-      k8s:
+      kubernetes.core.k8s:
         api_version: project.openshift.io/v1
         state: absent
         kind: Project
@@ -15,19 +15,20 @@
     - name: Create a project, deployment and a LoadBalancer type service
       block:
         - name: Create the resource/manifest file for "{{ test_id }}"
-          template:
+          ansible.builtin.template:
             src: lb_tcp.manifests.yaml.j2
             dest: "{{ home_dir }}/lb_verification_resources.yaml"
+            mode: u=rw,g=rw,o=r
 
         - name: Apply the manifest for resource creation
-          k8s:
+          kubernetes.core.k8s:
             state: present
             src: "{{ home_dir }}/lb_verification_resources.yaml"
             wait: yes
             wait_timeout: 100
 
     - name: Wait until the LB is created and ready
-      k8s_info:
+      kubernetes.core.k8s_info:
         api_version: v1
         kind: Service
         namespace: "{{ test_id }}-ns"
@@ -40,11 +41,11 @@
       delay: 15
 
     - name: Save the LB ingress address
-      set_fact:
+      ansible.builtin.set_fact:
         lb_ingress_ip: "{{ test_svc.resources[0].status.loadBalancer.ingress[0].ip }}"
 
     - name: Get the LB internal IP on openstack when the lb is using a FIP
-      shell: |
+      ansible.builtin.shell: |
         openstack floating ip show {{ lb_ingress_ip }} -c fixed_ip_address -f value
       environment:
         OS_CLOUD: "{{ user_cloud }}"
@@ -52,37 +53,39 @@
       when: not internal_lb
 
     - name: Define the internal IP
-      set_fact:
-          lb_internal_ip: "{{ internal_lb| ternary (lb_ingress_ip , lb_internal_ip_output.stdout) }}"
+      ansible.builtin.set_fact:
+        lb_internal_ip: "{{ internal_lb | ternary(lb_ingress_ip, lb_internal_ip_output.stdout) }}"
 
     - name: Get the Octavia provider type for the LB
-      shell: |
+      ansible.builtin.shell: |
+        set -o pipefail
         openstack loadbalancer list -c vip_address -c provider -f value | grep {{ lb_internal_ip }} | awk '{print $2}'
       environment:
         OS_CLOUD: "{{ user_cloud }}"
       register: svc_lb_type
 
     - name: Check the LB exists with the internal IP (VIP address) "{{ lb_internal_ip }}"
-      assert:
+      ansible.builtin.assert:
         that: svc_lb_type.stdout | length > 0
         fail_msg: Could not find a LB in OSP with the vip_address "{{ lb_internal_ip }}"
         success_msg: A LB with the vip_address "{{ lb_internal_ip }}" has been found in OSP
 
-    - debug:
+    - name: Detecte LB Octavia provider
+      ansible.builtin.debug:
         msg: "Detected LB Octavia provider: {{ svc_lb_type.stdout }}"
 
     - name: Get pod names
-      k8s_info:
+      kubernetes.core.k8s_info:
         kind: Pod
         namespace: "{{ test_id }}-ns"
       register: pods
 
     - name: Store pod names
-      set_fact:
+      ansible.builtin.set_fact:
         pod_names: "{{ pods | json_query('resources[*].metadata.name') | list }}"
 
     - name: Check connectivity to the svc, and balancing between endpoints
-      uri:
+      ansible.builtin.uri:
         url: "http://{{ lb_ingress_ip }}:80"
         return_content: yes
       register: uri_return
@@ -96,23 +99,23 @@
         loop_var: pod_item
 
     - name: Check the connectivity to the svc is consistent
-      uri:
+      ansible.builtin.uri:
         url: "http://{{ lb_ingress_ip }}:80"
         return_content: yes
         status_code: 200
-      loop: "{{ range(10)|list }}"
+      loop: "{{ range(10) | list }}"
       loop_control:
         loop_var: count
 
     - name: Delete the "{{ test_id }}-ns" project
-      k8s:
+      kubernetes.core.k8s:
         api_version: project.openshift.io/v1
         state: absent
         kind: Project
         name: "{{ test_id }}-ns"
 
     - name: Wait until the project "{{ test_id }}-ns" is deleted
-      k8s_info:
+      kubernetes.core.k8s_info:
         api_version: project.openshift.io/v1
         kind: Project
         name: "{{ test_id }}-ns"
@@ -122,7 +125,8 @@
       until: oc_project.resources|length == 0
 
     - name: Check the LB with "{{ lb_ingress_ip }}" ingress IP has been removed from OSP
-      shell: |
+      ansible.builtin.shell: |
+        set -o pipefail
         openstack loadbalancer list -f value | grep {{ lb_ingress_ip }}
       environment:
         OS_CLOUD: "{{ user_cloud }}"
@@ -131,7 +135,7 @@
       when: lb_internal_ip | length > 0
 
     - name: Check the fip "{{ lb_ingress_ip }}" has been removed from OSP
-      shell: |
+      ansible.builtin.shell: |
         openstack floating ip show {{ lb_ingress_ip }} -f value
       environment:
         OS_CLOUD: "{{ user_cloud }}"

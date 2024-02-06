@@ -31,12 +31,12 @@ EXAMPLES = r'''
   hosts: localhost
   tasks:
     - name: Parse test results in JUnit XML report
-      parse_junit_test_results:
+      shiftstack.tools.parse_junit_test_results:
         xml_report: path/to/your/junit-report.xml
       register: test_results
 
     - name: Display the number of disabled tests
-      debug:
+      ansible.builtin.debug:
         var: test_results.disabled_tests
 '''
 
@@ -62,7 +62,7 @@ results_summary:
 '''
 
 
-def parse_junit_test_results(xml_report):
+def parse_junit_results(xml_report):
     """
     Parse JUnit test results from an XML report.
 
@@ -127,7 +127,7 @@ def run_module():
         msg=''
     )
 
-    junit_tests_result = parse_junit_test_results(xml_report)
+    junit_tests_result = parse_junit_results(xml_report)
     if 'error' in junit_tests_result:
         module.fail_json(
             msg="Failed to parse the JUnit results: {}".format(junit_tests_result['error']))
