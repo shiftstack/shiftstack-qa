@@ -15,14 +15,14 @@
       delay: "{{ wait_delay }}"
 
     - name: Set pods list facts
-      set_fact:
+      ansible.builtin.set_fact:
         failed_pods_names: >-
           {{ failed_pods | json_query('resources[*].metadata.name') | flatten }}
         pods_expected_to_fail:
-          #https://bugzilla.redhat.com/show_bug.cgi?id=2035311#c30
+          # https://bugzilla.redhat.com/show_bug.cgi?id=2035311#c30
           - "installer.*"
           - "collect-profiles.*"
-          - ".*pruner.*" #BZ 1990125
+          - ".*pruner.*" # BZ 1990125
 
     - name: Set a list of failed pods (Expected fail pods)
       shiftstack.tools.list_filter:
@@ -32,7 +32,7 @@
       register: expected_failed_pods
 
     - name: Set buildmark if expected failed pods are found on error state
-      debug:
+      ansible.builtin.debug:
         msg: |
           Build mark: openshift_pods_not_ready=true
           {{ expected_failed_pods.filtered_list }}
@@ -46,14 +46,15 @@
       register: unexpected_failed_pods
 
     - name: Set UNSTABLE and debug if unexpected pods in error state
+      when: unexpected_failed_pods.filtered_list|default([]) | length > 0
       block:
         - name: Check the unready pods
-          include_role:
+          ansible.builtin.include_role:
             name: tools_cluster_checks
             tasks_from: debug_pods.yml
 
         - name: Set an UNSTABLE flag if unexpected pods in error state
-          include_role:
+          ansible.builtin.include_role:
             name: tools_stage_results
             tasks_from: mark_stage_unstable.yml
           vars:
@@ -61,4 +62,3 @@
               Unexpected pods in failed state:
               {{ unexpected_failed_pods.filtered_list }}
               Please check the details in the logs and must-gather.
-      when: unexpected_failed_pods.filtered_list|default([]) | length > 0

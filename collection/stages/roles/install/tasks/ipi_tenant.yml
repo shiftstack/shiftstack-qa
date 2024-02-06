@@ -1,3 +1,4 @@
+---
 - name: Discover pre-created FIPs stored on /etc/hosts
   ansible.builtin.set_fact:
     precreated_lb_fip: "{{ lookup('file', '/etc/hosts').splitlines() |
