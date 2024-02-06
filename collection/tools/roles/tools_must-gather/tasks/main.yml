@@ -1,61 +1,63 @@
+---
 - name: Run must-gather for debugging the cluster's status
+  ignore_errors: yes
   block:
     - name: Create oc config directory .kube/
-      file:
+      ansible.builtin.file:
         path: ~/.kube
         state: directory
+        mode: u=rw,g=rw,o=r
 
     - name: Copy oc config file to .kube/ dir
-      file:
+      ansible.builtin.file:
         src: "~/{{ ocp_cluster_name }}/auth/kubeconfig"
         dest: ~/.kube/config
         state: link
 
     - name: Check that the default service account exists with the default service account enabled
-      shell: oc -n default get serviceaccount default -o name
+      ansible.builtin.command: oc -n default get serviceaccount default -o name
       register: svcaccount
       until: svcaccount.rc == 0
       retries: 12
       delay: 10
 
     - name: Gather cluster network information using must-gather
-      shell: oc adm must-gather --dest-dir={{ must_gather_dir }} -- /usr/bin/gather_network_logs
+      ansible.builtin.command: oc adm must-gather --dest-dir={{ must_gather_dir }} -- /usr/bin/gather_network_logs
       no_log: true
 
     - name: Gather cluster information using must-gather
-      shell: oc adm must-gather --dest-dir={{ must_gather_dir }}
+      ansible.builtin.command: oc adm must-gather --dest-dir={{ must_gather_dir }}
       no_log: true
 
     - name: Remove "{{ must_gather_dir }}/node" directory if exists
-      file:
+      ansible.builtin.file:
         path: "{{ must_gather_dir }}/node"
-        state: directory
         state: absent
 
     - name: Create "{{ must_gather_dir }}/node" directory
-      file:
+      ansible.builtin.file:
         path: "{{ must_gather_dir }}/node"
         state: directory
+        mode: u=rw,g=rw,o=r
 
     - name: Gather node information and include it in the must-gather
-      shell: |
+      ansible.builtin.shell: |
         for i in $(oc get node -o NAME);
         do
-          oc adm --request-timeout=2s node-logs $i > {{must_gather_dir}}/$i.log 2>&1;
+          oc adm --request-timeout=2s node-logs $i > {{ must_gather_dir }}/$i.log 2>&1;
         done
 
     - name: Compress must-gather output
-      archive:
+      community.general.archive:
         path: "{{ must_gather_dir }}"
         dest: "{{ must_gather_dir_base }}/{{ must_gather_dir_suffix }}.tar.gz"
+        mode: u=rw,g=rw,o=r
       no_log: true
 
     - name: Fetch {{ must_gather_dir_base }}/{{ must_gather_dir_suffix }}.tar.gz to {{ inventory_dir }}
-      fetch:
+      ansible.builtin.fetch:
         src: "{{ must_gather_dir_base }}/{{ must_gather_dir_suffix }}.tar.gz"
         dest: "{{ inventory_dir }}/{{ must_gather_dir_suffix }}.tar.gz"
         flat: yes
       no_log: true
       when: fetch_to_inventory
-
-  ignore_errors: yes

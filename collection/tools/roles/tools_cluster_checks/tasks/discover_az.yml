@@ -1,36 +1,39 @@
 ---
-- name: discover if aggregates exist and get the nova AZ list
-  shell: "openstack availability zone list --compute -c 'Zone Name' -f value"
+- name: Discover if aggregates exist and get the nova AZ list
+  ansible.builtin.command: "openstack availability zone list --compute -c 'Zone Name' -f value"
   register: existing_nova_azs
   environment:
     OS_CLOUD: "{{ user_cloud }}"
 
-- name: declare variables - even distribution of OCP VMs on the available nova AZs.
-  set_fact:
-    nova_az_for_workers: "{{ (existing_nova_azs.stdout_lines * ocp_worker_replicas | int)[:ocp_worker_replicas | int] }}"
-    nova_az_for_masters: "{{ (existing_nova_azs.stdout_lines * ocp_master_replicas | int)[:ocp_master_replicas | int] }}"
+- name: Declare variables - even distribution of OCP VMs on the available nova AZs.
+  ansible.builtin.set_fact:
+    nova_az_for_workers: "{{ (existing_nova_azs.stdout_lines * ocp_worker_replicas | int)[: ocp_worker_replicas | int] }}"
+    nova_az_for_masters: "{{ (existing_nova_azs.stdout_lines * ocp_master_replicas | int)[: ocp_master_replicas | int] }}"
 
 # If --openshift-root-volumes is yes, discover the cinder AZs (different to default one 'nova') to create volumes for the OCP nodes there
-- block:
-  - name: Check if cinder AZs are ready to be used
-    shell: |
-      source {{ admin_env_file }} && openstack volume service list -c State -f value | grep "down"
-    register: any_cinder_az_down
-    ignore_errors: yes
-
-  - name: Fail if a down cinder zone is found
-    fail:
-      msg: "ERROR: some of the cinder AZs are down. Check OSP or disable root_volumes installation for this setup."
-    when: any_cinder_az_down is succeeded
-
-  - name: discover existing cinder AZs
-    shell: "openstack availability zone list --volume -c 'Zone Name' -f value | grep -v 'nova' || true"
-    register: existing_cinder_azs
-    environment:
-      OS_CLOUD: "{{ user_cloud }}"
-
-  - name: declare variables - even distribution of root volumes for OCP VMs on the available cinder AZs.
-    set_fact:
-      cinder_az_for_workers: "{{ (existing_cinder_azs.stdout_lines * ocp_worker_replicas | int)[:ocp_worker_replicas | int] }}"
-      cinder_az_for_masters: "{{ (existing_cinder_azs.stdout_lines * ocp_master_replicas | int)[:ocp_master_replicas | int] }}"
+- name: Discover AZs when using root volumes
   when: openshift_root_volumes
+  block:
+    - name: Check if cinder AZs are ready to be used
+      ansible.builtin.shell: |
+        source {{ admin_env_file }} && openstack volume service list -c State -f value | grep "down"
+      register: any_cinder_az_down
+      ignore_errors: yes
+
+    - name: Fail if a down cinder zone is found
+      ansible.builtin.fail:
+        msg: "ERROR: some of the cinder AZs are down. Check OSP or disable root_volumes installation for this setup."
+      when: any_cinder_az_down is succeeded
+
+    - name: Discover existing cinder AZs
+      ansible.builtin.shell: |
+        set -o pipefail
+        openstack availability zone list --volume -c 'Zone Name' -f value | grep -v 'nova' || true
+      register: existing_cinder_azs
+      environment:
+        OS_CLOUD: "{{ user_cloud }}"
+
+    - name: Declare variables - even distribution of root volumes for OCP VMs on the available cinder AZs.
+      ansible.builtin.set_fact:
+        cinder_az_for_workers: "{{ (existing_cinder_azs.stdout_lines * ocp_worker_replicas | int)[: ocp_worker_replicas | int] }}"
+        cinder_az_for_masters: "{{ (existing_cinder_azs.stdout_lines * ocp_master_replicas | int)[: ocp_master_replicas | int] }}"

@@ -40,7 +40,7 @@ options:
 
 EXAMPLES = r'''
 - name: Prepare a tests list with the allowed tests only
-  filter_tests_list:
+  shiftstack.tools.filter_tests_list:
     input_tests_file: "input_tests_path"
     allowlist_file: "allowlist_path"
     output_file: "tests_to_run_path"

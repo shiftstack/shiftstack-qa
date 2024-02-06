@@ -1,33 +1,34 @@
 ---
 # tasks file for discover_osp_version
 - name: Check for /etc/rhosp-release
-  stat:
-      path: "/etc/rhosp-release"
+  ansible.builtin.stat:
+    path: "/etc/rhosp-release"
   register: rhosp_release_file
 
 - name: Get /etc/rhosp-release content
-  command: cat /etc/rhosp-release
+  ansible.builtin.command: cat /etc/rhosp-release
   register: rhosp_release_content
   when: rhosp_release_file.stat.exists
 
 - name: Set openstack_version from /etc/rhosp-release output
-  set_fact:
-      openstack_version: "{{ rhosp_release_content.stdout |
+  ansible.builtin.set_fact:
+    openstack_version: "{{ rhosp_release_content.stdout |
         regex_replace('^Red Hat OpenStack Platform release ([0-9]+.[0-9]+)\\.\\d+.*', '\\1') }}"
   when: rhosp_release_file.stat.exists
 
 - name: Unknown OSP version, setting default openstack_version
-  set_fact:
-      openstack_version: "16.2"
+  ansible.builtin.set_fact:
+    openstack_version: "16.2"
   when: not rhosp_release_file.stat.exists
 
 # TODO: support installer host
-#- name: set openstack_version for installer host
-#  set_fact:
+# - name: Set openstack_version for installer host
+#   ansible.builtin.set_fact:
 #    openstack_version: "{{ hostvars['undercloud-0'].openstack_version }}"
-#  delegate_to: installer_host
-#  delegate_facts: true
+#   delegate_to: installer_host
+#   delegate_facts: true
 
-- debug:
+- name: Print the OSP version
+  ansible.builtin.debug:
     msg: "Considering {{ openstack_version }} as the openstack version \
           installed on the given setup. Game on!"
