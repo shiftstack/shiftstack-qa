@@ -1,4 +1,4 @@
-- name: create manifests for openshift-monitoring namespace
+- name: Create manifests for openshift-monitoring namespace
   ansible.builtin.template:
     src: cluster-monitoring-config.yaml.j2
     dest: "{{ home_dir }}/cluster-monitoring-config.yaml"
@@ -22,11 +22,12 @@
     - monitoring_pvcs|json_query('resources[*].status') is defined
     - monitoring_pvcs|json_query('resources[*].status.phase') | unique == ["Bound"]
 
-- set_fact:
+- name: Set the monitoring PVC IDs fact
+  ansible.builtin.set_fact:
     monitoring_pvc_ids: "{{ monitoring_pvcs | json_query('resources[].spec.volumeName') | list }}"
 
 - name: Check cinder volume for PVC exist
-  shell: openstack volume list -f csv | grep  "{{ item }}"
+  ansible.builtin.shell: openstack volume list -f csv | grep  "{{ item }}"
   environment:
     OS_CLOUD: "{{ user_cloud }}"
   loop: "{{ monitoring_pvc_ids }}"
