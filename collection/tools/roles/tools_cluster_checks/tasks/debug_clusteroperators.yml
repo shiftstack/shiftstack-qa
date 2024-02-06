@@ -1,11 +1,12 @@
 ---
 - name: Check the unready Cluster Operators
+  ignore_errors: yes
   block:
     - name: Get the Cluster Operators
-      shell: 'oc get clusteroperator'
+      ansible.builtin.shell: 'oc get clusteroperator'
 
     - name: Register the unready Cluster Operators
-      shell: >
+      ansible.builtin.shell: >
         oc get clusteroperator -o json | jq -r 'try .items[] |
             select((.status.conditions[] | select(.type == "Available")).status == "False"
             or (.status.conditions[] | select(.type == "Progressing")).status == "True"
@@ -13,6 +14,5 @@
       register: unready_clusteroperators
 
     - name: Describe each of the unready Cluster Operators
-      shell: "oc describe clusteroperator/{{ item }}"
+      ansible.builtin.shell: "oc describe clusteroperator/{{ item }}"
       loop: "{{ unready_clusteroperators.stdout.split() }}"
-  ignore_errors: yes

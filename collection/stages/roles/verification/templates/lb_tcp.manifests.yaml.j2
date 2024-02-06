@@ -18,7 +18,7 @@ spec:
   selector:
     matchLabels:
       app: {{ test_id }}-dep
-  template:
+  ansible.builtin.template:
     metadata:
       labels:
         app: {{ test_id }}-dep
