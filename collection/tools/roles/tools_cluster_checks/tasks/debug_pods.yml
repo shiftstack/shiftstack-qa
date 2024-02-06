@@ -1,8 +1,10 @@
 ---
 - name: Check the unready Pods
+  ignore_errors: yes
   block:
     - name: Get the Pods
-      shell: 'oc get pods -A'
+      ansible.builtin.command: 'oc get pods -A'
+      changed_when: false
 
     - name: Register the failed pods
       kubernetes.core.k8s_info:
@@ -14,19 +16,20 @@
       no_log: true
 
     - name: Set a fact for the failed pods
-      set_fact:
+      ansible.builtin.set_fact:
         failed_pods_names: >-
           {{ failed_pods | json_query("resources[*].[metadata.namespace,metadata.name]") | list }}
 
     - name: Describe each of the unready Pods
-      shell: "oc describe pod -n {{ item[0] }} {{ item[1] }}"
+      ansible.builtin.command: "oc describe pod -n {{ item[0] }} {{ item[1] }}"
       loop: "{{ failed_pods_names }}"
-      when: failed_pods_names|length < 5
+      changed_when: false
+      when: failed_pods_names | length < 5
 
     - name: Indicate if too many pods are not ready
-      debug:
+      ansible.builtin.debug:
         msg: |
-          {{ failed_pods_names|length }} pods are not ready.
+          {{ failed_pods_names | length }} pods are not ready.
           Please check the failed pods in the logs and must-gather.
-      when: failed_pods_names|length >= 5
-  ignore_errors: yes
+      changed_when: false
+      when: failed_pods_names | length >= 5

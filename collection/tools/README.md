@@ -1,3 +1,3 @@
-# Ansible Collection - shiftstack.list_filter
+# Ansible Collection - shiftstack.tools
 
 Documentation for the collection.

@@ -1,3 +1,4 @@
+---
 - name: Get the OCP installer and/or client binaries
   vars:
     installer_url: "{{ openshift_download_url }}/openshift-install-linux-{{ release_name }}.tar.gz"
