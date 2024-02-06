@@ -1,23 +1,24 @@
 - name: Print OCP cluster info
+  any_errors_fatal: false
   block:
-    - name: get osp instances
-      shell: "openstack server list"
+    - name: Get osp instances
+      ansible.builtin.shell: "openstack server list"
       environment:
         OS_CLOUD: "{{ user_cloud }}"
 
-    - name: get load balancers
-      shell: "openstack loadbalancer list"
+    - name: Get load balancers
+      ansible.builtin.shell: "openstack loadbalancer list"
       environment:
         OS_CLOUD: "{{ user_cloud }}"
 
-    - name: get the disabled load balancers listeners
-      shell: "openstack loadbalancer listener list --disable -f value"
+    - name: Get the disabled load balancers listeners
+      ansible.builtin.shell: "openstack loadbalancer listener list --disable -f value"
       register: osp_lbs_listeners
       environment:
         OS_CLOUD: "{{ user_cloud }}"
 
-    - name: print the disabled load balancers listeners
-      debug:
+    - name: Print the disabled load balancers listeners
+      ansible.builtin.debug:
         msg: |
           The following load balancers are in disabled state:
           {{ osp_lbs_listeners.stdout }}
@@ -25,8 +26,8 @@
 
     - name: Collect facts about master servers
       openstack.cloud.server_info:
-       cloud: "{{ user_cloud }}"
-       server: "{{ ocp_cluster_name }}*master*"
+        cloud: "{{ user_cloud }}"
+        server: "{{ ocp_cluster_name }}*master*"
       register: result
       no_log: true
 
@@ -41,52 +42,51 @@
       when: (result.openstack_servers | length) > 0
 
     - name: Create oc config directory .kube/
-      file:
+      ansible.builtin.file:
         path: ~/.kube
         state: directory
 
     - name: Copy oc config file to .kube/ dir
-      file:
+      ansible.builtin.file:
         src: "~/{{ ocp_cluster_name }}/auth/kubeconfig"
         dest: ~/.kube/config
         state: link
 
     - name: Gather the bootstrap logs
+      when: gather_bootstrap|default(True)
       block:
         - name: Gather bootstrap logs
-          shell: |
+          ansible.builtin.shell: |
             openshift-install gather bootstrap --dir {{ ocp_cluster_name }} --log-level=debug
           environment:
             SSH_AUTH_SOCK: ""
           ignore_errors: yes
 
         - name: Compress {{ installation_dir }} directory
-          archive:
+          community.general.archive:
             path: "{{ installation_dir }}"
             dest: "{{ installation_dir }}.tar.gz"
 
         - name: Fetch {{ installation_dir }}.tar.gz to {{ inventory_dir }}
-          fetch:
+          ansible.builtin.fetch:
             src: "{{ installation_dir }}.tar.gz"
             dest: "{{ inventory_dir }}/failing_installation_logs.tar.gz"
             flat: yes
-      when: gather_bootstrap|default(True)
 
     - name: Get ocp cluster version
-      shell: oc get clusterversion
+      ansible.builtin.shell: oc get clusterversion
 
     - name: Get Instances, Machines, and MachineSets information
-      include_tasks: debug_machines.yml
+      ansible.builtin.include_tasks: debug_machines.yml
 
     - name: Get cluster operators
-      shell: oc get co
+      ansible.builtin.shell: oc get co
 
     - name: Get all the non available Cluster Operators
-      shell: for i in $(oc get co --no-headers=true| awk '$3 != "True" {print $1}');do echo -e "\n$i\n-----------\n";oc describe co $i;done
+      ansible.builtin.shell: for i in $(oc get co --no-headers=true| awk '$3 != "True" {print $1}');do echo -e "\n$i\n-----------\n";oc describe co $i;done
 
     - name: Get pods not running or completed
-      shell: oc get pods -A | grep -v -e Running -e Completed
+      ansible.builtin.shell: oc get pods -A | grep -v -e Running -e Completed
 
     - name: Get all cluster pods
-      shell: oc get pods -A
-  any_errors_fatal: false
+      ansible.builtin.shell: oc get pods -A

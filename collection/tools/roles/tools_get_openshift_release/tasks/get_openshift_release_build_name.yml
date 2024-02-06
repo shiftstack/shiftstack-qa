@@ -30,7 +30,7 @@
 
     - name: Include vars for latest installer info
       ansible.builtin.include_vars:
-        file: "{{ output_dir }}//latest_build.json"
+        ansible.builtin.file: "{{ output_dir }}//latest_build.json"
         name: latest_build_info
 
     - name: Set openshift_release_build_name when build_name is not defined

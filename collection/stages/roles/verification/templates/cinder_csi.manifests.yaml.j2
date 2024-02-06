@@ -24,19 +24,19 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: demo-{{item}}
+  name: demo-{{ item }}
   namespace: "{{ cinder_csi_project_name }}"
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: demo-{{item}}
+      app: demo-{{ item }}
       cinder-az: {{cinder_az_for_sc[item]}}
       nova-az: {{nova_az_for_sc[item]}}
-  template:
+  ansible.builtin.template:
     metadata:
       labels:
-        app: demo-{{item}}
+        app: demo-{{ item }}
         cinder-az: {{cinder_az_for_sc[item]}}
         nova-az: {{nova_az_for_sc[item]}}
     spec:
@@ -63,5 +63,5 @@ spec:
       volumes:
         - name: mydata
           persistentVolumeClaim:
-            claimName: pvc-{{item}}
+            claimName: pvc-{{ item }}
             readOnly: false

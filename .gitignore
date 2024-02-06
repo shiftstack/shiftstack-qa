@@ -1,3 +1,4 @@
 # ignore all logs
 *.log
 .vscode
+.venv
