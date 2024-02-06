@@ -1,40 +1,40 @@
 - name: "Recreate OCP project"
   block:
-  - name: Check if {{ project_name }} project exists
-    kubernetes.core.k8s_info:
-      kind: Project
-      name: "{{ project_name }}"
-      api_version: project.openshift.io/v1
-    register: oc_project
+    - name: Check if {{ project_name }} project exists
+      kubernetes.core.k8s_info:
+        kind: Project
+        name: "{{ project_name }}"
+        api_version: project.openshift.io/v1
+      register: oc_project
 
-  - name: Delete the {{ project_name }} project
-    kubernetes.core.k8s:
-      state: absent
-      api_version: project.openshift.io/v1
-      kind: Project
-      name: "{{ project_name }}"
-    when:
-      - oc_project.resources
-      - force_delete|default(True)
+    - name: Delete the {{ project_name }} project
+      kubernetes.core.k8s:
+        state: absent
+        api_version: project.openshift.io/v1
+        kind: Project
+        name: "{{ project_name }}"
+      when:
+        - oc_project.resources
+        - force_delete|default(True)
 
-  - name: Wait for the {{ project_name }} project to be deleted
-    kubernetes.core.k8s_info:
-      kind: Project
-      name: "{{ project_name }}"
-      api_version: project.openshift.io/v1
-    register: oc_project_status
-    retries: "{{ wait_retries }}"
-    delay: "{{ wait_delay }}"
-    until:
-      - oc_project_status is not failed
-      - oc_project_status.resources is defined
-      - oc_project_status.resources|length == 0
-    when: force_delete|default(True)
+    - name: Wait for the {{ project_name }} project to be deleted
+      kubernetes.core.k8s_info:
+        kind: Project
+        name: "{{ project_name }}"
+        api_version: project.openshift.io/v1
+      register: oc_project_status
+      retries: "{{ wait_retries }}"
+      delay: "{{ wait_delay }}"
+      until:
+        - oc_project_status is not failed
+        - oc_project_status.resources is defined
+        - oc_project_status.resources|length == 0
+      when: force_delete|default(True)
 
-  - name: Create the {{ project_name }} project
-    kubernetes.core.k8s:
-      state: present
-      api_version: project.openshift.io/v1
-      kind: Project
-      name: "{{ project_name }}"
-    when: force_delete|default(True) or not oc_project.resources
+    - name: Create the {{ project_name }} project
+      kubernetes.core.k8s:
+        state: present
+        api_version: project.openshift.io/v1
+        kind: Project
+        name: "{{ project_name }}"
+      when: force_delete|default(True) or not oc_project.resources

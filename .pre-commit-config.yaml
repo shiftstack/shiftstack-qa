@@ -1,7 +1,7 @@
 ---
 repos:
   - repo: https://github.com/ansible/ansible-lint.git
-    rev: v6.22.0
+    rev: v6.22.2
     hooks:
       - id: ansible-lint
         files: \.(yaml|yml)$
@@ -9,3 +9,5 @@ repos:
         description: Run configurations on .ansible-lint file
         verbose: true
         # args: [-p, ./ansible/*]
+        additional_dependencies:
+          - jmespath

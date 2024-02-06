@@ -18,13 +18,13 @@
       no_log: true
   rescue:
     - name: Get cluster nodes
-      shell: oc get nodes
+      ansible.builtin.shell: oc get nodes
       register: cluster_nodes
 
     - name: Print cluster nodes
-      debug:
+      ansible.builtin.debug:
         msg: "{{ cluster_nodes.stdout_lines }}"
 
     - name: Fail inside rescue block
-      fail:
+      ansible.builtin.fail:
         msg: "There are not ready nodes, check failed task logs. Failed task: '{{ ansible_failed_task.name }}'"

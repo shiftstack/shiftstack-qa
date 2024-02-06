@@ -11,14 +11,14 @@
         error_msg: >
           Failed! The {{ item.name }} server in the {{ user_cloud }} project
           is in {{ item.vm_state }} status.
-      fail:
+      ansible.builtin.fail:
         msg: "{{ error_msg }}"
       when: item.vm_state != "active"
       loop: "{{ project_servers.openstack_servers }}"
   rescue:
     - name: Get Instances, Machines, and MachineSets information for unhealthy project instances
-      include_tasks: debug_machines.yml
+      ansible.builtin.include_tasks: debug_machines.yml
 
     - name: Fail inside rescue block
-      fail:
+      ansible.builtin.fail:
         msg: "The OSP servers health check failed. See above commands output for more information."
