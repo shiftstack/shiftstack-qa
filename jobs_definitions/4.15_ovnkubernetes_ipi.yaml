@@ -1,3 +1,4 @@
+---
 openshift_release: 4.15 # It can be "4.10", "4.11", etc. or "4-stable"
 openshift_build_name: "" # It can be an empty value "" (latest nightly), a given build
 openshift_network_type: OVNKubernetes

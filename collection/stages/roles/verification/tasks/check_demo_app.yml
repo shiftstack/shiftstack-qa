@@ -1,3 +1,4 @@
+---
 - name: Get existing workers
   kubernetes.core.k8s_info:
     api_version: v1
@@ -8,30 +9,30 @@
   register: workers
 
 - name: Set the number of workers
-  set_fact:
-    num_workers: "{{ workers.resources|length }}"
+  ansible.builtin.set_fact:
+    num_workers: "{{ workers.resources | length }}"
 
-- name: re-create "{{ demo_project_name }}" project
-  include_role:
+- name: "Re-create project: {{ demo_project_name }}"
+  ansible.builtin.include_role:
     name: tools_ocp_project
     tasks_from: recreate_ocp_project.yml
   vars:
     project_name: "{{ demo_project_name }}"
-    force_delete: "{{ not verify_existing_namespace|bool }}"
+    force_delete: "{{ not verify_existing_namespace | bool }}"
 
-- name: create manifests for demo project
-  template:
+- name: Create manifests for demo project
+  ansible.builtin.template:
     src: demo.yaml.j2
     dest: "{{ home_dir }}/demo.yaml"
 
-- name: Run the demo application for the "{{ demo_project_name }}" project
+- name: "Run the demo application for the project: {{ demo_project_name }}"
   kubernetes.core.k8s:
     state: present
     src: "{{ home_dir }}/demo.yaml"
     namespace: "{{ demo_project_name }}"
   when: not verify_existing_namespace
 
-- name: Wait for Pods {{ num_workers|int }} labelled app=demo
+- name: "Wait for Pods labelled app=demo: {{ num_workers | int }}"
   kubernetes.core.k8s_info:
     kind: Pod
     namespace: "{{ demo_project_name }}"
@@ -45,7 +46,7 @@
   until: demo_pods.resources|length == num_workers|int
 
 - name: Get the first pod
-  set_fact:
+  ansible.builtin.set_fact:
     first_pod_name: "{{ demo_pods | json_query('resources[*].metadata.name') | first }} "
 
 - name: Get the demo service
@@ -56,10 +57,11 @@
   register: demo_svc
 
 - name: Get demo service IP
-  set_fact:
-    demo_svc_ip: "{{ demo_svc| json_query('resources[0].spec.clusterIP') }}"
+  ansible.builtin.set_fact:
+    demo_svc_ip: "{{ demo_svc | json_query('resources[0].spec.clusterIP') }}"
 
-- shell: "oc exec -t {{ first_pod_name }} -n {{ demo_project_name }} -- curl {{ demo_svc_ip }}"
+- name: Check connectivity to the service
+  ansible.builtin.command: "oc exec -t {{ first_pod_name }} -n {{ demo_project_name }} -- curl {{ demo_svc_ip }}"
   register: pod_result
   retries: 30
   delay: 10
