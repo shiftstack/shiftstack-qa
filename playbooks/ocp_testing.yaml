@@ -22,7 +22,7 @@
           - env
 
     - name: Cleanup workspace flags - Remove the stage_unstable_flag if it exists
-      file:
+      ansible.builtin.file:
         path: "{{ stage_unstable_flag }}"
         state: absent
 
@@ -37,49 +37,49 @@
 
   tasks:
     - name: Discover OSP version
-      include_role:
+      ansible.builtin.include_role:
         name: shiftstack.tools.tools_get_deploy_info
         tasks_from: discover_osp_version.yml
 
     - name: Cleanup setup
-      include_role:
+      ansible.builtin.include_role:
         name: shiftstack.stages.cleanup
       when: "'cleanup' in stages"
 
     - name: Prepare setup
-      include_role:
+      ansible.builtin.include_role:
         name: shiftstack.stages.prepare
       when: "'prepare' in stages"
 
     - name: Install OCP on setup
-      include_role:
+      ansible.builtin.include_role:
         name: shiftstack.stages.install
       when: "'install' in stages"
 
     - name: Discover OCP version and networkType
-      include_role:
+      ansible.builtin.include_role:
         name: shiftstack.tools.tools_get_deploy_info
         tasks_from: discover_ocp_version.yml
 
     - name: Run post operations and OCP verification checks on setup
-      include_role:
+      ansible.builtin.include_role:
         name: shiftstack.stages.post
       when: "'post' in stages"
 
     - name: Run OCP verification checks
-      include_role:
+      ansible.builtin.include_role:
         name: shiftstack.stages.verification
       vars:
-        post_installatin: True
+        post_installatin: true
       when: "'verification' in stages"
 
     - name: Run tests on OCP
-      include_role:
+      ansible.builtin.include_role:
         name: shiftstack.stages.test
       when: "'test' in stages"
 
     - name: Run day2ops
-      include_role:
+      ansible.builtin.include_role:
         name: shiftstack.stages.day2ops
       when: "'day2ops' in stages"
 

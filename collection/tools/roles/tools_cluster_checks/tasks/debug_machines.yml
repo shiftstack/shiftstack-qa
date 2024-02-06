@@ -1,31 +1,31 @@
 ---
 - name: Get Instances, Nodes, Machines, and MachineSets information
+  ignore_errors: yes
   block:
     - name: Get OCP machinesets status
-      shell: 'oc get machinesets -A'
+      ansible.builtin.command: 'oc get machinesets -A'
 
     - name: Get OCP machines status
-      shell: 'oc get machines -A'
+      ansible.builtin.command: 'oc get machines -A'
 
     - name: Register the unrunning machines
-      shell: >
+      ansible.builtin.shell: >
         oc get machines -n openshift-machine-api -o json | jq -r '.items[] |
           select(.status.phase != "Running") | .metadata.name'
       register: unrunning_machines
 
     - name: Describe each of the unrunning machines
-      shell: "oc describe machines -n openshift-machine-api {{ item }}"
+      ansible.builtin.command: "oc describe machines -n openshift-machine-api {{ item }}"
       loop: "{{ unrunning_machines.stdout.split() }}"
 
     - name: Get OCP nodes status
-      shell: 'oc get nodes'
+      ansible.builtin.command: 'oc get nodes'
 
     - name: Get the project's instances status
-      shell: 'openstack server list'
+      ansible.builtin.command: 'openstack server list'
       environment:
         OS_CLOUD: "{{ user_cloud }}"
 
     - name: Get OCP Control Plane MachineSet status
-      shell: 'oc get controlplanemachineset/cluster -n openshift-machine-api -o=jsonpath={.spec.state}'
+      ansible.builtin.shell: 'oc get controlplanemachineset/cluster -n openshift-machine-api -o=jsonpath={.spec.state}'
       ignore_errors: yes
-  ignore_errors: yes

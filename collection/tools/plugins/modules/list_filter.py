@@ -16,6 +16,8 @@ version_added: "1.0.0"
 
 description: Filter a list of items based on a list of patterns to use for filtering.
 
+author: Itay Matza
+
 options:
     list:
         description: The original list to filter.
@@ -34,13 +36,13 @@ options:
 
 EXAMPLES = r'''
 - name: Make a list with items starting with 'collect-profiles' only
-  list_filter:
+  shiftstack.tools.list_filter:
     list: ['olm-operator-76b789c8d4-n8k4h', 'collect-profiles-27861660-6mz7r']
     filter_type: match
     filter_list: ['^collect-profiles.*']
 
 - name: Make a list without the items starting with 'collect-profiles'
-  list_filter:
+  shiftstack.tools.list_filter:
     list: ['olm-operator-76b789c8d4-n8k4h', 'collect-profiles-27861660-6mz7r']
     filter_type: notmatch
     filter_list: ['^collect-profiles.*']

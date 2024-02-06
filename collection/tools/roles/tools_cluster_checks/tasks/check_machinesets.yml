@@ -12,15 +12,15 @@
         error_msg: >
           Failed! The replicas value of MachineSet {{ item.metadata.name }} is
           not corresponding with the MachineSet available replicas status.
-      fail:
+      ansible.builtin.fail:
         msg: "{{ error_msg }}"
       when: item.status.availableReplicas is not defined or
             item.status.replicas != item.status.availableReplicas
       loop: "{{ oc_machines.resources }}"
   rescue:
     - name: Get Instances, Machines, and MachineSets information for unhealthy MachineSets
-      include_tasks: debug_machines.yml
+      ansible.builtin.include_tasks: debug_machines.yml
 
     - name: Fail inside rescue block
-      fail:
+      ansible.builtin.fail:
         msg: "The MachineSets health check failed. See above commands output for more information."

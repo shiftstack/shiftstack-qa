@@ -16,13 +16,13 @@
       delay: "{{ wait_delay }}"
   rescue:
     - name: Get ClusterVersion
-      shell: oc get clusterversion
+      ansible.builtin.command: oc get clusterversion
       register: cluster_version
 
     - name: Print ClusterVersion
-      debug:
+      ansible.builtin.debug:
         msg: "{{ cluster_version.stdout_lines }}"
 
     - name: Fail inside rescue block
-      fail:
+      ansible.builtin.fail:
         msg: "The cluster is not healthy, check failed task logs. Failed task: '{{ ansible_failed_task.name }}'"
