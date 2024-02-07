@@ -143,6 +143,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6f960456_a04a5636",
+        "filename": ".ansible-lint",
+        "patchSetId": 6
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-02-07T14:24:59Z",
+      "side": 1,
+      "message": "Added a task - https://issues.redhat.com/browse/OSPRH-4546",
+      "parentUuid": "032a54c6_37a38517",
+      "range": {
+        "startLine": 21,
+        "startChar": 0,
+        "endLine": 21,
+        "endChar": 30
+      },
+      "revId": "25f4f108084cce34e08fefd353a84d8b552fb121",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c9d937c4_8316b901",
