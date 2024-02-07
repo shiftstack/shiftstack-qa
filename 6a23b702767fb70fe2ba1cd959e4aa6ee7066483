@@ -152,6 +152,23 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "24ff863d_b2387772",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 9
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-02-07T08:17:55Z",
+      "side": 1,
+      "message": "1. Verified locally on a virt setup.\n2. Lint passed\n\n```bash\n(.venv) imatza@imatza-mac shiftstack-qa % ansible-lint\nPassed: 0 failure(s), 0 warning(s) on 107 files. Profile \u0027production\u0027 was required, and it passed.\n```\n\n```bash\n(.venv) imatza@imatza-mac shiftstack-qa % pre-commit\nAnsible Lint.............................................................Passed\n- hook id: ansible-lint\n- duration: 5.1s\n\nINFO     Identified /Users/imatza/git/shiftstack-qa as project root due .git directory.\nINFO     Set ANSIBLE_LIBRARY\u003d/Users/imatza/.cache/ansible-compat/5cbf19/modules:/Users/imatza/.ansible/plugins/modules:/usr/share/ansible/plugins/modules\nINFO     Set ANSIBLE_COLLECTIONS_PATH\u003d/Users/imatza/.cache/ansible-compat/5cbf19/collections:/Users/imatza/.ansible/collections:/usr/share/ansible/collections\nINFO     Set ANSIBLE_ROLES_PATH\u003d/Users/imatza/.cache/ansible-compat/5cbf19/roles:/Users/imatza/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles\nINFO     Loading ignores from .gitignore\nINFO     Excluded: .git\nINFO     Excluded: .venv\nINFO     Loading ignores from .gitignore\nINFO     Excluded: .git\nINFO     Excluded: .venv\nINFO     Set ANSIBLE_LIBRARY\u003d/Users/imatza/.cache/ansible-compat/5cbf19/modules:/Users/imatza/.ansible/plugins/modules:/usr/share/ansible/plugins/modules\nINFO     Set ANSIBLE_COLLECTIONS_PATH\u003d/Users/imatza/.cache/ansible-compat/5cbf19/collections:/Users/imatza/.ansible/collections:/usr/share/ansible/collections\nINFO     Set ANSIBLE_ROLES_PATH\u003d/Users/imatza/.cache/ansible-compat/5cbf19/roles:/Users/imatza/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles\nINFO     Executing syntax check on role collection/tools/roles/tools_cluster_checks (0.53s)\nINFO     Executing syntax check on role collection/stages/roles/test (0.54s)\nINFO     Executing syntax check on role collection/stages/roles/cleanup (0.54s)\nINFO     Executing syntax check on role collection/tools/roles/tools_get_openshift_release (0.55s)\nINFO     Executing syntax check on role collection/tools/roles/tools_get_deploy_info (0.56s)\nINFO     Executing syntax check on role collection/stages/roles/day2ops (0.58s)\nINFO     Executing syntax check on role collection/stages/roles/install (0.60s)\nINFO     Executing syntax check on role collection/tools/roles/tools_must-gather (0.61s)\nINFO     Executing syntax check on playbook playbooks/legacy_ocp_testing.yaml (0.63s)\nINFO     Executing syntax check on playbook playbooks/ocp_testing.yaml (0.64s)\nINFO     Executing syntax check on role collection/tools/roles/tools_ocp_project (0.33s)\nINFO     Executing syntax check on role collection/stages/roles/post (0.33s)\nINFO     Executing syntax check on role collection/tools/roles/tools_stage_results (0.34s)\nINFO     Executing syntax check on role collection/stages/roles/prepare (0.36s)\nINFO     Executing syntax check on role collection/stages/roles/verification (0.38s)\n\nPassed: 0 failure(s), 0 warning(s) on 107 files. Profile \u0027production\u0027 was required, and it passed.\n```",
+      "revId": "6a23b702767fb70fe2ba1cd959e4aa6ee7066483",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "170b916e_c44b2053",
         "filename": "configs/secret.yaml",
         "patchSetId": 9
