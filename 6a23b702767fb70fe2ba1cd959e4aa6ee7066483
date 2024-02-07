@@ -26,6 +26,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "2497dcdd_92bc8f91",
+        "filename": ".ansible-lint",
+        "patchSetId": 9
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-02-07T08:41:22Z",
+      "side": 1,
+      "message": "I think It\u0027s better if we keep a control of the tasks that are changing something in the system.\n\nThis check remember us to think about the idempotency in ansible. If we run the same playbook several times, the result should be the same. This is something that we were not paying attention on the plugin and I really think we should.",
+      "parentUuid": "3d24d650_e1dcccc7",
+      "range": {
+        "startLine": 22,
+        "startChar": 0,
+        "endLine": 22,
+        "endChar": 19
+      },
+      "revId": "6a23b702767fb70fe2ba1cd959e4aa6ee7066483",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "bfb81435_230f5504",
         "filename": ".ansible-lint",
         "patchSetId": 9
@@ -37,6 +61,30 @@
       "writtenOn": "2024-02-07T08:11:49Z",
       "side": 1,
       "message": "This one is about using an ansible var just at the end of the block/task \u0027name\u0027.\n\nAn example is the change in line #3 - https://review.gerrithub.io/c/shiftstack/shiftstack-qa/+/1176481/9/collection/stages/roles/verification/tasks/check_cinder_csi.yml#3\n\nIn some cases, I think this can negatively affect the readability of the code.\nLet me know wdyt.",
+      "range": {
+        "startLine": 23,
+        "startChar": 0,
+        "endLine": 23,
+        "endChar": 18
+      },
+      "revId": "6a23b702767fb70fe2ba1cd959e4aa6ee7066483",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dbb26728_c7eeb72b",
+        "filename": ".ansible-lint",
+        "patchSetId": 9
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-02-07T08:41:22Z",
+      "side": 1,
+      "message": "yes, we can ignore it too.",
+      "parentUuid": "bfb81435_230f5504",
       "range": {
         "startLine": 23,
         "startChar": 0,
@@ -72,6 +120,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "127aaa04_70f66c91",
+        "filename": ".ansible-lint",
+        "patchSetId": 9
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-02-07T08:41:22Z",
+      "side": 1,
+      "message": "I also think we should implement this. It\u0027s easy to do and help to detect issues.",
+      "parentUuid": "affc2fef_4d3262ff",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 20
+      },
+      "revId": "6a23b702767fb70fe2ba1cd959e4aa6ee7066483",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "e5f7d7c5_df97db88",
         "filename": ".ansible-lint",
         "patchSetId": 9
@@ -83,6 +155,30 @@
       "writtenOn": "2024-02-07T08:11:49Z",
       "side": 1,
       "message": "This one is about the usage of `ignore_errors `.\n\nIt could be useful, but on the other side, it could complicate our code.\nLet me know what is your opinion regarding this rule.\n\n[0] https://ansible.readthedocs.io/projects/lint/rules/ignore-errors",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 25,
+        "endChar": 17
+      },
+      "revId": "6a23b702767fb70fe2ba1cd959e4aa6ee7066483",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "410a3e7a_31fab091",
+        "filename": ".ansible-lint",
+        "patchSetId": 9
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-02-07T08:41:22Z",
+      "side": 1,
+      "message": "yeah, this complicates things. I agree to ignore.",
+      "parentUuid": "e5f7d7c5_df97db88",
       "range": {
         "startLine": 25,
         "startChar": 0,

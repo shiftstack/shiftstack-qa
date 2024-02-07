@@ -26,6 +26,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "9225fbdb_5bf9b30f",
+        "filename": ".ansible-lint",
+        "patchSetId": 6
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-02-07T08:41:22Z",
+      "side": 1,
+      "message": "we can ignore this one.",
+      "parentUuid": "38aa6b39_0557568c",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 12
+      },
+      "revId": "25f4f108084cce34e08fefd353a84d8b552fb121",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "1917a0da_6aeb1cb6",
         "filename": ".ansible-lint",
         "patchSetId": 6
@@ -49,6 +73,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "5791ec5d_a5685a77",
+        "filename": ".ansible-lint",
+        "patchSetId": 6
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-02-07T08:41:22Z",
+      "side": 1,
+      "message": "what do you think? Maybe it\u0027s time to do it?",
+      "parentUuid": "1917a0da_6aeb1cb6",
+      "range": {
+        "startLine": 21,
+        "startChar": 0,
+        "endLine": 21,
+        "endChar": 30
+      },
+      "revId": "25f4f108084cce34e08fefd353a84d8b552fb121",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "c9d937c4_8316b901",
         "filename": ".ansible-lint",
         "patchSetId": 6
@@ -60,6 +108,30 @@
       "writtenOn": "2024-02-07T08:11:49Z",
       "side": 1,
       "message": "This one is about setting chmode when creating a file using the template/file/get_url/ect.. modules. Do we want it?\n\nIf yes, wdyt should be our default mode? We can have it with \"u\u003drw,g\u003drw,o\u003dr\". e.g. -\n```\n- name: Generate install-config.yaml from template\n  ansible.builtin.template:\n    src: install-config.yaml.j2\n    dest: \"{{ home_dir }}/install-config.yaml\"\n    mode: u\u003drw,g\u003drw,o\u003dr\n```",
+      "range": {
+        "startLine": 23,
+        "startChar": 0,
+        "endLine": 23,
+        "endChar": 26
+      },
+      "revId": "25f4f108084cce34e08fefd353a84d8b552fb121",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cf4d1e21_44e01a0e",
+        "filename": ".ansible-lint",
+        "patchSetId": 6
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-02-07T08:41:22Z",
+      "side": 1,
+      "message": "yes, I think we want this. It\u0027s good to set it explicitly.",
+      "parentUuid": "c9d937c4_8316b901",
       "range": {
         "startLine": 23,
         "startChar": 0,
