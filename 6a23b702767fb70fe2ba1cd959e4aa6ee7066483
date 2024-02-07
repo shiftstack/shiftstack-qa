@@ -1,0 +1,176 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3d24d650_e1dcccc7",
+        "filename": ".ansible-lint",
+        "patchSetId": 9
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-02-07T08:11:49Z",
+      "side": 1,
+      "message": "This one is about adding changed_when for every shell/command module.\n\nI\u0027m not finding it very useful. Let me know if you think otherwise.\n\nAn example of such a usage in - https://review.gerrithub.io/c/shiftstack/shiftstack-qa/+/1176481/9/collection/stages/roles/verification/tasks/check_cinder_csi.yml#50",
+      "range": {
+        "startLine": 22,
+        "startChar": 0,
+        "endLine": 22,
+        "endChar": 19
+      },
+      "revId": "6a23b702767fb70fe2ba1cd959e4aa6ee7066483",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bfb81435_230f5504",
+        "filename": ".ansible-lint",
+        "patchSetId": 9
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-02-07T08:11:49Z",
+      "side": 1,
+      "message": "This one is about using an ansible var just at the end of the block/task \u0027name\u0027.\n\nAn example is the change in line #3 - https://review.gerrithub.io/c/shiftstack/shiftstack-qa/+/1176481/9/collection/stages/roles/verification/tasks/check_cinder_csi.yml#3\n\nIn some cases, I think this can negatively affect the readability of the code.\nLet me know wdyt.",
+      "range": {
+        "startLine": 23,
+        "startChar": 0,
+        "endLine": 23,
+        "endChar": 18
+      },
+      "revId": "6a23b702767fb70fe2ba1cd959e4aa6ee7066483",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "affc2fef_4d3262ff",
+        "filename": ".ansible-lint",
+        "patchSetId": 9
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-02-07T08:11:49Z",
+      "side": 1,
+      "message": "This one is about setting a `pipefail` option for every shell command that uses pipe (|).\n\nNot sure how useful it is. wdyt?\n\n\n[0] https://ansible.readthedocs.io/projects/lint/rules/risky-shell-pipe/?h\u003drisky+shell+pipe",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 20
+      },
+      "revId": "6a23b702767fb70fe2ba1cd959e4aa6ee7066483",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e5f7d7c5_df97db88",
+        "filename": ".ansible-lint",
+        "patchSetId": 9
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-02-07T08:11:49Z",
+      "side": 1,
+      "message": "This one is about the usage of `ignore_errors `.\n\nIt could be useful, but on the other side, it could complicate our code.\nLet me know what is your opinion regarding this rule.\n\n[0] https://ansible.readthedocs.io/projects/lint/rules/ignore-errors",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 25,
+        "endChar": 17
+      },
+      "revId": "6a23b702767fb70fe2ba1cd959e4aa6ee7066483",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c47590dd_fd5521bc",
+        "filename": ".pre-commit-config.yaml",
+        "patchSetId": 9
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-02-07T08:11:49Z",
+      "side": 1,
+      "message": "Fixing dependencies issues.",
+      "revId": "6a23b702767fb70fe2ba1cd959e4aa6ee7066483",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fbc686fa_9054a58a",
+        "filename": ".yamllint.yaml",
+        "patchSetId": 9
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-02-07T08:11:49Z",
+      "side": 1,
+      "message": "As this file is encrypted with ansible-vault.\n\nIgnore just this file for the `document-start` rule, instead of using yaml[document-start] for all of the files in the ansible-lint skip_list.",
+      "range": {
+        "startLine": 15,
+        "startChar": 0,
+        "endLine": 17,
+        "endChar": 0
+      },
+      "revId": "6a23b702767fb70fe2ba1cd959e4aa6ee7066483",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c036ca82_1b9c19c9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 9
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-02-07T08:11:49Z",
+      "side": 1,
+      "message": "Hey, this is the right time to define our code conventions and the rules we want to include in our lint.\n\nPlease review my comments. 10x!",
+      "revId": "6a23b702767fb70fe2ba1cd959e4aa6ee7066483",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "170b916e_c44b2053",
+        "filename": "configs/secret.yaml",
+        "patchSetId": 9
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-02-07T08:11:49Z",
+      "side": 1,
+      "message": "This change is about adding `---` at the start of the decrypted file.",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 25
+      },
+      "revId": "6a23b702767fb70fe2ba1cd959e4aa6ee7066483",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}

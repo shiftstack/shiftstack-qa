@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "38aa6b39_0557568c",
+        "filename": ".ansible-lint",
+        "patchSetId": 6
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-02-07T08:11:49Z",
+      "side": 1,
+      "message": "WDYT about this rule? This one is about galaxy info metadata\n\n```sh\n(.venv) imatza@imatza-mac shiftstack-qa % ansible-lint\nWARNING  Listing 7 violation(s) that are fatal\ngalaxy[no-changelog]: No changelog found. Please add a changelog file. Refer to the galaxy.md file for more info.\ncollection/stages/galaxy.yml:1\n\ngalaxy[tags]: galaxy.yaml must have one of the required tags: [\u0027application\u0027, \u0027cloud\u0027, \u0027database\u0027, \u0027infrastructure\u0027, \u0027linux\u0027, \u0027monitoring\u0027, \u0027networking\u0027, \u0027security\u0027, \u0027storage\u0027, \u0027tools\u0027, \u0027windows\u0027]\ncollection/stages/galaxy.yml:1\n\ngalaxy[no-runtime]: meta/runtime.yml file not found.\ncollection/stages/galaxy.yml:1\n\ngalaxy[no-changelog]: No changelog found. Please add a changelog file. Refer to the galaxy.md file for more info.\ncollection/tools/galaxy.yml:1\n\ngalaxy[tags]: galaxy.yaml must have one of the required tags: [\u0027application\u0027, \u0027cloud\u0027, \u0027database\u0027, \u0027infrastructure\u0027, \u0027linux\u0027, \u0027monitoring\u0027, \u0027networking\u0027, \u0027security\u0027, \u0027storage\u0027, \u0027tools\u0027, \u0027windows\u0027]\ncollection/tools/galaxy.yml:1\n\ngalaxy[no-runtime]: meta/runtime.yml file not found.\ncollection/tools/galaxy.yml:1\n\nrole-name: Role name tools_must-gather does not match ``^[a-z][a-z0-9_]*$`` pattern.\ncollection/tools/roles/tools_must-gather:1\n\nRead documentation for instructions on how to ignore specific rule violations.\n\n                  Rule Violation Summary\n count tag                  profile rule associated tags\n     1 role-name            basic   deprecations, metadata\n     2 galaxy[no-changelog] shared  metadata\n     2 galaxy[no-runtime]   shared  metadata\n     2 galaxy[tags]         shared  metadata\n\nFailed: 7 failure(s), 0 warning(s) on 108 files. Profile \u0027production\u0027 was required, but \u0027min\u0027 profile passed.\n```",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 12
+      },
+      "revId": "25f4f108084cce34e08fefd353a84d8b552fb121",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1917a0da_6aeb1cb6",
+        "filename": ".ansible-lint",
+        "patchSetId": 6
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-02-07T08:11:49Z",
+      "side": 1,
+      "message": "Do we want to refactor all of the var naming? it is a big refactoring.\n\n```bash\n(.venv) imatza@imatza-mac shiftstack-qa % ansible-lint --tags var-naming[no-role-prefix]\n\nWARNING  Listing 38 violation(s) that are fatal\nvar-naming[no-role-prefix]: Variables names from within roles should use prepare_ as a prefix. (vars: clouds_yaml_file_path)\ncollection/stages/roles/prepare/defaults/main.yml:2\n\nvar-naming[no-role-prefix]: Variables names from within roles should use prepare_ as a prefix. (vars: admin_verify_cacert)\ncollection/stages/roles/prepare/defaults/main.yml:3\n\nvar-naming[no-role-prefix]: Variables names from within roles should use prepare_ as a prefix. (vars: project)\ncollection/stages/roles/prepare/defaults/main.yml:4\n\nvar-naming[no-role-prefix]: Variables names from within roles should use prepare_ as a prefix. (vars: ocp_api_description)\ncollection/stages/roles/prepare/defaults/main.yml:26\n\nvar-naming[no-role-prefix]: Variables names from within roles should use prepare_ as a prefix. (vars: ocp_apps_description)\ncollection/stages/roles/prepare/defaults/main.yml:27\n\nvar-naming[no-role-prefix]: Variables names from within roles should use prepare_ as a prefix. (vars: etc_hosts_entries)\ncollection/stages/roles/prepare/defaults/main.yml:28\n\nvar-naming[no-role-prefix]: Variables names from within roles should use tools_get_openshift_release_ as a prefix. (vars: build_name)\ncollection/stages/roles/prepare/tasks/get_installer.yml:7 Task/Handler: Get the OCP release build name (it sets the \u0027openshift_release_build_name\u0027 fact)\n\nvar-naming[no-role-prefix]: Variables names from within roles should use tools_get_openshift_release_ as a prefix. (vars: output_dir)\ncollection/stages/roles/prepare/tasks/get_installer.yml:7 Task/Handler: Get the OCP release build name (it sets the \u0027openshift_release_build_name\u0027 fact)\n\nvar-naming[no-role-prefix]: Variables names from within roles should use tools_get_openshift_release_ as a prefix. (vars: release)\ncollection/stages/roles/prepare/tasks/get_installer.yml:7 Task/Handler: Get the OCP release build name (it sets the \u0027openshift_release_build_name\u0027 fact)\n\nvar-naming[no-role-prefix]: Variables names from within roles should use tools_get_openshift_release_ as a prefix. (vars: binaries)\ncollection/stages/roles/prepare/tasks/get_installer.yml:20 Task/Handler: Get the installer and client binaries for release {{ openshift_release_build_name }}\n\nvar-naming[no-role-prefix]: Variables names from within roles should use tools_get_openshift_release_ as a prefix. (vars: output_dir)\ncollection/stages/roles/prepare/tasks/get_installer.yml:20 Task/Handler: Get the installer and client binaries for release {{ openshift_release_build_name }}\n\nvar-naming[no-role-prefix]: Variables names from within roles should use tools_get_openshift_release_ as a prefix. (vars: release_name)\ncollection/stages/roles/prepare/tasks/get_installer.yml:20 Task/Handler: Get the installer and client binaries for release {{ openshift_release_build_name }}\n\nvar-naming[no-role-prefix]: Variables names from within roles should use verification_ as a prefix. (vars: az_enable)\ncollection/stages/roles/verification/defaults/main.yml:3\n\nvar-naming[no-role-prefix]: Variables names from within roles should use verification_ as a prefix. (vars: cinder_csi_project_name)\ncollection/stages/roles/verification/defaults/main.yml:4\n\nvar-naming[no-role-prefix]: Variables names from within roles should use verification_ as a prefix. (vars: manila_project_name)\ncollection/stages/roles/verification/defaults/main.yml:5\n\nvar-naming[no-role-prefix]: Variables names from within roles should use verification_ as a prefix. (vars: demo_project_name)\ncollection/stages/roles/verification/defaults/main.yml:6\n\nvar-naming[no-role-prefix]: Variables names from within roles should use verification_ as a prefix. (vars: verify_existing_namespace)\ncollection/stages/roles/verification/defaults/main.yml:7\n\nvar-naming[no-role-prefix]: Variables names from within roles should use verification_ as a prefix. (vars: soft_checks)\ncollection/stages/roles/verification/defaults/main.yml:8\n\nvar-naming[no-role-prefix]: Variables names from within roles should use verification_ as a prefix. (vars: alerts_to_ignore)\ncollection/stages/roles/verification/defaults/main.yml:9\n\nvar-naming[no-role-prefix]: Variables names from within roles should use verification_ as a prefix. (vars: demo_image)\ncollection/stages/roles/verification/defaults/main.yml:18\n\nvar-naming[no-role-prefix]: Variables names from within roles should use tools_ocp_project_ as a prefix. (vars: force_delete)\ncollection/stages/roles/verification/tasks/check_cinder_csi.yml:8 Task/Handler: Re-create project {{ cinder_csi_project_name }}\n\nvar-naming[no-role-prefix]: Variables names from within roles should use tools_ocp_project_ as a prefix. (vars: project_name)\ncollection/stages/roles/verification/tasks/check_cinder_csi.yml:8 Task/Handler: Re-create project {{ cinder_csi_project_name }}\n\nvar-naming[no-role-prefix]: Variables names from within roles should use tools_ocp_project_ as a prefix. (vars: force_delete)\ncollection/stages/roles/verification/tasks/check_demo_app.yml:19 Task/Handler: Re-create project: {{ demo_project_name }}\n\nvar-naming[no-role-prefix]: Variables names from within roles should use tools_ocp_project_ as a prefix. (vars: project_name)\ncollection/stages/roles/verification/tasks/check_demo_app.yml:19 Task/Handler: Re-create project: {{ demo_project_name }}\n\nvar-naming[no-role-prefix]: Variables names from within roles should use tools_ocp_project_ as a prefix. (vars: force_delete)\ncollection/stages/roles/verification/tasks/check_manila.yml:9 Task/Handler: Re-create {{ manila_project_name }} project\n\nvar-naming[no-role-prefix]: Variables names from within roles should use tools_ocp_project_ as a prefix. (vars: project_name)\ncollection/stages/roles/verification/tasks/check_manila.yml:9 Task/Handler: Re-create {{ manila_project_name }} project\n\nvar-naming[no-role-prefix]: Variables names from within roles should use tools_ocp_project_ as a prefix. (vars: project_name)\ncollection/stages/roles/verification/tasks/check_registry.yml:52 Task/Handler: Re-create {{ swift_check_ns }}\n\nvar-naming[no-role-prefix]: Variables names from within roles should use tools_cluster_checks_ as a prefix. (vars: wait_delay)\ncollection/stages/roles/verification/tasks/main.yml:56 Task/Handler: Check the pods are healthy\n\nvar-naming[no-role-prefix]: Variables names from within roles should use tools_cluster_checks_ as a prefix. (vars: wait_retries)\ncollection/stages/roles/verification/tasks/main.yml:56 Task/Handler: Check the pods are healthy\n\nvar-naming[no-role-prefix]: Variables names from within roles should use utils_ as a prefix. (vars: unstable_msg)\ncollection/tools/roles/tools_cluster_checks/tasks/check_alerts.yml:37 Task/Handler: Mark the installation as UNSTABLE as we have firing alerts\n\nvar-naming[no-role-prefix]: Variables names from within roles should use tools_stage_results_ as a prefix. (vars: unstable_msg)\ncollection/tools/roles/tools_cluster_checks/tasks/check_nodes_services.yml:70 Task/Handler: Mark the installation as UNSTABLE as a node has failed services\n\nvar-naming[no-role-prefix]: Variables names from within roles should use tools_stage_results_ as a prefix. (vars: unstable_msg)\ncollection/tools/roles/tools_cluster_checks/tasks/check_pods.yml:61 Task/Handler: Set an UNSTABLE flag if unexpected pods in error state\n\nvar-naming[no-role-prefix]: Variables names from within roles should use tools_get_openshift_release_ as a prefix. (vars: openshift_releasestream_url)\ncollection/tools/roles/tools_get_openshift_release/defaults/main.yml:3\n\nvar-naming[no-role-prefix]: Variables names from within roles should use tools_get_openshift_release_ as a prefix. (vars: release_name)\ncollection/tools/roles/tools_get_openshift_release/defaults/main.yml:4\n\nvar-naming[no-role-prefix]: Variables names from within roles should use tools_get_openshift_release_ as a prefix. (vars: openshift_download_url)\ncollection/tools/roles/tools_get_openshift_release/defaults/main.yml:5\n\nvar-naming[no-role-prefix]: Variables names from within roles should use tools_get_openshift_release_ as a prefix. (vars: openshift_mirror_url)\ncollection/tools/roles/tools_get_openshift_release/defaults/main.yml:6\n\nvar-naming[no-role-prefix]: Variables names from within roles should use verification_ as a prefix. (vars: post_installatin)\nplaybooks/legacy_ocp_testing.yaml:64 Task/Handler: Run OCP verification checks\n\nvar-naming[no-role-prefix]: Variables names from within roles should use verification_ as a prefix. (vars: post_installatin)\nplaybooks/ocp_testing.yaml:73 Task/Handler: Run OCP verification checks\n\nRead documentation for instructions on how to ignore specific rule violations.\n\n                    Rule Violation Summary\n count tag                        profile rule associated tags\n    38 var-naming[no-role-prefix] basic   idiom\n\nFailed: 38 failure(s), 0 warning(s) on 108 files. Profile \u0027production\u0027 was required, but \u0027min\u0027 profile passed.\n```",
+      "range": {
+        "startLine": 21,
+        "startChar": 0,
+        "endLine": 21,
+        "endChar": 30
+      },
+      "revId": "25f4f108084cce34e08fefd353a84d8b552fb121",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c9d937c4_8316b901",
+        "filename": ".ansible-lint",
+        "patchSetId": 6
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-02-07T08:11:49Z",
+      "side": 1,
+      "message": "This one is about setting chmode when creating a file using the template/file/get_url/ect.. modules. Do we want it?\n\nIf yes, wdyt should be our default mode? We can have it with \"u\u003drw,g\u003drw,o\u003dr\". e.g. -\n```\n- name: Generate install-config.yaml from template\n  ansible.builtin.template:\n    src: install-config.yaml.j2\n    dest: \"{{ home_dir }}/install-config.yaml\"\n    mode: u\u003drw,g\u003drw,o\u003dr\n```",
+      "range": {
+        "startLine": 23,
+        "startChar": 0,
+        "endLine": 23,
+        "endChar": 26
+      },
+      "revId": "25f4f108084cce34e08fefd353a84d8b552fb121",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
