@@ -50,6 +50,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "b013c241_a7bfbcfb",
+        "filename": ".ansible-lint",
+        "patchSetId": 9
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-02-07T09:32:05Z",
+      "side": 1,
+      "message": "This one is kind of time-consuming, as we have 55 failures of `no-changed-when`, and to fix them, we have to go over each one of them, explore the logic of the shell action, and decide the change condition.\n\nFrom a priority point of view, I think we can create a Jira task for it, and move to the migration of `openstack-tests` first. wdyt?",
+      "parentUuid": "2497dcdd_92bc8f91",
+      "range": {
+        "startLine": 22,
+        "startChar": 0,
+        "endLine": 22,
+        "endChar": 19
+      },
+      "revId": "6a23b702767fb70fe2ba1cd959e4aa6ee7066483",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "bfb81435_230f5504",
         "filename": ".ansible-lint",
         "patchSetId": 9
@@ -85,6 +109,30 @@
       "side": 1,
       "message": "yes, we can ignore it too.",
       "parentUuid": "bfb81435_230f5504",
+      "range": {
+        "startLine": 23,
+        "startChar": 0,
+        "endLine": 23,
+        "endChar": 18
+      },
+      "revId": "6a23b702767fb70fe2ba1cd959e4aa6ee7066483",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f0327f14_49d09c3f",
+        "filename": ".ansible-lint",
+        "patchSetId": 9
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-02-07T09:32:05Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "dbb26728_c7eeb72b",
       "range": {
         "startLine": 23,
         "startChar": 0,
@@ -142,6 +190,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "055ce0a7_e489fed1",
+        "filename": ".ansible-lint",
+        "patchSetId": 9
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-02-07T09:32:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "127aaa04_70f66c91",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 20
+      },
+      "revId": "6a23b702767fb70fe2ba1cd959e4aa6ee7066483",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e5f7d7c5_df97db88",
@@ -179,6 +251,30 @@
       "side": 1,
       "message": "yeah, this complicates things. I agree to ignore.",
       "parentUuid": "e5f7d7c5_df97db88",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 25,
+        "endChar": 17
+      },
+      "revId": "6a23b702767fb70fe2ba1cd959e4aa6ee7066483",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cf19117d_ff428851",
+        "filename": ".ansible-lint",
+        "patchSetId": 9
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-02-07T09:32:05Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "410a3e7a_31fab091",
       "range": {
         "startLine": 25,
         "startChar": 0,

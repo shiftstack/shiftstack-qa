@@ -48,6 +48,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f79e4463_0e4481e4",
+        "filename": ".ansible-lint",
+        "patchSetId": 6
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-02-07T09:32:05Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "9225fbdb_5bf9b30f",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 12
+      },
+      "revId": "25f4f108084cce34e08fefd353a84d8b552fb121",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1917a0da_6aeb1cb6",
@@ -97,6 +121,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "032a54c6_37a38517",
+        "filename": ".ansible-lint",
+        "patchSetId": 6
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-02-07T09:32:05Z",
+      "side": 1,
+      "message": "I think it is a big change and time-consuming. Maybe we should agree on that with the whole team.\n\nFrom a priority point of view, I think we can create a Jira task for it, and move to the migration of `openstack-tests` first. wdyt?",
+      "parentUuid": "5791ec5d_a5685a77",
+      "range": {
+        "startLine": 21,
+        "startChar": 0,
+        "endLine": 21,
+        "endChar": 30
+      },
+      "revId": "25f4f108084cce34e08fefd353a84d8b552fb121",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "c9d937c4_8316b901",
         "filename": ".ansible-lint",
         "patchSetId": 6
@@ -132,6 +180,30 @@
       "side": 1,
       "message": "yes, I think we want this. It\u0027s good to set it explicitly.",
       "parentUuid": "c9d937c4_8316b901",
+      "range": {
+        "startLine": 23,
+        "startChar": 0,
+        "endLine": 23,
+        "endChar": 26
+      },
+      "revId": "25f4f108084cce34e08fefd353a84d8b552fb121",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2d5ed02a_1cd004d9",
+        "filename": ".ansible-lint",
+        "patchSetId": 6
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-02-07T09:32:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cf4d1e21_44e01a0e",
       "range": {
         "startLine": 23,
         "startChar": 0,
