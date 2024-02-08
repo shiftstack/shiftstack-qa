@@ -1,0 +1,8 @@
+---
+# tasks file for openstack_test
+- name: Install GO
+  ansible.builtin.include_role:
+    name: tools_openshift_tests
+    tasks_from: install_go.yml
+  vars:
+    go_version_target: "{{ openstack_tests_go_version }}"
