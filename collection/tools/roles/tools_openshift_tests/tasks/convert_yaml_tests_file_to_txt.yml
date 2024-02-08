@@ -1,0 +1,24 @@
+---
+- name: Read the "{{ input_tests_list }}" yaml tests list file
+  ansible.builtin.set_fact:
+    yaml_testslist: "{{ lookup('file', input_tests_list) | from_yaml }}"
+
+- name: Use YAML format based on OCP version and network type
+  ansible.builtin.set_fact:
+    yaml_testslist: "{{ yaml_testslist[discovered_openshift_release][discovered_ocp_network_type] }}"
+  when: yaml_format_based_on_ocp_version|default(False)
+
+- name: Create the "{{ output_tests_list }}" file
+  ansible.builtin.file:
+    path: "{{ output_tests_list }}"
+    state: touch
+    mode: u=rw,g=rw,o=r
+
+- name: Write the yaml tests list in "{{ output_tests_list }}"
+  ansible.builtin.lineinfile:
+    path: "{{ output_tests_list }}"
+    line: >-
+      "{{ item.key }}"
+    mode: u=rw,g=rw,o=r
+    create: yes
+  loop: "{{ yaml_testslist | dict2items }}"
