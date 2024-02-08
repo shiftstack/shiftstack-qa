@@ -1,0 +1,60 @@
+---
+- name: Check current GO version
+  ansible.builtin.shell: |
+    source {{ home_dir }}/.bashrc
+    go version
+  register: existing_go_version
+  changed_when: false
+  ignore_errors: yes
+
+- name: Set a fact for the existing go version
+  ansible.builtin.set_fact:
+    existing_go_ver_number: "{{ existing_go_version.stdout | regex_replace('.*go(\\S+).*', '\\1') }}"
+
+- name: Print the existing GO version
+  ansible.builtin.debug:
+    msg: "GO version: {{ existing_go_ver_number }}"
+
+- name: Install GO when the target GO version is not installed
+  when: existing_go_ver_number | length == 0 or
+        existing_go_ver_number is version(go_version_target, '!=')
+  block:
+    - name: Remove existing go installation
+      ansible.builtin.file:
+        path: "/usr/local/bin/go"
+        state: absent
+      become: true
+
+    - name: Set GO package name
+      ansible.builtin.set_fact:
+        gopks: "go{{ go_version_target }}.linux-amd64.tar.gz"
+
+    - name: Download GO {{ gopks }}
+      ansible.builtin.get_url:
+        url: https://dl.google.com/go/{{ gopks }}
+        dest: "{{ home_dir }}/{{ gopks }}"
+        mode: u=rw,g=rw,o=r
+        force: yes
+      register: result
+      until:
+        - result.status_code is defined
+        - result.status_code == 200
+      retries: 5
+      delay: 30
+
+    - name: Unarchive GO
+      ansible.builtin.unarchive:
+        src: "{{ home_dir }}/{{ gopks }}"
+        dest: "/usr/local/bin"
+      become: true
+
+    - name: Insert in .bashrc file export for GO
+      ansible.builtin.lineinfile:
+        dest: "{{ home_dir }}/.bashrc"
+        line: "export PATH=/usr/local/bin/go/bin:$PATH"
+
+    - name: Source .bashrc
+      ansible.builtin.shell: "source {{ home_dir }}/.bashrc"
+      args:
+        executable: /bin/bash
+      changed_when: true

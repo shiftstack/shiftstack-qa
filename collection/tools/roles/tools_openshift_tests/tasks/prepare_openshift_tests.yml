@@ -1,0 +1,26 @@
+---
+- name: Install GO
+  ansible.builtin.include_tasks: install_go.yml
+
+- name: Clone openshift/{{ repo_name }} repository
+  ansible.builtin.git:
+    repo: "https://github.com/openshift/{{ repo_name }}.git"
+    version: release-{{ discovered_openshift_release }}
+    dest: "{{ home_dir }}/{{ repo_name }}"
+    force: yes
+    depth: 1
+  retries: 3
+  delay: 5
+  register: openshift_repo
+  until: openshift_repo is succeeded
+
+- name: Install make package
+  ansible.builtin.package:
+    name: "make"
+    state: present
+  become: true
+
+- name: Create the test results directory
+  ansible.builtin.include_tasks: create_test_results_directory.yml
+  vars:
+    test_results_directory: "{{ results_dir }}"
