@@ -8,3 +8,4 @@ stages:
   - install
   - post
   - verification
+  - openstack_test

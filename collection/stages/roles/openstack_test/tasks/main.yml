@@ -1,0 +1,22 @@
+---
+# tasks file for openstack_test
+- name: Install GO
+  ansible.builtin.include_role:
+    name: tools_openshift_tests
+    tasks_from: install_go.yml
+  vars:
+    go_version_target: "{{ openstack_tests_go_version }}"
+
+- name: Prepare openshift-test
+  ansible.builtin.include_role:
+    name: tools_openshift_tests
+    tasks_from: prepare_openshift_tests.yml
+  vars:
+    repo_name: "{{ openstack_test_name }}"
+    results_dir: "{{ openstack_test_results_dir }}"
+
+- name: Include Openstack-Test tasks
+  ansible.builtin.include_tasks: run_openstack_test.yml
+  vars:
+    test_name: "{{ openstack_test_name }}"
+    results_dir: "{{ openstack_test_results_dir }}"
