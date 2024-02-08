@@ -1,0 +1,11 @@
+---
+- name: Remove the tests results directory ({{ test_results_directory }}) if it exists
+  ansible.builtin.file:
+    path: "{{ test_results_directory }}"
+    state: absent
+
+- name: Create a directory for the test results ({{ test_results_directory }})
+  ansible.builtin.file:
+    path: "{{ test_results_directory }}"
+    state: directory
+    mode: u=rwx,g=rw,o=r
