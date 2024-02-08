@@ -1,0 +1,22 @@
+---
+- name: Make sure we are in the default project
+  ansible.builtin.shell: |
+    oc project default
+  changed_when: true
+  ignore_errors: true
+
+- name: Merge all tests results into one XML file
+  ansible.builtin.shell: |
+    junit2html {{ results_dir }}/junit_e2e_*.xml --merge={{ results_dir }}/tmp.xml
+  changed_when: true
+
+- name: Remove tests that are not {{ test_name }} from {{ test_name }}.xml
+  ansible.builtin.script: |
+    ../scripts/modifyE2ETags.py {{ results_dir }}/tmp.xml {{ results_dir }}/{{ test_name }}.xml \
+      {{ key_for_filtering_results }} {{ testsuite_name }} \
+      > {{ results_dir }}/report_processing.log
+
+- name: Convert test results to html inside virtualenv
+  ansible.builtin.shell: |
+    junit2html {{ results_dir }}/{{ test_name }}.xml {{ results_dir }}/{{ test_name }}.html
+  changed_when: true
