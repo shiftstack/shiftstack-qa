@@ -32,7 +32,7 @@
 
     - name: Mark the installation as UNSTABLE as we have firing alerts
       ansible.builtin.include_role:
-        name: utils
+        name: tools_stage_results
         tasks_from: mark_stage_unstable.yml
       vars:
         unstable_msg: >-
