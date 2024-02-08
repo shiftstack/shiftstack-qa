@@ -64,10 +64,10 @@
         post_installatin: true
       when: "'verification' in stages"
 
-    - name: Run tests on OCP
+    - name: Run Openstack-Test on OCP
       ansible.builtin.include_role:
-        name: shiftstack.stages.test
-      when: "'test' in stages"
+        name: shiftstack.stages.openstack_test
+      when: "'openstack_test' in stages"
 
     - name: Run day2ops
       ansible.builtin.include_role:
