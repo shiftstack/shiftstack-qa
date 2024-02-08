@@ -1,9 +1,10 @@
 ---
 home_dir: "{{ lookup('ansible.builtin.env', 'HOME') }}"
+artifacts_dir: "{{ home_dir }}/artifacts"
 installation_dir: "{{ home_dir }}/{{ ocp_cluster_name }}"
 kubeconfig: "{{ installation_dir }}/auth/kubeconfig"
 
-stage_unstable_flag: "{{ home_dir }}/stage_unstable_flag"
+stage_unstable_flag: "{{ artifacts_dir }}/stage_unstable_flag"
 
 admin_cloud: "overcloud"
 admin_env_file: "{{ home_dir }}/{{ admin_cloud }}rc"
