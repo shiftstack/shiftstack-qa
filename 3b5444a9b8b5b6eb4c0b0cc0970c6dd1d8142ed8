@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "567f6f9e_05e8eb89",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 12
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-02-11T13:02:33Z",
+      "side": 1,
+      "message": "Verified with the latest https://quay.io/repository/shiftstack-qe/shiftstack-client on a virt setup.",
+      "revId": "3b5444a9b8b5b6eb4c0b0cc0970c6dd1d8142ed8",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
