@@ -1,0 +1,50 @@
+---
+# This tasks file saves Ansible inventory information to the hosts/inventory file.
+# Vars:
+#   ``omit_groups`` - List of groups that will be excluded during the inventory file creation.
+#                     Note: Hosts from the groups will be removed also from the inventory.
+#
+#    ``omit_hosts`` - List of hosts that will be excluded during the inventory file creation.
+#
+#    ``inventory_file_name`` - Name of the inventory file that will be created. "hosts" file is created from this file.
+#                              File provide historical overview of the inventory.
+#
+#    ``inventory_symlink_file`` - Name of the inventory file config file that will be link to the `inventory_file_name`.
+#
+#    ``inventory_backup_file`` - Name of the file to backup the `inventory_file_name` inventory file .
+- name: Save the in-memory inventory as an inventory file
+  delegate_to: localhost
+  block:
+    - name: Copy the '{{ inventory_file_name }}' file to '{{ inventory_backup_file }}'
+      ansible.builtin.copy:
+        src: "{{ inventory_file_name }}"
+        dest: "{{ inventory_backup_file }}"
+        mode: u=rw,g=rw,o=r
+
+    - name: Remove the original '{{ inventory_file_name }}' file
+      ansible.builtin.file:
+        path: "{{ inventory_file_name }}"
+        state: absent
+
+    - name: Set the hosts from groups that will be excluded during the hosts file creation
+      ansible.builtin.set_fact:
+        omit_groups_hosts: "{{ omit_groups_hosts | default([]) + groups.get(item, []) }}"
+      with_items: "{{ omit_groups }}"
+
+    - name: Generate inventory file
+      ansible.builtin.template:
+        dest: "{{ inventory_dir }}/{{ inventory_file_name }}"
+        src: inventory.j2
+        mode: u=rw,g=rw,o=r
+        force: yes
+
+    - name: Remove file before creating the link
+      ansible.builtin.file:
+        path: "{{ inventory_symlink_file }}"
+        state: absent
+
+    - name: Update inventory file symlink
+      ansible.builtin.file:
+        dest: "{{ inventory_symlink_file }}"
+        state: link
+        src: "{{ inventory_file_name }}"
