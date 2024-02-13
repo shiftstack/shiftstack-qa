@@ -1,6 +1,13 @@
 ---
+- name: Deploy and configure an installer host VM and create the installer inventory group
+  ansible.builtin.include_role:
+    name: shiftstack.tools.tools_installer_host
+  when:
+    - upi
+
 - name: Create new Project
   ansible.builtin.import_tasks: project.yml
+  delegate_to: installer
 
 - name: Update clouds.yml file with new Project
   ansible.builtin.include_tasks: clouds.yml

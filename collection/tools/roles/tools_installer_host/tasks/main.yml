@@ -1,0 +1,9 @@
+---
+# - name: Deploy an installer host VM and create the installer group
+#  ansible.builtin.include_tasks: provision.yml
+
+- name: Create the installer group (and add a host) in the inventory
+  ansible.builtin.include_tasks: add_installer_host_to_installer_group.yml
+
+# - name: Configure the installer host VM
+#  ansible.builtin.include_tasks: configure.yml
