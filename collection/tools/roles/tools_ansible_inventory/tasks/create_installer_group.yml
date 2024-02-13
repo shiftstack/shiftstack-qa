@@ -1,0 +1,30 @@
+---
+- name: Check if '{{ user_cloud }}' includes '{{ installer_vm_name }}'
+  openstack.cloud.server_info:
+    cloud: "{{ user_cloud }}"
+    server: "{{ installer_vm_name }}"
+  register: server_info
+
+- name: Set fact when the '{{ installer_vm_name }}' VM is deployed
+  ansible.builtin.set_fact:
+    installer_vm_exists: true
+  when:
+    - server_info.openstack_servers|default([])|length == 1
+
+- name: Print when the installer host VM does exist
+  ansible.builtin.debug:
+    msg: "The '{{ installer_vm_name }}' VM is deployed!"
+  when:
+    - installer_vm_exists|default(false)
+
+- name: Create the installer group in the inventory
+  ansible.builtin.include_role:
+    name: installer_host
+    tasks_from: installer_group.yml
+  vars:
+    installer_host_in_group: "{{ installer_vm_exists | default(false) }}"
+    installer_host_fip: "{{ installer_vm_exists | default(false) | ternary(server_info.openstack_servers[0].public_v4, None) }}"
+
+- name: Print the '{{ installer_group }}' group hosts
+  ansible.builtin.debug:
+    var: groups[installer_group]
