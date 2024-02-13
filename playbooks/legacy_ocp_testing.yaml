@@ -1,21 +1,12 @@
 ---
-- name: OCP testing for new candidate on legacy OSP (17.1 or 16.2)
+- name: Cleanup the OCP setup and prepare the environment for testing OCP on legacy OSP (17.1 or 16.2)
   hosts: localhost
   gather_facts: no
-  # debugger: on_failed # https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_debugger.html#playbook-debugger
   vars_files:
     - "../configs/global.yml"
-    - "../configs/secret.yaml"
-    - "../configs/legacy_ocp_testing.yaml"
-
   environment:
     KUBECONFIG: "{{ kubeconfig }}"
-
   pre_tasks:
-    - name: Preparing for the run
-      ansible.builtin.debug:
-        msg: "Preparing for the run..."
-
     - name: Gather host environment variables
       ansible.builtin.setup:
         gather_subset:
@@ -25,28 +16,72 @@
       ansible.builtin.file:
         path: "{{ stage_unstable_flag }}"
         state: absent
-
   tasks:
-    - name: Discover OSP version
+    - name: Discover the OSP version
       ansible.builtin.include_role:
         name: shiftstack.tools.tools_get_deploy_info
         tasks_from: discover_osp_version.yml
 
-    - name: Cleanup setup
+    - name: Cleanup the setup
       ansible.builtin.include_role:
         name: shiftstack.stages.cleanup
       when: "'cleanup' in stages"
 
-    - name: Prepare setup
+
+- name: Prepare the OpenShift environment for installation and testing new candidate
+  hosts: localhost
+  gather_facts: no
+  vars_files:
+    - "../configs/global.yml"
+    - "../configs/legacy_ocp_testing.yaml"
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+  tasks:
+    - name: Prepare setup for OCP installation
       ansible.builtin.include_role:
         name: shiftstack.stages.prepare
       when: "'prepare' in stages"
+  post_tasks:
+    - name: Prepare the Ansible inventory in a case the "{{ installer_group }}" group is not presents
+      ansible.builtin.include_role:
+        name: shiftstack.tools.tools_ansible_inventory
+        tasks_from: create_installer_group.yml
+      when: "installer_group not in groups"
 
+
+- name: Install OpenShift new candidate on OSP
+  hosts: installer
+  gather_facts: no
+  vars_files:
+    - "../configs/global.yml"
+    - "../configs/secret.yaml"
+    - "../configs/legacy_ocp_testing.yaml"
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+  pre_tasks:
+    - name: Gather host environment variables
+      ansible.builtin.setup:
+        gather_subset:
+          - env
+
+    - name: Set the openstack_version based on the previous discovery
+      ansible.builtin.set_fact:
+        openstack_version: "{{ hostvars['localhost']['openstack_version'] }}"
+  tasks:
     - name: Install OCP on setup
       ansible.builtin.include_role:
         name: shiftstack.stages.install
       when: "'install' in stages"
 
+
+- name: Post OpenShift installation stage
+  hosts: installer
+  gather_facts: no
+  vars_files:
+    - "../configs/global.yml"
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+  tasks:
     - name: Discover OCP version and networkType
       ansible.builtin.include_role:
         name: shiftstack.tools.tools_get_deploy_info
@@ -57,6 +92,15 @@
         name: shiftstack.stages.post
       when: "'post' in stages"
 
+
+- name: Verify the OpenShift cluster
+  hosts: installer
+  gather_facts: no
+  vars_files:
+    - "../configs/global.yml"
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+  tasks:
     - name: Run OCP verification checks
       ansible.builtin.include_role:
         name: shiftstack.stages.verification
@@ -64,17 +108,16 @@
         post_installatin: true
       when: "'verification' in stages"
 
+
+- name: Run Openstack-Test on OpenShift
+  hosts: installer
+  gather_facts: no
+  vars_files:
+    - "../configs/global.yml"
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+  tasks:
     - name: Run Openstack-Test on OCP
       ansible.builtin.include_role:
         name: shiftstack.stages.openstack_test
       when: "'openstack_test' in stages"
-
-    - name: Run day2ops
-      ansible.builtin.include_role:
-        name: shiftstack.stages.day2ops
-      when: "'day2ops' in stages"
-
-  post_tasks:
-    - name: Gathering resources
-      ansible.builtin.debug:
-        msg: "Gathering resources..."

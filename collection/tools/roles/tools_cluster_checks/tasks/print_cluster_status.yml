@@ -74,10 +74,10 @@
             dest: "{{ installation_dir }}.tar.gz"
             mode: u=rw,g=rw,o=r
 
-        - name: Fetch {{ installation_dir }}.tar.gz to {{ inventory_dir }}
+        - name: Fetch {{ installation_dir }}.tar.gz to {{ artifacts_dir }}
           ansible.builtin.fetch:
             src: "{{ installation_dir }}.tar.gz"
-            dest: "{{ inventory_dir }}/failing_installation_logs.tar.gz"
+            dest: "{{ artifacts_dir }}/failing_installation_logs.tar.gz"
             flat: yes
 
     - name: Get ocp cluster version
