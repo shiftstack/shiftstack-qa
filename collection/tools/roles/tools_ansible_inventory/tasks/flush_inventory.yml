@@ -1,0 +1,14 @@
+---
+- name: Copy the '{{ inventory.hosts_file }}' file to '{{ inventory.backup_file }}'
+  ansible.builtin.copy:
+    src: "{{ inventory.hosts_file }}"
+    dest: "{{ inventory.backup_file }}"
+    mode: u=rw,g=rw,o=r
+
+- name: Remove the original '{{ inventory.hosts_file }}' file
+  ansible.builtin.file:
+    path: "{{ inventory.hosts_file }}"
+    state: absent
+
+- name: Refresh inventory to ensure new instances exist in inventory
+  ansible.builtin.meta: refresh_inventory
