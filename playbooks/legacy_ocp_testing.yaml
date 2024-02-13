@@ -27,15 +27,41 @@
         state: absent
 
   tasks:
+    - name: Discover the installer group in a case not need to create one
+      ansible.builtin.debug:
+        msg: |
+          {{ groups }}
+          #msg: "{{ ansible_run_tags }}"
+      when: |
+        'all' in ansible_run_tags or
+        'prepare' in ansible_run_tags or
+        'installer' in groups
+      tags: always
+
     - name: Discover OSP version
-      ansible.builtin.include_role:
+      ansible.builtin.import_role:
         name: shiftstack.tools.tools_get_deploy_info
         tasks_from: discover_osp_version.yml
+      tags: never
 
     - name: Cleanup setup
-      ansible.builtin.include_role:
+      ansible.builtin.import_role:
         name: shiftstack.stages.cleanup
-      when: "'cleanup' in stages"
+      tags: cleanup
+
+    - name: Add host localhost to inventory
+      ansible.builtin.add_host:
+        name: "localhost"
+        groups: "installer"
+        ansible_connection: "local"
+      tags: always
+
+    - name: Descover the installer group in a case not need to creat one
+      ansible.builtin.debug:
+        msg: |
+          {{ groups }}
+      when: "'installer' in groups"
+      tags: always
 
     - name: Prepare setup
       ansible.builtin.include_role:
@@ -48,21 +74,15 @@
       when: "'install' in stages"
 
     - name: Discover OCP version and networkType
-      ansible.builtin.include_role:
+      ansible.builtin.import_role:
         name: shiftstack.tools.tools_get_deploy_info
         tasks_from: discover_ocp_version.yml
+      tags: never
 
     - name: Run post operations and OCP verification checks on setup
       ansible.builtin.include_role:
         name: shiftstack.stages.post
       when: "'post' in stages"
-
-    - name: Run OCP verification checks
-      ansible.builtin.include_role:
-        name: shiftstack.stages.verification
-      vars:
-        post_installatin: true
-      when: "'verification' in stages"
 
     - name: Run Openstack-Test on OCP
       ansible.builtin.include_role:
@@ -78,3 +98,13 @@
     - name: Gathering resources
       ansible.builtin.debug:
         msg: "Gathering resources..."
+
+- name: Run update inv
+  ansible.builtin.import_playbook: update_inv.yaml
+  tags: always
+
+- name: Run OCP verification checks
+  ansible.builtin.import_playbook: verification.yaml
+  vars:
+    post_installatin: true
+  tags: verification
