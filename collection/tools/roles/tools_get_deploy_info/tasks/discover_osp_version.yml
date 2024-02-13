@@ -22,13 +22,6 @@
     openstack_version: "16.2"
   when: not rhosp_release_file.stat.exists
 
-# TODO: support installer host
-# - name: Set openstack_version for installer host
-#   ansible.builtin.set_fact:
-#    openstack_version: "{{ hostvars['undercloud-0'].openstack_version }}"
-#   delegate_to: installer_host
-#   delegate_facts: true
-
 - name: Print the OSP version
   ansible.builtin.debug:
     msg: "Considering {{ openstack_version }} as the openstack version \
