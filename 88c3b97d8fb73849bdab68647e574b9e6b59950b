@@ -16,6 +16,211 @@
       "message": "Verified with the latest https://quay.io/repository/shiftstack-qe/shiftstack-client on a virt setup.",
       "revId": "88c3b97d8fb73849bdab68647e574b9e6b59950b",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a7249a7e_855dd7f2",
+        "filename": "collection/stages/roles/openstack_test/defaults/main.yml",
+        "patchSetId": 14
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-02-13T14:43:30Z",
+      "side": 1,
+      "message": "There is a folder in the container called artifacts. I think this directory is the one that should be mounted on a PVC in the underlying OCP and the one that should be retrieved by the job.\n\nhttps://gitlab.cee.redhat.com/shiftstack/shiftstack-tools/-/blob/main/osp18/Dockerfile?ref_type\u003dheads#L19\n\nWe can put it here the openstack-test directory as default or we can add it in the configs.yml for example. Any of those options are valid for me.",
+      "revId": "88c3b97d8fb73849bdab68647e574b9e6b59950b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b75dfcf7_3b4bb658",
+        "filename": "collection/stages/roles/openstack_test/tasks/run_openstack_test.yml",
+        "patchSetId": 14
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-02-13T14:43:30Z",
+      "side": 1,
+      "message": "Let\u0027s get the passed too, so we can write some kind of global report, wdyt?",
+      "revId": "88c3b97d8fb73849bdab68647e574b9e6b59950b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8e3a0fc7_139b78a8",
+        "filename": "collection/stages/roles/openstack_test/tasks/run_openstack_test.yml",
+        "patchSetId": 14
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-02-13T14:43:30Z",
+      "side": 1,
+      "message": "I noticed that:\n\n  stage_unstable_flag: \"{{ home_dir }}/stage_unstable_flag\"\n\nmaybe should be on the artifacts directory too....",
+      "range": {
+        "startLine": 86,
+        "startChar": 0,
+        "endLine": 86,
+        "endChar": 43
+      },
+      "revId": "88c3b97d8fb73849bdab68647e574b9e6b59950b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "547b6161_d4516137",
+        "filename": "collection/stages/roles/openstack_test/tasks/run_openstack_test.yml",
+        "patchSetId": 14
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-02-13T14:43:30Z",
+      "side": 1,
+      "message": "I think we can add the number of failures here 😊",
+      "revId": "88c3b97d8fb73849bdab68647e574b9e6b59950b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9c38c042_cbf736a6",
+        "filename": "collection/tools/roles/tools_openshift_tests/defaults/main.yml",
+        "patchSetId": 14
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-02-13T14:43:30Z",
+      "side": 1,
+      "message": "What do you think if we call the role \"tools_tests\"? I think this role can be valid for any kind of testing, not only the openshift one (Maybe tobiko in the future?)",
+      "revId": "88c3b97d8fb73849bdab68647e574b9e6b59950b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "81746bcc_1a951648",
+        "filename": "collection/tools/roles/tools_openshift_tests/scripts/modifyE2ETags.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-02-13T14:43:30Z",
+      "side": 1,
+      "message": "Let\u0027s rename this script to something called \"prepareXmlReport.py\". How difficult is to convert this in a module?",
+      "revId": "88c3b97d8fb73849bdab68647e574b9e6b59950b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "99da71a7_0d4628c2",
+        "filename": "collection/tools/roles/tools_openshift_tests/scripts/modifyE2ETags.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-02-13T14:43:30Z",
+      "side": 1,
+      "message": "Please update this description to something like:\n\n```suggestion\n#   This script modify a given xml report so it can be uploaded to ReportPortal and Polarion.\n```",
+      "revId": "88c3b97d8fb73849bdab68647e574b9e6b59950b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a82b76c3_fd2bbbe5",
+        "filename": "collection/tools/roles/tools_openshift_tests/scripts/modifyE2ETags.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-02-13T14:43:30Z",
+      "side": 1,
+      "message": "this is making our lives complicated. This replacement is not needed for reportportal (I checked) and it was here because of Polarion. However we are not sure this is still needed. I propose to remove this replacement here and see what happens during our work integrating the results with RP/Polarion. What do you think?",
+      "revId": "88c3b97d8fb73849bdab68647e574b9e6b59950b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "baa20fee_81c1d36a",
+        "filename": "collection/tools/roles/tools_openshift_tests/tasks/install_go.yml",
+        "patchSetId": 14
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-02-13T14:43:30Z",
+      "side": 1,
+      "message": "I think we can rid of this. We can have several go versions in our image and simply change a soft link here.\n\nI think this is beneficial because:\n-  we are reducing the points of failure (I\u0027ve seen the go url timing out sometimes)\n- we are reducing the time in case of slow network.\n\nWhat do you think?",
+      "revId": "88c3b97d8fb73849bdab68647e574b9e6b59950b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dedd24e2_c4c6e749",
+        "filename": "collection/tools/roles/tools_openshift_tests/tasks/post_openshift_tests.yml",
+        "patchSetId": 14
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-02-13T14:43:30Z",
+      "side": 1,
+      "message": "We did this because of NetworkPolicy tests. It was generating as many reports as threads we enable so we needed to merge them in one single file.\n\nWe are not running NetworkPolicy anymore so I think we can remove this. We can play directly with the junit_e2e_*.xml. We can even check that it should be only one.",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 0
+      },
+      "revId": "88c3b97d8fb73849bdab68647e574b9e6b59950b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d63d74cf_edf84be0",
+        "filename": "collection/tools/roles/tools_openshift_tests/tasks/post_openshift_tests.yml",
+        "patchSetId": 14
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-02-13T14:43:30Z",
+      "side": 1,
+      "message": "How difficult is to convert this in a module?",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 17,
+        "endChar": 47
+      },
+      "revId": "88c3b97d8fb73849bdab68647e574b9e6b59950b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
