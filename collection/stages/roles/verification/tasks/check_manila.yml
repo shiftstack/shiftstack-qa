@@ -15,7 +15,7 @@
     dest: "{{ home_dir }}/manila.manifests.yaml"
     mode: u=rw,g=rw,o=r
 
-- name: Apply manifests for {{ manila_project_name }} namespace and check they are running.
+- name: Apply manifests for {{ manila_project_name }} namespace and check they are running
   kubernetes.core.k8s:
     state: present
     src: "{{ home_dir }}/manila.manifests.yaml"
