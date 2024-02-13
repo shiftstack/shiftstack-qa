@@ -1,0 +1,34 @@
+---
+- name: Check if '{{ user_cloud }}' includes '{{ installer_vm_name }}'
+  openstack.cloud.server_info:
+    cloud: "{{ user_cloud }}"
+    server: "{{ installer_vm_name }}"
+  register: server_info
+
+- name: Set fact when the '{{ installer_vm_name }}' VM is deployed
+  ansible.builtin.set_fact:
+    installer_vm_exists: true
+  when:
+    - server_info.openstack_servers|default([])|length == 1
+
+- name: Add host localhost to inventory when the installer host VM doesn't exist
+  when: not installer_vm_exists | default(false)
+  block:
+    - name: Add host localhost to inventory when the installer host VM doesn't exist
+      ansible.builtin.add_host:
+        name: "localhost"
+        groups: "{{ installer_group }}"
+        ansible_connection: "local"
+
+    - name: Update the inventory '{{ inventory.symlink_file }}'
+      ansible.builtin.include_role:
+        name: tools_ansible_inventory
+        tasks_from: update_inventory.yml
+      vars:
+        inventory_symlink_file: "{{ inventory.symlink_file }}"
+        inventory_file_name: "{{ inventory.hosts_file }}"
+        inventory_backup_file: "{{ inventory.backup_file }}"
+
+- name: Print the '{{ installer_group }}' group hosts
+  ansible.builtin.debug:
+    var: groups[installer_group]
