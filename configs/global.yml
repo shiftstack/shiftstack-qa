@@ -32,3 +32,9 @@ topology:
 wait_retries: 30
 wait_delay: 30
 manifests_wait_timeout: 300
+
+installer_group: "installer"
+inventory:
+  symlink_file: "/etc/ansible/hosts"
+  hosts_file: "{{ artifacts_dir }}/hosts-installer"
+  backup_file: "{{ artifacts_dir }}/hosts-installer.bck"
