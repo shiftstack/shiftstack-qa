@@ -1,0 +1,25 @@
+---
+- name: Flush the inventory in a case the {{ installer_group }} group is presents
+  ansible.builtin.include_role:
+    name: tools_ansible_inventory
+    tasks_from: flush_inventory.yml
+  when: "installer_group not in groups"
+
+- name: Add a host (and create the '{{ installer_group }}' group) to the ansible-playbook in-memory inventory
+  ansible.builtin.add_host:
+    name: "{{ installer_vm_name }}"
+    groups: "{{ installer_group }}"
+    ansible_host: "{{ installer_host_fip }}"
+    ansible_user: "{{ installer_vm_ssh_user }}"
+    ansible_connection: "ssh"
+    # ansible_python_interpreter: "/usr/libexec/platform-python"
+
+- name: Update the inventory '{{ inventory.dir }}/hosts'
+  ansible.builtin.include_role:
+    name: tools_ansible_inventory
+    tasks_from: update_inventory.yml
+  vars:
+    inventory_config_dir: "{{ inventory.dir }}"
+    inventory_symlink_file: "{{ inventory.dir }}/hosts"
+    inventory_file_name: "{{ inventory.hosts_file }}"
+    inventory_backup_file: "{{ inventory.backup_file }}"
