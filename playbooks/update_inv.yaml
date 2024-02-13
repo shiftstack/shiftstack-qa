@@ -1,0 +1,15 @@
+---
+- name: Run OCP verification checks
+  hosts: installer
+  gather_facts: no
+  tasks:
+    - name: Print the Ansible Tags
+      ansible.builtin.debug:
+        msg: |
+         {{ ansible_run_tags }}
+
+    - name: Discover OSP version
+      ansible.builtin.include_role:
+        name: shiftstack.tools.tools_get_deploy_info
+        tasks_from: discover_osp_version.yml
+      when: "'installer' in groups"
