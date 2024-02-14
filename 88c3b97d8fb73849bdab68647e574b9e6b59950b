@@ -37,6 +37,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "e827993a_8d912d5f",
+        "filename": "collection/stages/roles/openstack_test/defaults/main.yml",
+        "patchSetId": 14
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-02-14T08:35:45Z",
+      "side": 1,
+      "message": "Changed.\n\nMaybe we should update the podman command to sync also the `/home/cloud-admin/artifacts `.[0]\nWDYT?\n\n\n[0] https://gitlab.cee.redhat.com/shiftstack/shiftstack-tools/-/blob/main/osp18/README.md?ref_type\u003dheads\u0026plain\u003d1#L82",
+      "parentUuid": "a7249a7e_855dd7f2",
+      "revId": "88c3b97d8fb73849bdab68647e574b9e6b59950b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "b75dfcf7_3b4bb658",
         "filename": "collection/stages/roles/openstack_test/tasks/run_openstack_test.yml",
         "patchSetId": 14
@@ -54,6 +72,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "73db9c21_e8aea4a1",
+        "filename": "collection/stages/roles/openstack_test/tasks/run_openstack_test.yml",
+        "patchSetId": 14
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-02-14T08:35:45Z",
+      "side": 1,
+      "message": "We already have all of the results in the reports:\n```bash\n[cloud-admin@79380ae88e7e ~]$ ll -rt openstack-test-results/ | grep openstack-test | tail\n-rw-r-----. 1 cloud-admin cloud-admin   21037 Feb 11 11:42 openstack-test.log\n-rw-r--r--. 1 cloud-admin cloud-admin   48620 Feb 11 11:42 openstack-test.xml\n-rw-r--r--. 1 cloud-admin cloud-admin   96917 Feb 11 11:42 openstack-test.html\n\n[cloud-admin@79380ae88e7e ~]$ tail -1 openstack-test-results/openstack-test.log\n23 pass, 20 skip (14m28s)\n```\n\nWhat is in your mind? to print in the Ansible log the number of failed and passed tests?",
+      "parentUuid": "b75dfcf7_3b4bb658",
+      "revId": "88c3b97d8fb73849bdab68647e574b9e6b59950b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "8e3a0fc7_139b78a8",
         "filename": "collection/stages/roles/openstack_test/tasks/run_openstack_test.yml",
         "patchSetId": 14
@@ -65,6 +101,30 @@
       "writtenOn": "2024-02-13T14:43:30Z",
       "side": 1,
       "message": "I noticed that:\n\n  stage_unstable_flag: \"{{ home_dir }}/stage_unstable_flag\"\n\nmaybe should be on the artifacts directory too....",
+      "range": {
+        "startLine": 86,
+        "startChar": 0,
+        "endLine": 86,
+        "endChar": 43
+      },
+      "revId": "88c3b97d8fb73849bdab68647e574b9e6b59950b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9021c862_752e7371",
+        "filename": "collection/stages/roles/openstack_test/tasks/run_openstack_test.yml",
+        "patchSetId": 14
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-02-14T08:35:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8e3a0fc7_139b78a8",
       "range": {
         "startLine": 86,
         "startChar": 0,
@@ -94,6 +154,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "ca71e37c_6aea47f8",
+        "filename": "collection/stages/roles/openstack_test/tasks/run_openstack_test.yml",
+        "patchSetId": 14
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-02-14T08:35:45Z",
+      "side": 1,
+      "message": "I think the current `number_of_failed_tests` is not accurate here, as usually, for failed tests it tries to rerun the test.\n\nSo we need to check the logic if we want to improve it.\n\nOne option to gather the test results is using the https://code.engineering.redhat.com/gerrit/plugins/gitiles/openshift-ir-plugin/+/refs/heads/master/library/parse_junit_test_results.py\n\nBut I didn\u0027t try it yet on openstack tests.\nDo you think this is the time to work on it? I think about creating a task for it and bach work on it after the work of the installer host.",
+      "parentUuid": "547b6161_d4516137",
+      "revId": "88c3b97d8fb73849bdab68647e574b9e6b59950b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "9c38c042_cbf736a6",
         "filename": "collection/tools/roles/tools_openshift_tests/defaults/main.yml",
         "patchSetId": 14
@@ -105,6 +183,24 @@
       "writtenOn": "2024-02-13T14:43:30Z",
       "side": 1,
       "message": "What do you think if we call the role \"tools_tests\"? I think this role can be valid for any kind of testing, not only the openshift one (Maybe tobiko in the future?)",
+      "revId": "88c3b97d8fb73849bdab68647e574b9e6b59950b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3da541aa_6c59a88e",
+        "filename": "collection/tools/roles/tools_openshift_tests/defaults/main.yml",
+        "patchSetId": 14
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-02-14T08:35:45Z",
+      "side": 1,
+      "message": "I think this role is very specific for the openshift repo/tests.\n\nIf you check the tasks in the role (prepare/post), you can see it focuses on the \u0027https://github.com/openshift\u0027 repo and kind of tests.",
+      "parentUuid": "9c38c042_cbf736a6",
       "revId": "88c3b97d8fb73849bdab68647e574b9e6b59950b",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
@@ -128,6 +224,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "672a45a0_1c241b61",
+        "filename": "collection/tools/roles/tools_openshift_tests/scripts/modifyE2ETags.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-02-14T08:35:45Z",
+      "side": 1,
+      "message": "I agree but from a priority point of view, I think we should move forward to handle the installer host role first.\n\nThis change will take some time to dev and test it.",
+      "parentUuid": "81746bcc_1a951648",
+      "revId": "88c3b97d8fb73849bdab68647e574b9e6b59950b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "99da71a7_0d4628c2",
         "filename": "collection/tools/roles/tools_openshift_tests/scripts/modifyE2ETags.py",
         "patchSetId": 14
@@ -139,6 +253,24 @@
       "writtenOn": "2024-02-13T14:43:30Z",
       "side": 1,
       "message": "Please update this description to something like:\n\n```suggestion\n#   This script modify a given xml report so it can be uploaded to ReportPortal and Polarion.\n```",
+      "revId": "88c3b97d8fb73849bdab68647e574b9e6b59950b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cdc97301_aaf1caa7",
+        "filename": "collection/tools/roles/tools_openshift_tests/scripts/modifyE2ETags.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-02-14T08:35:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "99da71a7_0d4628c2",
       "revId": "88c3b97d8fb73849bdab68647e574b9e6b59950b",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
@@ -162,6 +294,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "d5cf9759_44e121f2",
+        "filename": "collection/tools/roles/tools_openshift_tests/scripts/modifyE2ETags.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-02-14T08:35:45Z",
+      "side": 1,
+      "message": "Can you please create a task for this one and also for converting it to a module?\n\nI agree with your comments here, but again, from a priority point of view, I think we should move forward to handle the installer host role first.",
+      "parentUuid": "a82b76c3_fd2bbbe5",
+      "revId": "88c3b97d8fb73849bdab68647e574b9e6b59950b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "baa20fee_81c1d36a",
         "filename": "collection/tools/roles/tools_openshift_tests/tasks/install_go.yml",
         "patchSetId": 14
@@ -173,6 +323,24 @@
       "writtenOn": "2024-02-13T14:43:30Z",
       "side": 1,
       "message": "I think we can rid of this. We can have several go versions in our image and simply change a soft link here.\n\nI think this is beneficial because:\n-  we are reducing the points of failure (I\u0027ve seen the go url timing out sometimes)\n- we are reducing the time in case of slow network.\n\nWhat do you think?",
+      "revId": "88c3b97d8fb73849bdab68647e574b9e6b59950b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1a98b66a_b6a029a1",
+        "filename": "collection/tools/roles/tools_openshift_tests/tasks/install_go.yml",
+        "patchSetId": 14
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-02-14T08:35:45Z",
+      "side": 1,
+      "message": "So, are you suggesting installing some go versions in the Dockerfile?\nWould you like to take this part?",
+      "parentUuid": "baa20fee_81c1d36a",
       "revId": "88c3b97d8fb73849bdab68647e574b9e6b59950b",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
@@ -202,6 +370,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "02af29f7_6ea32a87",
+        "filename": "collection/tools/roles/tools_openshift_tests/tasks/post_openshift_tests.yml",
+        "patchSetId": 14
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-02-14T08:35:45Z",
+      "side": 1,
+      "message": "We are using the {{ results_dir }}/tmp.xml also in the two next tasks.\nI can see there is just one junit_e2e_*.xml file in the case of the openstack test, but not sure what happens in the other test suits (conformance, etc..).\n\nPlease let\u0027s address it as part of the task of converting the modifyE2ETags into a module.",
+      "parentUuid": "dedd24e2_c4c6e749",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 0
+      },
+      "revId": "88c3b97d8fb73849bdab68647e574b9e6b59950b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "d63d74cf_edf84be0",
         "filename": "collection/tools/roles/tools_openshift_tests/tasks/post_openshift_tests.yml",
         "patchSetId": 14
@@ -213,6 +405,30 @@
       "writtenOn": "2024-02-13T14:43:30Z",
       "side": 1,
       "message": "How difficult is to convert this in a module?",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 17,
+        "endChar": 47
+      },
+      "revId": "88c3b97d8fb73849bdab68647e574b9e6b59950b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5b2c6368_8e23c216",
+        "filename": "collection/tools/roles/tools_openshift_tests/tasks/post_openshift_tests.yml",
+        "patchSetId": 14
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-02-14T08:35:45Z",
+      "side": 1,
+      "message": "We can do it.\nPlease see my comment at - collection/tools/roles/tools_openshift_tests/scripts/modifyE2ETags.py",
+      "parentUuid": "d63d74cf_edf84be0",
       "range": {
         "startLine": 14,
         "startChar": 0,
