@@ -55,6 +55,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "84edb19d_dc8e1994",
+        "filename": "collection/stages/roles/openstack_test/defaults/main.yml",
+        "patchSetId": 14
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-02-14T13:22:03Z",
+      "side": 1,
+      "message": "@rlobillo@redhat.com pls see https://gitlab.cee.redhat.com/shiftstack/shiftstack-tools/-/merge_requests/35",
+      "parentUuid": "e827993a_8d912d5f",
+      "revId": "88c3b97d8fb73849bdab68647e574b9e6b59950b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "b75dfcf7_3b4bb658",
         "filename": "collection/stages/roles/openstack_test/tasks/run_openstack_test.yml",
         "patchSetId": 14
