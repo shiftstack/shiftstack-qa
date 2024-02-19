@@ -71,6 +71,24 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7a8e57d1_732714d0",
+        "filename": "collection/stages/roles/openstack_test/defaults/main.yml",
+        "patchSetId": 14
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-02-19T10:43:31Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "84edb19d_dc8e1994",
+      "revId": "88c3b97d8fb73849bdab68647e574b9e6b59950b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b75dfcf7_3b4bb658",
@@ -102,6 +120,24 @@
       "side": 1,
       "message": "We already have all of the results in the reports:\n```bash\n[cloud-admin@79380ae88e7e ~]$ ll -rt openstack-test-results/ | grep openstack-test | tail\n-rw-r-----. 1 cloud-admin cloud-admin   21037 Feb 11 11:42 openstack-test.log\n-rw-r--r--. 1 cloud-admin cloud-admin   48620 Feb 11 11:42 openstack-test.xml\n-rw-r--r--. 1 cloud-admin cloud-admin   96917 Feb 11 11:42 openstack-test.html\n\n[cloud-admin@79380ae88e7e ~]$ tail -1 openstack-test-results/openstack-test.log\n23 pass, 20 skip (14m28s)\n```\n\nWhat is in your mind? to print in the Ansible log the number of failed and passed tests?",
       "parentUuid": "b75dfcf7_3b4bb658",
+      "revId": "88c3b97d8fb73849bdab68647e574b9e6b59950b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "51036764_90d303fc",
+        "filename": "collection/stages/roles/openstack_test/tasks/run_openstack_test.yml",
+        "patchSetId": 14
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-02-19T10:43:31Z",
+      "side": 1,
+      "message": "no, you are right. That report is ok :)",
+      "parentUuid": "73db9c21_e8aea4a1",
       "revId": "88c3b97d8fb73849bdab68647e574b9e6b59950b",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
@@ -188,6 +224,24 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e4ab028a_34c4beac",
+        "filename": "collection/stages/roles/openstack_test/tasks/run_openstack_test.yml",
+        "patchSetId": 14
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-02-19T10:43:31Z",
+      "side": 1,
+      "message": "you are right. I don\u0027t see too much benefit here. Even if the variable is not accurate.",
+      "parentUuid": "ca71e37c_6aea47f8",
+      "revId": "88c3b97d8fb73849bdab68647e574b9e6b59950b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "9c38c042_cbf736a6",
@@ -223,6 +277,24 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "393be5b1_b879b581",
+        "filename": "collection/tools/roles/tools_openshift_tests/defaults/main.yml",
+        "patchSetId": 14
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-02-19T10:43:31Z",
+      "side": 1,
+      "message": "ack",
+      "parentUuid": "3da541aa_6c59a88e",
+      "revId": "88c3b97d8fb73849bdab68647e574b9e6b59950b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "81746bcc_1a951648",
@@ -254,6 +326,24 @@
       "side": 1,
       "message": "I agree but from a priority point of view, I think we should move forward to handle the installer host role first.\n\nThis change will take some time to dev and test it.",
       "parentUuid": "81746bcc_1a951648",
+      "revId": "88c3b97d8fb73849bdab68647e574b9e6b59950b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e6a014eb_f0da2965",
+        "filename": "collection/tools/roles/tools_openshift_tests/scripts/modifyE2ETags.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-02-19T10:43:31Z",
+      "side": 1,
+      "message": "Created this task with minor priority: https://issues.redhat.com/browse/OSPRH-4984",
+      "parentUuid": "672a45a0_1c241b61",
       "revId": "88c3b97d8fb73849bdab68647e574b9e6b59950b",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
@@ -328,6 +418,24 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d119b3cc_1cb08210",
+        "filename": "collection/tools/roles/tools_openshift_tests/scripts/modifyE2ETags.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-02-19T10:43:31Z",
+      "side": 1,
+      "message": "After the work performed by Yaakov on this task https://issues.redhat.com/browse/OSPRH-3752 we are finally going to keep these replacements.",
+      "parentUuid": "d5cf9759_44e121f2",
+      "revId": "88c3b97d8fb73849bdab68647e574b9e6b59950b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "baa20fee_81c1d36a",
@@ -359,6 +467,24 @@
       "side": 1,
       "message": "So, are you suggesting installing some go versions in the Dockerfile?\nWould you like to take this part?",
       "parentUuid": "baa20fee_81c1d36a",
+      "revId": "88c3b97d8fb73849bdab68647e574b9e6b59950b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "07446b63_e976f0f3",
+        "filename": "collection/tools/roles/tools_openshift_tests/tasks/install_go.yml",
+        "patchSetId": 14
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-02-19T10:43:31Z",
+      "side": 1,
+      "message": "Sure! I created this subtask and assigned it to me: https://issues.redhat.com/browse/OSPRH-4999",
+      "parentUuid": "1a98b66a_b6a029a1",
       "revId": "88c3b97d8fb73849bdab68647e574b9e6b59950b",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
@@ -400,6 +526,30 @@
       "side": 1,
       "message": "We are using the {{ results_dir }}/tmp.xml also in the two next tasks.\nI can see there is just one junit_e2e_*.xml file in the case of the openstack test, but not sure what happens in the other test suits (conformance, etc..).\n\nPlease let\u0027s address it as part of the task of converting the modifyE2ETags into a module.",
       "parentUuid": "dedd24e2_c4c6e749",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 0
+      },
+      "revId": "88c3b97d8fb73849bdab68647e574b9e6b59950b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5b3a9366_0e7fe64a",
+        "filename": "collection/tools/roles/tools_openshift_tests/tasks/post_openshift_tests.yml",
+        "patchSetId": 14
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-02-19T10:43:31Z",
+      "side": 1,
+      "message": "there are serveral junits only in NetworkPolicy tests. They are not going to be migrated. I think we can safely remove this now.",
+      "parentUuid": "02af29f7_6ea32a87",
       "range": {
         "startLine": 8,
         "startChar": 0,
