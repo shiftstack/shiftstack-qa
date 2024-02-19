@@ -614,6 +614,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "16635445_9274e87c",
+        "filename": "collection/tools/roles/tools_openshift_tests/tasks/post_openshift_tests.yml",
+        "patchSetId": 14
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-02-19T12:13:58Z",
+      "side": 1,
+      "message": "As agreed, I\u0027ll test and address it during the work of the conformance role",
+      "parentUuid": "5b3a9366_0e7fe64a",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 0
+      },
+      "revId": "88c3b97d8fb73849bdab68647e574b9e6b59950b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d63d74cf_edf84be0",
