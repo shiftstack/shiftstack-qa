@@ -142,6 +142,24 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "08ce7c5c_0c5ec2be",
+        "filename": "collection/stages/roles/openstack_test/tasks/run_openstack_test.yml",
+        "patchSetId": 14
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-02-19T12:10:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "51036764_90d303fc",
+      "revId": "88c3b97d8fb73849bdab68647e574b9e6b59950b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8e3a0fc7_139b78a8",
@@ -348,6 +366,24 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "cc530c46_fb2bb7eb",
+        "filename": "collection/tools/roles/tools_openshift_tests/scripts/modifyE2ETags.py",
+        "patchSetId": 14
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-02-19T12:10:24Z",
+      "side": 1,
+      "message": "10x",
+      "parentUuid": "e6a014eb_f0da2965",
+      "revId": "88c3b97d8fb73849bdab68647e574b9e6b59950b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "99da71a7_0d4628c2",
@@ -485,6 +521,24 @@
       "side": 1,
       "message": "Sure! I created this subtask and assigned it to me: https://issues.redhat.com/browse/OSPRH-4999",
       "parentUuid": "1a98b66a_b6a029a1",
+      "revId": "88c3b97d8fb73849bdab68647e574b9e6b59950b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a104a463_5abd8286",
+        "filename": "collection/tools/roles/tools_openshift_tests/tasks/install_go.yml",
+        "patchSetId": 14
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-02-19T12:10:24Z",
+      "side": 1,
+      "message": "thanks!",
+      "parentUuid": "07446b63_e976f0f3",
       "revId": "88c3b97d8fb73849bdab68647e574b9e6b59950b",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
