@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "41eb057d_682515bb",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 22
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-02-20T18:38:43Z",
+      "side": 1,
+      "message": "Verified locally on openshift-qe-010\n\nFor reviewing the new playbook view:\n* Before setting the inventory:\n```bash\nimatza@imatza-mac ~ % ssh openshift-qe-010\n[stack@undercloud-0 ~]$ podman exec -it 7302786bee9e bash\n[cloud-admin@7302786bee9e ~]$ cd artifacts/\n[cloud-admin@7302786bee9e artifacts]$ ansible-navigator replay legacy_ocp_testing-artifact-2024-02-20T16\\:59\\:10.513763+00\\:00.json -m interactive\n```\n\n* After setting the inventory:\n```bash\n[cloud-admin@7302786bee9e artifacts]$ ansible-navigator replay legacy_ocp_testing-artifact-2024-02-20T18\\:19\\:27.883180+00\\:00.json -m interactive\n```\n\nThe next step is setting the installer_host.",
+      "revId": "59ae44636cff66b5b30adb7b6783e8ea41b4677c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
