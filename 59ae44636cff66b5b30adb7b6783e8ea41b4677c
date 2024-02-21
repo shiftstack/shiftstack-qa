@@ -60,6 +60,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "9ffccbd4_95c92490",
+        "filename": "collection/tools/roles/tools_ansible_inventory/defaults/main.yml",
+        "patchSetId": 22
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-02-21T09:53:59Z",
+      "side": 1,
+      "message": "```\nSince Ansible 2.4, the inventory_dir variable is now set to None instead of the ‘global inventory source’, because you can now have multiple sources. An example was added that shows how to partially restore the previous behaviour.\n\n```\n\n[0] https://docs.ansible.com/ansible/latest/collections/ansible/builtin/add_host_module.html#notes",
+      "parentUuid": "423d38cd_37726b39",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 37
+      },
+      "revId": "59ae44636cff66b5b30adb7b6783e8ea41b4677c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "236ef750_9ad965ce",
         "filename": "playbooks/legacy_ocp_testing.yaml",
         "patchSetId": 22
