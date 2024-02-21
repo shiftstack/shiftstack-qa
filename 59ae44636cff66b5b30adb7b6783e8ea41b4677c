@@ -16,6 +16,69 @@
       "message": "Verified locally on openshift-qe-010\n\nFor reviewing the new playbook view:\n* Before setting the inventory:\n```bash\nimatza@imatza-mac ~ % ssh openshift-qe-010\n[stack@undercloud-0 ~]$ podman exec -it 7302786bee9e bash\n[cloud-admin@7302786bee9e ~]$ cd artifacts/\n[cloud-admin@7302786bee9e artifacts]$ ansible-navigator replay legacy_ocp_testing-artifact-2024-02-20T16\\:59\\:10.513763+00\\:00.json -m interactive\n```\n\n* After setting the inventory:\n```bash\n[cloud-admin@7302786bee9e artifacts]$ ansible-navigator replay legacy_ocp_testing-artifact-2024-02-20T18\\:19\\:27.883180+00\\:00.json -m interactive\n```\n\nThe next step is setting the installer_host.",
       "revId": "59ae44636cff66b5b30adb7b6783e8ea41b4677c",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e8e07a8d_4ec059cb",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 22
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-02-21T09:37:17Z",
+      "side": 1,
+      "message": "I would be great if Jon can take a look. Specially to the tools_ansible_inventory role.",
+      "revId": "59ae44636cff66b5b30adb7b6783e8ea41b4677c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "423d38cd_37726b39",
+        "filename": "collection/tools/roles/tools_ansible_inventory/defaults/main.yml",
+        "patchSetId": 22
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-02-21T09:37:17Z",
+      "side": 1,
+      "message": "Do you need to define it? Is this not already defined on runtime by ansible?\n\nIf not, all the variables starting with ansible_* are special variables afaik... not sure if it is better to call it \"inventory_dir\" in that case.",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 37
+      },
+      "revId": "59ae44636cff66b5b30adb7b6783e8ea41b4677c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "236ef750_9ad965ce",
+        "filename": "playbooks/legacy_ocp_testing.yaml",
+        "patchSetId": 22
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-02-21T09:37:17Z",
+      "side": 1,
+      "message": "This looks good and has logic: We prepare the setup and then create the installer group. Depending on the type of preparation we have done on the system, it could be the installer host or the pod itself. Nice.",
+      "range": {
+        "startLine": 30,
+        "startChar": 0,
+        "endLine": 49,
+        "endChar": 43
+      },
+      "revId": "59ae44636cff66b5b30adb7b6783e8ea41b4677c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
