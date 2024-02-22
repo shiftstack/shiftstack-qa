@@ -35,6 +35,23 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3cd5598c_d07739bf",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 22
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-02-22T17:15:43Z",
+      "side": 1,
+      "message": "Thanks Itay for working on this!\nI added a couple of comments, and also have some questions:\n- can you please paste the generated inventory file?\n- Do we need to keep the inventory between different runs?\n  i.e.: with infrared we could import the workspace which included the inventory, do we need it here? if it\u0027s not needed it\u0027s probably not needed to save the in-memory inventory into a file (if I\u0027m not missing something...)",
+      "revId": "59ae44636cff66b5b30adb7b6783e8ea41b4677c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "423d38cd_37726b39",
@@ -100,6 +117,52 @@
         "startChar": 0,
         "endLine": 49,
         "endChar": 43
+      },
+      "revId": "59ae44636cff66b5b30adb7b6783e8ea41b4677c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2f391298_aa29965b",
+        "filename": "playbooks/ocp_testing.yaml",
+        "patchSetId": 22
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-02-22T17:15:43Z",
+      "side": 1,
+      "message": "nit: please use OSP 18 or RHOSO instead of NextGen which I think it\u0027s not used any more.",
+      "range": {
+        "startLine": 2,
+        "startChar": 77,
+        "endLine": 2,
+        "endChar": 84
+      },
+      "revId": "59ae44636cff66b5b30adb7b6783e8ea41b4677c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b46f03ba_433ad3eb",
+        "filename": "playbooks/ocp_testing.yaml",
+        "patchSetId": 22
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-02-22T17:15:43Z",
+      "side": 1,
+      "message": "As this role is targeting localhost we should extract the get_installer.yml tasks from the roles/prepare/tasks/main.yml tasks as we want to get the installer in the installer host (which can be local or installer VM)",
+      "range": {
+        "startLine": 51,
+        "startChar": 0,
+        "endLine": 51,
+        "endChar": 2
       },
       "revId": "59ae44636cff66b5b30adb7b6783e8ea41b4677c",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
