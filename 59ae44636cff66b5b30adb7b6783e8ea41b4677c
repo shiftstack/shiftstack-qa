@@ -54,6 +54,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "021480fa_a214f29c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 22
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-02-26T07:10:15Z",
+      "side": 1,
+      "message": "Thanks for the review, Jon!\n\n1. In my next patch, I\u0027ll paste the inventory file when using the installer host. \n   Generated inventory file for local host:\n\n```\n[cloud-admin@7302786bee9e artifacts]$ ll /etc/ansible/hosts\nlrwxrwxrwx. 1 cloud-admin cloud-admin 43 Feb 20 15:48 /etc/ansible/hosts -\u003e /home/cloud-admin/artifacts/hosts-installer\n\n[cloud-admin@7302786bee9e artifacts]$ cat /etc/ansible/hosts\n\nlocalhost ansible_connection\u003dlocal\n\n[installer]\nlocalhost\n```\n\n2. I think it is better to have this option so we can run individual stages, for example - running the tests stage if we want.\n  Another advantage is when you are working on the env (without ci tool), you can rely on the inventory file and run the plugin with different stages.",
+      "parentUuid": "3cd5598c_d07739bf",
+      "revId": "59ae44636cff66b5b30adb7b6783e8ea41b4677c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "423d38cd_37726b39",
         "filename": "collection/tools/roles/tools_ansible_inventory/defaults/main.yml",
         "patchSetId": 22
@@ -99,6 +117,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6332a958_16035f4a",
+        "filename": "collection/tools/roles/tools_ansible_inventory/defaults/main.yml",
+        "patchSetId": 22
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-02-26T07:10:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9ffccbd4_95c92490",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 37
+      },
+      "revId": "59ae44636cff66b5b30adb7b6783e8ea41b4677c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "236ef750_9ad965ce",
@@ -112,6 +154,30 @@
       "writtenOn": "2024-02-21T09:37:17Z",
       "side": 1,
       "message": "This looks good and has logic: We prepare the setup and then create the installer group. Depending on the type of preparation we have done on the system, it could be the installer host or the pod itself. Nice.",
+      "range": {
+        "startLine": 30,
+        "startChar": 0,
+        "endLine": 49,
+        "endChar": 43
+      },
+      "revId": "59ae44636cff66b5b30adb7b6783e8ea41b4677c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d9a70617_056f4121",
+        "filename": "playbooks/legacy_ocp_testing.yaml",
+        "patchSetId": 22
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-02-26T07:10:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "236ef750_9ad965ce",
       "range": {
         "startLine": 30,
         "startChar": 0,
@@ -145,6 +211,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "56470f9b_4bbf2012",
+        "filename": "playbooks/ocp_testing.yaml",
+        "patchSetId": 22
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-02-26T07:10:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2f391298_aa29965b",
+      "range": {
+        "startLine": 2,
+        "startChar": 77,
+        "endLine": 2,
+        "endChar": 84
+      },
+      "revId": "59ae44636cff66b5b30adb7b6783e8ea41b4677c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b46f03ba_433ad3eb",
@@ -158,6 +248,30 @@
       "writtenOn": "2024-02-22T17:15:43Z",
       "side": 1,
       "message": "As this role is targeting localhost we should extract the get_installer.yml tasks from the roles/prepare/tasks/main.yml tasks as we want to get the installer in the installer host (which can be local or installer VM)",
+      "range": {
+        "startLine": 51,
+        "startChar": 0,
+        "endLine": 51,
+        "endChar": 2
+      },
+      "revId": "59ae44636cff66b5b30adb7b6783e8ea41b4677c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4dbe6086_867309bf",
+        "filename": "playbooks/ocp_testing.yaml",
+        "patchSetId": 22
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-02-26T07:10:15Z",
+      "side": 1,
+      "message": "Hey Jon, you are right.\nThe installer host preparation is part of the \"prepare\" stage. Hence, we should execute the first \"prepare\" tasks from the localhost, and move later on to the installer host to prepare the host to ocp installation (get the installer, etc..). I plan to add delegation and handle it as part of my next patch which will be focusing on the installer host installation.",
+      "parentUuid": "b46f03ba_433ad3eb",
       "range": {
         "startLine": 51,
         "startChar": 0,
