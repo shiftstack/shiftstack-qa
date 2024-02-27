@@ -1,12 +1,12 @@
- {{ user_cloud }}:
-     auth:
-        auth_url: {{ auth_url }}
-        project_name: {{ project.name }}
-        password: {{ project.password }}
-        project_domain_name: Default
-        project_id: {{ user_project_fact.openstack_projects[0].id }}
-        user_domain_name: {{ project.domain_name }}
-        username: {{ project.user }}
-     cacert: {{ cacert }}
-     identity_api_version: '3'
-     region_name: {{ project.region }}
+{{ user_cloud }}:
+    auth:
+       auth_url: {{ auth_url }}
+       project_name: {{ project.name }}
+       password: {{ project.password }}
+       project_domain_name: Default
+       project_id: {{ user_project_fact.openstack_projects[0].id }}
+       user_domain_name: {{ project.domain_name }}
+       username: {{ project.user }}
+    cacert: {{ cacert }}
+    identity_api_version: '3'
+    region_name: {{ project.region }}
