@@ -16,11 +16,13 @@
 
 - name: Update {{ clouds_yaml_file_path }}
   ansible.builtin.blockinfile:
-    block: "{{ lookup('ansible.builtin.template', 'clouds.yml.j2') }}"
+    block: "{{ lookup('ansible.builtin.template', 'clouds.yml.j2') | indent(indentation, True) }}"
     path: "{{ clouds_yaml_file_path }}"
     marker: "# {mark} {{ user_cloud }} PARAMETERS"
     backup: true
     unsafe_writes: true
+  vars:
+    indentation: "{{ (legacy_installation | default(False)) | ternary(1, 4) }}"
 
 - name: Test it is possible to access {{ user_cloud }}
   openstack.cloud.auth:
