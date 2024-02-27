@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "412fa1b4_9af63118",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-02-27T09:07:51Z",
+      "side": 1,
+      "message": "Pending to test. I tried something similar but not exactly this. I\u0027ll set Verified+1 once tested. In the meantime you can review the idea and let me know if you agree with it.  Thanks!",
+      "revId": "a442583818b3abdf251222dbf2000b35c0b4444d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
