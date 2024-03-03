@@ -4,6 +4,9 @@ from lxml import etree
 import sys
 import time
 
+def format_test_case_name(s):
+    return s.replace(':', '_').replace('/', '_').replace(' ', '_').replace('.', '_').replace('[', '.').replace(']', '.').rstrip('.').replace('..','.').replace('_.','.').replace('._','.')[1::]
+
 # This script modify a given xml report so it can be uploaded to ReportPortal and Polarion.
 # third argument. Currently it's used for NetworkPolicy and Conformance tests
 # @arg1: input xml file.
@@ -44,9 +47,7 @@ for ts in root:
                     print('TestCase removed from input XML:', tc_name)
                     ts.remove(tc)
                 else:
-                    new_tc_name = tc_name.strip().replace(' ','_').replace('"','_').replace(
-                        ':','_').replace('[','_').replace(']','_').replace(
-                        '(','_').replace(')','_').replace('*','_')
+                    new_tc_name = format_test_case_name(tc_name)
                     tc.set('name', new_tc_name)
                     print('TestCase added to output XML:', new_tc_name)
     ts.set('tests', str(len(ts.getchildren())))
