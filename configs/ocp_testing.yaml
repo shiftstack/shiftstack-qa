@@ -6,3 +6,4 @@ infra: # Store required Openstack deployment info for deploying OCP
   region: regionOne
   dns_servers:
     - '10.47.242.10'
+octavia_blocker_bugs_fixed: false # Amphora-Octavia is not working in RHOSP18 until OSPRH-387 and OSPRH-399 are done

@@ -1,0 +1,26 @@
+---
+admin_cloud: default
+cacert: "{{ home_dir }}/.original-config/cert/ca.crt"
+infra: # Store required Openstack deployment info for deploying OCP
+  external_network: public
+  region: regionOne
+  dns_servers:
+    - '192.168.122.1'
+    - '10.47.242.10'
+
+topology:
+  flavors:
+    master:
+      name: "master"
+      ram: 16384
+      vcpus: 4
+      disk: 25
+    worker:
+      name: "worker"
+      ram: 8192
+      vcpus: 2
+      disk: 25
+  replicas:
+    master: 3
+    worker: 2
+  machine_cidr: 10.196.0.0/16
