@@ -22,11 +22,6 @@
       retries: 12
       delay: 10
 
-    - name: Gather cluster network information using must-gather
-      ansible.builtin.command: oc adm must-gather --dest-dir={{ must_gather_dir }} -- /usr/bin/gather_network_logs
-      changed_when: true
-      no_log: true
-
     - name: Gather cluster information using must-gather
       ansible.builtin.command: oc adm must-gather --dest-dir={{ must_gather_dir }}
       changed_when: true

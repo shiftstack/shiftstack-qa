@@ -34,6 +34,7 @@
         dest: "{{ home_dir }}/.config/openstack/"
         remote_src: yes
         mode: u=rw,g=rw,o=r
+      when: "'prepare' in stages" # Avoid removing clouds.yaml if prepare already run
 
   tasks:
     - name: Discover OSP version
