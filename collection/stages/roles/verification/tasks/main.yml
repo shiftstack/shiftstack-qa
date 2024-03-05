@@ -90,6 +90,7 @@
       ansible.builtin.include_tasks: check_lb_svc.yml
       when:
         - edge_nova_az is not defined # Skip due to Openstack Manila is not supported at the Edge
+        - octavia_blocker_bugs_fixed|default(true)
 
     - name: Run cinder checks
       ansible.builtin.include_tasks: check_cinder_csi.yml
