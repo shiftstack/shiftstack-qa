@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8d4c38ad_cfe8c805",
+        "filename": "configs/virt_va1.yml",
+        "patchSetId": 4
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-03-12T16:56:02Z",
+      "side": 1,
+      "message": "Just needed in virt setup?",
+      "range": {
+        "startLine": 8,
+        "startChar": 6,
+        "endLine": 8,
+        "endChar": 21
+      },
+      "revId": "14ce425b81fb70c70b76504d3ada0d95d0a09ebe",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
