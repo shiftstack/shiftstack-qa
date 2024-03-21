@@ -1,0 +1,19 @@
+[rhel-9-baseos]
+name=RHEL 9 BaseOS
+baseurl=http://rhsm-pulp.corp.redhat.com/content/eus/rhel9/9.2/$basearch/baseos/os/
+enabled=1
+gpgcheck=0
+
+[rhel-9-appstream]
+name=RHEL 9 AppStream
+baseurl=http://rhsm-pulp.corp.redhat.com/content/eus/rhel9/9.2/$basearch/appstream/os/
+enabled=1
+gpgcheck=0
+
+[rhel-9-openstack-tools-17]
+name=RHEL 9 Openstack-Tools 17
+baseurl=http://rhsm-pulp.corp.redhat.com/content/dist/layered/rhel9/$basearch/openstack-tools/17/os/
+enabled=1
+gpgcheck=0
+skip_if_unavailable=1
+module_hotfixes=1

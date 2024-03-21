@@ -43,6 +43,8 @@
       delay: 30
 
     - name: Unarchive GO
+      vars:
+        home_dir: "{{ ansible_facts.env['HOME'] }}"
       ansible.builtin.unarchive:
         src: "{{ home_dir }}/{{ gopks }}"
         dest: "/usr/local/bin"
