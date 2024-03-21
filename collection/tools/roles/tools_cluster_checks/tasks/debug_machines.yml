@@ -1,6 +1,6 @@
 ---
 - name: Get Instances, Nodes, Machines, and MachineSets information
-  ignore_errors: yes
+  failed_when: false
   block:
     - name: Get OCP machinesets status
       ansible.builtin.command: 'oc get machinesets -A'
@@ -36,4 +36,3 @@
     - name: Get OCP Control Plane MachineSet status
       ansible.builtin.shell: 'oc get controlplanemachineset/cluster -n openshift-machine-api -o=jsonpath={.spec.state}'
       changed_when: false
-      ignore_errors: yes

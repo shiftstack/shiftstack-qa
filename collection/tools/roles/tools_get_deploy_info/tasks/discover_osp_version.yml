@@ -19,7 +19,7 @@
 
 - name: Unknown OSP version, setting default openstack_version
   ansible.builtin.set_fact:
-    openstack_version: "16.2"
+    openstack_version: "18.0"
   when: not rhosp_release_file.stat.exists
 
 - name: Print the OSP version
