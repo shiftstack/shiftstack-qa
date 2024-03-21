@@ -4,3 +4,4 @@ openshift_releasestream_url: "https://openshift-release.apps.ci.l2s4.p1.openshif
 release_name: "{{ openshift_release_build_name | default('') }}"
 openshift_download_url: "{{ 'https://openshift-release-artifacts.apps.ci.l2s4.p1.openshiftapps.com' + '/' + release_name }}"
 openshift_mirror_url: "https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp"
+ocp_build_info_file: "{{ controller_home_dir }}/latest_build.json"

@@ -17,7 +17,9 @@
   block:
     - name: Check if cinder AZs are ready to be used
       ansible.builtin.shell: |
-        source {{ admin_env_file }} && openstack volume service list -c State -f value | grep "down"
+        openstack volume service list -c State -f value | grep "down"
+      environment:
+        OS_CLOUD: "{{ user_cloud }}"
       register: any_cinder_az_down
       changed_when: false
       ignore_errors: yes
