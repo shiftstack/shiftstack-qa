@@ -30,7 +30,6 @@
         inventory_file_name: "{{ inventory.hosts_file }}"
         inventory_backup_file: "{{ inventory.backup_file }}"
 
-
 - name: Print the '{{ installer_group }}' group hosts
   ansible.builtin.debug:
     var: groups[installer_group]
