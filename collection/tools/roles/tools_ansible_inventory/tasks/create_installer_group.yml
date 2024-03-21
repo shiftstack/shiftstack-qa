@@ -9,11 +9,32 @@
   ansible.builtin.set_fact:
     installer_vm_exists: true
   when:
-    - server_info.openstack_servers|default([])|length == 1
+    - server_info.openstack_servers | default([]) | length == 1
+
+- name: Add host installer to inventory when the installer host VM exists
+  when: installer_vm_exists | default(false)
+  block:
+    - name: Include vars from registered resources
+      ansible.builtin.include_vars:
+        file: "{{ resources_file }}"
+        name: resources
+
+    - name: Create the installer inventory group and add the installer host
+      ansible.builtin.include_role:
+        name: tools_installer_host
+        tasks_from: add_installer_host_to_installer_group.yml
+      vars:
+        installer_host_fip: "{{ resources.installer_fip }}"
 
 - name: Add host localhost to inventory when the installer host VM doesn't exist
   when: not installer_vm_exists | default(false)
   block:
+    - name: Flush the inventory in a case the {{ installer_group }} group is presents
+      ansible.builtin.include_role:
+        name: tools_ansible_inventory
+        tasks_from: flush_inventory.yml
+      when: "installer_group in groups"
+
     - name: Add host localhost to inventory when the installer host VM doesn't exist
       ansible.builtin.add_host:
         name: "localhost"
@@ -29,7 +50,6 @@
         inventory_symlink_file: "{{ inventory.dir }}/hosts"
         inventory_file_name: "{{ inventory.hosts_file }}"
         inventory_backup_file: "{{ inventory.backup_file }}"
-
 
 - name: Print the '{{ installer_group }}' group hosts
   ansible.builtin.debug:

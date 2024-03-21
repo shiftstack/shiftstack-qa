@@ -1,0 +1,9 @@
+---
+- name: Register resources in file
+  ansible.builtin.blockinfile:
+    content: "{{ input | to_nice_yaml }}"
+    dest: "{{ resources_file }}"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK {{ input.keys() }}"
+    mode: u=rw,g=rw,o=r
+    create: yes
+  delegate_to: localhost
