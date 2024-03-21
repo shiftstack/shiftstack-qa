@@ -16,7 +16,7 @@
 
 - name: Update {{ clouds_yaml_file_path }}
   ansible.builtin.blockinfile:
-    block: "{{ lookup('ansible.builtin.template', 'clouds.yml.j2') | indent(indentation|int, True) }}"
+    block: "{{ lookup('ansible.builtin.template', 'clouds.yml.j2') | indent(indentation | int, True) }}"
     path: "{{ clouds_yaml_file_path }}"
     marker: "# {mark} {{ user_cloud }} PARAMETERS"
     backup: true
