@@ -17,10 +17,13 @@
   block:
     - name: Check if cinder AZs are ready to be used
       ansible.builtin.shell: |
-        source {{ admin_env_file }} && openstack volume service list -c State -f value | grep "down"
+        set -o pipefail &&
+        openstack volume service list -c State -f value | grep "down"
+      environment:
+        OS_CLOUD: "{{ user_cloud }}"
       register: any_cinder_az_down
       changed_when: false
-      ignore_errors: yes
+      failed_when: false
 
     - name: Fail if a down cinder zone is found
       ansible.builtin.fail:
