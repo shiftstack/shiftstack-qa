@@ -1,0 +1,16 @@
+---
+- name: Include vars from registered resources
+  ansible.builtin.include_vars:
+    file: "{{ resources_file }}"
+    name: resources
+
+- name: Add resulting API and APPS fip/vip to /etc/hosts file
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    regexp: "{{ item.regex }}"
+    line: "{{ item.row }}"
+  vars:
+    api_ip: "{{ resources.api_fip }}"
+    apps_ip: "{{ resources.apps_fip }}"
+  loop: "{{ etc_hosts_entries }}"
