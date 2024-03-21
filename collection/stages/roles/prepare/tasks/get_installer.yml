@@ -6,7 +6,6 @@
   vars:
     release: "{{ openshift_release }}"
     build_name: "{{ openshift_build_name }}"
-    output_dir: "{{ home_dir }}"
 
 - name: Marking the Openshift release build name {{ openshift_release_build_name }}
   ansible.builtin.debug:
@@ -19,4 +18,3 @@
   vars:
     binaries: [installer, client]
     release_name: "{{ openshift_release_build_name | default('') }}"
-    output_dir: "{{ home_dir }}"
