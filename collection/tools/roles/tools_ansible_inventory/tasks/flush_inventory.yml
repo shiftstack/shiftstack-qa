@@ -9,7 +9,7 @@
     src: "{{ inventory.hosts_file }}"
     dest: "{{ inventory.backup_file }}"
     mode: u=rw,g=rw,o=r
-    when: hosts_file_stat.stat.exists
+  when: hosts_file_stat.stat.exists
 
 - name: Remove the original '{{ inventory.hosts_file }}' file
   ansible.builtin.file:

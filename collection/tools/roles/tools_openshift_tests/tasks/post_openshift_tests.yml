@@ -3,7 +3,7 @@
   ansible.builtin.shell: |
     oc project default
   changed_when: true
-  ignore_errors: true
+  failed_when: false
 
 - name: Merge all tests results into one XML file
   ansible.builtin.shell: |
