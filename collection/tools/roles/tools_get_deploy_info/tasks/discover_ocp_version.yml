@@ -5,7 +5,7 @@
   ansible.builtin.command: "oc --request-timeout=2s get clusterversion"
   register: oc_get_clusterversion
   changed_when: false
-  ignore_errors: true
+  failed_when: false
 
 - name: Discover the running OCP network type in a case discovered a running OCP release
   when: oc_get_clusterversion.rc == 0
