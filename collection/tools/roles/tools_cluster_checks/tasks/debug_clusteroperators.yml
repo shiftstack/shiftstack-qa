@@ -1,6 +1,6 @@
 ---
 - name: Check the unready Cluster Operators
-  ignore_errors: yes
+  failed_when: false
   block:
     - name: Get the Cluster Operators
       ansible.builtin.command: 'oc get clusteroperator'

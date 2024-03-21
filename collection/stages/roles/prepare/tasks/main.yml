@@ -1,6 +1,6 @@
 ---
 - name: Create new Project
-  ansible.builtin.import_tasks: project.yml
+  ansible.builtin.include_tasks: project.yml
 
 - name: Update clouds.yml file with new Project
   ansible.builtin.include_tasks: clouds.yml
@@ -8,5 +8,7 @@
 - name: Prepare setup for accessing the OCP Cluster
   ansible.builtin.include_tasks: external_access.yml
 
-- name: Get OCP installer and client in the installer host
-  ansible.builtin.include_tasks: get_installer.yml
+- name: Deploy and configure an installer host VM and update the inventory
+  ansible.builtin.include_role:
+    name: tools_installer_host
+  when: deploy_installer_host
