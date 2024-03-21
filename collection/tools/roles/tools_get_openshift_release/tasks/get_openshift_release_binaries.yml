@@ -23,7 +23,7 @@
 
     - name: Create the installer directory
       ansible.builtin.file:
-        path: "{{ output_dir }}/{{ release_name }}"
+        path: "{{ home_dir }}/{{ release_name }}"
         state: directory
         mode: u=rwx,g=rw,o=r
 
@@ -33,7 +33,7 @@
         - name: Download and unarchive the installer from {{ installer_url }}
           ansible.builtin.unarchive:
             src: "{{ installer_url }}"
-            dest: "{{ output_dir }}/{{ release_name }}"
+            dest: "{{ home_dir }}/{{ release_name }}"
             remote_src: yes
           register: result
           until: result is not failed
@@ -42,7 +42,7 @@
 
         - name: Create a symlink to the openshift-install binary from /usr/local/bin
           ansible.builtin.file:
-            src: "{{ output_dir }}/{{ release_name }}/openshift-install"
+            src: "{{ home_dir }}/{{ release_name }}/openshift-install"
             dest: /usr/local/bin/openshift-install
             state: link
           become: true
@@ -53,7 +53,7 @@
         - name: Download and unarchive the client from {{ client_url }}
           ansible.builtin.unarchive:
             src: "{{ client_url }}"
-            dest: "{{ output_dir }}/{{ release_name }}"
+            dest: "{{ home_dir }}/{{ release_name }}"
             remote_src: yes
           register: result
           until: result is not failed
@@ -62,14 +62,14 @@
 
         - name: Create a symlink to the oc binary from /usr/local/bin
           ansible.builtin.file:
-            src: "{{ output_dir }}/{{ release_name }}/oc"
+            src: "{{ home_dir }}/{{ release_name }}/oc"
             dest: /usr/local/bin/oc
             state: link
           become: true
 
         - name: Create a symlink to the kubectl binary from /usr/bin
           ansible.builtin.file:
-            src: "{{ output_dir }}/{{ release_name }}/kubectl"
+            src: "{{ home_dir }}/{{ release_name }}/kubectl"
             dest: /usr/bin/kubectl
             state: link
           become: true
