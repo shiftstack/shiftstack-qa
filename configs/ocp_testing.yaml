@@ -1,6 +1,6 @@
 ---
 admin_cloud: default
-cacert: "{{ home_dir }}/.original-config/cert/ca.crt"
+cacert: "~/.original-config/cert/ca.crt"
 infra: # Store required Openstack deployment info for deploying OCP
   external_network: public
   region: regionOne

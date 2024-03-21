@@ -18,8 +18,6 @@
         state: absent
 
     - name: Make a copy of the original config directory
-      vars:
-        home_dir: "{{ ansible_facts.env['HOME'] }}"
       ansible.builtin.copy:
         src: "{{ home_dir }}/.original-config/openstack/"
         dest: "{{ home_dir }}/.config/openstack/"
