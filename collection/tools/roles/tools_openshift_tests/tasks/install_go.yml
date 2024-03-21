@@ -5,7 +5,7 @@
     go version
   register: existing_go_version
   changed_when: false
-  ignore_errors: yes
+  failed_when: false
 
 - name: Set a fact for the existing go version
   ansible.builtin.set_fact:
@@ -43,6 +43,8 @@
       delay: 30
 
     - name: Unarchive GO
+      vars:
+        home_dir: "{{ ansible_facts.env['HOME'] }}"
       ansible.builtin.unarchive:
         src: "{{ home_dir }}/{{ gopks }}"
         dest: "/usr/local/bin"
