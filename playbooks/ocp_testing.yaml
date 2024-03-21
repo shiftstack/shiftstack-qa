@@ -18,15 +18,12 @@
         state: absent
 
     - name: Make a copy of the original config directory
-      vars:
-        home_dir: "{{ ansible_facts.env['HOME'] }}"
       ansible.builtin.copy:
         src: "{{ home_dir }}/.original-config/openstack/"
         dest: "{{ home_dir }}/.config/openstack/"
         remote_src: yes
         mode: u=rw,g=rw,o=r
       when: "'prepare' in stages" # Avoid removing clouds.yaml if prepare already run
-
   tasks:
     - name: Discover the OSP version
       ansible.builtin.include_role:
@@ -44,20 +41,41 @@
   gather_facts: no
   vars_files:
     - "../configs/global.yml"
+    - "../configs/secret.yaml"
     - "../configs/ocp_testing.yaml"
-  environment:
-    KUBECONFIG: "{{ kubeconfig }}"
   tasks:
     - name: Prepare setup for OCP installation
       ansible.builtin.include_role:
         name: shiftstack.stages.prepare
       when: "'prepare' in stages"
   post_tasks:
-    - name: Prepare the Ansible inventory in a case the "{{ installer_group }}" group is not presents
+    - name: Update the Ansible inventory in case not deploying an installer host
       ansible.builtin.include_role:
         name: shiftstack.tools.tools_ansible_inventory
         tasks_from: create_installer_group.yml
-      when: "installer_group not in groups"
+      when: "not deploy_installer_host"
+
+
+- name: Prepare the OpenShift installer and client in the installer host
+  hosts: installer
+  gather_facts: no
+  vars_files:
+    - "../configs/global.yml"
+  pre_tasks:
+    - name: Gather host environment variables
+      ansible.builtin.setup:
+        gather_subset:
+          - env
+
+    - name: Set the openstack_version based on the previous discovery
+      ansible.builtin.set_fact:
+        openstack_version: "{{ hostvars['localhost']['openstack_version'] }}"
+  tasks:
+    - name: Get OCP installer and client in the installer host
+      ansible.builtin.include_role:
+        name: shiftstack.stages.prepare
+        tasks_from: get_installer.yml
+      when: "'prepare' in stages"
 
 
 - name: Install OpenShift new candidate on OSP
@@ -69,15 +87,6 @@
     - "../configs/ocp_testing.yaml"
   environment:
     KUBECONFIG: "{{ kubeconfig }}"
-  pre_tasks:
-    - name: Gather host environment variables
-      ansible.builtin.setup:
-        gather_subset:
-          - env
-
-    - name: Set the openstack_version based on the previous discovery
-      ansible.builtin.set_fact:
-        openstack_version: "{{ hostvars['localhost']['openstack_version'] }}"
   tasks:
     - name: Install OCP on setup
       ansible.builtin.include_role:
@@ -132,3 +141,31 @@
       ansible.builtin.include_role:
         name: shiftstack.stages.openstack_test
       when: "'openstack_test' in stages"
+
+
+- name: Post steps
+  hosts: installer
+  gather_facts: no
+  vars_files:
+    - "../configs/global.yml"
+  pre_tasks:
+    - name: Gather host environment variables
+      ansible.builtin.setup:
+        gather_subset:
+          - env
+  tasks:
+    - name: Check if source directory exists
+      ansible.builtin.stat:
+        path: "{{ artifacts_dir }}"
+      register: source_dir_stat
+      ignore_errors: yes
+
+    - name: Synchronize artifacts from the Ansible Managed Node to Ansible Controller
+      ansible.posix.synchronize:
+        src: "{{ artifacts_dir }}"
+        dest: "{{ controller_home_dir }}"
+        mode: pull
+        recursive: yes
+        times: false
+        perms: false
+      when: source_dir_stat.stat.exists
