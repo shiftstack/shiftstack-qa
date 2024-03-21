@@ -11,7 +11,7 @@
 {%- endif %}
 
 {%- if hostvars[host]['ansible_distribution']|default('') in ('CentOS', 'RedHat', 'Red Hat Enterprise Linux') and hostvars[host]['ansible_distribution_major_version']|default('0') >= '8' %}
- ansible_python_interpreter='/usr/libexec/platform-python'
+ ansible_python_interpreter='{{ installer_ansible_python_interpreter }}'
 {%- elif hostvars[host]['ansible_python_interpreter'] is defined %}
  ansible_python_interpreter='{{ hostvars[host]['ansible_python_interpreter'] }}'
 {%- endif -%}
