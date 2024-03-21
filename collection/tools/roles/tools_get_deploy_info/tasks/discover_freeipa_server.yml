@@ -1,0 +1,11 @@
+---
+- name: Get the freeipa DNS server IP for the installer host VM (with tls-e only)
+  ansible.builtin.shell: >
+    set -o pipefail &&
+    grep ^nameserver /etc/resolv.conf | cut -d' ' -f2
+  changed_when: false
+  register: command_output
+
+- name: Set a fact for the freeipa server
+  ansible.builtin.set_fact:
+    freeipa_server: "{{ command_output.stdout.split()[0] }}"

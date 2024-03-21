@@ -43,7 +43,7 @@
       ansible.builtin.include_role:
         name: tools_cluster_checks
         tasks_from: check_controlplane_machinesets.yml
-      when: not openshift_upi|default(False)
+      when: installation_type != 'upi'
 
     - name: Soft Checks that can mark the installation as unstable
       when: soft_checks
@@ -107,7 +107,7 @@
     - name: Run manila checks if it is enabled on OSP
       ansible.builtin.include_tasks: check_manila.yml
       when:
-        - not openshift_upi|default(False)
+        - installation_type != 'upi'
         - manila_enabled.rc == 0
         - edge_nova_az is not defined # Skip due to Openstack Manila is not supported at the Edge
 

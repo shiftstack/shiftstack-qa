@@ -1,0 +1,63 @@
+---
+- name: Add RH-IT-Root-CA.crt certificate
+  ansible.builtin.get_url:
+    url: "{{ redhat_ca_file }}"
+    dest: /etc/pki/ca-trust/source/anchors/custom-ssl-ca.crt
+    validate_certs: no
+    mode: u=rw,g=rw,o=r
+  become: true
+  register: custom_ca
+
+- name: Update system trust store
+  when: custom_ca is changed
+  ansible.builtin.command: update-ca-trust
+  changed_when: true
+  become: true
+
+- name: Install required packages in the installer host
+  ansible.builtin.package:
+    name: "{{ installer_required_packages }}"
+    state: present
+  register: result
+  become: true
+  retries: 10
+  delay: 10
+  until: not result.failed
+
+- name: Install ansible and ansible collections for UPI
+  when: installation_type == 'upi'
+  block:
+    - name: Install ansible-collections-openstack from RPM for UPI mode installer (installs ansible-core too)
+      become: true
+      ansible.builtin.package:
+        name:
+          - 'ansible-collections-openstack' # will install ansible-core as dependency
+        state: present
+      register: result
+      retries: 10
+      delay: 10
+      until: not result.failed
+
+    - name: Install required ansible collections for UPI mode installer
+      ansible.builtin.command: "ansible-galaxy collection install {{ item }} --force-with-deps -vvv"
+      loop: "{{ installer_ansible_collections }}"
+      changed_when: true
+      register: result
+      retries: 10
+      delay: 10
+      until: not result.failed
+
+- name: Ensure that the python command points to python3
+  when: installation_type == 'upi'
+  block:
+    - name: Check if python symlink points to python3
+      ansible.builtin.stat:
+        path: /usr/bin/python
+      register: python_symlink
+
+    - name: Set python3 as default if symlink doesn't exist or doesn't point to python3
+      ansible.builtin.shell: |
+        alternatives --set python /usr/bin/python3
+      changed_when: true
+      become: true
+      when: not (python_symlink.stat.exists and python_symlink.stat.target == "/usr/bin/python3")
