@@ -1,0 +1,25 @@
+[rhel-8-baseos]
+name=RHEL 8 BaseOS
+baseurl=http://rhsm-pulp.corp.redhat.com/content/dist/rhel8/8.5/$basearch/baseos/os/
+enabled=1
+gpgcheck=0
+
+[rhel-8-appstream]
+name=RHEL 8 AppStream
+baseurl=http://rhsm-pulp.corp.redhat.com/content/dist/rhel8/8.5/$basearch/appstream/os/
+enabled=1
+gpgcheck=0
+
+[rhel-8-openstack-tools-16]
+name=RHEL 8 Openstack-Tools 16
+baseurl=http://rhsm-pulp.corp.redhat.com/content/dist/layered/rhel8/$basearch/openstack-tools/16/os/
+enabled=1
+gpgcheck=0
+skip_if_unavailable=1
+module_hotfixes=1
+
+[rhel-8-ansible-2.9]
+name=Red Hat Enterprise Linux Ansible $releasever - $basearch
+baseurl=http://rhsm-pulp.corp.redhat.com/content/dist/layered/rhel8/$basearch/ansible/2.9/os/
+enabled=1
+gpgcheck=0
