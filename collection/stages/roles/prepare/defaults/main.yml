@@ -26,12 +26,12 @@ project:
 ocp_api_description: "API {{ ocp_cluster_name }}.{{ user_cloud }}.com"
 ocp_apps_description: "APPS {{ ocp_cluster_name }}.{{ user_cloud }}.com"
 etc_hosts_entries:
-  - {regex: 'api\..*\.{{ user_cloud }}.com', row: '{{ api_ip }} api.{{ ocp_cluster_name }}.{{ user_cloud }}.com'}
-  - {regex: 'oauth-openshift.apps\..*\.{{ user_cloud }}.com', row: '{{ apps_ip }} oauth-openshift.apps.{{ ocp_cluster_name }}.{{ user_cloud }}.com'}
-  - {regex: 'console-openshift-console.apps\..*\.{{ user_cloud }}.com', row: '{{ apps_ip }} console-openshift-console.apps.{{ ocp_cluster_name }}.{{ user_cloud }}.com'}
-  - {regex: 'downloads-openshift-console.apps\..*\.{{ user_cloud }}.com', row: '{{ apps_ip }} downloads-openshift-console.apps.{{ ocp_cluster_name }}.{{ user_cloud }}.com'}
-  - {regex: 'canary-openshift-ingress-canary.apps\..*\.{{ user_cloud }}.com', row: '{{ apps_ip }} canary-openshift-ingress-canary.apps.{{ ocp_cluster_name }}.{{ user_cloud }}.com'}
-  - {regex: 'alertmanager-main-openshift-monitoring.apps\..*\.{{ user_cloud }}.com', row: '{{ apps_ip }} alertmanager-main-openshift-monitoring.apps.{{ ocp_cluster_name }}.{{ user_cloud }}.com'}
-  - {regex: 'grafana-openshift-monitoring.apps\..*\.{{ user_cloud }}.com', row: '{{ apps_ip }} grafana-openshift-monitoring.apps.{{ ocp_cluster_name }}.{{ user_cloud }}.com'}
-  - {regex: 'prometheus-k8s-openshift-monitoring.apps\..*\.{{ user_cloud }}.com', row: '{{ apps_ip }} prometheus-k8s-openshift-monitoring.apps.{{ ocp_cluster_name }}.{{ user_cloud }}.com'}
-  - {regex: 'thanos-querier-openshift-monitoring.apps\..*\.{{ user_cloud }}.com', row: '{{ apps_ip }} thanos-querier-openshift-monitoring.apps.{{ ocp_cluster_name }}.{{ user_cloud }}.com'}
+  - {regex: 'api\..*\.shiftstack.com', row: '{{ api_fip }} api.{{ ocp_cluster_name }}.shiftstack.com'}
+  - {regex: 'oauth-openshift.apps\..*\.shiftstack.com', row: '{{ apps_fip }} oauth-openshift.apps.{{ ocp_cluster_name }}.shiftstack.com'}
+  - {regex: 'console-openshift-console.apps\..*\.shiftstack.com', row: '{{ apps_fip }} console-openshift-console.apps.{{ ocp_cluster_name }}.shiftstack.com'}
+  - {regex: 'downloads-openshift-console.apps\..*\.shiftstack.com', row: '{{ apps_fip }} downloads-openshift-console.apps.{{ ocp_cluster_name }}.shiftstack.com'}
+  - {regex: 'canary-openshift-ingress-canary.apps\..*\.shiftstack.com', row: '{{ apps_fip }} canary-openshift-ingress-canary.apps.{{ ocp_cluster_name }}.shiftstack.com'}
+  - {regex: 'alertmanager-main-openshift-monitoring.apps\..*\.shiftstack.com', row: '{{ apps_fip }} alertmanager-main-openshift-monitoring.apps.{{ ocp_cluster_name }}.shiftstack.com'}
+  - {regex: 'grafana-openshift-monitoring.apps\..*\.shiftstack.com', row: '{{ apps_fip }} grafana-openshift-monitoring.apps.{{ ocp_cluster_name }}.shiftstack.com'}
+  - {regex: 'prometheus-k8s-openshift-monitoring.apps\..*\.shiftstack.com', row: '{{ apps_fip }} prometheus-k8s-openshift-monitoring.apps.{{ ocp_cluster_name }}.shiftstack.com'}
+  - {regex: 'thanos-querier-openshift-monitoring.apps\..*\.shiftstack.com', row: '{{ apps_fip }} thanos-querier-openshift-monitoring.apps.{{ ocp_cluster_name }}.shiftstack.com'}

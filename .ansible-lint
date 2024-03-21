@@ -20,3 +20,4 @@ skip_list:
   - var-naming[no-role-prefix]
   - name[template]
   - ignore-errors
+  - no-handler

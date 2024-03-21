@@ -3,6 +3,7 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 from ansible.module_utils.basic import AnsibleModule
 import xml.etree.ElementTree as ET
+import os
 __metaclass__ = type
 
 DOCUMENTATION = r'''
@@ -119,7 +120,7 @@ def run_module():
     )
 
     # pars the parameters
-    xml_report = module.params['xml_report']
+    xml_report = os.path.expanduser(module.params['xml_report'])
 
     # seed the result dict in the object
     result = dict(

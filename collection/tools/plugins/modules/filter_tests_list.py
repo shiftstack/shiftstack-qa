@@ -5,6 +5,7 @@ from __future__ import (absolute_import, division, print_function)
 from ansible.module_utils.basic import AnsibleModule
 import re
 import shutil
+import os
 __metaclass__ = type
 
 DOCUMENTATION = r'''
@@ -110,10 +111,10 @@ def run_module():
     )
 
     # pars the parameters
-    input_tests_file = module.params['input_tests_file']
-    allowlist_file = module.params['allowlist_file']
-    blocklist_file = module.params['blocklist_file']
-    output_file = module.params['output_file']
+    input_tests_file = os.path.expanduser(module.params['input_tests_file'])
+    allowlist_file = os.path.expanduser(module.params['allowlist_file'])
+    blocklist_file = os.path.expanduser(module.params['blocklist_file'])
+    output_file = os.path.expanduser(module.params['output_file'])
 
     # seed the result dict in the object
     result = dict(
@@ -207,7 +208,6 @@ def run_module():
 
         blocked_output_file = input_tests_file + ".blocked_tests"
         try:
-            blocked_output_file = input_tests_file + ".blocked_tests"
             with open(blocked_output_file, 'w') as f:
                 f.writelines(blocked_tests)
         except IOError:

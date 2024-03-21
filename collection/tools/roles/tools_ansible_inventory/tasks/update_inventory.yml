@@ -50,7 +50,7 @@
         state: absent
       become: true
 
-    - name: Create a directory for the installation files
+    - name: Create a directory for the inventory files
       ansible.builtin.file:
         path: "{{ inventory_config_dir }}"
         state: directory
