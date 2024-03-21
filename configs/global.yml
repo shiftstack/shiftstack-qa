@@ -1,10 +1,17 @@
 ---
-home_dir: "{{ lookup('ansible.builtin.env', 'HOME') }}"
+# Sets the Ansible Target (a.k.a Managed Node) HOME environment variable to its actual value
+# This ensures scripts and applications running on the target machine know the user's home directory
+home_dir: "{{ ansible_facts.env['HOME'] }}"
 artifacts_dir: "{{ home_dir }}/artifacts"
 installation_dir: "{{ home_dir }}/{{ ocp_cluster_name }}"
 kubeconfig: "{{ installation_dir }}/auth/kubeconfig"
 
 stage_unstable_flag: "{{ artifacts_dir }}/stage_unstable_flag"
+
+# Sets the Ansible Controller Node machine's HOME environment variable
+controller_home_dir: "{{ lookup('ansible.builtin.env', 'HOME') }}"
+# The resources_file is in the Ansible control node's HOME environment variable
+resources_file: "{{ controller_home_dir }}/artifacts/resources.yml"
 
 admin_cloud: "overcloud"
 admin_env_file: "{{ home_dir }}/{{ admin_cloud }}rc"
@@ -33,9 +40,37 @@ wait_retries: 30
 wait_delay: 30
 manifests_wait_timeout: 300
 
-installer_vm_name: "installer_host"
+openstack_ssl: true
+openstack_tlse: false
+openstack_key_file: "{{ home_dir }}/.ssh/rhos-dfg-osasinfra-qe"
+redhat_ca_file: "https://certs.corp.redhat.com/RH-IT-Root-CA.crt"
+
+deploy_installer_host: false
+installer_vm_ssh_user: "cloud-user"
+custom_network: ''
+custom_subnet: ''
+custom_router: ''
+custom_flavor: ''
+installer_vm_name: "installer-host"
 installer_group: "installer"
+installer_ansible_python_interpreter: '/usr/libexec/platform-python'
+installer_network: "{{ installer_vm_name | default('installer_host-network', true) }}"
+installer_subnet: "{{ custom_subnet | default('installer_host-subnet', true) }}"
+installer_router: "{{ custom_router | default('installer_host-router', true) }}"
+installer_flavor_name: "{{ custom_flavor| default('m1.medium', true) }}"
+
 inventory:
   dir: "/etc/ansible"
   hosts_file: "{{ artifacts_dir }}/hosts-installer"
   backup_file: "{{ artifacts_dir }}/hosts-installer.bck"
+
+fip_hosts:
+  - {regex: 'api\..*\.shiftstack.com', row: '{{ api_fip }} api.{{ ocp_cluster_name }}.shiftstack.com'}
+  - {regex: 'oauth-openshift.apps\..*\.shiftstack.com', row: '{{ apps_fip }} oauth-openshift.apps.{{ ocp_cluster_name }}.shiftstack.com'}
+  - {regex: 'console-openshift-console.apps\..*\.shiftstack.com', row: '{{ apps_fip }} console-openshift-console.apps.{{ ocp_cluster_name }}.shiftstack.com'}
+  - {regex: 'downloads-openshift-console.apps\..*\.shiftstack.com', row: '{{ apps_fip }} downloads-openshift-console.apps.{{ ocp_cluster_name }}.shiftstack.com'}
+  - {regex: 'canary-openshift-ingress-canary.apps\..*\.shiftstack.com', row: '{{ apps_fip }} canary-openshift-ingress-canary.apps.{{ ocp_cluster_name }}.shiftstack.com'}
+  - {regex: 'alertmanager-main-openshift-monitoring.apps\..*\.shiftstack.com', row: '{{ apps_fip }} alertmanager-main-openshift-monitoring.apps.{{ ocp_cluster_name }}.shiftstack.com'}
+  - {regex: 'grafana-openshift-monitoring.apps\..*\.shiftstack.com', row: '{{ apps_fip }} grafana-openshift-monitoring.apps.{{ ocp_cluster_name }}.shiftstack.com'}
+  - {regex: 'prometheus-k8s-openshift-monitoring.apps\..*\.shiftstack.com', row: '{{ apps_fip }} prometheus-k8s-openshift-monitoring.apps.{{ ocp_cluster_name }}.shiftstack.com'}
+  - {regex: 'thanos-querier-openshift-monitoring.apps\..*\.shiftstack.com', row: '{{ apps_fip }} thanos-querier-openshift-monitoring.apps.{{ ocp_cluster_name }}.shiftstack.com'}
