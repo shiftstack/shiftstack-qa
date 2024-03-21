@@ -1,0 +1,28 @@
+---
+- name: Set openstack major version (from '{{ openstack_version }}')
+  ansible.builtin.set_fact:
+    openstack_major_version: "{{ openstack_version.split('.')[0] }}"
+
+- name: Print the openstack major version
+  ansible.builtin.debug:
+    var: openstack_major_version
+
+- name: Copy the repo file if the template exists, fail otherwise
+  vars:
+    repo_template: "./installer_host-osp_{{ openstack_major_version }}.repo.j2"
+  block:
+    - name: Print the repo file for OSP '{{ openstack_major_version }}', fail if the template '{{ repo_template }}' doesn't exist
+      ansible.builtin.debug:
+        msg: "{{ lookup('ansible.builtin.template', '{{ repo_template }}') }}"
+
+    - name: Generate and copy the repo file to the installer host VM
+      ansible.builtin.template:
+        src: "{{ repo_template }}"
+        dest: /etc/yum.repos.d/installer_host.repo
+        mode: u=rw,g=rw,o=r
+        force: yes
+      become: yes
+  rescue:
+    - name: Fail if the repo_template doesn't exist
+      ansible.builtin.fail:
+        msg: "Plase make sure the template '{{ repo_template }}' exists"
