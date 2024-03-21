@@ -1,0 +1,66 @@
+---
+- name: Copy files from the local home dir to the installer host VM
+  ansible.builtin.copy:
+    src: "{{ home_dir }}/{{ item }}"
+    dest: "~/{{ item }}"
+    mode: u=rw,g=rw,o=r
+  loop: "{{ files_to_copy }}"
+
+- name: Copy clouds.yaml to the proper place for OS_CLOUD
+  block:
+    - name: Ensure ~/.config/openstack exists in the installer host VM
+      ansible.builtin.file:
+        path: ~/.config/openstack
+        state: directory
+        mode: u=rwx,g=rw,o=r
+
+    - name: Copy clouds.yaml to ~/.config/openstack/clouds.yaml
+      ansible.builtin.file:
+        src: ~/clouds.yaml
+        dest: ~/.config/openstack/clouds.yaml
+        force: true
+        state: link
+
+- name: Copy ssh private key to the installer host VM
+  ansible.builtin.copy:
+    src: "{{ openstack_key_file }}"
+    dest: "~/.ssh/"
+    mode: u=rw,g=rw,o=r
+
+- name: CA cert management for SSL and TLS-E deployments
+  when: openstack_ssl | default(false) or
+        openstack_tlse | default(false)
+  block:
+    - name: Check if the CA certificate {{ cacert }} exists in localhost
+      ansible.builtin.stat:
+        path: "{{ cacert }}"
+      register: stat_result
+      delegate_to: localhost
+
+    - name: Fail if the CA certificate doesn't exist
+      ansible.builtin.assert:
+        that:
+          - stat_result.stat.exists
+        fail_msg: "Could not find the CA certificate {{ cacert }} in localhost"
+        success_msg: "The CA certificate {{ cacert }} was found in localhost"
+
+    - name: Copy the CA cert from localhost to the installer host VM
+      block:
+        - name: Ensure {{ cacert | dirname }} exists in the installer host VM
+          ansible.builtin.file:
+            path: "{{ cacert | dirname }}"
+            state: directory
+            mode: u=rwx,g=rwx,o=rwx
+          become: yes
+
+        - name: Copy the CA cert to the installer host VM
+          ansible.builtin.copy:
+            src: "{{ cacert }}"
+            dest: "{{ cacert }}"
+            mode: u=rwx,g=rwx,o=rwx
+          become: yes
+
+        - name: Add the CA cert to the trusted root chain in the installer host VM
+          ansible.builtin.command: update-ca-trust extract
+          changed_when: true
+          become: yes
