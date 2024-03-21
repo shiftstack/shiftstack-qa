@@ -1,0 +1,24 @@
+---
+- name: Provision the installer host VM
+  ansible.builtin.include_tasks: provision.yml
+
+- name: Create the installer group (and add a host) in the inventory
+  ansible.builtin.include_tasks: add_installer_host_to_installer_group.yml
+  vars:
+    installer_host_fip: "{{ installer_vm_fip.floating_ip.floating_ip_address }}"
+
+- name: Copy workspace files from the undercloud to the installer VM
+  ansible.builtin.import_tasks: configuration_copy_workspace.yml
+  delegate_to: "{{ installer_vm_name }}"
+
+- name: Add entries to /etc/hosts file in the installer VM
+  ansible.builtin.import_tasks: configuration_hosts.yml
+  delegate_to: "{{ installer_vm_name }}"
+
+- name: Install repos in the installer VM
+  ansible.builtin.import_tasks: configuration_install_repos.yml
+  delegate_to: "{{ installer_vm_name }}"
+
+- name: Install packages in the installer VM
+  ansible.builtin.import_tasks: configuration_install_packages.yml
+  delegate_to: "{{ installer_vm_name }}"

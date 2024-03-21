@@ -33,6 +33,14 @@
   ansible.builtin.set_fact:
     apps_fip: "{{ res.floating_ips[0].floating_ip_address }}"
 
+- name: Register Installer API and APP FIPS  in resources.yml
+  ansible.builtin.include_role:
+    name: shiftstack.tools.tools_register_resources_file
+  vars:
+    input:
+      api_fip: "{{ api_fip }}"
+      apps_fip: "{{ apps_fip }}"
+
 - name: Add resulting API and APPS fip/vip to /etc/hosts file
   become: true
   ansible.builtin.lineinfile:
