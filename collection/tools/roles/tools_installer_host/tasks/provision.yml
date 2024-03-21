@@ -1,0 +1,193 @@
+---
+- name: Check a RHEL image is defined for OSP {{ openstack_version }}
+  ansible.builtin.assert:
+    that: osp_rhel_matrix[openstack_version] is defined
+    fail_msg: "Couldn't find a RHEL image for OSP '{{ openstack_version }}' in 'osp_rhel_matrix parameter': {{ osp_rhel_matrix }}, please add one entry for it."
+
+- name: Print the RHEL image to use for the installer host
+  ansible.builtin.debug:
+    msg: "Found RHEL image for OSP '{{ openstack_version }}': '{{ installer_vm.image.url }}'"
+
+- name: Get the SHA256 corresponding to the RHEL image
+  block:
+    - name: Download the SHA256 of the RHEL image from {{ installer_vm.image.sha_url }}
+      ansible.builtin.get_url:
+        url: "{{ installer_vm.image.sha_url }}"
+        dest: "/tmp/{{ installer_vm.image.sha_info_file }}"
+        force: yes
+        mode: u=rw,g=rw,o=r
+
+    - name: Register the SHA256 of the RHEL image
+      ansible.builtin.shell: >
+        set -o pipefail &&
+        cat /tmp/{{ installer_vm.image.sha_info_file }} | tail -1 | awk '{print $NF}'
+      changed_when: false
+      register: rhel_sha_result
+
+- name: Check if the RHEL image file has already been downloaded and get it's SHA256
+  ansible.builtin.stat:
+    path: "/tmp/{{ installer_vm.image.name }}"
+    checksum_algorithm: sha256
+  register: downloaded_image_sha_result
+
+- name: Gather information about the RHEL image on Glance (if any)
+  openstack.cloud.image_info:
+    cloud: "{{ admin_cloud }}"
+    image: "{{ installer_vm.image.name }}"
+  register: glance_image_sha_result
+
+- name: Download {{ installer_vm.image.name }} image for the installer host VM if it is not on both Glance and /tmp/
+  ansible.builtin.get_url:
+    url: "{{ installer_vm.image.url }}"
+    dest: "/tmp/{{ installer_vm.image.name }}"
+    mode: u=rw,g=rw,o=r
+  when:
+    - glance_image_sha_result.openstack_images['owner_specified.openstack.sha256'] is not defined or
+      glance_image_sha_result.openstack_images['owner_specified.openstack.sha256'] != rhel_sha_result.stdout
+    - downloaded_image_sha_result.stat.checksum is not defined or
+      downloaded_image_sha_result.stat.checksum != rhel_sha_result.stdout
+
+- name: Set freeipa_server variable with the freeipa DNS server IP for the installer host VM (with tls-e only)
+  ansible.builtin.include_role:
+    name: shiftstack.tools.tools_get_deploy_info
+    tasks_from: discover_freeipa_server.yml
+  when: openstack_tlse | default(false)
+
+- name: Provision the resources for the installer host VM
+  block:
+    - name: Create network {{ installer_vm.network.name }}
+      openstack.cloud.network:
+        cloud: "{{ user_cloud }}"
+        name: "{{ installer_vm.network.name }}"
+        state: present
+      when: installer_host_custom_network == ''
+
+    - name: Register externally accessible networks
+      openstack.cloud.networks_info:
+        cloud: "{{ user_cloud }}"
+        filters:
+          router:external: true
+      register: openstack_networks_info
+
+    - name: Create subnet {{ installer_vm.subnet.name }}
+      openstack.cloud.subnet:
+        cloud: "{{ user_cloud }}"
+        name: "{{ installer_vm.subnet.name }}"
+        cidr: "{{ installer_vm.subnet.cidr }}"
+        dns_nameservers: "{{ provision.openstack.tlse | ternary(freeipa_server, installer_vm.subnet.dns) }}"
+        network_name: "{{ installer_vm.network.name }}"
+        enable_dhcp: true
+        state: present
+      when: installer_host_custom_network == ''
+
+    - name: Create router {{ installer_vm.router.name }}
+      openstack.cloud.router:
+        cloud: "{{ admin_cloud }}"
+        name: "{{ installer_vm.router.name }}"
+        interfaces: "{{ installer_vm.subnet.name }}"
+        network: "{{ openstack_networks_info.openstack_networks[0].name }}"
+        state: present
+      when: installer_host_custom_router == ''
+
+    - name: Create security group {{ installer_vm.sec_group.name }}
+      openstack.cloud.security_group:
+        cloud: "{{ user_cloud }}"
+        name: "{{ installer_vm.sec_group.name }}"
+        description: "ir: {{ lookup('env', 'BUILD_URL') }} at {{ ansible_date_time.iso8601 }}"
+        state: present
+
+    - name: Add rules to the security group {{ installer_vm.sec_group.name }}
+      openstack.cloud.security_group_rule:
+        cloud: "{{ user_cloud }}"
+        security_group: "{{ installer_vm.sec_group.name }}"
+        direction: "{{ item.direction }}"
+        ethertype: "{{ item.ethertype }}"
+        remote_ip_prefix: "{{ item.remote_ip_prefix }}"
+        protocol: "{{ item.protocol | default(omit) }}"
+        port_range_min: "{{ item.port_range_min | default(omit) }}"
+        port_range_max: "{{ item.port_range_max | default(omit) }}"
+      with_items: "{{ installer_vm.sg_rules }}"
+
+    - name: Create the flavor {{ installer_vm.flavor.name }} for the installer host VM
+      openstack.cloud.compute_flavor:
+        cloud: "{{ admin_cloud }}"
+        name: "{{ installer_vm.flavor.name }}"
+        ram: "{{ installer_vm.flavor.ram }}"
+        vcpus: "{{ installer_vm.flavor.vcpus }}"
+        disk: "{{ installer_vm.flavor.disk }}"
+        state: present
+      when: installer_custom_flavor == ''
+
+    - name: Upload the required RHEL image to Glance if there is no RHEL image on Glance yet or its SHA256 is not equal to the RHEL's SHA256 on Glance
+      when: >
+        glance_image_sha_result.openstack_images['owner_specified.openstack.sha256'] is not defined or
+        glance_image_sha_result.openstack_images['owner_specified.openstack.sha256'] != rhel_sha_result.stdout
+      block:
+        - name: Remove the RHEL image from Glance
+          openstack.cloud.image:
+            cloud: "{{ admin_cloud }}"
+            name: "{{ installer_vm.image.name }}"
+            state: absent
+
+        - name: Upload the {{ installer_vm.image.name }} image to Glance
+          openstack.cloud.image:
+            cloud: "{{ admin_cloud }}"
+            name: "{{ installer_vm.image.name }}"
+            checksum: sha256
+            container_format: bare
+            disk_format: "{{ installer_vm.image.name.split('.')[-1] }}"
+            state: present
+            filename: "/tmp/{{ installer_vm.image.name }}"
+            is_public: "{{ openshift_separated_project | ternary('yes', omit) }}"
+          register: uploaded_image
+
+    - name: Create the installer host VM instance
+      openstack.cloud.server:
+        cloud: "{{ user_cloud }}"
+        name: "{{ installer_vm_name }}"
+        flavor: "{{ installer_vm.flavor.name }}"
+        image: "{{ installer_vm.image.name }}"
+        availability_zone: "{{ provision.edge.nova.az | default(omit) }}"
+        nics:
+          - net-name: "{{ installer_vm.network.name }}"
+        key_name: "{{ provision.openstack.key.file | basename }}"
+        security_groups: "{{ installer_vm.sec_group.name }}"
+        auto_ip: no
+        state: present
+        wait: yes
+        meta:
+          hostname: "{{ installer_vm_name }}"
+        config_drive: true
+
+    - name: Create floating IPs
+      openstack.cloud.floating_ip:
+        cloud: "{{ user_cloud }}"
+        network: "{{ openstack_networks_info.openstack_networks[0].id }}"
+        nat_destination: "{{ installer_vm.network.name }}"
+        server: "{{ installer_vm_name }}"
+        state: present
+        wait: yes
+      register: installer_vm_fip
+
+    - name: Verify the installer host is reachable via fip {{ installer_vm_fip.floating_ip.floating_ip_address }}
+      ansible.builtin.command: ping -c1 {{ installer_vm_fip.floating_ip.floating_ip_address }}
+      changed_when: false
+      register: ping_result
+      retries: 10
+      delay: 5
+      until: ping_result.rc == 0
+
+    - name: Verify the ssh connection to the installer host
+      ansible.builtin.command: ssh {{ installer_vm_ssh_user }}@{{ installer_vm_fip.floating_ip.floating_ip_address }} hostname
+      changed_when: false
+      register: ssh_result
+      retries: 10
+      delay: 5
+      until: ssh_result.rc == 0
+
+- name: Register Installer FIP in resources.yml
+  ansible.builtin.include_role:
+    name: shiftstack.tools.tools_register_resources_file
+  vars:
+    input:
+      installer_fip: "{{ installer_vm_fip.floating_ip.floating_ip_address }}"

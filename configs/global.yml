@@ -5,6 +5,7 @@ installation_dir: "{{ home_dir }}/{{ ocp_cluster_name }}"
 kubeconfig: "{{ installation_dir }}/auth/kubeconfig"
 
 stage_unstable_flag: "{{ artifacts_dir }}/stage_unstable_flag"
+resources_file: "{{ artifacts_dir }}/resources.yml"
 
 admin_cloud: "overcloud"
 admin_env_file: "{{ home_dir }}/{{ admin_cloud }}rc"
@@ -33,9 +34,24 @@ wait_retries: 30
 wait_delay: 30
 manifests_wait_timeout: 300
 
-installer_vm_name: "installer_host"
+deploy_installer_host: false
+installer_vm_ssh_user: "cloud-user"
+installer_host_custom_network: ''
+installer_host_custom_router: ''
+installer_custom_flavor: ''
+installer_vm_name: "installer-host"
 installer_group: "installer"
 inventory:
   dir: "/etc/ansible"
   hosts_file: "{{ artifacts_dir }}/hosts-installer"
   backup_file: "{{ artifacts_dir }}/hosts-installer.bck"
+fip_hosts:
+  - {regex: 'api\..*\.shiftstack.com', row: '{{ api_fip.stdout }} api.{{ ocp_cluster_name }}.shiftstack.com'}
+  - {regex: 'oauth-openshift.apps\..*\.shiftstack.com', row: '{{ apps_fip.stdout }} oauth-openshift.apps.{{ ocp_cluster_name }}.shiftstack.com'}
+  - {regex: 'console-openshift-console.apps\..*\.shiftstack.com', row: '{{ apps_fip.stdout }} console-openshift-console.apps.{{ ocp_cluster_name }}.shiftstack.com'}
+  - {regex: 'downloads-openshift-console.apps\..*\.shiftstack.com', row: '{{ apps_fip.stdout }} downloads-openshift-console.apps.{{ ocp_cluster_name }}.shiftstack.com'}
+  - {regex: 'canary-openshift-ingress-canary.apps\..*\.shiftstack.com', row: '{{ apps_fip.stdout }} canary-openshift-ingress-canary.apps.{{ ocp_cluster_name }}.shiftstack.com'}
+  - {regex: 'alertmanager-main-openshift-monitoring.apps\..*\.shiftstack.com', row: '{{ apps_fip.stdout }} alertmanager-main-openshift-monitoring.apps.{{ ocp_cluster_name }}.shiftstack.com'}
+  - {regex: 'grafana-openshift-monitoring.apps\..*\.shiftstack.com', row: '{{ apps_fip.stdout }} grafana-openshift-monitoring.apps.{{ ocp_cluster_name }}.shiftstack.com'}
+  - {regex: 'prometheus-k8s-openshift-monitoring.apps\..*\.shiftstack.com', row: '{{ apps_fip.stdout }} prometheus-k8s-openshift-monitoring.apps.{{ ocp_cluster_name }}.shiftstack.com'}
+  - {regex: 'thanos-querier-openshift-monitoring.apps\..*\.shiftstack.com', row: '{{ apps_fip.stdout }} thanos-querier-openshift-monitoring.apps.{{ ocp_cluster_name }}.shiftstack.com'}

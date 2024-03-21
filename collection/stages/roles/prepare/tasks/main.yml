@@ -8,5 +8,11 @@
 - name: Prepare setup for accessing the OCP Cluster
   ansible.builtin.include_tasks: external_access.yml
 
+- name: Deploy and configure an installer host VM and update the inventory
+  ansible.builtin.include_role:
+    name: tools_installer_host
+  when: deploy_installer_host
+
 - name: Get OCP installer and client in the installer host
-  ansible.builtin.include_tasks: get_installer.yml
+  ansible.builtin.import_tasks: get_installer.yml
+  delegate_to: installer
