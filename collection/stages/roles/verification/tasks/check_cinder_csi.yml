@@ -41,12 +41,13 @@
 
 - name: Get volume az for workers (if any)
   ansible.builtin.shell: |
+    set -o pipefail
     openstack volume show $(openstack volume list -c ID -c Name -f value | grep "{{ item }}" | cut -d' ' -f2) -c availability_zone -f value
   environment:
     OS_CLOUD: "{{ user_cloud }}"
   loop: "{{ worker_names }}"
   register: temporary_output
-  ignore_errors: yes
+  failed_when: false
   changed_when: false
 
 - name: Convert output on a list
