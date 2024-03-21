@@ -1,0 +1,77 @@
+---
+# defaults file for tools_instaler_host
+osp_rhel_matrix:
+  '16.2': 'http://download.eng.tlv.redhat.com/rhel-8/rel-eng/RHEL-8/latest-RHEL-8.5.0/compose/BaseOS/x86_64/images/rhel-guest-image-8.5-1174.x86_64.qcow2'
+  '17.1': 'http://download.devel.redhat.com/rhel-9/rel-eng/RHEL-9/latest-RHEL-9.2.0/compose/BaseOS/x86_64/images/rhel-guest-image-9.2-20230414.17.x86_64.qcow2'
+  '18.0': 'http://download.devel.redhat.com/rhel-9/rel-eng/RHEL-9/latest-RHEL-9.2.0/compose/BaseOS/x86_64/images/rhel-guest-image-9.2-20230414.17.x86_64.qcow2'
+
+installer_image: "{{ osp_rhel_matrix[openstack_version] }}"
+
+files_to_copy:
+  - "{{ user_env_file | basename }}"
+  - "{{ admin_env_file | basename }}"
+  - "clouds.yaml"
+
+installer_vm:
+  home_dir: "{{ lookup('ansible.builtin.env', 'HOME') }}"
+  installer_fqdn: "{{ installer_vm_name }}.example.com"
+  installer_fqdn_port: "{{ installer_vm_name }}.example.com:8443"
+  image:
+    url: "{{ installer_image }}"
+    name: "{{ installer_image | basename }}"
+    sha_url: "{{ installer_image }}.SHA256SUM"
+    sha_info_file: "{{ installer_image | basename }}.SHA256SUM"
+  flavor:
+    name: "{{ installer_flavor_name }}"
+    ram: 8192
+    vcpus: 4
+    disk: 60
+  network:
+    name: "{{ installer_network }}"
+  subnet:
+    name: "{{ installer_subnet }}"
+    cidr: 172.16.40.0/24
+    dns: "{{ lab_dns }}"
+  router:
+    name: "{{ installer_router }}"
+  sec_group:
+    name: installer_host-sg
+  sg_rules:
+    - direction: 'ingress'
+      ethertype: 'IPv4'
+      remote_ip_prefix: '0.0.0.0/0'
+      protocol: icmp
+      port_range_min: -1
+      port_range_max: -1
+    - direction: 'ingress'
+      ethertype: 'IPv4'
+      remote_ip_prefix: '0.0.0.0/0'
+      protocol: tcp
+      port_range_min: '22'
+      port_range_max: '22'
+    - direction: 'ingress'
+      ethertype: 'IPv4'
+      remote_ip_prefix: '0.0.0.0/0'
+      protocol: tcp
+      port_range_min: '3128'
+      port_range_max: '3128'
+    - direction: 'ingress'
+      ethertype: 'IPv4'
+      remote_ip_prefix: '0.0.0.0/0'
+      protocol: tcp
+      port_range_min: '3130'
+      port_range_max: '3130'
+    - direction: 'ingress'
+      ethertype: 'IPv4'
+      remote_ip_prefix: '0.0.0.0/0'
+      protocol: udp
+      port_range_min: '53'
+      port_range_max: '53'
+  ntp:
+    sg_rules:
+      - direction: 'ingress'
+        ethertype: 'IPv4'
+        remote_ip_prefix: '0.0.0.0/0'
+        protocol: udp
+        port_range_min: '123'
+        port_range_max: '123'
