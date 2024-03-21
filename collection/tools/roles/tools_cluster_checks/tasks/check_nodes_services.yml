@@ -32,7 +32,7 @@
       loop_control:
         pause: 2
         loop_var: ocp_node
-      ignore_errors: yes
+      failed_when: false
 
     - name: Set a list of failed services (Ignore services failing)
       shiftstack.tools.list_filter:
