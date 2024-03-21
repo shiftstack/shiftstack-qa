@@ -27,7 +27,7 @@
     installcfg_external_network: "{{ infra.external_network }}"
     installcfg_region: "{{ infra.region }}"
     installcfg_dns_servers: "{{ infra.dns_servers }}"
-    installcfg_lb_floating_ip: "{{ precreated_lb_fip }}"
+    installcfg_api_floating_ip: "{{ precreated_lb_fip }}"
     installcfg_ingress_floating_ip: "{{ precreated_ingress_fip }}"
 
 - name: Copy the install-config.yaml to installation dir
