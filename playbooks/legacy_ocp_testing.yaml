@@ -5,7 +5,7 @@
   vars_files:
     - "../configs/global.yml"
   environment:
-    KUBECONFIG: "{{ kubeconfig }}"
+    KUBECONFIG: "{{ kubeconfig | expanduser }}"
   pre_tasks:
     - name: Gather host environment variables
       ansible.builtin.setup:
@@ -33,9 +33,8 @@
   gather_facts: no
   vars_files:
     - "../configs/global.yml"
+    - "../configs/secret.yaml"
     - "../configs/legacy_ocp_testing.yaml"
-  environment:
-    KUBECONFIG: "{{ kubeconfig }}"
   tasks:
     - name: Prepare setup for OCP installation
       ansible.builtin.include_role:
@@ -49,15 +48,11 @@
       when: "installer_group not in groups"
 
 
-- name: Install OpenShift new candidate on OSP
+- name: Prepare the OpenShift installer and client in the installer host
   hosts: installer
   gather_facts: no
   vars_files:
     - "../configs/global.yml"
-    - "../configs/secret.yaml"
-    - "../configs/legacy_ocp_testing.yaml"
-  environment:
-    KUBECONFIG: "{{ kubeconfig }}"
   pre_tasks:
     - name: Gather host environment variables
       ansible.builtin.setup:
@@ -67,6 +62,23 @@
     - name: Set the openstack_version based on the previous discovery
       ansible.builtin.set_fact:
         openstack_version: "{{ hostvars['localhost']['openstack_version'] }}"
+  tasks:
+    - name: Get OCP installer and client in the installer host
+      ansible.builtin.include_role:
+        name: shiftstack.stages.prepare
+        tasks_from: get_installer.yml
+      when: "'prepare' in stages"
+
+
+- name: Install OpenShift new candidate on OSP
+  hosts: installer
+  gather_facts: no
+  vars_files:
+    - "../configs/global.yml"
+    - "../configs/secret.yaml"
+    - "../configs/legacy_ocp_testing.yaml"
+  environment:
+    KUBECONFIG: "{{ kubeconfig | expanduser }}"
   tasks:
     - name: Install OCP on setup
       ansible.builtin.include_role:
@@ -80,7 +92,7 @@
   vars_files:
     - "../configs/global.yml"
   environment:
-    KUBECONFIG: "{{ kubeconfig }}"
+    KUBECONFIG: "{{ kubeconfig | expanduser }}"
   tasks:
     - name: Discover OCP version and networkType
       ansible.builtin.include_role:
@@ -99,7 +111,7 @@
   vars_files:
     - "../configs/global.yml"
   environment:
-    KUBECONFIG: "{{ kubeconfig }}"
+    KUBECONFIG: "{{ kubeconfig | expanduser }}"
   tasks:
     - name: Run OCP verification checks
       ansible.builtin.include_role:
@@ -115,7 +127,7 @@
   vars_files:
     - "../configs/global.yml"
   environment:
-    KUBECONFIG: "{{ kubeconfig }}"
+    KUBECONFIG: "{{ kubeconfig | expanduser }}"
   tasks:
     - name: Run Openstack-Test on OCP
       ansible.builtin.include_role:
