@@ -34,8 +34,6 @@
   vars_files:
     - "../configs/global.yml"
     - "../configs/legacy_ocp_testing.yaml"
-  environment:
-    KUBECONFIG: "{{ kubeconfig }}"
   tasks:
     - name: Prepare setup for OCP installation
       ansible.builtin.include_role:
