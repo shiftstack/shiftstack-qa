@@ -10,3 +10,17 @@
         name: version
       spec:
         channel: ""
+
+- name: "Copy installation and Openstack files to {{ artifacts_dir }}"
+  block:
+    - name: "Copy {{ installation_dir }} to {{ artifacts_dir }}"
+      ansible.builtin.copy:
+        src: "{{ installation_dir }}/"
+        dest: "{{ artifacts_dir }}/{{ user_cloud }}/{{ ocp_cluster_name }}"
+        mode: 0755
+
+    - name: "Copy {{ installation_dir }} to {{ artifacts_dir }}"
+      ansible.builtin.copy:
+        src: "{{ osp_config_dir }}"
+        dest: "{{ artifacts_dir }}/{{ user_cloud }}/{{ ocp_cluster_name }}"
+        mode: 0755
