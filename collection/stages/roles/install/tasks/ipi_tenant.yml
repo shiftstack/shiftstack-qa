@@ -69,3 +69,13 @@
         unstable_msg: >-
           The openshift installation passed but unexpectedly needed the wait-for flag.
           More info in Jira KURYRQE-1002.
+  always:
+    - name: "Copy installation files to {{ artifacts_dir }}"
+      ansible.builtin.copy:
+        src: "{{ item.src }}"
+        dest: "{{ artifacts_dir }}/{{ user_cloud }}/{{ ocp_cluster_name }}"
+        mode: "{{ item.mode }}"
+      loop:
+        - {src: "{{ installation_dir }}/", mode: "0755"}
+        - {src: "{{ osp_config_dir }}", mode: "0755"}
+        - {src: "{{ home_dir }}/install-config.yaml", mode: "0644"}
