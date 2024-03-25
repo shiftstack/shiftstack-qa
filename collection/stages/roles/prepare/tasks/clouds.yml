@@ -3,6 +3,24 @@
   ansible.builtin.set_fact:
     clouds_yml: "{{ lookup('file', clouds_yaml_file_path) | from_yaml }}"
 
+- name: Remove the directory for the osp files (if exists)
+  ansible.builtin.file:
+    path: "{{ osp_config_dir }}"
+    state: absent
+
+- name: Create a directory for the openstack files
+  ansible.builtin.file:
+    path: "{{ osp_config_dir }}"
+    state: directory
+    mode: u=rwx,g=rw,o=r
+
+- name: "Copy clouds.yaml to {{ osp_config_dir }}"
+  ansible.builtin.copy:
+    src: "{{ clouds_yaml_file_path }}"
+    dest: "{{ osp_config_dir }}"
+    remote_src: yes
+    mode: u=rwx,g=r,o=r
+
 - name: Get auth url from existing {{ admin_cloud }}
   ansible.builtin.set_fact:
     auth_url: "{{ clouds_yml['clouds'][admin_cloud]['auth']['auth_url'] }}"
