@@ -33,6 +33,24 @@
       "message": "According to https://issues.redhat.com/browse/OSPRH-5589, I think we agreed to keep two directories on the pod:\n\n- ~/artifacts with the logs, test results and so on. Will be gathered by \"oc rsync\" in ci-framework.\n- ~/installation with the installation info needed for a future shiftstackclient pod to run the cleanup. Will be kept in a PVC in the underlying OCP.\n \nHere you are creating one inside the other. Did you do that on purpose?",
       "revId": "7cbabd67545bc48c74b2d27993cf6c37e16d73d7",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6c107f47_30ff8c7c",
+        "filename": "configs/global.yml",
+        "patchSetId": 2
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2024-03-26T09:27:26Z",
+      "side": 1,
+      "message": "That\u0027s up for discussion if this layout makes sense or we want the original one",
+      "parentUuid": "e2d8249e_96057e05",
+      "revId": "7cbabd67545bc48c74b2d27993cf6c37e16d73d7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
