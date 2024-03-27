@@ -22,6 +22,30 @@
       },
       "revId": "70bbdc1420f79e5fc1a063ea0b413cbe2944c864",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6a6a4c04_dba1a386",
+        "filename": "playbooks/legacy_ocp_testing.yaml",
+        "patchSetId": 4
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-03-27T14:18:15Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "35123f50_3e1c603a",
+      "range": {
+        "startLine": 37,
+        "startChar": 0,
+        "endLine": 39,
+        "endChar": 0
+      },
+      "revId": "70bbdc1420f79e5fc1a063ea0b413cbe2944c864",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }

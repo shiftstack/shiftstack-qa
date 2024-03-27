@@ -22,6 +22,30 @@
       },
       "revId": "5fafcb0b85a5523a2bf8455e0d210e9c0e4870cd",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9a37e968_b6813099",
+        "filename": "jobs_definitions/4.15_ovnkubernetes_upi.yaml",
+        "patchSetId": 4
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-03-27T14:18:15Z",
+      "side": 1,
+      "message": "Will be done as part of the UPI patch.",
+      "parentUuid": "5a2f0e25_53b79220",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 7
+      },
+      "revId": "5fafcb0b85a5523a2bf8455e0d210e9c0e4870cd",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
