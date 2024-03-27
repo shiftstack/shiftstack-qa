@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e886953c_b507aa12",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-03-27T18:46:02Z",
+      "side": 1,
+      "message": "The new token was verified on https://code.engineering.redhat.com/gerrit/c/openshift-ir-plugin/+/451249",
+      "revId": "9b54b02752ad4e1c381dac4a7f97a016be2df186",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
