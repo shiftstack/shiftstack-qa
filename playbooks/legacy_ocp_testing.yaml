@@ -48,11 +48,12 @@
       when: "not deploy_installer_host"
 
 
-- name: Prepare the OpenShift installer and client in the installer host
+- name: Prepare the OpenShift installer and client in the installer host and create network resources for UPI
   hosts: installer
   gather_facts: no
   vars_files:
     - "../configs/global.yml"
+    - "../configs/legacy_ocp_testing.yaml"
   pre_tasks:
     - name: Gather host environment variables
       ansible.builtin.setup:
@@ -63,6 +64,14 @@
       ansible.builtin.set_fact:
         openstack_version: "{{ hostvars['localhost']['openstack_version'] }}"
   tasks:
+    - name: Create network resources for UPI
+      ansible.builtin.include_role:
+        name: shiftstack.tools.tools_ocp_upi
+        tasks_from: prepare_network_resources.yml
+      when:
+        - installation_type == 'upi'
+        - "'prepare' in stages"
+
     - name: Get OCP installer and client in the installer host
       ansible.builtin.include_role:
         name: shiftstack.stages.prepare

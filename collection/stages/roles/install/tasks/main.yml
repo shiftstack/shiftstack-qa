@@ -17,4 +17,4 @@
 - name: Fail if installation_type is not supported
   ansible.builtin.fail:
     msg: "Installation type not supported: {{ installation_type }}"
-  when: installation_type != 'ipi'
+  when: installation_type not in ['ipi', 'upi']
