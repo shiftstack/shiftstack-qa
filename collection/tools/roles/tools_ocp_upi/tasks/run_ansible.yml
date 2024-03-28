@@ -1,0 +1,27 @@
+---
+- name: "Generate script {{ cmd | basename }}.sh for {{ desc }}"
+  ansible.builtin.copy:
+    content: |
+      #!/bin/bash
+      export ANSIBLE_HOST_KEY_CHECKING=False
+      source {{ user_env_file }}
+
+      ansible-playbook -i "{{ upi_inventory_file }}" "{{ cmd }}" > "{{ log_file }}"
+    dest: "{{ home_dir }}/{{ cmd | basename }}.sh"
+    mode: u=rw,g=rw,o=r
+
+- name: "Run {{ cmd | basename }}.sh"
+  ansible.builtin.command: "{{ home_dir }}/{{ cmd | basename }}.sh"
+  args:
+    chdir: "{{ upi_playbooks_dir }}"
+  register: result
+  failed_when: false
+  changed_when: false
+
+- name: Print error message
+  ansible.builtin.fail:
+    msg: |
+      "Running ansible playbook {{ cmd | basename }} from {{ cmd | basename }}.sh failed!
+      Please check following log file {{ log_file }} on the inventory or installer host VM."
+  when:
+    - result.rc != 0
