@@ -1,0 +1,109 @@
+---
+- name: Obtain the commit id from the openshift installer
+  ansible.builtin.shell: |
+    set -o pipefail &&
+    openshift-install version | grep 'built from commit' | awk '{print $NF}'
+  changed_when: false
+  register: ocp_installer_commit_id
+
+- name: Set the openshift installer data rhcos.json url
+  ansible.builtin.set_fact:
+    rhcos_json_url: "https://raw.githubusercontent.com/openshift/installer/{{ ocp_installer_commit_id.stdout }}/data/data/coreos/rhcos.json"
+
+- name: Get the rhcos.json from {{ rhcos_json_url }}
+  ansible.builtin.get_url:
+    url: "{{ rhcos_json_url }}"
+    dest: "/tmp/rhcos.json"
+    force: yes
+    mode: u=rw,g=rw,o=r
+  delegate_to: localhost
+
+- name: Include vars for RHCOS info
+  ansible.builtin.include_vars:
+    file: "/tmp/rhcos.json"
+    name: rhcos_info
+
+- name: Set RHCOS image facts from rhcos.json format
+  ansible.builtin.set_fact:
+    rhcos_version: "{{ rhcos_info.architectures.x86_64.artifacts.openstack.release }}"
+    rhcos_sha256: "{{ rhcos_info.architectures.x86_64.artifacts.openstack.formats['qcow2.gz'].disk['uncompressed-sha256'] }}"
+    rhcos_full_image_url: "{{ rhcos_info.architectures.x86_64.artifacts.openstack.formats['qcow2.gz'].disk.location }}"
+    rhcos_openstack_image: "{{ rhcos_info.architectures.x86_64.artifacts.openstack.formats['qcow2.gz'].disk.location.split('/')[-1] }}"
+    uncompressed_image: "/tmp/{{ rhcos_info.architectures.x86_64.artifacts.openstack.formats['qcow2.gz'].disk.location.split('/')[-1].split('.gz')[0] }}"
+
+- name: Gather information about the RHCOS image on Glance (if any)
+  openstack.cloud.image_info:
+    cloud: "{{ admin_cloud }}"
+    image: "{{ rhcos_image_name }}"
+  register: glance_image_sha_result
+
+- name: Upload the required RHCOS image to Glance if there is no RHCOS image on Glance yet or its SHA256 is not equal to the RHCOS's SHA256 on Glance
+  when: >
+    glance_image_sha_result.openstack_images['owner_specified.openstack.sha256'] is not defined or
+    glance_image_sha_result.openstack_images['owner_specified.openstack.sha256'] != rhcos_sha256
+  block:
+    - name: Check if the uncompressed image file ({{ rhcos_openstack_image }}) already exists and get the SHA256
+      ansible.builtin.stat:
+        path: "{{ uncompressed_image }}"
+        checksum_algorithm: sha256
+      register: downloaded_image_sha_result
+
+    - name: Download and uncompress the required RHCOS image file if it's not already downloaded
+      when: >
+        downloaded_image_sha_result.stat.checksum is not defined or
+        downloaded_image_sha_result.stat.checksum != rhcos_sha256
+      block:
+        - name: Download the RHCOS image file ({{ rhcos_version }})
+          ansible.builtin.get_url:
+            url: "{{ rhcos_full_image_url }}"
+            dest: "/tmp/"
+            force: yes
+            mode: u=rw,g=rw,o=r
+          register: result
+          until:
+            - not result.failed
+            - result.status_code == 200
+          retries: 10
+          delay: 60
+          ignore_errors: true
+
+        - name: Uncompress {{ rhcos_openstack_image }}
+          ansible.builtin.shell:
+            cmd: "gunzip -f {{ rhcos_openstack_image }}"
+            chdir: "/tmp/"
+          changed_when: false # noqa: command-instead-of-shell
+
+        - name: Check SHA-256 hash of the uncompressed image ({{ uncompressed_image }})
+          ansible.builtin.stat:
+            path: "{{ uncompressed_image }}"
+            checksum_algorithm: sha256
+          register: uncompressed_sha_result
+
+        - name: Fail if the image SHA-256 hash check failed
+          ansible.builtin.assert:
+            that:
+              - uncompressed_sha_result.stat.checksum == rhcos_sha256
+            fail_msg: |
+              "SHA-256 hash check failed for {{ uncompressed_image }},
+               expected: {{ rhcos_sha256 }},
+               obtained: {{ uncompressed_sha_result.stat.checksum }}"
+            success_msg: "SHA-256 hash successfully checked"
+
+    - name: Make sure that "{{ rhcos_image_name }} image is not in Glance
+      openstack.cloud.image:
+        cloud: "{{ admin_cloud }}"
+        name: "{{ rhcos_image_name }}"
+        state: absent
+
+    - name: Upload the {{ rhcos_image_name }} {{ rhcos_version }} image to Glance
+      openstack.cloud.image:
+        cloud: "{{ admin_cloud }}"
+        name: "{{ rhcos_image_name }}"
+        is_public: yes
+        container_format: bare
+        disk_format: "{{ uncompressed_image.split('.')[-1] }}"
+        state: present
+        filename: "{{ uncompressed_image }}"
+        properties:
+          version: "{{ rhcos_version }}"
+      register: uploaded_image

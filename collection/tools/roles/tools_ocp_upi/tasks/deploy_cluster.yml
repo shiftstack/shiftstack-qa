@@ -1,0 +1,106 @@
+---
+- name: Create directory for ansible playbooks logs
+  ansible.builtin.file:
+    path: "{{ upi_playbooks_logs_dir }}"
+    mode: u=rwx,g=rw,o=r
+    state: directory
+
+- name: Provision Openstack resources for OCP UPI deployment
+  block:
+    - name: Create security groups (security-groups.yaml)
+      vars:
+        log_file: "{{ upi_playbooks_logs_dir }}/security-groups.log"
+        desc: "OSP security groups creation"
+        cmd: "{{ upi_playbooks_dir }}/security-groups.yaml"
+      ansible.builtin.include_tasks: run_ansible.yml
+
+    - name: Update the network, subnet, router and ports (update-network-resources.yaml)
+      vars:
+        log_file: "{{ upi_playbooks_logs_dir }}/update-network-resources.log"
+        desc: "OSP network resources update"
+        cmd: "{{ upi_playbooks_dir }}/update-network-resources.yaml"
+      ansible.builtin.include_tasks: run_ansible.yml
+
+    - name: Create the bootstrap VM (bootstrap.yaml)
+      vars:
+        log_file: "{{ upi_playbooks_logs_dir }}/bootstrap.log"
+        desc: "Bootstrap VM creation"
+        cmd: "{{ upi_playbooks_dir }}/bootstrap.yaml"
+      ansible.builtin.include_tasks: run_ansible.yml
+
+    - name: Create the control plane VMs (control-plane.yaml)
+      vars:
+        log_file: "{{ upi_playbooks_logs_dir }}/control-plane.log"
+        desc: "Control plane VMs creation"
+        cmd: "{{ upi_playbooks_dir }}/control-plane.yaml"
+      ansible.builtin.include_tasks: run_ansible.yml
+
+- name: Wait until the bootstrap is completed
+  ansible.builtin.shell: |
+    openshift-install wait-for bootstrap-complete --log-level=debug --dir {{ installation_dir }}
+  changed_when: false
+
+- name: Remove the bootstrap resources (down-bootstrap.yaml)
+  vars:
+    log_file: "{{ upi_playbooks_logs_dir }}/down-bootstrap.log"
+    desc: "Bootstrap resources deletion"
+    cmd: "{{ upi_playbooks_dir }}/down-bootstrap.yaml"
+  ansible.builtin.include_tasks: run_ansible.yml
+
+- name: Create the compute VMs (compute-nodes.yaml)
+  vars:
+    log_file: "{{ upi_playbooks_logs_dir }}/compute-nodes.log"
+    desc: "Compute VMs creation"
+    cmd: "{{ upi_playbooks_dir }}/compute-nodes.yaml"
+  ansible.builtin.include_tasks: run_ansible.yml
+
+- name: Create oc config directory .kube/
+  ansible.builtin.file:
+    path: ~/.kube
+    state: directory
+    mode: u=rwx,g=rw,o=r
+
+- name: Copy oc config file to .kube/ dir
+  ansible.builtin.file:
+    src: "{{ kubeconfig }}"
+    dest: ~/.kube/config
+    state: link
+
+- name: Approve the pending CSRs (two CSRs are generated for each new machine added to the cluster)
+  block:
+    - name: Wait until there are at least {{ topology.replicas.worker }} client CSRs (bootstrapper) in pending status
+      ansible.builtin.shell: |
+        set -o pipefail &&
+        oc get csr -o json | jq -r '.items[] | select(.status == {} and (.spec.username | contains("bootstrapper"))) | .metadata.name'
+      changed_when: false
+      register: client_csrs
+      until: client_csrs.stdout_lines | length >= topology.replicas.worker | int
+      retries: "{{ wait_retries }}"
+      delay: "{{ wait_delay }}"
+
+    - name: Approve the pending client CSRs
+      ansible.builtin.shell: |
+        oc adm certificate approve {{ item }}
+      changed_when: true
+      with_items: "{{ client_csrs.stdout_lines }}"
+
+    - name: Wait until there are at least {{ topology.replicas.worker }} worker server CSRs (worker-x) in pending status
+      ansible.builtin.shell: |
+        set -o pipefail &&
+        oc get csr -o json | jq -r '.items[] | select(.status == {} and (.spec.username | contains("worker"))) | .metadata.name'
+      changed_when: false
+      register: server_csrs
+      until: server_csrs.stdout_lines|length >= topology.replicas.worker | int
+      retries: 30
+      delay: 10
+
+    - name: Approve the pending server CSRs
+      ansible.builtin.shell: |
+        oc adm certificate approve {{ item }}
+      changed_when: true
+      with_items: "{{ server_csrs.stdout_lines }}"
+
+- name: Wait until the installation is completed
+  ansible.builtin.shell: |
+    openshift-install wait-for install-complete --log-level=debug --dir {{ installation_dir }}
+  changed_when: false
