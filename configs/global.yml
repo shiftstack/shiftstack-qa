@@ -6,13 +6,13 @@ artifacts_dir: "{{ home_dir }}/artifacts"
 installation_dir: "{{ home_dir }}/installation/{{ user_cloud }}/{{ ocp_cluster_name }}"
 osp_config_dir: "{{ home_dir }}/installation/{{ user_cloud }}/openstack"
 kubeconfig: "{{ installation_dir }}/auth/kubeconfig"
-
-stage_unstable_flag: "{{ artifacts_dir }}/stage_unstable_flag"
+upi_playbooks_dir: "{{ installation_dir }}"
 
 # Sets the Ansible Controller Node machine's HOME environment variable
 controller_home_dir: "{{ lookup('ansible.builtin.env', 'HOME') }}"
-# The resources_file is in the Ansible control node's HOME environment variable
+# The resources_file and stage_unstable_flag are in the Ansible control node's HOME environment variable
 resources_file: "{{ controller_home_dir }}/artifacts/resources.yml"
+stage_unstable_flag: "{{ controller_home_dir }}/artifacts/stage_unstable_flag"
 
 admin_cloud: "overcloud"
 admin_env_file: "{{ home_dir }}/{{ admin_cloud }}rc"
@@ -31,6 +31,11 @@ topology:
       name: "worker"
       ram: 8192
       vcpus: 2
+      disk: 100
+    bootstrap:
+      name: "bootstrap"
+      ram: 16384
+      vcpus: 4
       disk: 100
   replicas:
     master: 3
@@ -51,6 +56,7 @@ installer_vm_ssh_user: "cloud-user"
 custom_network: ''
 custom_subnet: ''
 custom_router: ''
+custom_ports: []
 custom_flavor: ''
 installer_vm_name: "installer-host"
 installer_group: "installer"
@@ -64,3 +70,16 @@ inventory:
   dir: "/etc/ansible"
   hosts_file: "{{ artifacts_dir }}/hosts-installer"
   backup_file: "{{ artifacts_dir }}/hosts-installer.bck"
+
+openshift_upi:
+  network:
+    name: network-upi
+  subnets:
+    ipv4:
+      name: subnet-upi
+  api_vip_port:
+    name: api-upi
+  ingress_vip_port:
+    name: ingress-upi
+  router:
+    name: ingress-upi
