@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bbcc381c_b1cf3e43",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 34
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-03-28T08:56:01Z",
+      "side": 1,
+      "message": "Rebased for the new token.\n\nVerified locally on a legacy env - openshift-qe-010:\n\nPreparation of installer host.\nThe changes are not breaking the IPI installation and testing.",
+      "revId": "1fd98e9042898ae24bfefabbc0a046387c72ed74",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
