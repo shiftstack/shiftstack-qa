@@ -11,8 +11,8 @@ exclude_paths:
   - excludethis/
 
 # Ansible-lint does not fail on warnings from the rules or tags listed below
-# warn_list:
-# - command-instead-of-module
+warn_list:
+  - command-instead-of-module
 
 # Ansible-lint will skip and ignore the rules or tags listed below
 skip_list:
