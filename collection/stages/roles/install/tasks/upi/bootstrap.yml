@@ -1,0 +1,121 @@
+---
+- name: Obtain the base64-encoded CA certificate content
+  block:
+    - name: Set CA certificate path fact
+      ansible.builtin.set_fact:
+        cacert: "/etc/pki/ca-trust/source/anchors/{{ openstack_tlse | ternary('ca.crt', 'undercloud-cacert.pem') }}"
+
+    - name: Check if the CA certificate {{ cacert }} exists in the installer host VM
+      ansible.builtin.stat:
+        path: "{{ cacert }}"
+      register: stat_result
+
+    - name: Fail if the CA certificate not in the installer host
+      ansible.builtin.assert:
+        that:
+          - stat_result.stat.exists
+        fail_msg: "Could not find the CA certificate {{ cacert }} in the installer host VM"
+        success_msg: "The CA certificate {{ cacert }} was found in the installer host VM"
+
+    - name: Get base64-encoded certificate content
+      ansible.builtin.shell: |
+        base64 -w 0 {{ cacert }}
+      changed_when: false
+      register: base64_cert
+
+    - name: Set a fact for the CA certificate
+      ansible.builtin.set_fact:
+        base64_cert: "{{ base64_cert.stdout }}"
+
+- name: Run the script that modifies the bootstrap ignition file
+  vars:
+    env_vars:
+      INFRA_ID: "{{ ocp_infra_id }}"
+  block:
+    - name: Set a fact for the environment vars
+      ansible.builtin.set_fact:
+        env_vars: "{{ env_vars | combine({'OS_CACERT': cacert}) }}"
+
+    - name: Run the script that modifies the bootstrap ignition file
+      ansible.builtin.script:
+        cmd: "../scripts/upi_bootstrap.py"
+        chdir: "{{ installation_dir }}"
+        executable: python3
+      environment: "{{ env_vars }}"
+
+- name: Remove the bootstrap image from glance (if any)
+  openstack.cloud.image:
+    cloud: "{{ user_cloud }}"
+    name: "bootstrap"
+    state: absent
+
+- name: Create an image with the bootstrap ignition file
+  openstack.cloud.image:
+    cloud: "{{ user_cloud }}"
+    name: "bootstrap"
+    container_format: bare
+    disk_format: raw
+    state: present
+    filename: "{{ installation_dir }}/bootstrap.ign"
+
+- name: Retrieve the image file string
+  block:
+    - name: Get the bootstrap image file name
+      ansible.builtin.shell: |
+        openstack image show bootstrap -f value -c file
+      changed_when: false
+      register: image_info
+      environment:
+        OS_CLOUD: "{{ user_cloud }}"
+
+    - name: Set a fact for the bootstrap image file
+      ansible.builtin.set_fact:
+        image_file: "{{ image_info.stdout | regex_search(qry, '\\1') }}"
+      vars:
+        qry: '\/v2\/images\/([\w-]+)\/file'
+
+    - name: Faile if the image file is not found
+      ansible.builtin.assert:
+        that:
+          - image_file | length > 0
+        fail_msg: "Could not find the image file in {{ image_info.stdout }}"
+        success_msg: "Image file found: {{ image_file }}"
+
+- name: Retrieve the image service’s public address
+  block:
+    - name: Get the image service IP address
+      ansible.builtin.shell: |
+        set -o pipefail &&
+        openstack catalog show image -f json | jq -r '.endpoints[] | select(.interface == "public") | .url'
+      changed_when: false
+      register: image_ip
+      environment:
+        OS_CLOUD: "{{ user_cloud }}"
+
+    - name: Set a fact for the image service IP address
+      ansible.builtin.set_fact:
+        image_ip: "{{ image_ip.stdout }}"
+
+- name: Set the storage location fact
+  ansible.builtin.set_fact:
+    storage_url: "{{ image_ip }}/v2/images/{{ image_file | first }}/file"
+
+- name: Generate an auth token and save the token ID
+  block:
+    - name: Generate an auth token ID
+      ansible.builtin.shell: |
+        openstack token issue -c id -f value
+      changed_when: true
+      register: auth_token
+      environment:
+        OS_CLOUD: "{{ user_cloud }}"
+
+    - name: Set a fact for the auth token ID
+      ansible.builtin.set_fact:
+        token_id: "{{ auth_token.stdout }}"
+
+- name: Generate the secondary ignition config file
+  ansible.builtin.template:
+    src: "upi_bootstrap-ignition.json.j2"
+    dest: "{{ installation_dir }}/{{ ocp_infra_id }}-bootstrap-ignition.json"
+    mode: u=rw,g=rw,o=r

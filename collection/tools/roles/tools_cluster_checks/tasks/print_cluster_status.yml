@@ -62,7 +62,7 @@
       block:
         - name: Gather bootstrap logs
           ansible.builtin.shell: |
-            openshift-install gather bootstrap --dir {{ ocp_cluster_name }} --log-level=debug
+            openshift-install gather bootstrap --dir {{ installation_dir }} --log-level=debug
           environment:
             SSH_AUTH_SOCK: ""
           failed_when: false
