@@ -52,3 +52,21 @@
     api_ip: "{{ api_fip }}"
     apps_ip: "{{ apps_fip }}"
   loop: "{{ etc_hosts_entries }}"
+
+- name: Bootstrap fip pre-creation for UPI
+  when: installation_type == 'upi'
+  block:
+    - name: Create the bootstrap floating IP for UPI
+      ansible.builtin.shell: |
+        openstack floating ip create --description 'Bootstrap {{ ocp_cluster_name }}.shiftstack.com' "{{ infra.external_network }}" -c name -f value
+      register: bootstrap_fip
+      environment:
+        OS_CLOUD: "{{ user_cloud }}"
+      changed_when: true
+
+    - name: Register the bootstrap floating/virtual IP for UPI
+      ansible.builtin.include_role:
+        name: shiftstack.tools.tools_register_resources_file
+      vars:
+        input:
+          bootstrap_fip: "{{ bootstrap_fip }}"
