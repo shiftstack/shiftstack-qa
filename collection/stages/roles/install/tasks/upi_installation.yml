@@ -1,0 +1,21 @@
+---
+- name: Get the RHCOS image and upload it to Openstack
+  ansible.builtin.include_tasks: upi/prepare_rhcos_image.yml
+
+- name: Create the Kubernetes manifests
+  ansible.builtin.include_tasks: upi/create_ocp_manifests.yml
+
+- name: Create the Ignition config files
+  ansible.builtin.include_tasks: upi/ignition_configs.yml
+
+- name: Retrieve the ansible playbooks for resource provisioning/deprovisioning
+  ansible.builtin.include_tasks: upi/retrieve_playbooks.yml
+
+- name: Create the bootstrap ignition file and image
+  ansible.builtin.include_tasks: upi/bootstrap.yml
+
+- name: Create the masters ignition files
+  ansible.builtin.include_tasks: upi/control_plane.yml
+
+- name: Deploy the cluster
+  ansible.builtin.include_tasks: upi/deploy_cluster.yml
