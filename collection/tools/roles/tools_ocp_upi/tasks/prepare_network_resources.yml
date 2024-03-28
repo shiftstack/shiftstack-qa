@@ -1,0 +1,129 @@
+---
+# In 4.15 release the UPI installation playbooks were adapted
+# to support dualstack and the installation flow changed, not
+# only for dualstack but also for non dualstack installations.
+# A new network.yaml playbook was created for network resources
+# creation (i.e. BYO network, IPv4 and IPv6 subnets, external
+# router, API and Ingress ports).
+# The install-config.yaml needs to be populated then with the
+# next params:
+#   - networking.machineNetwork
+#   - platform.openstack.controlPlanePort
+#   - platform.openstack.apiVIPs
+#   - platform.openstack.ingressVIPs
+#
+# and appended additional IPv6 values in the next params when
+# it's dualstack:
+#   - networking.machineNetwork
+#   - networking.clusterNetwork
+#   - networking.serviceNetwork
+#   - platform.openstack.controlPlanePort.fixedIPs
+#   - platform.openstack.apiVIPs
+#   - platform.openstack.ingressVIPs
+#
+# This changed the UPI flow in the plugin and requires the
+# network.yaml playbook to run before the UPI installation
+# starts (in 4.14 UPI the network.yaml playbook ran as part
+# of UPI installation process).
+# That's why this play is called from the prepare stage.
+#
+# Upstream docs: https://github.com/openshift/installer/blob/release-4.15/docs/user/openstack/install_upi.md#create-network-api-and-ingress-ports
+
+- name: Remove the directory '{{ upi_playbooks_dir }}' for the installation files (if exists)
+  ansible.builtin.file:
+    path: "{{ upi_playbooks_dir }}"
+    state: absent
+
+- name: Create the directory '{{ upi_playbooks_dir }}' for the UPI playbooks (and later OCP installation)
+  ansible.builtin.file:
+    path: "{{ upi_playbooks_dir }}"
+    state: directory
+    mode: u=rwx,g=rw,o=r
+
+- name: Get the UPI inventory and network resources creation playbook from '{{ upi_github_repo_url }}'
+  ansible.builtin.get_url:
+    url: "{{ upi_github_repo_url }}/{{ item }}"
+    dest: "{{ upi_playbooks_dir }}"
+    mode: u=rw,g=rw,o=r
+  loop:
+    - inventory.yaml
+    # - network.yaml
+
+# TODO: remove this workaround when the issue updating the router in network.yaml is fixed
+- name: Workaround for https://issues.redhat.com/browse/SOSQE-213?focusedId=23699292&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-23699292
+  ansible.builtin.get_url:
+    url: "https://file.rdu.redhat.com/juriarte/upi/network.yaml"
+    dest: "{{ upi_playbooks_dir }}"
+    mode: u=rw,g=rw,o=r
+
+- name: Include vars from registered resources
+  ansible.builtin.include_vars:
+    file: "{{ resources_file }}"
+    name: resources
+  delegate_to: localhost
+
+- name: Replace the hardcoded values in '{{ upi_inventory_file }}'
+  block:
+    # The os_apiVIP and os_ingressVIP values are overwritten by the network.yaml playbook
+    - name: Replace the hardcoded values in '{{ upi_inventory_file }}'
+      ansible.builtin.replace:
+        path: "{{ upi_inventory_file }}"
+        regexp: "{{ item.regexp }}"
+        replace: "{{ item.replace }}"
+      loop: "{{ upi_inventory_file_values }}"
+
+    - name: Get the freeipa DNS server IPs to include it on '{{ upi_inventory_file }}'
+      when: provision.openstack.tlse
+      block:
+        - name: Set freeipa_server variable with the freeipa DNS server IP (with tls-e only)
+          ansible.builtin.include_role:
+            name: shiftstack.tools.tools_get_deploy_info
+            tasks_from: discover_freeipa_server.yml
+
+        - name: Overwrite default osp_dns_servers
+          ansible.builtin.set_fact:
+            osp_dns_servers: ["{{ freeipa_server }}"]
+
+    - name: Check whether '{{ upi_inventory_file }}' contains DNS configuration
+      ansible.builtin.lineinfile:
+        path: "{{ upi_inventory_file }}"
+        regexp: "os_external_dns:"
+        state: absent
+      check_mode: yes
+      changed_when: false
+      register: dns_infile
+
+    - name: Set the external DNS in '{{ upi_inventory_file }}'
+      when: dns_infile.found
+      block:
+        - name: Remove the default DNS configuration
+          vars:
+            start_pattern: "os_external_dns:"
+            end_pattern: "#"
+          ansible.builtin.shell: |
+            sed -i '/{{ start_pattern }}/,/{{ end_pattern }}/{//!d}' {{ upi_inventory_file }}
+            sed -i 's/{{ start_pattern }}/&\n/' {{ upi_inventory_file }} # Add a new line
+          changed_when: true
+
+        - name: Set the external DNS in '{{ upi_inventory_file }}'
+          vars:
+            os_external_dns: "{{ osp_dns_servers }}"
+          ansible.builtin.lineinfile:
+            path: "{{ upi_inventory_file }}"
+            insertafter: "os_external_dns"
+            line: >-2
+                    - {{ item }}
+          loop: "{{ os_external_dns }}"
+
+- name: Create the directory '{{ upi_playbooks_logs_dir }}' for the ansible playbooks logs
+  ansible.builtin.file:
+    path: "{{ upi_playbooks_logs_dir }}"
+    state: directory
+    mode: u=rwx,g=rw,o=r
+
+- name: Create the network resources (by running network.yaml playbook) before creating the manifests
+  vars:
+    log_file: "{{ upi_playbooks_logs_dir }}/network.log"
+    desc: "OSP network resources creation"
+    cmd: "{{ upi_playbooks_dir }}/network.yaml"
+  ansible.builtin.include_tasks: run_ansible.yml

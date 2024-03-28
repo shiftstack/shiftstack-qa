@@ -69,6 +69,14 @@
         tasks_from: get_installer.yml
       when: "'prepare' in stages"
 
+    - name: Create network resources for UPI
+      ansible.builtin.include_role:
+        name: shiftstack.tools.tools_ocp_upi
+        tasks_from: prepare_network_resources.yml
+      when:
+        - installation_type == 'upi'
+        - "'prepare' in stages"
+
 
 - name: Install OpenShift new candidate on OSP
   hosts: installer
