@@ -25,6 +25,7 @@ project:
     load_balancer_pools: 5000
 ocp_api_description: "API {{ ocp_cluster_name }}.{{ user_cloud }}.com"
 ocp_apps_description: "APPS {{ ocp_cluster_name }}.{{ user_cloud }}.com"
+ocp_bootstrap_fip_description: "Bootstrap {{ ocp_cluster_name }}.{{ user_cloud }}.com"
 etc_hosts_entries:
   - {regex: 'api\..*\.{{ user_cloud }}.com', row: '{{ api_ip }} api.{{ ocp_cluster_name }}.{{ user_cloud }}.com'}
   - {regex: 'oauth-openshift.apps\..*\.{{ user_cloud }}.com', row: '{{ apps_ip }} oauth-openshift.apps.{{ ocp_cluster_name }}.{{ user_cloud }}.com'}
