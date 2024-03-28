@@ -47,6 +47,12 @@
       delay: 10
       until: not result.failed
 
+    - name: Install Python packages
+      ansible.builtin.pip:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ installer_python_packages }}"
+
 - name: Ensure that the python command points to python3
   when: installation_type == 'upi'
   block:
