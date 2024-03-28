@@ -1,0 +1,28 @@
+{
+  "ignition": {
+    "config": {
+      "merge": [
+        {
+          "source": "{{ storage_url }}",
+          "httpHeaders": [
+            {
+              "name": "X-Auth-Token",
+              "value": "{{ token_id }}"
+            }
+          ]
+        }
+      ]
+    },
+    "security": {
+      "tls": {
+        "certificateAuthorities": [
+          {
+            "source": "data:text/plain;charset=utf-8;base64,{{ base64_cert }}",
+            "verification": {}
+          }
+        ]
+      }
+    },
+    "version": "3.1.0"
+  }
+}
