@@ -1,43 +1,5 @@
 ---
-- name: Discover pre-created FIPs stored on /etc/hosts
-  ansible.builtin.set_fact:
-    precreated_lb_fip: "{{ lookup('file', '/etc/hosts').splitlines() |
-                      select('search', api_filter) |
-                      first | split() | first }}"
-    precreated_ingress_fip: "{{ lookup('file', '/etc/hosts').splitlines() |
-                      select('search', ingress_filter) |
-                      first | split() | first }}"
-  vars:
-    api_filter: "api.{{ ocp_cluster_name }}.{{ user_cloud }}.com"
-    ingress_filter: "oauth-openshift.apps.{{ ocp_cluster_name }}.{{ user_cloud }}.com"
-
-- name: Generate install-config.yaml from template
-  ansible.builtin.template:
-    src: install-config.yaml.j2
-    dest: "{{ home_dir }}/install-config.yaml"
-    mode: u=rw,g=rw,o=r
-  vars:
-    installcfg_cluster_name: "{{ ocp_cluster_name }}"
-    installcfg_worker_flavor: "{{ topology.flavors.worker.name }}"
-    installcfg_worker_replicas: "{{ topology.replicas.worker }}"
-    installcfg_master_flavor: "{{ topology.flavors.master.name }}"
-    installcfg_master_replicas: "{{ topology.replicas.master }}"
-    installcfg_machine_cidr: "{{ topology.machine_cidr }}"
-    installcfg_network_type: "{{ openshift_network_type }}"
-    installcfg_external_network: "{{ infra.external_network }}"
-    installcfg_region: "{{ infra.region }}"
-    installcfg_dns_servers: "{{ infra.dns_servers }}"
-    installcfg_api_floating_ip: "{{ precreated_lb_fip }}"
-    installcfg_ingress_floating_ip: "{{ precreated_ingress_fip }}"
-
-- name: Copy the install-config.yaml to installation dir
-  ansible.builtin.copy:
-    src: "{{ home_dir }}/install-config.yaml"
-    dest: "{{ installation_dir }}/install-config.yaml"
-    remote_src: yes
-    mode: u=rw,g=rw,o=r
-
-- name: Install Openshift including extra wait if needed
+- name: Install OpenShift cluster using openshift-install
   block:
     - name: Install Openshift
       ansible.builtin.shell: |
@@ -45,9 +7,8 @@
       environment:
         OS_CLOUD: "{{ user_cloud }}"
       changed_when: true
-
   rescue:
-    - name: Wait extra time
+    - name: Use an openshift-install flag to wait until the cluster is ready
       ansible.builtin.shell: |
         openshift-install wait-for install-complete --log-level debug --dir {{ installation_dir }}
       environment:
