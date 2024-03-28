@@ -1,0 +1,29 @@
+---
+- name: Generate the Kubernetes manifests for the cluster
+  ansible.builtin.shell: |
+    openshift-install create manifests --dir={{ ocp_cluster_name }}
+  changed_when: true
+
+- name: Remove the Kubernetes manifest files that define the control plane machines and compute machineSets
+  block:
+    - name: Find the Kubernetes manifest files that define the control plane machines and compute machineSets
+      ansible.builtin.find:
+        paths: "{{ ocp_cluster_name }}/openshift"
+        patterns:
+          - "99_openshift-cluster-api_master-machines-*.yaml"
+          - "99_openshift-cluster-api_worker-machineset-*.yaml"
+          - "99_openshift-machine-api_master-control-plane-machine-set.yaml"
+      register: find_results
+
+    - name: Remove the Kubernetes manifest files
+      ansible.builtin.file:
+        path: "{{ item['path'] }}"
+        state: absent
+      with_items: "{{ find_results['files'] }}"
+
+- name: Modify the Kubernetes manifest file to prevent Pods from being scheduled on the control plane machines
+  ansible.builtin.replace:
+    path: "{{ ocp_cluster_name }}/manifests/cluster-scheduler-02-config.yml"
+    regexp: '^  mastersSchedulable: .*'
+    replace: '  mastersSchedulable: false'
+    after: 'spec'

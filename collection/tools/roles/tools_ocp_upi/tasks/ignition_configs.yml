@@ -1,0 +1,16 @@
+---
+- name: Create the ignition config files
+  ansible.builtin.shell: |
+    openshift-install create ignition-configs --dir={{ ocp_cluster_name }}
+  changed_when: true
+
+- name: Get the OCP cluster id
+  ansible.builtin.shell:
+    cmd: jq -r .infraID metadata.json
+    chdir: "{{ ocp_cluster_name }}"
+  changed_when: false # noqa: command-instead-of-shell
+  register: jq_result
+
+- name: Set a fact for the OCP cluster id
+  ansible.builtin.set_fact:
+    ocp_infra_id: "{{ jq_result.stdout }}"
