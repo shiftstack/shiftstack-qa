@@ -1,0 +1,20 @@
+---
+upi_inventory_file: "{{ upi_playbooks_dir }}/inventory.yaml"
+upi_playbooks_logs_dir: "{{ artifacts_dir }}/playbooks_logs"
+upi_github_repo_url: "https://raw.githubusercontent.com/openshift/installer/release-{{ openshift_release }}/upi/openstack/"
+
+upi_inventory_file_values:
+  - {regexp: "os_network:.*", replace: "os_network: '{{ openshift_dualstack.network.name }}'"}
+  - {regexp: "os_port_api:.*", replace: "os_port_api: '{{ openshift_dualstack.api_vip_port.name }}'"}
+  - {regexp: "os_port_ingress:.*", replace: "os_port_ingress: '{{ openshift_dualstack.ingress_vip_port.name }}'"}
+  - {regexp: "os_router:.*", replace: "os_router: '{{ openshift_dualstack.router.name }}'"}
+  - {regexp: "os_subnet:.*", replace: "os_subnet: '{{ openshift_dualstack.subnets.ipv4.name }}'"}
+  - {regexp: "os_subnet_range:.*", replace: "os_subnet_range: '{{ topology.machine_cidr }}'"}
+  - {regexp: "os_external_network:.*", replace: "os_external_network: '{{ infra.external_network }}'"}
+  - {regexp: "os_api_fip:.*", replace: "os_api_fip: '{{ resources.api_fip }}'"}
+  - {regexp: "os_ingress_fip:.*", replace: "os_ingress_fip: '{{ resources.apps_fip }}'"}
+  - {regexp: "os_bootstrap_fip:.*", replace: "os_bootstrap_fip: '{{ resources.bootstrap_fip }}'"}
+  - {regexp: "ansible_python_interpreter:", replace: "#ansible_python_interpreter:"}
+
+rhcos_image_name: "rhcos"
+local_template_dir: "upi_playbook_templates"
