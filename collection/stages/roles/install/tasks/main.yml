@@ -10,11 +10,23 @@
     state: directory
     mode: u=rwx,g=rw,o=r
 
+- name: Prepare for UPI installation
+  ansible.builtin.include_tasks: upi/prepare_upi_installation.yml
+  when:
+    - installation_type == 'upi'
+
+- name: Generate OpenShift install-config.yaml file
+  ansible.builtin.include_tasks: generate_ocp_install-config.yml
+
 - name: Install cluster with IPI on regular tenant network
   ansible.builtin.include_tasks: ipi_tenant.yml
   when: installation_type == 'ipi'
 
+- name: Install cluster with UPI installation type
+  ansible.builtin.include_tasks: upi_installation.yml
+  when: installation_type == 'upi'
+
 - name: Fail if installation_type is not supported
   ansible.builtin.fail:
     msg: "Installation type not supported: {{ installation_type }}"
-  when: installation_type != 'ipi'
+  when: installation_type not in ['ipi', 'upi']

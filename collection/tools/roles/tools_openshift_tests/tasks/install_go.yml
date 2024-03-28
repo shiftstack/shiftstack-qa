@@ -46,6 +46,7 @@
       ansible.builtin.unarchive:
         src: "{{ home_dir }}/{{ gopks }}"
         dest: "/usr/local/bin"
+        remote_src: yes
       become: true
 
     - name: Insert in .bashrc file export for GO
