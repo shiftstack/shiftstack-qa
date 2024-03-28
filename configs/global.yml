@@ -5,8 +5,8 @@ home_dir: "{{ ansible_facts.env['HOME'] }}"
 artifacts_dir: "{{ home_dir }}/artifacts"
 installation_dir: "{{ home_dir }}/{{ ocp_cluster_name }}"
 kubeconfig: "{{ installation_dir }}/auth/kubeconfig"
-
 stage_unstable_flag: "{{ artifacts_dir }}/stage_unstable_flag"
+upi_playbooks_dir: "{{ installation_dir }}"
 
 # Sets the Ansible Controller Node machine's HOME environment variable
 controller_home_dir: "{{ lookup('ansible.builtin.env', 'HOME') }}"
@@ -63,3 +63,16 @@ inventory:
   dir: "/etc/ansible"
   hosts_file: "{{ artifacts_dir }}/hosts-installer"
   backup_file: "{{ artifacts_dir }}/hosts-installer.bck"
+
+openshift_dualstack:
+  network:
+    name: network-dualstack
+  subnets:
+    ipv4:
+      name: subnet-dualstack-v4
+  api_vip_port:
+    name: api-dualstack
+  ingress_vip_port:
+    name: ingress-dualstack
+  router:
+    name: router-dualstack
