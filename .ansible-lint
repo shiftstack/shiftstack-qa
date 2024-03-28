@@ -19,3 +19,9 @@ skip_list:
   - metadata
   - var-naming[no-role-prefix]
   - name[template]
+<<<<<<< PATCH SET (1a1c32 Support UPI installation in the shiftstack-qa automation)
+  - ignore-errors
+  - no-handler
+  - command-instead-of-module
+=======
+>>>>>>> BASE      (1bc004 Support installer host in the shiftstack-qa automation)
