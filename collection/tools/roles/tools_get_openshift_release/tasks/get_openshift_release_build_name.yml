@@ -13,7 +13,7 @@
   block:
     - name: Get the latest nightly accepted build information for {{ release }}
       vars:
-        home_dir: "{{ '~' | expanduser }}"
+        home_dir: "{{ lookup('ansible.builtin.env', 'HOME') }}"
       ansible.builtin.get_url:
         url: "{{ openshift_releasestream_url }}/{{ release }}.0-0.nightly/latest"
         dest: "{{ home_dir }}/latest_build.json"
@@ -24,7 +24,7 @@
 
     - name: Get the latest 4-stable accepted build information
       vars:
-        home_dir: "{{ '~' | expanduser }}"
+        home_dir: "{{ lookup('ansible.builtin.env', 'HOME') }}"
       ansible.builtin.get_url:
         url: "{{ openshift_releasestream_url }}/4-stable/latest"
         dest: "{{ home_dir }}/latest_build.json"
@@ -35,8 +35,6 @@
 
       # the ansible.builtin.include_vars module is designed to include variable files from the control machine
     - name: Include vars for latest installer info
-      vars:
-        home_dir: "{{ '~' | expanduser }}"
       ansible.builtin.include_vars:
         file: "{{ home_dir }}/latest_build.json"
         name: latest_build_info

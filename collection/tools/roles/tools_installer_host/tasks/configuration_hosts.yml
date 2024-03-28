@@ -3,7 +3,6 @@
   ansible.builtin.include_vars:
     file: "{{ resources_file }}"
     name: resources
-  delegate_to: localhost
 
 - name: Add API and APPS floating IPs to /etc/hosts file
   vars:
