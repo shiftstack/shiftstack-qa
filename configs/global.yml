@@ -1,12 +1,18 @@
 ---
+# Sets the Ansible target machine's HOME environment variable
 home_dir: "{{ ansible_facts.env['HOME'] }}"
+
 artifacts_dir: "{{ home_dir }}/artifacts"
 installation_dir: "{{ home_dir }}/{{ ocp_cluster_name }}"
 kubeconfig: "{{ installation_dir }}/auth/kubeconfig"
 openstack_key_file: "{{ home_dir }}/.ssh/rhos-dfg-osasinfra-qe"
 
 stage_unstable_flag: "{{ artifacts_dir }}/stage_unstable_flag"
-resources_file: "{{ artifacts_dir }}/resources.yml"
+
+# The resources_file is in the Ansible control node's HOME environment variable
+resources_file: "{{ lookup('ansible.builtin.env', 'HOME') }}/artifacts/resources.yml"
+
+upi_playbooks_dir: "{{ installation_dir }}"
 
 admin_cloud: "overcloud"
 admin_env_file: "{{ home_dir }}/{{ admin_cloud }}rc"
@@ -35,7 +41,6 @@ wait_retries: 30
 wait_delay: 30
 manifests_wait_timeout: 300
 
-lab_dns: 10.47.242.10
 openstack_ssl: true
 openstack_tlse: false
 
@@ -47,6 +52,7 @@ custom_router: ''
 custom_flavor: ''
 installer_vm_name: "installer-host"
 installer_group: "installer"
+installer_ansible_python_interpreter: '/usr/libexec/platform-python'
 installer_network: "{{ installer_vm_name | default('installer_host-network', true) }}"
 installer_subnet: "{{ custom_subnet | default('installer_host-subnet', true) }}"
 installer_router: "{{ custom_router | default('installer_host-router', true) }}"
@@ -69,3 +75,16 @@ fip_hosts:
   - {regex: 'thanos-querier-openshift-monitoring.apps\..*\.shiftstack.com', row: '{{ apps_fip }} thanos-querier-openshift-monitoring.apps.{{ ocp_cluster_name }}.shiftstack.com'}
 
 redhat_ca_file: "https://certs.corp.redhat.com/RH-IT-Root-CA.crt"
+
+openshift_dualstack:
+  network:
+    name: network-dualstack
+  subnets:
+    ipv4:
+      name: subnet-dualstack-v4
+  api_vip_port:
+    name: api-dualstack
+  ingress_vip_port:
+    name: ingress-dualstack
+  router:
+    name: router-dualstack
