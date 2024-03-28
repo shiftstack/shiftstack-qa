@@ -48,11 +48,12 @@
       when: "not deploy_installer_host"
 
 
-- name: Prepare the OpenShift installer and client in the installer host
+- name: Prepare the OpenShift installer and client in the installer host and create network resources for UPI
   hosts: installer
   gather_facts: no
   vars_files:
     - "../configs/global.yml"
+    - "../configs/legacy_ocp_testing.yaml"
   pre_tasks:
     - name: Gather host environment variables
       ansible.builtin.setup:
