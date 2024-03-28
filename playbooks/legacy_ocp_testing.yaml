@@ -53,6 +53,7 @@
   gather_facts: no
   vars_files:
     - "../configs/global.yml"
+    - "../configs/legacy_ocp_testing.yaml"
   pre_tasks:
     - name: Gather host environment variables
       ansible.builtin.setup:
