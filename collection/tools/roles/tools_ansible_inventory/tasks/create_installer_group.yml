@@ -18,7 +18,6 @@
       ansible.builtin.include_vars:
         file: "{{ resources_file }}"
         name: resources
-      delegate_to: localhost
 
     - name: Create the installer inventory group and add the installer host
       ansible.builtin.include_role:

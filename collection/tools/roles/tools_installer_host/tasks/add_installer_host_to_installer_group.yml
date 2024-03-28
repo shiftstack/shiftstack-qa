@@ -22,3 +22,4 @@
     inventory_symlink_file: "{{ inventory.dir }}/hosts"
     inventory_file_name: "{{ inventory.hosts_file }}"
     inventory_backup_file: "{{ inventory.backup_file }}"
+    ansible_python_interpreter: "{{ installer_ansible_python_interpreter }}"
