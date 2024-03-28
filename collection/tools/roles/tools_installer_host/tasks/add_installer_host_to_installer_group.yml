@@ -12,6 +12,7 @@
     ansible_host: "{{ installer_host_fip }}"
     ansible_user: "{{ installer_vm_ssh_user }}"
     ansible_connection: "ssh"
+    ansible_python_interpreter: "{{ installer_ansible_python_interpreter }}"
 
 - name: Update the inventory '{{ inventory.dir }}/hosts'
   ansible.builtin.include_role:

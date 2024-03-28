@@ -43,7 +43,7 @@ installer_vm:
   subnet:
     name: "{{ installer_subnet }}"
     cidr: 172.16.40.0/24
-    dns: "{{ lab_dns }}"
+    dns: "{{ infra.dns_servers }}"
   router:
     name: "{{ installer_router }}"
   sec_group:

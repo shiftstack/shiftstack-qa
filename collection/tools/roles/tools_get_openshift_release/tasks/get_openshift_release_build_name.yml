@@ -12,22 +12,18 @@
   when: build_name == ''
   block:
     - name: Get the latest nightly accepted build information for {{ release }}
-      vars:
-        home_dir: "{{ '~' | expanduser }}"
       ansible.builtin.get_url:
         url: "{{ openshift_releasestream_url }}/{{ release }}.0-0.nightly/latest"
-        dest: "{{ home_dir }}/latest_build.json"
+        dest: "{{ ocp_build_info_file }}"
         force: yes
         mode: u=rw,g=rw,o=r
       delegate_to: localhost
       when: release is not match("4-stable")
 
     - name: Get the latest 4-stable accepted build information
-      vars:
-        home_dir: "{{ '~' | expanduser }}"
       ansible.builtin.get_url:
         url: "{{ openshift_releasestream_url }}/4-stable/latest"
-        dest: "{{ home_dir }}/latest_build.json"
+        dest: "{{ ocp_build_info_file }}"
         force: yes
         mode: u=rw,g=rw,o=r
       delegate_to: localhost
@@ -35,10 +31,8 @@
 
       # the ansible.builtin.include_vars module is designed to include variable files from the control machine
     - name: Include vars for latest installer info
-      vars:
-        home_dir: "{{ '~' | expanduser }}"
       ansible.builtin.include_vars:
-        file: "{{ home_dir }}/latest_build.json"
+        file: "{{ ocp_build_info_file }}"
         name: latest_build_info
 
     - name: Set openshift_release_build_name when build_name is not defined

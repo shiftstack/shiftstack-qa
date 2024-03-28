@@ -14,16 +14,15 @@
     mode: u=rw,g=rw,o=r
   become: yes
 
-- name: Copy clouds.yaml to the proper place for OS_CLOUD in OSP >= 17.0
-  when: openstack_version|int >= 17
+- name: Copy clouds.yaml to the proper place for OS_CLOUD
   block:
-    - name: Create directory ~/.config/openstack for OSP >= 17.0
+    - name: Create directory ~/.config/openstack
       ansible.builtin.file:
         path: ~/.config/openstack
         state: directory
         mode: u=rwx,g=rw,o=r
 
-    - name: Copy clouds.yaml to ~/.config/openstack for OSP >= 17.0
+    - name: Copy clouds.yaml to ~/.config/openstack
       ansible.builtin.file:
         src: ~/clouds.yaml
         dest: ~/.config/openstack/clouds.yaml
@@ -59,14 +58,14 @@
           ansible.builtin.file:
             path: "{{ cacert | dirname }}"
             state: directory
-            mode: u=rwx,g=rw,o=r
+            mode: u=rwx,g=rwx,o=rwx
           become: yes
 
         - name: Copy the CA cert to the installer host VM
           ansible.builtin.copy:
             src: "{{ cacert }}"
             dest: "{{ cacert }}"
-            mode: u=rw,g=rw,o=r
+            mode: u=rwx,g=rwx,o=rwx
           become: yes
 
         - name: Add the CA cert to the trusted root chain in the installer host VM
