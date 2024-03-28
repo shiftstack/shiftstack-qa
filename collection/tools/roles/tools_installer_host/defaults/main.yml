@@ -21,9 +21,11 @@ installer_required_packages:
   - 'qemu-img'
 
 installer_ansible_collections:
-  - ansible.netcommon
-  - ansible.utils
-  - community.general
+  - "ansible.netcommon"
+  - "ansible.utils"
+  - "community.general"
+  - "openstack.cloud:1.10.0"
+  - "kubernetes.core:2.3.2"
 
 installer_vm:
   installer_fqdn: "{{ installer_vm_name }}.example.com"
