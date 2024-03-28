@@ -1,5 +1,5 @@
 ---
-- name: Create (if needed) API FIPs
+- name: Create (if needed) API FIP
   ansible.builtin.include_tasks: create_fip.yml
   vars:
     description: "{{ ocp_api_description }}"
@@ -16,7 +16,7 @@
   ansible.builtin.set_fact:
     api_fip: "{{ res.floating_ips[0].floating_ip_address }}"
 
-- name: Create (if needed) APPS FIPs
+- name: Create (if needed) APPS FIP
   ansible.builtin.include_tasks: create_fip.yml
   vars:
     description: "{{ ocp_apps_description }}"
@@ -52,3 +52,30 @@
     api_ip: "{{ api_fip }}"
     apps_ip: "{{ apps_fip }}"
   loop: "{{ etc_hosts_entries }}"
+
+- name: Bootstrap fip pre-creation for UPI
+  when: installation_type == 'upi'
+  block:
+    - name: Create (if needed) Bootstrap FIP
+      ansible.builtin.include_tasks: create_fip.yml
+      vars:
+        description: "{{ ocp_bootstrap_fip_description }}"
+
+    - name: Get Bootstrap FIP
+      openstack.cloud.floating_ip_info:
+        cloud: "{{ user_cloud }}"
+        description: "{{ ocp_bootstrap_fip_description }}"
+        floating_network: "{{ infra.external_network }}"
+        status: "down"
+      register: res
+
+    - name: Store Bootstrap FIP
+      ansible.builtin.set_fact:
+        bootstrap_fip: "{{ res.floating_ips[0].floating_ip_address }}"
+
+    - name: Register Installer FIPs in resources.yml
+      ansible.builtin.include_role:
+        name: shiftstack.tools.tools_register_resources_file
+      vars:
+        input:
+          bootstrap_fip: "{{ bootstrap_fip }}"
