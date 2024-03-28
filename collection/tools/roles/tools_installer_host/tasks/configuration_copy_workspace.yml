@@ -16,13 +16,21 @@
 
 - name: Copy clouds.yaml to the proper place for OS_CLOUD
   block:
+<<<<<<< PATCH SET (1ba5cc Support UPI installation in the shiftstack-qa automation)
+    - name: Create directory ~/.config/openstack
+=======
     - name: Ensure ~/.config/openstack exists in the installer host VM
+>>>>>>> BASE      (019e40 Support installer host in the shiftstack-qa automation)
       ansible.builtin.file:
         path: ~/.config/openstack
         state: directory
         mode: u=rwx,g=rw,o=r
 
+<<<<<<< PATCH SET (1ba5cc Support UPI installation in the shiftstack-qa automation)
+    - name: Copy clouds.yaml to ~/.config/openstack
+=======
     - name: Copy clouds.yaml to ~/.config/openstack/clouds.yaml
+>>>>>>> BASE      (019e40 Support installer host in the shiftstack-qa automation)
       ansible.builtin.file:
         src: ~/clouds.yaml
         dest: ~/.config/openstack/clouds.yaml
