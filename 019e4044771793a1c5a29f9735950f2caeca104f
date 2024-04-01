@@ -24,6 +24,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8547cfed_2493d87c",
+        "filename": "collection/tools/roles/tools_get_deploy_info/tasks/discover_freeipa_server.yml",
+        "patchSetId": 39
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-04-01T10:55:58Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "2e9983ec_66cf2e82",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 1
+      },
+      "revId": "019e4044771793a1c5a29f9735950f2caeca104f",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "dab0ac90_170e0a4c",
@@ -43,6 +67,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "c5147739_7b548104",
+        "filename": "collection/tools/roles/tools_installer_host/tasks/configuration_copy_workspace.yml",
+        "patchSetId": 39
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-04-01T10:55:58Z",
+      "side": 1,
+      "message": "In legacy env we do have it - https://gitlab.cee.redhat.com/shiftstack/shiftstack-tools/-/blob/main/osp18/README.md?plain\u003d1#L89\n\nDo you have another idea for OSP18 env?",
+      "parentUuid": "dab0ac90_170e0a4c",
+      "revId": "019e4044771793a1c5a29f9735950f2caeca104f",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "315bc6f5_b645ee61",
         "filename": "configs/global.yml",
         "patchSetId": 39
@@ -54,6 +96,30 @@
       "writtenOn": "2024-04-01T10:17:53Z",
       "side": 1,
       "message": "Please use https://review.gerrithub.io/plugins/gitiles/shiftstack/shiftstack-qa/+/refs/heads/main/collection/stages/roles/prepare/defaults/main.yml#28 instead",
+      "range": {
+        "startLine": 67,
+        "startChar": 0,
+        "endLine": 77,
+        "endChar": 0
+      },
+      "revId": "019e4044771793a1c5a29f9735950f2caeca104f",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "efe54f5c_e38b8ea6",
+        "filename": "configs/global.yml",
+        "patchSetId": 39
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-04-01T10:55:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "315bc6f5_b645ee61",
       "range": {
         "startLine": 67,
         "startChar": 0,
