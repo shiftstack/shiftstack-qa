@@ -85,6 +85,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "f0c36bcb_7ee0168b",
+        "filename": "collection/tools/roles/tools_installer_host/tasks/configuration_copy_workspace.yml",
+        "patchSetId": 39
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-04-01T11:06:36Z",
+      "side": 1,
+      "message": "Let\u0027s put OSP18 as default here https://review.gerrithub.io/plugins/gitiles/shiftstack/shiftstack-qa/+/refs/heads/main/collection/tools/roles/tools_get_deploy_info/tasks/discover_osp_version.yml#22 and remove this task. WDYT?",
+      "parentUuid": "c5147739_7b548104",
+      "revId": "019e4044771793a1c5a29f9735950f2caeca104f",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "315bc6f5_b645ee61",
         "filename": "configs/global.yml",
         "patchSetId": 39
