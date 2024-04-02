@@ -22,6 +22,30 @@
       },
       "revId": "c0403a38461b9e5d43f65d453a90cf8d1d92728a",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "27398eea_a3f4f33d",
+        "filename": "collection/stages/roles/prepare/tasks/clouds.yml",
+        "patchSetId": 5
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-04-02T14:02:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5cfb694b_de7328fe",
+      "range": {
+        "startLine": 8,
+        "startChar": 14,
+        "endLine": 8,
+        "endChar": 21
+      },
+      "revId": "c0403a38461b9e5d43f65d453a90cf8d1d92728a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
