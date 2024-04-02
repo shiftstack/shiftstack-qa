@@ -27,7 +27,7 @@
     installcfg_external_network: "{{ infra.external_network }}"
     installcfg_region: "{{ infra.region }}"
     installcfg_dns_servers: "{{ infra.dns_servers }}"
-    installcfg_lb_floating_ip: "{{ precreated_lb_fip }}"
+    installcfg_api_floating_ip: "{{ precreated_lb_fip }}"
     installcfg_ingress_floating_ip: "{{ precreated_ingress_fip }}"
 
 - name: Copy the install-config.yaml to installation dir
@@ -37,9 +37,35 @@
     remote_src: yes
     mode: u=rw,g=rw,o=r
 
-- name: Install Openshift (IPI mode)
-  ansible.builtin.shell: |
-      openshift-install create cluster --log-level debug --dir {{ installation_dir }}
-  environment:
-    OS_CLOUD: "{{ user_cloud }}"
-  changed_when: true
+- name: Install Openshift including extra wait if needed
+  block:
+    - name: Install Openshift
+      ansible.builtin.shell: |
+          openshift-install create cluster --log-level debug --dir {{ installation_dir }}
+      environment:
+        OS_CLOUD: "{{ user_cloud }}"
+      changed_when: true
+
+  rescue:
+    - name: Wait extra time
+      ansible.builtin.shell: |
+        openshift-install wait-for install-complete --log-level debug --dir {{ installation_dir }}
+      environment:
+        OS_CLOUD: "{{ user_cloud }}"
+      changed_when: true
+
+    - name: Remove the bootstrap resources after the OCP installation succeeded
+      ansible.builtin.shell: |
+        openshift-install destroy bootstrap --log-level debug --dir {{ installation_dir }}
+      environment:
+        OS_CLOUD: "{{ user_cloud }}"
+      changed_when: true
+
+    - name: Mark the openshift tests as UNSTABLE
+      ansible.builtin.include_role:
+        name: tools_stage_results
+        tasks_from: mark_stage_unstable.yml
+      vars:
+        unstable_msg: >-
+          The openshift installation passed but unexpectedly needed the wait-for flag.
+          More info in Jira KURYRQE-1002.
