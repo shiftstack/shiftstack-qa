@@ -70,6 +70,30 @@
       },
       "revId": "ecda744c938e657d9bf6214af3546e5a1665d452",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ab47be54_2bcd9a4d",
+        "filename": "configs/global.yml",
+        "patchSetId": 4
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-04-02T11:51:34Z",
+      "side": 1,
+      "message": "wait, it should b e inside the installation_dir, so I would say\n\nosp_config_dir: \"{{ installation_dir }}/openstack\"",
+      "parentUuid": "5eca606d_eed6cfd4",
+      "range": {
+        "startLine": 5,
+        "startChar": 0,
+        "endLine": 5,
+        "endChar": 7
+      },
+      "revId": "ecda744c938e657d9bf6214af3546e5a1665d452",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
