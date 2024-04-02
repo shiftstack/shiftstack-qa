@@ -46,6 +46,30 @@
       },
       "revId": "ecda744c938e657d9bf6214af3546e5a1665d452",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5eca606d_eed6cfd4",
+        "filename": "configs/global.yml",
+        "patchSetId": 4
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-04-02T11:50:33Z",
+      "side": 1,
+      "message": "what about \"osp_config_dir\" then?",
+      "parentUuid": "9e0d40a9_b8da06e9",
+      "range": {
+        "startLine": 5,
+        "startChar": 0,
+        "endLine": 5,
+        "endChar": 7
+      },
+      "revId": "ecda744c938e657d9bf6214af3546e5a1665d452",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
