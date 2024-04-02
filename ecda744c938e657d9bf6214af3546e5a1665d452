@@ -94,6 +94,30 @@
       },
       "revId": "ecda744c938e657d9bf6214af3546e5a1665d452",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "495e45a3_e757f6bd",
+        "filename": "configs/global.yml",
+        "patchSetId": 4
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2024-04-02T11:54:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ab47be54_2bcd9a4d",
+      "range": {
+        "startLine": 5,
+        "startChar": 0,
+        "endLine": 5,
+        "endChar": 7
+      },
+      "revId": "ecda744c938e657d9bf6214af3546e5a1665d452",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
