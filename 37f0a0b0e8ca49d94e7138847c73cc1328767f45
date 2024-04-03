@@ -114,6 +114,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "43d89a34_6ca8d0f0",
+        "filename": "configs/global.yml",
+        "patchSetId": 6
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-04-03T08:01:52Z",
+      "side": 1,
+      "message": "I see!\nand do you think the `installation_dir` should be used for both the PVC and `ocp create cluster` installation? should we have a sub dir just for `ocp_installation_dir`?",
+      "parentUuid": "66437b14_bb8adae2",
+      "range": {
+        "startLine": 4,
+        "startChar": 0,
+        "endLine": 4,
+        "endChar": 86
+      },
+      "revId": "37f0a0b0e8ca49d94e7138847c73cc1328767f45",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "1dd9dc49_7ed444c0",
         "filename": "playbooks/legacy_ocp_testing.yaml",
         "patchSetId": 6
