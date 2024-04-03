@@ -138,6 +138,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "22c8d52c_a3adbe6b",
+        "filename": "configs/global.yml",
+        "patchSetId": 6
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-04-03T08:07:10Z",
+      "side": 1,
+      "message": "the `openshift-install create cluster` creates some files (I think it\u0027s mainly the `manifest.json`) that is needed for running the `openshift-install cluster destroy`.\n\nTherefore, It\u0027s needed to include these files in the PVC.",
+      "parentUuid": "43d89a34_6ca8d0f0",
+      "range": {
+        "startLine": 4,
+        "startChar": 0,
+        "endLine": 4,
+        "endChar": 86
+      },
+      "revId": "37f0a0b0e8ca49d94e7138847c73cc1328767f45",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "1dd9dc49_7ed444c0",
         "filename": "playbooks/legacy_ocp_testing.yaml",
         "patchSetId": 6
