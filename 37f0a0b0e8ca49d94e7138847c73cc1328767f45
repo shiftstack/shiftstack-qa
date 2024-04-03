@@ -162,6 +162,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "54b3caca_babdbb5f",
+        "filename": "configs/global.yml",
+        "patchSetId": 6
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-04-03T08:11:41Z",
+      "side": 1,
+      "message": "agree it should be in the PVC. \nmy question is if we should have a sub dir in the PVC just for the OCP installation. I think it is better than having the same dir for the OCP installation and other files as well (e.g. - osp_config_dir)",
+      "parentUuid": "22c8d52c_a3adbe6b",
+      "range": {
+        "startLine": 4,
+        "startChar": 0,
+        "endLine": 4,
+        "endChar": 86
+      },
+      "revId": "37f0a0b0e8ca49d94e7138847c73cc1328767f45",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "1dd9dc49_7ed444c0",
         "filename": "playbooks/legacy_ocp_testing.yaml",
         "patchSetId": 6
