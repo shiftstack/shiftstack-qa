@@ -90,6 +90,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "66437b14_bb8adae2",
+        "filename": "configs/global.yml",
+        "patchSetId": 6
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-04-03T07:49:59Z",
+      "side": 1,
+      "message": "Your proposal is problematic, because we would need to manage a dinamic path for mounting the volume. If the dir is \"~/{{ user_cloud }}/...\" we\u0027ll need to define a dinamic path in the pod definition (which is part of the ci-framework patch that Jon is working on). \n\nHowever, if we set \"~/installation/{{ user_cloud}}/...\", we can mount the volume on \"~/installation/\" and let the dir structure inside there be changed by shiftstack-qa automation. The ci-framework will be agnostic of all these changes.",
+      "parentUuid": "a996339d_79fb24d4",
+      "range": {
+        "startLine": 4,
+        "startChar": 0,
+        "endLine": 4,
+        "endChar": 86
+      },
+      "revId": "37f0a0b0e8ca49d94e7138847c73cc1328767f45",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "1dd9dc49_7ed444c0",
         "filename": "playbooks/legacy_ocp_testing.yaml",
         "patchSetId": 6
