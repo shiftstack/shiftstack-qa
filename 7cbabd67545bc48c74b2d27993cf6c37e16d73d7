@@ -69,6 +69,24 @@
       "parentUuid": "e2d8249e_96057e05",
       "revId": "7cbabd67545bc48c74b2d27993cf6c37e16d73d7",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b30aae84_cf9828c1",
+        "filename": "configs/global.yml",
+        "patchSetId": 2
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2024-04-03T05:37:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6c107f47_30ff8c7c",
+      "revId": "7cbabd67545bc48c74b2d27993cf6c37e16d73d7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
