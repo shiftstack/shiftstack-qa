@@ -58,6 +58,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ce212a93_aea6f035",
+        "filename": "collection/stages/roles/post/tasks/main.yml",
+        "patchSetId": 11
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2024-04-03T15:21:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bb8d4c76_722f6ef5",
+      "range": {
+        "startLine": 22,
+        "startChar": 21,
+        "endLine": 22,
+        "endChar": 37
+      },
+      "revId": "4a50d8e65a7b4c8eae1449e3f7d93232db40ad71",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8122bff5_290f749c",
@@ -71,6 +95,30 @@
       "writtenOn": "2024-04-03T14:00:05Z",
       "side": 1,
       "message": "Doesn\u0027t the previous task copy the `osp_config_dir` as well?\n(`osp_config_dir` is included in `installatio_dir`)",
+      "range": {
+        "startLine": 22,
+        "startChar": 0,
+        "endLine": 26,
+        "endChar": 18
+      },
+      "revId": "4a50d8e65a7b4c8eae1449e3f7d93232db40ad71",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3a4e59cc_56b9c061",
+        "filename": "collection/stages/roles/post/tasks/main.yml",
+        "patchSetId": 11
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2024-04-03T15:21:51Z",
+      "side": 1,
+      "message": "My bad - I thought I have changed it\nIt\u0027s now osp_config_dir: \"{{ home_dir }}/installation/{{ user_cloud}}/openstack\"",
+      "parentUuid": "8122bff5_290f749c",
       "range": {
         "startLine": 22,
         "startChar": 0,

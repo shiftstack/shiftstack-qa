@@ -41,6 +41,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "02cdf5f7_a7fd0edc",
+        "filename": "collection/stages/roles/prepare/tasks/clouds.yml",
+        "patchSetId": 6
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2024-04-03T15:21:51Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f3de8ee0_8f255079",
+      "range": {
+        "startLine": 21,
+        "startChar": 0,
+        "endLine": 21,
+        "endChar": 19
+      },
+      "revId": "37f0a0b0e8ca49d94e7138847c73cc1328767f45",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "115017c5_acd898e9",
