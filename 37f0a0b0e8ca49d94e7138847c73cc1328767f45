@@ -151,6 +151,24 @@
       "message": "I think we have agreed (and should) to add post tasks to copy the `installation_dir` into the `artifacts_dir` at the end of the playbook run. WDYT?",
       "revId": "37f0a0b0e8ca49d94e7138847c73cc1328767f45",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a31196f8_ea56818e",
+        "filename": "playbooks/legacy_ocp_testing.yaml",
+        "patchSetId": 6
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-04-03T08:04:22Z",
+      "side": 1,
+      "message": "mmmm the problem is in case of failure. I think if we have an error in the tasks, post_tasks is not run. So it should be better to add it to an always inside right after the installation attempt.",
+      "parentUuid": "1dd9dc49_7ed444c0",
+      "revId": "37f0a0b0e8ca49d94e7138847c73cc1328767f45",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
