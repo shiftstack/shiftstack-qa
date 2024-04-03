@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "190314f6_a1b5b07c",
+        "filename": "collection/stages/roles/post/tasks/main.yml",
+        "patchSetId": 12
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-04-03T15:37:17Z",
+      "side": 1,
+      "message": "Is still needed here?",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 67
+      },
+      "revId": "094e401260f92030df8e1586a1439c0af5866ba6",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
