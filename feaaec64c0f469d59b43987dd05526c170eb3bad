@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bfb5f337_447d67b5",
+        "filename": "collection/stages/roles/install/tasks/ipi_tenant.yml",
+        "patchSetId": 13
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-04-04T09:03:30Z",
+      "side": 1,
+      "message": "wdyt about having it as a list in https://review.gerrithub.io/c/shiftstack/shiftstack-qa/+/1186984/13/collection/stages/roles/install/defaults/main.yml?",
+      "range": {
+        "startLine": 79,
+        "startChar": 0,
+        "endLine": 81,
+        "endChar": 67
+      },
+      "revId": "feaaec64c0f469d59b43987dd05526c170eb3bad",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fd44576d_bebf2160",
+        "filename": "configs/global.yml",
+        "patchSetId": 13
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-04-04T09:03:30Z",
+      "side": 1,
+      "message": "{{ user_cloud }}",
+      "range": {
+        "startLine": 5,
+        "startChar": 45,
+        "endLine": 5,
+        "endChar": 60
+      },
+      "revId": "feaaec64c0f469d59b43987dd05526c170eb3bad",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
