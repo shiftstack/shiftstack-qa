@@ -39,6 +39,30 @@
       },
       "revId": "002124fb834ef6d7d33534e7913a990d43d4d560",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "605083ef_d75eaf0c",
+        "filename": "collection/stages/roles/prepare/defaults/main.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2024-04-07T10:28:25Z",
+      "side": 1,
+      "message": "We use swiftoperator in the plugin for OSP\u003e\u003d16",
+      "parentUuid": "a80713aa_ebb8d308",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 27
+      },
+      "revId": "002124fb834ef6d7d33534e7913a990d43d4d560",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
