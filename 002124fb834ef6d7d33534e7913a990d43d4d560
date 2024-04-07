@@ -16,6 +16,29 @@
       "message": "verified locally",
       "revId": "002124fb834ef6d7d33534e7913a990d43d4d560",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a80713aa_ebb8d308",
+        "filename": "collection/stages/roles/prepare/defaults/main.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-04-07T10:21:44Z",
+      "side": 1,
+      "message": "what about legacy OSP env? is it ok?",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 27
+      },
+      "revId": "002124fb834ef6d7d33534e7913a990d43d4d560",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
