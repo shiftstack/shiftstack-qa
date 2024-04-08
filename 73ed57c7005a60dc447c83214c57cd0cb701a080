@@ -16,6 +16,23 @@
       "message": "Using OSP17",
       "revId": "73ed57c7005a60dc447c83214c57cd0cb701a080",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d43dd2f2_5c81bfa8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 14
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2024-04-08T09:50:43Z",
+      "side": 1,
+      "message": "Using OSP17",
+      "revId": "73ed57c7005a60dc447c83214c57cd0cb701a080",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
