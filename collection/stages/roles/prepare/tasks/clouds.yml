@@ -18,7 +18,6 @@
   ansible.builtin.copy:
     src: "{{ clouds_yaml_file_path }}"
     dest: "{{ osp_config_dir }}"
-    remote_src: yes
     mode: u=rwx,g=r,o=r
 
 - name: Get auth url from existing {{ admin_cloud }}
