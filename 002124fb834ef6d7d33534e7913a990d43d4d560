@@ -63,6 +63,30 @@
       },
       "revId": "002124fb834ef6d7d33534e7913a990d43d4d560",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1b8b6413_b65c701c",
+        "filename": "collection/stages/roles/prepare/defaults/main.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-04-09T14:01:20Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "605083ef_d75eaf0c",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 27
+      },
+      "revId": "002124fb834ef6d7d33534e7913a990d43d4d560",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
