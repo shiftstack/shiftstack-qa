@@ -39,6 +39,30 @@
       },
       "revId": "f3d9c72bc8674ea5c3a12438db7c08a501c8dc13",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "74fe92e8_d2a14d9d",
+        "filename": "collection/stages/roles/verification/tasks/main.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-04-11T07:55:27Z",
+      "side": 1,
+      "message": ":) not sure. It was just one of the tests I did. Octavia should work before GA so I think I\u0027ll remove this soon.",
+      "parentUuid": "36bcb99d_d30232f0",
+      "range": {
+        "startLine": 93,
+        "startChar": 36,
+        "endLine": 93,
+        "endChar": 41
+      },
+      "revId": "f3d9c72bc8674ea5c3a12438db7c08a501c8dc13",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
