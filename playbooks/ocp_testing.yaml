@@ -132,3 +132,4 @@
       ansible.builtin.include_role:
         name: shiftstack.stages.openstack_test
       when: "'openstack_test' in stages"
+Failing on purpose
