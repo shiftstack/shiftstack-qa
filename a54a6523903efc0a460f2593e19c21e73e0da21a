@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cef20e1c_983e016a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 47
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-04-11T13:31:46Z",
+      "side": 1,
+      "message": "Verified locally with and without installer-host on a legacy env",
+      "revId": "a54a6523903efc0a460f2593e19c21e73e0da21a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
