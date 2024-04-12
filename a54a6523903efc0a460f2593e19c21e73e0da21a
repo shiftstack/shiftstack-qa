@@ -1,6 +1,40 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "bf514e5b_e43691fa",
+        "filename": ".ansible-lint",
+        "patchSetId": 47
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-04-12T10:31:03Z",
+      "side": 1,
+      "message": "I think we can remove this ignore-errors from the skip_list, right?\n\nIf we still need to have it for some specific situation, ansible-lint allows to ignore it just adding a comment like:\n\n` # noqa: ignore-errors`\n\nref: https://ansible.readthedocs.io/projects/lint/usage/#muting-warnings-to-avoid-false-positives",
+      "revId": "a54a6523903efc0a460f2593e19c21e73e0da21a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0a67bbe0_77082e24",
+        "filename": ".ansible-lint",
+        "patchSetId": 47
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-04-12T10:31:03Z",
+      "side": 1,
+      "message": "Same applies for no-handler. If you need to silent the ansible-lint error on a specific case, you can use https://ansible.readthedocs.io/projects/lint/usage/#muting-warnings-to-avoid-false-positives.\n\nWith this, we keep checking this in the rest of the repo.",
+      "revId": "a54a6523903efc0a460f2593e19c21e73e0da21a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "cef20e1c_983e016a",
