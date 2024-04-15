@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3f135512_11afcdc6",
+        "filename": "gate.sh",
+        "patchSetId": 9
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1005097
+      },
+      "writtenOn": "2024-04-15T14:22:27Z",
+      "side": 1,
+      "message": "One more note, the cloud-admin user does not exist on generic CI workers, these commands will likely fail (use \"rhos-ci\" instead).",
+      "range": {
+        "startLine": 2,
+        "startChar": 12,
+        "endLine": 2,
+        "endChar": 23
+      },
+      "revId": "a78d9d1957c9d4990631a9e8d6d021ea121ebede",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
