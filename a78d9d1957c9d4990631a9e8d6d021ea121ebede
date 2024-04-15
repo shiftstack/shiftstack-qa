@@ -22,6 +22,30 @@
       },
       "revId": "a78d9d1957c9d4990631a9e8d6d021ea121ebede",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "87aac6d8_ffbbb7e5",
+        "filename": "gate.sh",
+        "patchSetId": 9
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-04-15T14:53:56Z",
+      "side": 1,
+      "message": "That path is inside the image we are using: quay.io/shiftstack-qe/shiftstack-client\n\nThe dockerfile is on https://gitlab.cee.redhat.com/shiftstack/shiftstack-tools/-/blob/main/osp18/Dockerfile?ref_type\u003dheads#L10",
+      "parentUuid": "3f135512_11afcdc6",
+      "range": {
+        "startLine": 2,
+        "startChar": 12,
+        "endLine": 2,
+        "endChar": 23
+      },
+      "revId": "a78d9d1957c9d4990631a9e8d6d021ea121ebede",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
