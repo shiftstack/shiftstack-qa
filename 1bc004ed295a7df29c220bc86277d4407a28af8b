@@ -1,0 +1,239 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ee6c63ad_f1f56406",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 48
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-04-15T14:26:23Z",
+      "side": 1,
+      "message": "Great work Itay!\n\nIn addition to the comments I wanted to point out that the repo file for OSP 18 (collection/tools/roles/tools_installer_host/templates/installer_host-osp_18.repo.j2) is missing and thus the job would fail.\nLooks like the OSP 18 repo is not completely built for now (https://rhsm-pulp.corp.redhat.com/content/dist/layered/rhel9/x86_64/openstack-tools/18/os/) so I just can think about copying it from the OSP 17 one (collection/tools/roles/tools_installer_host/templates/installer_host-osp_17.repo.j2)",
+      "revId": "1bc004ed295a7df29c220bc86277d4407a28af8b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "49989e9b_31adb1bf",
+        "filename": "collection/stages/roles/prepare/tasks/get_installer.yml",
+        "patchSetId": 48
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-04-15T14:26:23Z",
+      "side": 1,
+      "message": "What do we want to do with the build marks in the new CI?",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 1
+      },
+      "revId": "1bc004ed295a7df29c220bc86277d4407a28af8b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "acf4a552_146fbb1e",
+        "filename": "collection/tools/roles/tools_ansible_inventory/tasks/create_installer_group.yml",
+        "patchSetId": 48
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-04-15T14:26:23Z",
+      "side": 1,
+      "message": "nit: present",
+      "range": {
+        "startLine": 32,
+        "startChar": 77,
+        "endLine": 32,
+        "endChar": 85
+      },
+      "revId": "1bc004ed295a7df29c220bc86277d4407a28af8b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bb857ec6_441c21a7",
+        "filename": "collection/tools/roles/tools_installer_host/defaults/main.yml",
+        "patchSetId": 48
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-04-15T14:26:23Z",
+      "side": 1,
+      "message": "nit: tools_installer_host",
+      "range": {
+        "startLine": 2,
+        "startChar": 20,
+        "endLine": 2,
+        "endChar": 39
+      },
+      "revId": "1bc004ed295a7df29c220bc86277d4407a28af8b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e6884cc4_465efee8",
+        "filename": "collection/tools/roles/tools_installer_host/tasks/main.yml",
+        "patchSetId": 48
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-04-15T14:26:23Z",
+      "side": 1,
+      "message": "Should we replace it by \"{{ installer_vm_name }}\"?",
+      "range": {
+        "startLine": 12,
+        "startChar": 15,
+        "endLine": 12,
+        "endChar": 29
+      },
+      "revId": "1bc004ed295a7df29c220bc86277d4407a28af8b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b75b380a_6927498a",
+        "filename": "collection/tools/roles/tools_installer_host/tasks/main.yml",
+        "patchSetId": 48
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-04-15T14:26:23Z",
+      "side": 1,
+      "message": "Same here",
+      "range": {
+        "startLine": 16,
+        "startChar": 15,
+        "endLine": 16,
+        "endChar": 29
+      },
+      "revId": "1bc004ed295a7df29c220bc86277d4407a28af8b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "304e4b95_304c8934",
+        "filename": "collection/tools/roles/tools_installer_host/tasks/main.yml",
+        "patchSetId": 48
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-04-15T14:26:23Z",
+      "side": 1,
+      "message": "Same here",
+      "range": {
+        "startLine": 20,
+        "startChar": 15,
+        "endLine": 20,
+        "endChar": 29
+      },
+      "revId": "1bc004ed295a7df29c220bc86277d4407a28af8b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ad0a98ce_42453cd1",
+        "filename": "collection/tools/roles/tools_installer_host/tasks/main.yml",
+        "patchSetId": 48
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-04-15T14:26:23Z",
+      "side": 1,
+      "message": "Same here",
+      "range": {
+        "startLine": 24,
+        "startChar": 15,
+        "endLine": 24,
+        "endChar": 29
+      },
+      "revId": "1bc004ed295a7df29c220bc86277d4407a28af8b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2957618c_ebc7b7d8",
+        "filename": "configs/global.yml",
+        "patchSetId": 48
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-04-15T14:26:23Z",
+      "side": 1,
+      "message": "Aren\u0027t these params duplicated in collection/tools/roles/tools_ansible_inventory/defaults/main.yml (was not added in this patch though...)?",
+      "range": {
+        "startLine": 63,
+        "startChar": 0,
+        "endLine": 66,
+        "endChar": 56
+      },
+      "revId": "1bc004ed295a7df29c220bc86277d4407a28af8b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cb8f926d_68582db3",
+        "filename": "playbooks/ocp_testing.yaml",
+        "patchSetId": 48
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-04-15T14:26:23Z",
+      "side": 1,
+      "message": "Is it needed?",
+      "revId": "1bc004ed295a7df29c220bc86277d4407a28af8b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ae46e24c_716b1f70",
+        "filename": "playbooks/ocp_testing.yaml",
+        "patchSetId": 48
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-04-15T14:26:23Z",
+      "side": 1,
+      "message": "I think we are not retrieving the inventory file from /etc/ansible, can we retrieve it as well (into control node artifacts dir)?",
+      "revId": "1bc004ed295a7df29c220bc86277d4407a28af8b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
