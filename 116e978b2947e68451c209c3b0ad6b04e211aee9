@@ -41,6 +41,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "987ddb93_43d0b0a6",
+        "filename": "gate.sh",
+        "patchSetId": 8
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-04-15T14:06:31Z",
+      "side": 1,
+      "message": "Sure, I wrongly inherit from another test. securty-opt is not needed. I tested and it worked fine. Thanks for reviewing!",
+      "parentUuid": "7d12d958_62d8ae57",
+      "range": {
+        "startLine": 1,
+        "startChar": 48,
+        "endLine": 1,
+        "endChar": 66
+      },
+      "revId": "116e978b2947e68451c209c3b0ad6b04e211aee9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8c07e555_a4cced0c",
