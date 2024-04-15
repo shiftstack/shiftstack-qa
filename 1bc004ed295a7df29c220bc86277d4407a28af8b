@@ -37,6 +37,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "2a8dc89f_7e1ef575",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 48
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-04-15T20:27:54Z",
+      "side": 1,
+      "message": "thanks!\nis this one look good? https://review.gerrithub.io/c/shiftstack/shiftstack-qa/+/1185741/49/collection/tools/roles/tools_installer_host/templates/installer_host-osp_18.repo.j2",
+      "parentUuid": "ee6c63ad_f1f56406",
+      "revId": "1bc004ed295a7df29c220bc86277d4407a28af8b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "49989e9b_31adb1bf",
         "filename": "collection/stages/roles/prepare/tasks/get_installer.yml",
         "patchSetId": 48
@@ -48,6 +66,30 @@
       "writtenOn": "2024-04-15T14:26:23Z",
       "side": 1,
       "message": "What do we want to do with the build marks in the new CI?",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 1
+      },
+      "revId": "1bc004ed295a7df29c220bc86277d4407a28af8b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4109fabd_20e83538",
+        "filename": "collection/stages/roles/prepare/tasks/get_installer.yml",
+        "patchSetId": 48
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-04-15T20:27:54Z",
+      "side": 1,
+      "message": "good question. do you think we should remove it?",
+      "parentUuid": "49989e9b_31adb1bf",
       "range": {
         "startLine": 10,
         "startChar": 0,
@@ -81,6 +123,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8bbd7497_f27c6156",
+        "filename": "collection/tools/roles/tools_ansible_inventory/tasks/create_installer_group.yml",
+        "patchSetId": 48
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-04-15T20:27:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "acf4a552_146fbb1e",
+      "range": {
+        "startLine": 32,
+        "startChar": 77,
+        "endLine": 32,
+        "endChar": 85
+      },
+      "revId": "1bc004ed295a7df29c220bc86277d4407a28af8b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "bb857ec6_441c21a7",
@@ -94,6 +160,30 @@
       "writtenOn": "2024-04-15T14:26:23Z",
       "side": 1,
       "message": "nit: tools_installer_host",
+      "range": {
+        "startLine": 2,
+        "startChar": 20,
+        "endLine": 2,
+        "endChar": 39
+      },
+      "revId": "1bc004ed295a7df29c220bc86277d4407a28af8b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "393b0459_87ccbb3f",
+        "filename": "collection/tools/roles/tools_installer_host/defaults/main.yml",
+        "patchSetId": 48
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-04-15T20:27:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bb857ec6_441c21a7",
       "range": {
         "startLine": 2,
         "startChar": 20,
@@ -127,6 +217,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "50c4b8b7_6d34f44d",
+        "filename": "collection/tools/roles/tools_installer_host/tasks/main.yml",
+        "patchSetId": 48
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-04-15T20:27:54Z",
+      "side": 1,
+      "message": "Thanks!\nDone",
+      "parentUuid": "e6884cc4_465efee8",
+      "range": {
+        "startLine": 12,
+        "startChar": 15,
+        "endLine": 12,
+        "endChar": 29
+      },
+      "revId": "1bc004ed295a7df29c220bc86277d4407a28af8b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "b75b380a_6927498a",
@@ -140,6 +254,30 @@
       "writtenOn": "2024-04-15T14:26:23Z",
       "side": 1,
       "message": "Same here",
+      "range": {
+        "startLine": 16,
+        "startChar": 15,
+        "endLine": 16,
+        "endChar": 29
+      },
+      "revId": "1bc004ed295a7df29c220bc86277d4407a28af8b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "072fb6cf_6a21ec01",
+        "filename": "collection/tools/roles/tools_installer_host/tasks/main.yml",
+        "patchSetId": 48
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-04-15T20:27:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b75b380a_6927498a",
       "range": {
         "startLine": 16,
         "startChar": 15,
@@ -173,6 +311,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ccfd8314_a9db1450",
+        "filename": "collection/tools/roles/tools_installer_host/tasks/main.yml",
+        "patchSetId": 48
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-04-15T20:27:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "304e4b95_304c8934",
+      "range": {
+        "startLine": 20,
+        "startChar": 15,
+        "endLine": 20,
+        "endChar": 29
+      },
+      "revId": "1bc004ed295a7df29c220bc86277d4407a28af8b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ad0a98ce_42453cd1",
@@ -186,6 +348,30 @@
       "writtenOn": "2024-04-15T14:26:23Z",
       "side": 1,
       "message": "Same here",
+      "range": {
+        "startLine": 24,
+        "startChar": 15,
+        "endLine": 24,
+        "endChar": 29
+      },
+      "revId": "1bc004ed295a7df29c220bc86277d4407a28af8b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9b3f41f9_e34176db",
+        "filename": "collection/tools/roles/tools_installer_host/tasks/main.yml",
+        "patchSetId": 48
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-04-15T20:27:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ad0a98ce_42453cd1",
       "range": {
         "startLine": 24,
         "startChar": 15,
@@ -219,6 +405,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e36d9370_4aee4d06",
+        "filename": "configs/global.yml",
+        "patchSetId": 48
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-04-15T20:27:54Z",
+      "side": 1,
+      "message": "we have it also in https://github.com/shiftstack/shiftstack-qa/blob/main/collection/tools/roles/tools_ansible_inventory/defaults/main.yml so we can have this role independent.\n\nWe are overwriting these vars when we call this role - https://review.gerrithub.io/c/shiftstack/shiftstack-qa/+/1185741/49/collection/tools/roles/tools_ansible_inventory/tasks/create_installer_group.yml#48\n\nPlease let me know if you think it is not a best practice. 10x",
+      "parentUuid": "2957618c_ebc7b7d8",
+      "range": {
+        "startLine": 63,
+        "startChar": 0,
+        "endLine": 66,
+        "endChar": 56
+      },
+      "revId": "1bc004ed295a7df29c220bc86277d4407a28af8b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "cb8f926d_68582db3",
@@ -236,6 +446,24 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "1db2a24e_da758e20",
+        "filename": "playbooks/ocp_testing.yaml",
+        "patchSetId": 48
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-04-15T20:27:54Z",
+      "side": 1,
+      "message": "Probably not. Thanks!",
+      "parentUuid": "cb8f926d_68582db3",
+      "revId": "1bc004ed295a7df29c220bc86277d4407a28af8b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ae46e24c_716b1f70",
@@ -249,6 +477,24 @@
       "writtenOn": "2024-04-15T14:26:23Z",
       "side": 1,
       "message": "I think we are not retrieving the inventory file from /etc/ansible, can we retrieve it as well (into control node artifacts dir)?",
+      "revId": "1bc004ed295a7df29c220bc86277d4407a28af8b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4da26d30_92dcfe32",
+        "filename": "playbooks/ocp_testing.yaml",
+        "patchSetId": 48
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-04-15T20:27:54Z",
+      "side": 1,
+      "message": "We should have it as part of https://review.gerrithub.io/c/shiftstack/shiftstack-qa/+/1185741/49/collection/tools/roles/tools_ansible_inventory/tasks/update_inventory.yml#23",
+      "parentUuid": "ae46e24c_716b1f70",
       "revId": "1bc004ed295a7df29c220bc86277d4407a28af8b",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
