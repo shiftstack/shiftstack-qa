@@ -110,6 +110,30 @@
       },
       "revId": "116e978b2947e68451c209c3b0ad6b04e211aee9",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f5c513fc_9d34bb92",
+        "filename": "gate.sh",
+        "patchSetId": 8
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-04-15T19:20:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6ed7ae76_cb7f59ed",
+      "range": {
+        "startLine": 6,
+        "startChar": 0,
+        "endLine": 6,
+        "endChar": 76
+      },
+      "revId": "116e978b2947e68451c209c3b0ad6b04e211aee9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
