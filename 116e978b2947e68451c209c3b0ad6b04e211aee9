@@ -39,6 +39,30 @@
       },
       "revId": "116e978b2947e68451c209c3b0ad6b04e211aee9",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6ed7ae76_cb7f59ed",
+        "filename": "gate.sh",
+        "patchSetId": 8
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-04-15T10:19:03Z",
+      "side": 1,
+      "message": "\u003e do we want to store the log somewhere? or can we see the output in the gate\u0027s execution log?\n\nYep Itay! Sorry I forgot to link the jenkins job: https://rhos-ci-staging-jenkins.lab.eng.tlv2.redhat.com/view/All/job/DFG-osasinfra-shiftstack-qa-gate/\n\nRun #15 is a case where the gate detects a failure (-1 VERIFIED).\nRun #14 is a case where the gate gives +1 VERIFIED.",
+      "parentUuid": "8c07e555_a4cced0c",
+      "range": {
+        "startLine": 6,
+        "startChar": 0,
+        "endLine": 6,
+        "endChar": 76
+      },
+      "revId": "116e978b2947e68451c209c3b0ad6b04e211aee9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
