@@ -20,6 +20,29 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "7d12d958_62d8ae57",
+        "filename": "gate.sh",
+        "patchSetId": 8
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1005097
+      },
+      "writtenOn": "2024-04-15T13:51:35Z",
+      "side": 1,
+      "message": "Note this is not gonna play well with our CI env run in the user-context, see (also note the CI acc usable is \"rhos-ci\" here):\n\npodman run -u root --pull always --security-opt seccomp\u003dunconfined -v .:/home/rhos-ci/shiftstack-client:Z quay.io/shiftstack-qe/shiftstack-client /bin/bash -c \u0027ls *\u0027\n...\nWriting manifest to image destination\nStoring signatures\nError: SELinux relabeling of /home/rhos-ci is not allowed\n\nAny chance this can be executed differently to omit touching the selinux context for example?",
+      "range": {
+        "startLine": 1,
+        "startChar": 48,
+        "endLine": 1,
+        "endChar": 66
+      },
+      "revId": "116e978b2947e68451c209c3b0ad6b04e211aee9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "8c07e555_a4cced0c",
         "filename": "gate.sh",
         "patchSetId": 8
