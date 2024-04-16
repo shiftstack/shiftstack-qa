@@ -46,6 +46,53 @@
       },
       "revId": "a78d9d1957c9d4990631a9e8d6d021ea121ebede",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "eec90bbd_ee905c06",
+        "filename": "gate.sh",
+        "patchSetId": 9
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1005097
+      },
+      "writtenOn": "2024-04-16T16:55:23Z",
+      "side": 1,
+      "message": "Yeah, sorry, my bad, didn\u0027t realize that during fast-read...",
+      "parentUuid": "87aac6d8_ffbbb7e5",
+      "range": {
+        "startLine": 2,
+        "startChar": 12,
+        "endLine": 2,
+        "endChar": 23
+      },
+      "revId": "a78d9d1957c9d4990631a9e8d6d021ea121ebede",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "18710257_b6c8ace3",
+        "filename": "gate.sh",
+        "patchSetId": 9
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1005097
+      },
+      "writtenOn": "2024-04-16T16:55:23Z",
+      "side": 1,
+      "message": "If I am not mistaken, I believe this might be dangerous to mount \".\" into container.\n\nI know this relies on https://code.engineering.redhat.com/gerrit/c/rhos-qe-jenkins/+/451471/2/jobs/DFG/osasinfra/shiftstack_ci/gate/gate.yml#139 but if the parts of the code change or something fails, it might be passing an arbitary directory into the container runtime.\n\nI believe it should be smth like:\n\n-v shiftstack-qa:/home/cloud-admin/shiftstack-qa:Z\n\nand the pushd line removed from the other change.",
+      "range": {
+        "startLine": 2,
+        "startChar": 4,
+        "endLine": 2,
+        "endChar": 5
+      },
+      "revId": "a78d9d1957c9d4990631a9e8d6d021ea121ebede",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
