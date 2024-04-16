@@ -53,6 +53,24 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "983ea512_78d76e5f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 48
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-04-16T08:58:05Z",
+      "side": 1,
+      "message": "Yes, we\u0027ll need to change it to `http://rhsm-pulp.corp.redhat.com/content/dist/layered/rhel9/$basearch/openstack-tools/18/os` once it\u0027s ready",
+      "parentUuid": "2a8dc89f_7e1ef575",
+      "revId": "1bc004ed295a7df29c220bc86277d4407a28af8b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "49989e9b_31adb1bf",
@@ -90,6 +108,30 @@
       "side": 1,
       "message": "good question. do you think we should remove it?",
       "parentUuid": "49989e9b_31adb1bf",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 1
+      },
+      "revId": "1bc004ed295a7df29c220bc86277d4407a28af8b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "51c0c07f_ef116170",
+        "filename": "collection/stages/roles/prepare/tasks/get_installer.yml",
+        "patchSetId": 48
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-04-16T08:58:05Z",
+      "side": 1,
+      "message": "I don\u0027t know if there is something similar in Zuul, we can leave them for now and find a replacement for Zuul?",
+      "parentUuid": "4109fabd_20e83538",
       "range": {
         "startLine": 10,
         "startChar": 0,
@@ -419,6 +461,30 @@
       "side": 1,
       "message": "we have it also in https://github.com/shiftstack/shiftstack-qa/blob/main/collection/tools/roles/tools_ansible_inventory/defaults/main.yml so we can have this role independent.\n\nWe are overwriting these vars when we call this role - https://review.gerrithub.io/c/shiftstack/shiftstack-qa/+/1185741/49/collection/tools/roles/tools_ansible_inventory/tasks/create_installer_group.yml#48\n\nPlease let me know if you think it is not a best practice. 10x",
       "parentUuid": "2957618c_ebc7b7d8",
+      "range": {
+        "startLine": 63,
+        "startChar": 0,
+        "endLine": 66,
+        "endChar": 56
+      },
+      "revId": "1bc004ed295a7df29c220bc86277d4407a28af8b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5d648c0c_61e04e4a",
+        "filename": "configs/global.yml",
+        "patchSetId": 48
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-04-16T08:58:05Z",
+      "side": 1,
+      "message": "That\u0027s ok!",
+      "parentUuid": "e36d9370_4aee4d06",
       "range": {
         "startLine": 63,
         "startChar": 0,
