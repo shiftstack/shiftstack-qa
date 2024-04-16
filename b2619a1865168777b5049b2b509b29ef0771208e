@@ -1,0 +1,113 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dec5f8fb_7c08f741",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 50
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2024-04-16T10:16:18Z",
+      "side": 1,
+      "message": "few nits",
+      "revId": "b2619a1865168777b5049b2b509b29ef0771208e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4036ea7f_846606f3",
+        "filename": "collection/stages/roles/prepare/tasks/external_access.yml",
+        "patchSetId": 50
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2024-04-16T10:16:18Z",
+      "side": 1,
+      "message": "API and APP FIPS?",
+      "range": {
+        "startLine": 36,
+        "startChar": 27,
+        "endLine": 36,
+        "endChar": 30
+      },
+      "revId": "b2619a1865168777b5049b2b509b29ef0771208e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "770e86d6_7eca377e",
+        "filename": "collection/tools/plugins/modules/filter_tests_list.py",
+        "patchSetId": 50
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2024-04-16T10:16:18Z",
+      "side": 1,
+      "message": "nit: os should be before re",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 8,
+        "endChar": 2
+      },
+      "revId": "b2619a1865168777b5049b2b509b29ef0771208e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7bd0a9fa_3e1d1ea7",
+        "filename": "collection/tools/plugins/modules/filter_tests_list.py",
+        "patchSetId": 50
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2024-04-16T10:16:18Z",
+      "side": 1,
+      "message": "nit: parse",
+      "range": {
+        "startLine": 113,
+        "startChar": 6,
+        "endLine": 113,
+        "endChar": 10
+      },
+      "revId": "b2619a1865168777b5049b2b509b29ef0771208e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fb570e04_a76802d0",
+        "filename": "collection/tools/roles/tools_must-gather/tasks/main.yml",
+        "patchSetId": 50
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2024-04-16T10:16:18Z",
+      "side": 1,
+      "message": "Didn\u0027t you want to replace the ignore_errors?",
+      "range": {
+        "startLine": 3,
+        "startChar": 2,
+        "endLine": 3,
+        "endChar": 20
+      },
+      "revId": "b2619a1865168777b5049b2b509b29ef0771208e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
