@@ -190,6 +190,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "25591922_e3ce281b",
+        "filename": "collection/stages/roles/prepare/tasks/get_installer.yml",
+        "patchSetId": 48
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-04-16T11:11:40Z",
+      "side": 1,
+      "message": "Agreed to leave it for now.",
+      "parentUuid": "f610b5eb_8c99853a",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 1
+      },
+      "revId": "1bc004ed295a7df29c220bc86277d4407a28af8b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "acf4a552_146fbb1e",

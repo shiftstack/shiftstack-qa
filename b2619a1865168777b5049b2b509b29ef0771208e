@@ -41,6 +41,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "713fbd80_6fa44396",
+        "filename": "collection/stages/roles/prepare/tasks/external_access.yml",
+        "patchSetId": 50
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-04-16T11:11:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4036ea7f_846606f3",
+      "range": {
+        "startLine": 36,
+        "startChar": 27,
+        "endLine": 36,
+        "endChar": 30
+      },
+      "revId": "b2619a1865168777b5049b2b509b29ef0771208e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "770e86d6_7eca377e",
@@ -54,6 +78,30 @@
       "writtenOn": "2024-04-16T10:16:18Z",
       "side": 1,
       "message": "nit: os should be before re",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 8,
+        "endChar": 2
+      },
+      "revId": "b2619a1865168777b5049b2b509b29ef0771208e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "acc9d3c4_056047d5",
+        "filename": "collection/tools/plugins/modules/filter_tests_list.py",
+        "patchSetId": 50
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-04-16T11:11:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "770e86d6_7eca377e",
       "range": {
         "startLine": 8,
         "startChar": 0,
@@ -87,6 +135,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e7dfdcd2_6f693311",
+        "filename": "collection/tools/plugins/modules/filter_tests_list.py",
+        "patchSetId": 50
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-04-16T11:11:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7bd0a9fa_3e1d1ea7",
+      "range": {
+        "startLine": 113,
+        "startChar": 6,
+        "endLine": 113,
+        "endChar": 10
+      },
+      "revId": "b2619a1865168777b5049b2b509b29ef0771208e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "fb570e04_a76802d0",
@@ -100,6 +172,30 @@
       "writtenOn": "2024-04-16T10:16:18Z",
       "side": 1,
       "message": "Didn\u0027t you want to replace the ignore_errors?",
+      "range": {
+        "startLine": 3,
+        "startChar": 2,
+        "endLine": 3,
+        "endChar": 20
+      },
+      "revId": "b2619a1865168777b5049b2b509b29ef0771208e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d081035f_64a1a706",
+        "filename": "collection/tools/roles/tools_must-gather/tasks/main.yml",
+        "patchSetId": 50
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-04-16T11:11:40Z",
+      "side": 1,
+      "message": "I tried it. seems it doesn\u0027t work with blocks.",
+      "parentUuid": "fb570e04_a76802d0",
       "range": {
         "startLine": 3,
         "startChar": 2,
