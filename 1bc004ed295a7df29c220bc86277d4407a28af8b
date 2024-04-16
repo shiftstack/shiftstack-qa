@@ -144,6 +144,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "4bb78553_e38af709",
+        "filename": "collection/stages/roles/prepare/tasks/get_installer.yml",
+        "patchSetId": 48
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-04-16T09:03:44Z",
+      "side": 1,
+      "message": "I think we can leave it there for now.\n\nIn the future I think we can think of building some kind of summary (CSV entry in the format that we currently populate the spreadsheet?) and push it somewhere so we can truck the results.",
+      "parentUuid": "51c0c07f_ef116170",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 1
+      },
+      "revId": "1bc004ed295a7df29c220bc86277d4407a28af8b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "acf4a552_146fbb1e",
         "filename": "collection/tools/roles/tools_ansible_inventory/tasks/create_installer_group.yml",
         "patchSetId": 48
