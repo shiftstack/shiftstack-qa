@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b03fed4a_1851ac76",
+        "filename": "collection/tools/roles/tools_cluster_checks/tasks/discover_az.yml",
+        "patchSetId": 42
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-04-16T13:59:54Z",
+      "side": 0,
+      "message": "This is not defined.",
+      "range": {
+        "startLine": 11,
+        "startChar": 63,
+        "endLine": 11,
+        "endChar": 82
+      },
+      "revId": "c0446997fbbd8d1d072c797dc469c8eede9a59bd",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}

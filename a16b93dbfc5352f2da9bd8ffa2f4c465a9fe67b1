@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "af7845c3_033a6504",
+        "filename": "configs/global.yml",
+        "patchSetId": 42
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-04-16T13:59:54Z",
+      "side": 1,
+      "message": "It is needed for the upi_inventory_file_values.",
+      "range": {
+        "startLine": 74,
+        "startChar": 0,
+        "endLine": 86,
+        "endChar": 0
+      },
+      "revId": "a16b93dbfc5352f2da9bd8ffa2f4c465a9fe67b1",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
