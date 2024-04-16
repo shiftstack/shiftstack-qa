@@ -22,6 +22,30 @@
       },
       "revId": "a16b93dbfc5352f2da9bd8ffa2f4c465a9fe67b1",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d859f47b_5b47a1ec",
+        "filename": "configs/global.yml",
+        "patchSetId": 42
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-04-16T15:15:07Z",
+      "side": 1,
+      "message": "@Jon has been fighting with this lately. Maybe he can know why. From ignorance, it looks wrong that you need to have those variables set in a non-dualstack installation",
+      "parentUuid": "af7845c3_033a6504",
+      "range": {
+        "startLine": 74,
+        "startChar": 0,
+        "endLine": 86,
+        "endChar": 0
+      },
+      "revId": "a16b93dbfc5352f2da9bd8ffa2f4c465a9fe67b1",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
