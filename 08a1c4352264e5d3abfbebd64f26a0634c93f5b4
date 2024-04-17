@@ -34,6 +34,23 @@
       "parentUuid": "6588d5b1_a618f7be",
       "revId": "08a1c4352264e5d3abfbebd64f26a0634c93f5b4",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7823952e_ee064b4c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 11
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1005097
+      },
+      "writtenOn": "2024-04-17T10:58:47Z",
+      "side": 1,
+      "message": "Also I suggest to think of adding this container to internal container registrier or using our mirrors, hints on how should be in rhos-qe-jenkins repo in docs or around code, or feel free to ask people on rhos-infrared Slack channel.",
+      "revId": "08a1c4352264e5d3abfbebd64f26a0634c93f5b4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }

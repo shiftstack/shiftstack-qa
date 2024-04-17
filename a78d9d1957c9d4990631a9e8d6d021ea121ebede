@@ -141,6 +141,30 @@
       },
       "revId": "a78d9d1957c9d4990631a9e8d6d021ea121ebede",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e9212663_da87f0f3",
+        "filename": "gate.sh",
+        "patchSetId": 9
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1005097
+      },
+      "writtenOn": "2024-04-17T10:58:47Z",
+      "side": 1,
+      "message": "Ok I believe this is enough effort to try, even though that such mount might be dangerous, in this case nothing is deleted, just ansible-galaxy commands there. Let\u0027s keep it as it is.",
+      "parentUuid": "0d6295ee_99724982",
+      "range": {
+        "startLine": 2,
+        "startChar": 4,
+        "endLine": 2,
+        "endChar": 5
+      },
+      "revId": "a78d9d1957c9d4990631a9e8d6d021ea121ebede",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
