@@ -33,6 +33,24 @@
       "message": "Ey Itay!\n\nIs there any reason why you added the ocp_upi role under tools collection? \n\nNot sure if it should be on the install role... I don\u0027t see now any case where ocp_upi role can be reused by any other stages role. \n\nWe can have subdirs inside the tasks dir of install role. Maybe that helps for clarity.",
       "revId": "fec2603818c79c32762090519aae7e98eb95c5a5",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0ab438f6_ae419003",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 43
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-04-17T08:24:52Z",
+      "side": 1,
+      "message": "+1. thanks for this input!\nplease let me know wdyt about the updated patchset.\n\nI\u0027m not sure if it is more logic, but maybe we should have a dedicated UPI role inside the \u0027stages\u0027 collection?",
+      "parentUuid": "14303fc1_5715cda5",
+      "revId": "fec2603818c79c32762090519aae7e98eb95c5a5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
