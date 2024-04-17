@@ -51,6 +51,24 @@
       "parentUuid": "14303fc1_5715cda5",
       "revId": "fec2603818c79c32762090519aae7e98eb95c5a5",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "37d36e3f_09d86b6a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 43
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-04-17T11:37:33Z",
+      "side": 1,
+      "message": "I think that would be problematic because the install-config generation is common for all installation types. I like how it looks now tbh 😊",
+      "parentUuid": "0ab438f6_ae419003",
+      "revId": "fec2603818c79c32762090519aae7e98eb95c5a5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }

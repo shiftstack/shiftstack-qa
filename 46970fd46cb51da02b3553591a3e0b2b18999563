@@ -39,6 +39,23 @@
       },
       "revId": "46970fd46cb51da02b3553591a3e0b2b18999563",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "15b2aa54_f3d2aadb",
+        "filename": "jobs_definitions/4.15_ovnkubernetes_upi.yaml",
+        "patchSetId": 45
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-04-17T11:37:33Z",
+      "side": 1,
+      "message": "not the scope of this patch, but have you tried to add openstack-tests stage?",
+      "revId": "46970fd46cb51da02b3553591a3e0b2b18999563",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
