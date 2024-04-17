@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ba2e3740_cb544ad7",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 45
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2024-04-17T11:13:36Z",
+      "side": 1,
+      "message": "lgtm",
+      "revId": "46970fd46cb51da02b3553591a3e0b2b18999563",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1ea8135d_d8cc5c49",
+        "filename": "collection/stages/roles/install/tasks/generate_ocp_install-config.yml",
+        "patchSetId": 45
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2024-04-17T11:13:36Z",
+      "side": 1,
+      "message": "should lb changed to api?",
+      "range": {
+        "startLine": 4,
+        "startChar": 4,
+        "endLine": 4,
+        "endChar": 21
+      },
+      "revId": "46970fd46cb51da02b3553591a3e0b2b18999563",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
