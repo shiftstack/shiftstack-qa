@@ -1,3 +1,4 @@
 ---
+# NOTE: Please don't remove or modify this file. It can affect ci-framework gating.
 stages: []
 check_mode: yes
