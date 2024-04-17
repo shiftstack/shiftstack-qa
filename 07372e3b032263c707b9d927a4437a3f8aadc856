@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c7f1ed80_4f5cbf73",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-04-17T12:22:18Z",
+      "side": 1,
+      "message": "Checked locally and works, thanks Itay!",
+      "revId": "07372e3b032263c707b9d927a4437a3f8aadc856",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
