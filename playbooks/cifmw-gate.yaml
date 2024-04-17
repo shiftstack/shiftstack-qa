@@ -1,0 +1,8 @@
+---
+- name: Fake playbook to test the integration with ci-framework
+  hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: Write message
+      ansible.builtin.debug:
+        msg: "Hello from shiftstack world!"
