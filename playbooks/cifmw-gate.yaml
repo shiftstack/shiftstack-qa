@@ -1,0 +1,9 @@
+---
+# NOTE: Please don't remove or modify this file. It can affect ci-framework gating.
+- name: Fake playbook to test the integration with ci-framework
+  hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: Write message
+      ansible.builtin.debug:
+        msg: "Hello from shiftstack world!"
