@@ -93,6 +93,30 @@
       },
       "revId": "a78d9d1957c9d4990631a9e8d6d021ea121ebede",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a1a05fa3_050c1791",
+        "filename": "gate.sh",
+        "patchSetId": 9
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-04-17T08:16:29Z",
+      "side": 1,
+      "message": "From my point of view, the script should be self-content. So if you want to run the gate locally, you just clone the repo, make your changes and run the script directly from the clone repo.\n\nIf you are concerned about security, I found a different way to mount the directory: \"Overlay Volume Mounts\" [1]. I hope that resolves your concerns.\n\n[1] https://docs.podman.io/en/latest/markdown/podman-run.1.html",
+      "parentUuid": "18710257_b6c8ace3",
+      "range": {
+        "startLine": 2,
+        "startChar": 4,
+        "endLine": 2,
+        "endChar": 5
+      },
+      "revId": "a78d9d1957c9d4990631a9e8d6d021ea121ebede",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
