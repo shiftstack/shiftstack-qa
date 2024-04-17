@@ -43,6 +43,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "2491dc4d_e98f520d",
+        "filename": "collection/stages/roles/install/tasks/generate_ocp_install-config.yml",
+        "patchSetId": 45
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-04-17T14:02:10Z",
+      "side": 1,
+      "message": "@rlobillo@redhat.com",
+      "parentUuid": "1ea8135d_d8cc5c49",
+      "range": {
+        "startLine": 4,
+        "startChar": 4,
+        "endLine": 4,
+        "endChar": 21
+      },
+      "revId": "46970fd46cb51da02b3553591a3e0b2b18999563",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "15b2aa54_f3d2aadb",
         "filename": "jobs_definitions/4.15_ovnkubernetes_upi.yaml",
         "patchSetId": 45
@@ -54,6 +78,24 @@
       "writtenOn": "2024-04-17T11:37:33Z",
       "side": 1,
       "message": "not the scope of this patch, but have you tried to add openstack-tests stage?",
+      "revId": "46970fd46cb51da02b3553591a3e0b2b18999563",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5c713ccb_b5b713d7",
+        "filename": "jobs_definitions/4.15_ovnkubernetes_upi.yaml",
+        "patchSetId": 45
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-04-17T14:02:10Z",
+      "side": 1,
+      "message": "yes - https://redhat-internal.slack.com/archives/CMLGK0SFM/p1713362478738289?thread_ts\u003d1713343480.185879\u0026cid\u003dCMLGK0SFM",
+      "parentUuid": "15b2aa54_f3d2aadb",
       "revId": "46970fd46cb51da02b3553591a3e0b2b18999563",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
