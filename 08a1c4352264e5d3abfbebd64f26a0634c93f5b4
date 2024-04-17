@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6588d5b1_a618f7be",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 11
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-04-17T08:25:52Z",
+      "side": 1,
+      "message": "https://rhos-ci-staging-jenkins.lab.eng.tlv2.redhat.com/view/All/job/DFG-osasinfra-shiftstack-qa-gate/19/console",
+      "revId": "08a1c4352264e5d3abfbebd64f26a0634c93f5b4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
