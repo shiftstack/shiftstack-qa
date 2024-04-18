@@ -1,2 +1,23 @@
 ---
-# tasks file for cleanup
+- name: Detect environment specifics
+  include_tasks: detect_env.yml
+
+- name: Destroy clusters based on type
+  include_tasks: destroy_clusters.yml
+
+- name: Cleanup OpenStack Resources
+  include_tasks: openstack_cleanup.yml
+
+# - name: Clean up resources
+#   include_tasks: resource_cleanup.yml
+
+# - name: Clean up project if it is safe to do so
+#   include_tasks: project_cleanup.yml
+
+# - name: Destroy OpenShift Cluster
+#   include_tasks: destroy_clusters.yml
+
+# - name: Gather Data
+#   include_tasks: get_data.yml
+
+

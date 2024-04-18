@@ -1,0 +1,105 @@
+---
+- name: Fetch all OpenStack resources related to the project
+  block:
+    - name: Get all projects
+      openstack.cloud.project_info:
+        cloud: "{{ admin_cloud }}"
+      register: all_projects
+
+    - name: Set project name
+      set_fact:
+        project_name: "{{ (all_projects.openstack_projects | selectattr('id', 'equalto', project_id) | list | first).name }}"
+      when: all_projects.openstack_projects | selectattr('id', 'equalto', project_id) | list | length > 0
+
+    - name: Get all instances in the project
+      openstack.cloud.server_info:
+        cloud: "{{ admin_cloud }}"
+        filters:
+          all_tenants: 1
+          project_id: "{{ project_id }}"
+      register: instances
+
+    - name: Get all networks in the project
+      openstack.cloud.networks_info:
+        cloud: "{{ admin_cloud }}"
+        filters:
+          tenant_id: "{{ project_id }}"
+      register: networks
+
+    - name: Get all subnets in the project
+      openstack.cloud.subnets_info:
+        cloud: "{{ admin_cloud }}"
+        filters:
+          tenant_id: "{{ project_id }}"
+      register: subnets
+
+    - name: Get all volumes in all projects
+      openstack.cloud.volume_info:
+        cloud: "{{ admin_cloud }}"
+        all_projects: yes  # This gathers volumes from all projects
+      register: all_volumes
+
+    - name: Check if volumes are present
+      set_fact:
+        volumes_present: "{{ 'openstack_volumes' in all_volumes }}"
+
+    - name: Filter volumes by project_id
+      set_fact:
+        volumes: "{{ all_volumes.openstack_volumes | selectattr('os-vol-tenant-attr:tenant_id', 'equalto', project_id) | list }}"
+      when: volumes_present
+
+    - name: Get all floating IPs in the project
+      openstack.cloud.floating_ip_info:
+        cloud: "{{ admin_cloud }}"
+        project_id: "{{ project_id }}"
+      register: floating_ips
+
+
+- name: debug "{{ admin_cloud }}"
+  debug:
+    var: admin_cloud
+
+- name: Delete all subnets
+  openstack.cloud.subnet:
+    cloud: "{{ admin_cloud }}"
+    state: absent
+    name: "{{ item.name }}"
+  loop: "{{ subnets.openstack_subnets }}"
+
+- name: Delete all networks
+  openstack.cloud.network:
+    cloud: "{{ admin_cloud }}"
+    state: absent
+    name: "{{ item.name }}"
+  loop: "{{ networks.openstack_networks }}"
+
+- name: Delete all instances
+  openstack.cloud.server:
+    cloud: "{{ admin_cloud }}"
+    state: absent
+    name: "{{ item.name }}"
+  loop: "{{ instances.openstack_servers }}"
+
+- name: Delete floating IP
+  shell: |
+    openstack floating ip delete {{ item.floating_ip_address }}
+  environment:
+    OS_CLOUD: "{{ admin_cloud }}"
+  loop: "{{ floating_ips.floating_ips }}"
+  when:
+      - floating_ips.floating_ips is defined
+      - floating_ips.floating_ips | length > 0
+
+- name: Delete all volumes
+  openstack.cloud.volume:
+    cloud: "{{ admin_cloud }}"
+    state: absent
+    display_name: "{{ item.display_name }}"
+  loop: "{{ volumes.openstack_volumes }}"
+  when: volumes_present
+
+- name: Delete project if it is empty
+  openstack.cloud.project:
+    cloud: "{{ admin_cloud }}"
+    state: absent
+    name: "{{ project_name }}"
