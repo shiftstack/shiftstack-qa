@@ -1,0 +1,9 @@
+---
+- name: Destroy IPI cluster
+  include_tasks: destroy_ipi.yml
+  when: installation_type == 'ipi'
+
+# - name: Destroy UPI cluster
+#   include_tasks: destroy_upi.yml
+#   when: installation_type == 'upi'
+
