@@ -1,3 +1,6 @@
 # UUID                                  	Group Name
 #
 25e35cd52501dc098f37bc5f36863ddd1af0ec7d	shiftstack-qe
+48250c57af5cae14ac05aba80badf7d1398635a6	rhosqeauto-core
+6bb5f78d4182efb8d965219c5b183ba5d989d89a	rhosqeauto-contrib
+797b329f5cad835a66712e463dcdd25baea9f9d9	rhosqeauto-stable
