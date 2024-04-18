@@ -1,2 +1,11 @@
 ---
-# tasks file for cleanup
+- name: Detect environment specifics
+  include_tasks: detect_env.yml
+
+- name: Destroy clusters based on type
+  include_tasks: destroy_clusters.yml
+
+- name: Cleanup OpenStack Resources
+  include_tasks: openstack_cleanup.yml
+
+
