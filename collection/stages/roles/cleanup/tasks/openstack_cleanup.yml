@@ -1,0 +1,15 @@
+---
+- name: Set project ID for non-admin and non-service projects
+  set_fact:
+    project_ids: "{{ project_info.openstack_projects | selectattr('name', 'search', '^((?!admin|service).)*$') | map(attribute='id') | list }}"
+
+- name: Check if valid project IDs are available
+  fail:
+    msg: "No valid projects found. All projects are either 'admin' or 'service'."
+  when: project_ids | length == 0
+
+- name: Proceed with cleanup tasks for each project
+  include_tasks: openstack_project_cleanup.yml
+  loop: "{{ project_ids }}"
+  loop_control:
+    loop_var: project_id
