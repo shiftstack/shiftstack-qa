@@ -1,2 +1,10 @@
 ---
-# tasks file for cleanup
+- name: Detect environment specifics
+  ansible.builtin.include_tasks: detect_env.yml
+
+- name: Destroy clusters based on type
+  ansible.builtin.include_tasks: destroy_clusters.yml
+  when: cluster_directory_check.stat.exists
+
+- name: Cleanup OpenStack Resources
+  ansible.builtin.include_tasks: openstack_cleanup.yml
