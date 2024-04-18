@@ -1,0 +1,16 @@
+---
+- name: Check if target project exists
+  openstack.cloud.project_info:
+    cloud: "{{ admin_cloud }}"
+    name: "{{ user_cloud }}"
+  register: project_info
+
+- name: Check if target cluster directory exists
+  ansible.builtin.stat:
+    path: "{{ installation_dir }}"
+  register: cluster_directory_check
+
+- name: Set installation type based on directory existence
+  ansible.builtin.set_fact:
+    installation_type: "{{ 'ipi' if cluster_directory_check.stat.exists else 'upi' }}"
+  ignore_errors: true
