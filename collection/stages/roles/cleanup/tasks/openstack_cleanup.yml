@@ -1,0 +1,6 @@
+---
+- name: Proceed with cleanup tasks for each project
+  ansible.builtin.include_tasks: openstack_project_cleanup.yml
+  loop: "{{ project_info.openstack_projects }}"
+  loop_control:
+    loop_var: project
