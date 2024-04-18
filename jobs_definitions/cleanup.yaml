@@ -5,8 +5,3 @@ openshift_network_type: OVNKubernetes
 installation_type: ipi
 stages:
   - cleanup
-  - prepare
-  - install
-  - post
-  - verification
-  - openstack_test
