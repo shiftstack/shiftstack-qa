@@ -1,0 +1,40 @@
+---
+- name: Check if target project exists
+  openstack.cloud.project_info:
+    cloud: "{{ admin_cloud }}"
+    name: "{{ user_cloud }}"
+  register: project_info
+
+- name: Check if target cluster directory exists
+  ansible.builtin.stat:
+    path: "{{ installation_dir }}"
+  register: cluster_directory_check
+
+- name: Detect previous installation type
+  when: project_info.openstack_projects|length == 1
+  block:
+    - name: Check if "{{ user_cloud }}" includes "{{ installer_vm_name }}"
+      openstack.cloud.server_info:
+        cloud: "{{ user_cloud }}"
+        server: "{{ installer_vm_name }}"
+      register: result
+
+    - name: Update the Ansible inventory in case there is installer host to destroy
+      ansible.builtin.include_role:
+        name: shiftstack.tools.tools_ansible_inventory
+        tasks_from: create_installer_group.yml
+      when: result.openstack_servers|length == 1
+
+    - name: Discover if UPI installation was performed on the installer host VM to destroy
+      ansible.builtin.stat:
+        path: /home/{{ installer_vm_ssh_user }}/installation/{{ user_cloud }}/{{ ocp_cluster_name }}/inventory.yaml
+      ignore_errors: yes
+      register: upi_inventory_stat
+      when: result.openstack_servers|length == 1
+      delegate_to: "{{ installer_vm_name }}"
+
+      # ipi is default in case there is no installer host
+    - name: Setting previous installation type based on inventory presence
+      ansible.builtin.set_fact:
+        previous_installation_type: "{{ 'upi' if upi_inventory_stat.stat.exists else 'restricted' }}"
+      when: result.openstack_servers|length == 1

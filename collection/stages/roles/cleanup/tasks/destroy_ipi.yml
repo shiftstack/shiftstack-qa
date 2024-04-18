@@ -1,0 +1,22 @@
+---
+- name: Check if OCP cluster directory exists
+  ansible.builtin.stat:
+    path: "{{ installation_dir }}"
+  register: cluster_directory
+
+- name: Destroy OCP Cluster (IPI)
+  when: cluster_directory.stat.exists
+  block:
+    - name: Run 'openshift-install destroy cluster'
+      ansible.builtin.command: "openshift-install --log-level=debug destroy cluster --dir {{ installation_dir }}"
+      async: 2400 # Timeout after 40 minutes
+      poll: 60 # Check status every minute
+      failed_when: false
+      changed_when: true
+      register: destroy_result
+
+    - name: Fail the play if the previous command did not succeed
+      ansible.builtin.fail:
+        msg: "Destroy OCP Cluster failed or timed out"
+      when:
+        - destroy_result is failed
