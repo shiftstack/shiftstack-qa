@@ -48,6 +48,7 @@ oc rsh shiftstackclient -n openstack \
   ansible-navigator replay /home/cloud-admin/artifacts/{playbook_name}-artifact-{time_stamp}.json -m interactive
 ```
 
+
 ## Enable hooks in your setup
 
 Requires Python>=3.9
