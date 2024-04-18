@@ -1,0 +1,11 @@
+---
+- name: Check if target project exists
+  openstack.cloud.project_info:
+    cloud: "{{ admin_cloud }}"
+    name: "{{ user_cloud }}"
+  register: project_info
+
+- name: Check if target cluster directory exists
+  ansible.builtin.stat:
+    path: "{{ installation_dir }}"
+  register: cluster_directory_check
