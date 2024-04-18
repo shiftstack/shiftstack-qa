@@ -1,0 +1,55 @@
+---
+- name: Check if target project exists
+  openstack.cloud.project_info:
+    cloud: "{{ admin_cloud }}"
+    name: "{{ user_cloud }}"
+  register: project_info
+
+- name: Check if target cluster directory exists
+  ansible.builtin.stat:
+    path: "{{ installation_dir }}"
+  register: cluster_directory_check
+
+- name: Detect previous installation type
+  when: project_info.openstack_projects|length == 1
+  block:
+    - name: Check if "{{ user_cloud }}" includes "{{ installer_vm_name }}"
+      openstack.cloud.server_info:
+        cloud: "{{ user_cloud }}"
+        server: "{{ installer_vm_name }}"
+      register: result
+
+    - name: Getting installer host VM to destroy info if exists
+      set_fact:
+        installer_host_to_destroy_fip: "{{ result.openstack_servers[0].accessIPv4 }}"
+      when:
+        - result.openstack_servers|default([])|length == 1
+        - "'addresses' in result.openstack_servers[0]"
+
+    - name: Discover if UPI installation was performed on the installer host VM to destroy
+      ansible.builtin.shell: |
+        ssh {{ installer_vm_ssh_user }}@{{ installer_host_to_destroy_fip }} test -f /home/{{ installer_vm_ssh_user }}/installation/{{ user_cloud }}/{{ ocp_cluster_name }}/inventory.yaml
+      ignore_errors: yes
+      register: upi_inventory_exists
+      when: installer_host_to_destroy_fip is defined
+
+    - name: Discover if restricted installation was performed on destroyer VM
+      shell: |
+        ssh {{ installer_vm_ssh_user }}@{{ installer_host_to_destroy_fip }} test -f /home/{{ installer_vm_ssh_user }}/{{ ocp_cluster_name }}/metadata.json
+      ignore_errors: yes
+      register: restricted_installation_exists
+      when: installer_host_to_destroy_fip is defined
+
+    - name: Setting UPI installation flag if detected
+      set_fact:
+        previous_installation_type: "upi"
+      when:
+        - installer_host_to_destroy_fip is defined
+        - upi_inventory_exists.rc == 0
+
+    - name: Setting IPI restricted installation flag if detected
+      set_fact:
+        previous_installation_type: "restricted"
+      when:
+        - installer_host_to_destroy_fip is defined
+        - restricted_installation_exists.rc == 0
