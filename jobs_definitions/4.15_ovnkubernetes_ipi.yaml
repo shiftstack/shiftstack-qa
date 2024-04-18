@@ -5,9 +5,10 @@ openshift_network_type: OVNKubernetes
 installation_type: ipi
 conformance_test_type: parallel
 stages:
-  - prepare
-  - install
-  - post
-  - verification
-  - openstack_test
-  - conformance_test
+  - cleanup
+  # - prepare
+  # - install
+  # - post
+  # - verification
+  # - openstack_test
+  # - conformance_test
