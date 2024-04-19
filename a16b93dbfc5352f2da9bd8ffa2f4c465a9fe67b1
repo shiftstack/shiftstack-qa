@@ -46,6 +46,30 @@
       },
       "revId": "a16b93dbfc5352f2da9bd8ffa2f4c465a9fe67b1",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "94b51281_5ca1b098",
+        "filename": "configs/global.yml",
+        "patchSetId": 42
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-04-19T16:28:02Z",
+      "side": 1,
+      "message": "Oh right, this shouldn\u0027t be like this (in the plugin).... it can be misleading. This was due to the need of precreating these resources (by network.yaml UPI playbook) since the UPI playbooks were changed for supporting dualstack (but affected non-dualstack deployments as well).\nFor now I think you can just create an equivalent structure for UPI (non dualstack):\n`\n openshift_upi:\n   network:\n     name: network-upi\n   subnets:\n     ipv4:\n       name: subnet-upi\n   api_vip_port:\n     name: api-upi\n   ingress_vip_port:\n     name: ingress-upi\n   router:\n     name: router-upi\n`\nWhen adding dualstack support we\u0027ll need to add the other dict (with addresses and cidrs) and choose one dict or another depending on the dualstack param.",
+      "parentUuid": "d859f47b_5b47a1ec",
+      "range": {
+        "startLine": 74,
+        "startChar": 0,
+        "endLine": 86,
+        "endChar": 0
+      },
+      "revId": "a16b93dbfc5352f2da9bd8ffa2f4c465a9fe67b1",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }

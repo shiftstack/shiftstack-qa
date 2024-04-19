@@ -116,6 +116,24 @@
       "parentUuid": "15b2aa54_f3d2aadb",
       "revId": "46970fd46cb51da02b3553591a3e0b2b18999563",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a5464cf5_d769af06",
+        "filename": "jobs_definitions/4.15_ovnkubernetes_upi.yaml",
+        "patchSetId": 45
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-04-19T16:28:02Z",
+      "side": 1,
+      "message": "+1",
+      "parentUuid": "40907049_21fca642",
+      "revId": "46970fd46cb51da02b3553591a3e0b2b18999563",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
