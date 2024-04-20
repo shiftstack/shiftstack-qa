@@ -18,6 +18,24 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "97844bb1_12b5ca6a",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 47
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-04-20T18:47:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0ba0ca3b_c21ba204",
+      "revId": "f9440ccfd58e9151cb3f47db179f31d5a7f33e47",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ea359a03_2ea4a4c2",
@@ -35,6 +53,24 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6981a939_62832507",
+        "filename": "collection/stages/roles/install/tasks/upi/deploy_cluster.yml",
+        "patchSetId": 47
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-04-20T18:47:46Z",
+      "side": 1,
+      "message": "as we agreed, we should use `changed_when: false` if the shell command performs any change. in this case, it is just waiting to install-complete and not perform any change.",
+      "parentUuid": "ea359a03_2ea4a4c2",
+      "revId": "f9440ccfd58e9151cb3f47db179f31d5a7f33e47",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0c520772_1f0fb95f",
@@ -48,6 +84,30 @@
       "writtenOn": "2024-04-19T16:28:02Z",
       "side": 1,
       "message": "nit: not needed or need to add the closing quotes",
+      "range": {
+        "startLine": 92,
+        "startChar": 27,
+        "endLine": 92,
+        "endChar": 28
+      },
+      "revId": "f9440ccfd58e9151cb3f47db179f31d5a7f33e47",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2100cc12_5e968e9f",
+        "filename": "collection/stages/roles/install/tasks/upi/prepare_rhcos_image.yml",
+        "patchSetId": 47
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-04-20T18:47:46Z",
+      "side": 1,
+      "message": "Done. Thanks!",
+      "parentUuid": "0c520772_1f0fb95f",
       "range": {
         "startLine": 92,
         "startChar": 27,
@@ -81,6 +141,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "bd2c16f9_6492dd11",
+        "filename": "collection/stages/roles/prepare/tasks/create_fip.yml",
+        "patchSetId": 47
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-04-20T18:47:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "236c8163_0850367c",
+      "range": {
+        "startLine": 13,
+        "startChar": 15,
+        "endLine": 13,
+        "endChar": 18
+      },
+      "revId": "f9440ccfd58e9151cb3f47db179f31d5a7f33e47",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "56f9a58e_3915d274",
@@ -94,6 +178,30 @@
       "writtenOn": "2024-04-19T16:28:02Z",
       "side": 1,
       "message": "Why different from {{ installer_required_packages }}?",
+      "range": {
+        "startLine": 55,
+        "startChar": 16,
+        "endLine": 55,
+        "endChar": 41
+      },
+      "revId": "f9440ccfd58e9151cb3f47db179f31d5a7f33e47",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d09a1a21_db97a648",
+        "filename": "collection/tools/roles/tools_installer_host/tasks/configuration_install_packages.yml",
+        "patchSetId": 47
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-04-20T18:47:46Z",
+      "side": 1,
+      "message": "\u0027installer_python_packages\u0027 is for \u0027ansible.builtin.pip\u0027\n\u0027installer_required_packages\u0027 is for \u0027ansible.builtin.package\u0027",
+      "parentUuid": "56f9a58e_3915d274",
       "range": {
         "startLine": 55,
         "startChar": 16,

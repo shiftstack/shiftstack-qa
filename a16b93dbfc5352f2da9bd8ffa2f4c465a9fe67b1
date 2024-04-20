@@ -70,6 +70,30 @@
       },
       "revId": "a16b93dbfc5352f2da9bd8ffa2f4c465a9fe67b1",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "34d1ed0e_b5e56102",
+        "filename": "configs/global.yml",
+        "patchSetId": 42
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-04-20T18:47:46Z",
+      "side": 1,
+      "message": "Thanks! Done",
+      "parentUuid": "94b51281_5ca1b098",
+      "range": {
+        "startLine": 74,
+        "startChar": 0,
+        "endLine": 86,
+        "endChar": 0
+      },
+      "revId": "a16b93dbfc5352f2da9bd8ffa2f4c465a9fe67b1",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
