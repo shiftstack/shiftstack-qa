@@ -9,6 +9,7 @@ exclude_paths:
   - .cache/
   - .github/
   - excludethis/
+  - collection/stages/roles/conformance_test/files/
 
 # Ansible-lint does not fail on warnings from the rules or tags listed below
 # warn_list:
