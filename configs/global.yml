@@ -83,3 +83,6 @@ openshift_upi:
     name: ingress-upi
   router:
     name: ingress-upi
+
+tests:
+  default_go_version_target: '1.21.8'

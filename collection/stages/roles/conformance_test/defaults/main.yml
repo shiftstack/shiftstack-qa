@@ -1,0 +1,14 @@
+---
+# defaults file for conformance_test
+conformance_test_type: parallel
+conformance_test_parallel_number: "10"
+
+conformance_test_name: "conformance-{{ conformance_test_type }}-test"
+conformance_test_dir: "{{ artifacts_dir }}/{{ conformance_test_name }}"
+conformance_test_results_dir: "{{ artifacts_dir }}/{{ conformance_test_name }}-results"
+conformance_test_repo_name: origin
+conformance_test_executable: "{{ home_dir }}/openshift-tests"
+conformance_tests_go_version: "{{ tests.default_go_version_target }}"
+conformance_tests_allowlist_file: ""
+conformance_tests_blocklist_file: "files/conformance-{{ conformance_test_type }}-blocklist.yaml"
+conformance_test_testsuite_name: "conformance/{{ conformance_test_type }}"
