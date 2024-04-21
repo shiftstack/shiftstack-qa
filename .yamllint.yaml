@@ -13,4 +13,5 @@ rules:
     min-spaces-from-content: 1
 
   document-start:
-    ignore: configs/secret.yaml
+    ignore:
+      - configs/secret.yaml

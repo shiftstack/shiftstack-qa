@@ -1,0 +1,60 @@
+---
+blocklist: &all_block_tests
+  {}
+
+# OpenShift 4.11
+"4.11":
+  "OpenShiftSDN":
+    <<: *all_block_tests
+
+  "OVNKubernetes":
+    <<: *all_block_tests
+
+  "Kuryr":
+    <<: *all_block_tests
+
+# OpenShift 4.12
+412_blocklist: &412_blocklist_tests
+  ".*] oc status can show correct status after switching between projects [.*":
+   note: "Enable again as soon as https://issues.redhat.com/browse/OCPBUGS-4731 is done"
+  <<: *all_block_tests
+
+"4.12":
+  "OpenShiftSDN":
+    <<: *412_blocklist_tests
+
+  "OVNKubernetes":
+    <<: *412_blocklist_tests
+
+  "Kuryr":
+    <<: *412_blocklist_tests
+
+# OpenShift 4.13
+"4.13":
+  "OpenShiftSDN":
+    <<: *412_blocklist_tests
+
+  "OVNKubernetes":
+    <<: *412_blocklist_tests
+
+  "Kuryr":
+    <<: *412_blocklist_tests
+
+# OpenShift 4.14
+"4.14":
+  "OpenShiftSDN":
+    <<: *412_blocklist_tests
+
+  "OVNKubernetes":
+    <<: *412_blocklist_tests
+
+  "Kuryr":
+    <<: *412_blocklist_tests
+
+# OpenShift 4.15
+"4.15":
+  "OpenShiftSDN":
+    <<: *412_blocklist_tests
+
+  "OVNKubernetes":
+    <<: *412_blocklist_tests
