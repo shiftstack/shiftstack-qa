@@ -65,6 +65,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "39cd6ba3_35cc7ae4",
+        "filename": "collection/stages/roles/install/tasks/generate_ocp_install-config.yml",
+        "patchSetId": 45
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-04-21T06:29:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2491dc4d_e98f520d",
+      "range": {
+        "startLine": 4,
+        "startChar": 4,
+        "endLine": 4,
+        "endChar": 21
+      },
+      "revId": "46970fd46cb51da02b3553591a3e0b2b18999563",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "15b2aa54_f3d2aadb",
