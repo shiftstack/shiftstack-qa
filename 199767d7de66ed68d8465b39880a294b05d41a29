@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "015ae67c_e70d14df",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-04-21T13:52:40Z",
+      "side": 1,
+      "message": "Verified `parallel` conformance tests locally on a legacy virt UPI env with the following command:\n```\ncollection_install \u0026\u0026 ansible-navigator run shiftstack-qa/playbooks/legacy_ocp_testing.yaml --extra-vars \u0027{\"stages\": [\"conformance_test\"]}\u0027 -v\n```\nVerification of a full IPI job with `serial` conformance tests is in progress",
+      "revId": "199767d7de66ed68d8465b39880a294b05d41a29",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
