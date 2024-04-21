@@ -1,0 +1,110 @@
+---
+- name: Set artifact paths
+  ansible.builtin.set_fact:
+    all_tests_path: >-
+      {{ conformance_test_results_dir }}/conformance_tests.txt
+    allowlist_path: >-
+      {{ conformance_tests_allowlist_file | ternary(conformance_test_results_dir + '/allowlist.txt', '') }}
+    blocklist_path: >-
+      {{ conformance_tests_blocklist_file | ternary(conformance_test_results_dir + '/blocklist.txt', '') }}
+    tests_to_run_path: >-
+      {{ conformance_test_results_dir }}/list_of_tests_to_run.txt
+
+- name: Build conformance tests for tests in the "origin" repository
+  ansible.builtin.shell: |
+    source {{ home_dir }}/.bashrc
+    make WHAT=cmd/openshift-tests
+  args:
+    chdir: "{{ artifacts_dir }}/{{ repo_name }}"
+  changed_when: true
+
+- name: Copy openshift-test executable
+  ansible.builtin.copy:
+    src: "{{ artifacts_dir }}/{{ repo_name }}/openshift-tests"
+    dest: "{{ conformance_test_executable }}"
+    mode: u=rwx,g=rwx,o=rwx
+    remote_src: yes
+
+- name: Prepare {{ all_tests_path }} file with all the tests that can be run
+  ansible.builtin.shell: >
+    {{ conformance_test_executable }} run \
+    --provider '{"type":"openstack"}' \
+    --dry-run openshift/conformance/{{ conformance_test_type }} > {{ all_tests_path }}
+  environment:
+    OS_CLOUD: "{{ user_cloud }}"
+  changed_when: true
+
+- name: Convert the allowlist YAML files to TXT
+  ansible.builtin.include_role:
+    name: tools_openshift_tests
+    tasks_from: convert_yaml_tests_file_to_txt.yml
+  vars:
+    input_tests_list: "{{ item | trim }}"
+    output_tests_list: "{{ allowlist_path }}"
+  with_items: "{{ conformance_tests_allowlist_file.split(',') }}"
+  when: conformance_tests_allowlist_file != ''
+
+- name: Convert the blocklist YAML files to TXT
+  ansible.builtin.include_role:
+    name: tools_openshift_tests
+    tasks_from: convert_yaml_tests_file_to_txt.yml
+  vars:
+    input_tests_list: "{{ item | trim }}"
+    output_tests_list: "{{ blocklist_path }}"
+    yaml_format_based_on_ocp_version: true
+  with_items: "{{ conformance_tests_blocklist_file.split(',') }}"
+  when: conformance_tests_blocklist_file != ''
+
+- name: Prepare the tests list to run
+  shiftstack.tools.filter_tests_list:
+    input_tests_file: "{{ all_tests_path }}"
+    allowlist_file: "{{ allowlist_path }}"
+    blocklist_file: "{{ blocklist_path }}"
+    output_file: "{{ tests_to_run_path }}"
+
+- name: Set the parameters for the openshift-tests conformance run
+  ansible.builtin.set_fact:
+    test_params: >
+      --provider '{"type":"openstack"}'
+      -f {{ tests_to_run_path }}
+      {{ (conformance_test_type == 'parallel') | ternary('--max-parallel-tests ' + conformance_test_parallel_number, '') }}
+      --output-file {{ conformance_test_results_dir }}/{{ conformance_test_name }}.log
+      --junit-dir={{ conformance_test_results_dir }}
+
+- name: Run the openshift tests
+  block:
+    - name: Run the openshift conformance {{ conformance_test_type }} tests
+      ansible.builtin.shell: >
+        {{ conformance_test_executable }} run openshift/conformance/{{ conformance_test_type }} {{ test_params }}
+      environment:
+        OS_CLOUD: "{{ user_cloud }}"
+      changed_when: true
+
+    - name: Check for any failed openshift tests
+      ansible.builtin.shell: >
+        set -o pipefail &&
+        grep -e "^failed:" {{ conformance_test_results_dir }}/{{ conformance_test_name }}.log | wc -l
+        || true
+      register: number_of_failed_tests
+      changed_when: false
+
+    - name: Assert that there are no failed tests
+      ansible.builtin.assert:
+        that: number_of_failed_tests.stdout | int == 0
+        fail_msg: "There are failed openshift tests"
+        success_msg: "There are no openshift tests"
+  rescue:
+    - name: Mark the openshift tests as UNSTABLE
+      ansible.builtin.include_role:
+        name: tools_stage_results
+        tasks_from: mark_stage_unstable.yml
+      vars:
+        unstable_msg: >-
+          The openshift test Suite failed.
+
+    - name: Run must-gather
+      ansible.builtin.include_role:
+        name: tools_must-gather
+      vars:
+        must_gather_dir_suffix: "must-gather-conformance"
+        fetch_to_inventory: true
