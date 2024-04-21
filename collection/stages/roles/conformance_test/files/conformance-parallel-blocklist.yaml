@@ -1,0 +1,234 @@
+---
+blocklist: &all_block_tests
+  ".*] *Networking should provide Internet connection for containers *[.*":
+    note: "DNS TCP is blocked from the Lab, https://redhat.service-now.com/help?id=rh_ticket&table=sc_request&sys_id=2ef74faadbdc5950c0c8464e13961914"
+
+openshiftsdn_blocklist: &openshiftsdn_block_tests
+  <<: *all_block_tests
+  ".*] *when using openshift-sdn should ensure egressnetworkpolicy is created *[.*":
+    bug: "https://issues.redhat.com/browse/OCPBUGS-5024"
+
+kuryr_blocklist: &kuryr_block_tests
+  <<: *all_block_tests
+  ".*NodePort.*":
+    note: "Skipped in U/S CI: https://github.com/openshift/release/blob/master/ci-operator/config/openshift/kuryr-kubernetes/openshift-kuryr-kubernetes-release-4.8.yaml#L74"
+
+  ".*] *Services should be able to connect to terminating and unready endpoints if PublishNotReadyAddresses is true *[.*":
+    note: "Service objects with the NodePort type are not supported"
+
+  ".*session affinity.*":
+    note: "Skipped in U/S CI: https://github.com/openshift/release/blob/master/ci-operator/config/openshift/kuryr-kubernetes/openshift-kuryr-kubernetes-release-4.8.yaml#L74"
+
+  ".*Kubectl client Guestbook application should create and stop a working application.*":
+    note: "Skipped in U/S CI: https://github.com/openshift/release/blob/master/ci-operator/config/openshift/kuryr-kubernetes/openshift-kuryr-kubernetes-release-4.8.yaml#L74"
+
+  ".*Services should be able to change the type from ExternalName to ClusterIP.*":
+    note: "Skipped in U/S CI: https://github.com/openshift/release/blob/master/ci-operator/config/openshift/kuryr-kubernetes/openshift-kuryr-kubernetes-release-4.8.yaml#L74"
+
+  ".*Pods should delete a collection of pods.*":
+    note: "Skipped in U/S CI: https://github.com/openshift/release/blob/master/ci-operator/config/openshift/kuryr-kubernetes/openshift-kuryr-kubernetes-release-4.9.yaml#L74"
+
+  ".*Services should serve a basic endpoint from pods.*":
+    note: "Skipped in U/S CI: https://github.com/openshift/release/blob/master/ci-operator/config/openshift/kuryr-kubernetes/openshift-kuryr-kubernetes-release-4.9.yaml#L74"
+
+  ".*Services should serve multiport endpoints.*":
+    note: "Skipped in U/S CI: https://github.com/openshift/release/blob/master/ci-operator/config/openshift/kuryr-kubernetes/openshift-kuryr-kubernetes-release-4.9.yaml#L74"
+
+  ".*NetworkPolicyLegacy.*":
+    note: "In Kuryr jobs, we are running it as part of the NP Tests stage"
+
+  ".*] *Services should release NodePorts on delete *[.*":
+    note: "TBD"
+
+  ".*] *Networking Granular Checks: Services should support basic nodePort: udp functionality *[.*":
+    note: "TBD"
+
+  ".*] *NetworkPolicy API should support creating NetworkPolicy API operations *[.*":
+    note: "TBD"
+
+  ".*] *Networking Granular Checks: Pods should function for intra-pod communication: http *[.*":
+    note: "TBD"
+
+  ".*] *Networking Granular Checks: Pods should function for intra-pod communication: udp *[.*":
+    note: "TBD"
+
+  ".*] *Networking Granular Checks: Pods should function for node-pod communication: http *[.*":
+    note: "TBD"
+
+  ".*] *Networking Granular Checks: Pods should function for node-pod communication: udp *[.*":
+    note: "TBD"
+
+  ".*] *Networking Granular Checks: Services should be able to handle large requests: http *[.*":
+    note: "TBD"
+
+  ".*] *Networking Granular Checks: Services should be able to handle large requests: udp *[.*":
+    note: "TBD"
+
+  ".*] *Networking Granular Checks: Services should function for endpoint-Service: http *[.*":
+    note: "TBD"
+
+  ".*] *Networking Granular Checks: Services should function for endpoint-Service: udp *[.*":
+    note: "TBD"
+
+  ".*] *Networking Granular Checks: Services should function for multiple endpoint-Services with same selector *[.*":
+    note: "TBD"
+
+  ".*] *Networking Granular Checks: Services should function for node-Service: http *[.*":
+    note: "TBD"
+
+  ".*] *Networking Granular Checks: Services should function for node-Service: udp *[.*":
+    note: "TBD"
+
+  ".*] *Networking Granular Checks: Services should function for pod-Service: http *[.*":
+    note: "TBD"
+
+  ".*] *Networking Granular Checks: Services should function for pod-Service: udp *[.*":
+    note: "TBD"
+
+  ".*] *Networking Granular Checks: Services should update endpoints: http *[.*":
+    note: "TBD"
+
+  ".*] *Networking Granular Checks: Services should update endpoints: udp *[.*":
+    note: "TBD"
+
+  ".*] *Networking IPerf2 *[?.*]? *should run iperf2 *[.*":
+    note: "https://issues.redhat.com/browse/OCPBUGS-10634"
+
+  ".*] *Unidling *[?.*]? *should work with TCP (when fully idled) *[.*":
+    note: "TBD"
+
+  ".*] *Unidling *[?.*]? *should work with UDP *[.*":
+    note: "TBD"
+
+  ".*] *Conntrack should be able to preserve UDP traffic when server pod cycles for a ClusterIP service *[.*":
+    note: "https://bugzilla.redhat.com/show_bug.cgi?id=2047236"
+
+  ".*] *Services should be possible to connect to a service via ExternalIP when the external IP is not assigned to a node *[.*":
+    note: "https://bugzilla.redhat.com/show_bug.cgi?id=2047240"
+
+  ".*] *Services should be rejected when no endpoints exist *[.*":
+    note: "TBD"
+
+  ".*] *Services should respect internalTrafficPolicy=Local Pod and Node, to Pod (hostNetwork: true) *[.*":
+    note: "TBD"
+
+  ".*] *Services should respect internalTrafficPolicy=Local Pod to Pod *[.*":
+    note: "TBD"
+
+  ".*] *services basic functionality should allow connections to another pod on a different node via a service IP *[.*":
+    note: "TBD"
+
+  ".*] *services basic functionality should allow connections to another pod on the same node via a service IP *[.*":
+    note: "TBD"
+
+  ".*] *Prometheus *[.*] *when installed on the cluster should start and expose a secured proxy and unsecured metrics *[.*":
+    note: "https://bugzilla.redhat.com/show_bug.cgi?id=2059629"
+
+  ".*] *Prometheus *[.*] *when installed on the cluster shouldn't report any alerts in firing state apart from Watchdog and AlertmanagerReceiversNotConfigured *[.*":
+    note: "TBD"
+
+  ".*] *Alerts shouldn't report any unexpected alerts in firing or pending state *[.*":
+    note: "TBD"
+
+  ".*] *services when using .* in a mode that does not isolate namespaces by default should allow connections to pods in different namespaces on different nodes via service IPs *[.*":
+    note: "TBD"
+
+  ".*] *services when using .* in a mode that does not isolate namespaces by default should allow connections to pods in different namespaces on the same node via service IPs *[.*":
+    note: "TBD"
+
+  ".*] *services when using .* in a mode that isolates namespaces by default should allow connections from pods in the default namespace to a service in another namespace on a different node *[.*":
+    note: "TBD"
+
+  ".*] *services when using .* in a mode that isolates namespaces by default should allow connections from pods in the default namespace to a service in another namespace on the same node *[.*":
+    note: "TBD"
+
+  ".*] *services when using .* in a mode that isolates namespaces by default should allow connections to services in the default namespace from a pod in another namespace on the same node *[.*":
+    note: "TBD"
+
+  ".*] *services when using .* in a mode that isolates namespaces by default should prevent connections to pods in different namespaces on different nodes via service IPs *[.*":
+    note: "TBD"
+
+  ".*] *services when using .* in a mode that isolates namespaces by default should prevent connections to pods in different namespaces on the same node via service IPs *[.*":
+    note: "TBD"
+
+  ".*] *Alerts shouldn't exceed the .* series limit of total series sent via telemetry from each cluster *[.*":
+    note: "TBD"
+
+  ".*] *LDAP IDP should authenticate against an ldap server *[.*":
+    note: "https://bugzilla.redhat.com/show_bug.cgi?id=2074941"
+
+  ".*] *an end user can use OLM can subscribe to the operator *[.*":
+    note: "https://bugzilla.redhat.com/show_bug.cgi?id=2074941"
+
+  ".*] *Services should respect internalTrafficPolicy=Local Pod (hostNetwork: true) to Pod *[.*":
+    note: "Currently not supported https://issues.redhat.com/browse/OSASINFRA-2770"
+
+  ".*] *Services should be updated after adding or deleting ports *[.*":
+    note: "https://issues.redhat.com/browse/OCPBUGS-5552"
+
+  ".*] *StatefulSet Basic StatefulSet functionality [StatefulSetBasic] should implement legacy replacement when the update strategy is OnDelete *[.*":
+    note: "https://issues.redhat.com/browse/OCPBUGS-5558"
+
+  ".*] *Services should be rejected for evicted pods (no endpoints exist) *[.*":
+    note: >
+      Kuryr won't create any load-balancer if the Endpoint has no Endpoints subset with an address.
+      https://issues.redhat.com/browse/OSASINFRA-2287
+
+  ".*] *Conntrack should be able to preserve UDP traffic when initial unready endpoints get ready *[.*":
+    note: "https://issues.redhat.com/browse/OCPBUGS-7059"
+
+  ".*] *DNS should answer queries using the local DNS endpoint *[.*":
+    note: "https://issues.redhat.com/browse/OCPBUGS-8084"
+
+# OpenShift 4.11
+"4.11":
+  "Kuryr":
+    <<: *kuryr_block_tests
+  "OpenShiftSDN":
+    <<: *openshiftsdn_block_tests
+  "OVNKubernetes":
+    <<: *all_block_tests
+
+
+# OpenShift 4.12
+"4.12":
+  "Kuryr":
+    <<: *kuryr_block_tests
+  "OpenShiftSDN":
+    <<: *openshiftsdn_block_tests
+  "OVNKubernetes":
+    <<: *all_block_tests
+
+
+# OpenShift 4.13
+"4.13":
+  "Kuryr":
+    <<: *kuryr_block_tests
+  "OpenShiftSDN":
+    <<: *openshiftsdn_block_tests
+  "OVNKubernetes":
+    <<: *all_block_tests
+
+
+# OpenShift 4.14
+"4.14":
+  "Kuryr":
+    <<: *kuryr_block_tests
+    ".*Netpol.*":
+      note: "In Kuryr jobs, we are running it as part of the NP Tests stage"
+
+  "OpenShiftSDN":
+    <<: *openshiftsdn_block_tests
+  "OVNKubernetes":
+    <<: *all_block_tests
+
+# OpenShift 4.15
+"4.15":
+  "OpenShiftSDN":
+    <<: *openshiftsdn_block_tests
+  "OVNKubernetes":
+    <<: *all_block_tests
+    ".*Feature:IPv6DualStack.*should function for service endpoints using hostNetwork.*":
+      note: "Failing persistently in openshift CI"
+
+
