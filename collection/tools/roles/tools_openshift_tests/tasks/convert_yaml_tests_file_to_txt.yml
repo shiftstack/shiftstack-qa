@@ -18,7 +18,9 @@
   ansible.builtin.lineinfile:
     path: "{{ output_tests_list }}"
     line: >-
-      "{{ item.key }}"
+      "{{ test_item.key }}"
     mode: u=rw,g=rw,o=r
     create: yes
   loop: "{{ yaml_testslist | dict2items }}"
+  loop_control:
+    loop_var: test_item

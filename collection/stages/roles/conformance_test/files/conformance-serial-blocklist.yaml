@@ -1,0 +1,9 @@
+---
+blocklist: &all_block_tests
+  ".*] oc status can show correct status after switching between projects [.*":
+    note: "Enable again as soon as https://issues.redhat.com/browse/OCPBUGS-4731 is done"
+
+# OpenShift 4.15
+"4.15":
+  "OVNKubernetes":
+    <<: *all_block_tests

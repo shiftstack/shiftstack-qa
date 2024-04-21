@@ -1,0 +1,28 @@
+---
+# tasks file for conformance_test
+# TO-DO: Check if "Install and configure dnsmasq" is needed
+# TO-DO: Check if "Set image registry to disable until BZ#1810461 is solved" is needed
+
+- name: Prepare openshift-test
+  ansible.builtin.include_role:
+    name: tools_openshift_tests
+    tasks_from: prepare_openshift_tests.yml
+  vars:
+    repo_name: "{{ conformance_test_repo_name }}"
+    results_dir: "{{ conformance_test_results_dir }}"
+    go_version_target: "{{ conformance_tests_go_version }}"
+
+- name: Include Conformance-Test tasks
+  ansible.builtin.include_tasks: run_conformance_test.yml
+
+- name: Post openshift-test
+  ansible.builtin.include_role:
+    name: tools_openshift_tests
+    tasks_from: post_openshift_tests.yml
+  vars:
+    testsuite_name: "{{ conformance_test_testsuite_name }}"
+    key_for_filtering_results: "{{ conformance_test_testsuite_name }}"
+    test_name: "{{ conformance_test_name }}"
+    results_dir: "{{ conformance_test_results_dir }}"
+
+# TO-DO: Check if "Remove dnsmasq" is needed
