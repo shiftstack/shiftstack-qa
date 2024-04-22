@@ -79,3 +79,13 @@
         - {src: "{{ installation_dir }}/", mode: "0755"}
         - {src: "{{ osp_config_dir }}", mode: "0755"}
         - {src: "{{ home_dir }}/install-config.yaml", mode: "0644"}
+
+    - name: Run must-gather if installation failed
+      when:
+        - ansible_failed_task is defined
+        - ansible_failed_task.name == 'Install Openshift'
+      ansible.builtin.include_role:
+        name: tools_must-gather
+      vars:
+        must_gather_dir_suffix: "must-gather-change-install"
+        fetch_to_inventory: true
