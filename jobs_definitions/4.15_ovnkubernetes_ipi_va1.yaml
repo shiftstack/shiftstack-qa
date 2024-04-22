@@ -9,6 +9,7 @@ stages:
   - post
   - verification
   - openstack_test
+  - lb_tests
 
 infra: # Store required Openstack deployment info for deploying OCP
   external_network: public
