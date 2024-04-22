@@ -73,6 +73,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "fcb93f54_ad3d96b7",
+        "filename": "collection/stages/roles/install/tasks/upi/deploy_cluster.yml",
+        "patchSetId": 47
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-04-22T20:54:42Z",
+      "side": 1,
+      "message": "So if the wait-for shell command fails, will the error be raised (or ignored)?",
+      "parentUuid": "6981a939_62832507",
+      "revId": "f9440ccfd58e9151cb3f47db179f31d5a7f33e47",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "0c520772_1f0fb95f",
         "filename": "collection/stages/roles/install/tasks/upi/prepare_rhcos_image.yml",
         "patchSetId": 47
@@ -202,6 +220,30 @@
       "side": 1,
       "message": "\u0027installer_python_packages\u0027 is for \u0027ansible.builtin.pip\u0027\n\u0027installer_required_packages\u0027 is for \u0027ansible.builtin.package\u0027",
       "parentUuid": "56f9a58e_3915d274",
+      "range": {
+        "startLine": 55,
+        "startChar": 16,
+        "endLine": 55,
+        "endChar": 41
+      },
+      "revId": "f9440ccfd58e9151cb3f47db179f31d5a7f33e47",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d2c56a31_1cba5418",
+        "filename": "collection/tools/roles/tools_installer_host/tasks/configuration_install_packages.yml",
+        "patchSetId": 47
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-04-22T20:54:42Z",
+      "side": 1,
+      "message": "ok!",
+      "parentUuid": "d09a1a21_db97a648",
       "range": {
         "startLine": 55,
         "startChar": 16,
