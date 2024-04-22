@@ -1,0 +1,6 @@
+---
+# defaults file for lb_tests
+lb_allowlist_file: '{{ artifacts_dir }}/openstack-test-lb-allowlist.yaml'
+lb_testfilter: |
+  ".*[lb].*":
+    note: "Load Balancer tests"
