@@ -1,0 +1,7 @@
+---
+# defaults file for lb_tests
+log_directory: "{{ artifacts_dir }}/lb_amphora"
+allowlist_path: /tmp/openstack-test-lb-allowlist.yaml
+allowlist_filter: |
+  ".*[lb].*":
+    note: "Load Balancer tests"

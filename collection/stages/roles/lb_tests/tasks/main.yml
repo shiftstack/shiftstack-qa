@@ -1,0 +1,62 @@
+---
+- name: Create lb_allowlist_file
+  ansible.builtin.copy:
+    dest: "{{ allowlist_path }}"
+    content: "{{ allowlist_filter }}"
+    mode: u=rwx,g=rw,o=r
+
+- name: Get the external network
+  openstack.cloud.networks_info:
+    cloud: "{{ user_cloud }}"
+    filters:
+      router:external: true
+  register: os_networks
+
+- name: Get install-config content to obtain the 1st machineCIDR
+  ansible.builtin.import_role:
+    name: tools_get_deploy_info
+    tasks_from: get_ic_content.yml
+
+- name: Get the node subnet
+  openstack.cloud.subnets_info:
+    cloud: "{{ user_cloud }}"
+    filters:
+      cidr: "{{ ic_content.networking.machineNetwork[0].cidr }}"
+  register: os_subnets
+
+- name: Enable Amphora LoadBalancer with monitors and SOURCE_IP lb-method on cloud-provider-config
+  ansible.builtin.include_tasks: change_cloud_cm.yml
+  vars:
+    octavia_provider: "amphora"
+    lb_method: "SOURCE_IP"
+    lb_create_monitor: "True"
+    lb_monitor_delay: "{{ cloud_provider_config.lb_monitor_delay }}"
+    lb_monitor_timeout: "{{ cloud_provider_config.lb_monitor_timeout }}"
+    lb_monitor_max_retries: "{{ cloud_provider_config.lb_monitor_max_retries }}"
+    lb_fip_net_id: "{{ os_networks.openstack_networks[0].id }}"
+    lb_subnet_id: "{{ os_subnets.openstack_subnets[0].id }}"
+    max_shared_lb: "2"
+    log_directory: "{{ artifacts_dir }}/lb_amphora_sourceip"
+
+- name: Run Openstack-Test on OCP
+  ansible.builtin.include_role:
+    name: shiftstack.stages.openstack_test
+  vars:
+    openstack_test_results_dir: "{{ artifacts_dir }}/lb_amphora_sourceip"
+    openstack_tests_allowlist_file: "{{ allowlist_path }}"
+
+- name: Enable OVN provider on cloud-provider-config
+  ansible.builtin.include_tasks: change_cloud_cm.yml
+  vars:
+    octavia_provider: "ovn"
+    lb_method: "SOURCE_IP_PORT"
+    lb_create_monitor: "False"
+    max_shared_lb: "2"
+    log_directory: "{{ artifacts_dir }}/lb_ovn"
+
+- name: Run Openstack-Test on OCP
+  ansible.builtin.include_role:
+    name: shiftstack.stages.openstack_test
+  vars:
+    openstack_test_results_dir: "{{ artifacts_dir }}/lb_ovn"
+    openstack_tests_allowlist_file: "{{ allowlist_path }}"

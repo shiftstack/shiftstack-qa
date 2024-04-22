@@ -1,0 +1,14 @@
+---
+- name: Store cluster-config-v1 config map
+  vars:
+    ansible_python_interpreter: "{{ k8s_venv_python_interpreter }}"
+  kubernetes.core.k8s_info:
+    api_version: v1
+    kind: ConfigMap
+    namespace: kube-system
+    name: cluster-config-v1
+  register: cluster_config_cm
+
+- name: Get install-config
+  ansible.builtin.set_fact:
+    ic_content: "{{ cluster_config_cm.resources[0].data['install-config'] | from_yaml }}"
