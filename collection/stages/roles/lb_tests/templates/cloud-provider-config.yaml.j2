@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{original_cm_yaml.metadata.name}}
+  namespace: {{original_cm_yaml.metadata.namespace}}
+data:
+  ca-bundle.pem: |
+    {{original_cm_yaml.data['ca-bundle.pem']|trim|indent(width=4)}}
+  config: |
+    {{ini_config|indent(width=4)}}

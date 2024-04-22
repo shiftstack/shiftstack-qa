@@ -1,6 +1,6 @@
 ---
 - name: Get Instances, Nodes, Machines, and MachineSets information
-  failed_when: false
+  ignore_errors: yes # noqa: ignore-errors
   block:
     - name: Get OCP machinesets status
       ansible.builtin.command: 'oc get machinesets -A'
