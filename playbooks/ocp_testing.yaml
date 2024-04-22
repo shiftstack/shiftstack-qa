@@ -120,6 +120,7 @@
     - "../configs/global.yml"
   environment:
     KUBECONFIG: "{{ kubeconfig }}"
+    K8S_AUTH_KUBECONFIG: "{{ kubeconfig }}"
   tasks:
     - name: Run OCP verification checks
       ansible.builtin.include_role:
@@ -142,6 +143,18 @@
         name: shiftstack.stages.openstack_test
       when: "'openstack_test' in stages"
 
+- name: Run LB-Test on OpenShift
+  hosts: installer
+  gather_facts: no
+  vars_files:
+    - "../configs/global.yml"
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+  tasks:
+    - name: Run LB-Test on OCP
+      ansible.builtin.include_role:
+        name: shiftstack.stages.lb_tests
+      when: "'lb_tests' in stages"
 
 - name: Post steps
   hosts: installer

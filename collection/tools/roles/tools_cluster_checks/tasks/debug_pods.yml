@@ -1,6 +1,5 @@
 ---
 - name: Check the unready Pods
-  failed_when: false
   block:
     - name: Get the Pods
       ansible.builtin.command: 'oc get pods -A'

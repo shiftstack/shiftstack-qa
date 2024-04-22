@@ -1,0 +1,219 @@
+---
+- name: Create {{ log_directory }} directory if it does not exist
+  ansible.builtin.file:
+    path: "{{ log_directory }}"
+    state: directory
+    mode: u=rwx,g=rw,o=r
+
+- name: Set artifact paths
+  ansible.builtin.set_fact:
+    config_orig_path: "{{ log_directory }}/cloud_cm_before-{{ octavia_provider | default('') }}.yaml"
+    config_ini_path: "{{ log_directory }}/config-{{ octavia_provider | default('') }}.ini"
+    config_to_apply_path: "{{ log_directory }}/cloud_cm_before-{{ octavia_provider | default('') }}.edited.yaml"
+    config_applied_path: "{{ log_directory }}/cloud_cm_after-{{ octavia_provider | default('') }}.yaml"
+    pods_before_cloud_cm_change: "{{ log_directory }}/pods_before_cloud_cm_change.txt"
+    pods_after_cloud_cm_change: "{{ log_directory }}/pods_after_cloud_cm_change.txt"
+
+- name: Save the pods status in '{{ pods_before_cloud_cm_change }}' before performing the cloud configuration change
+  ansible.builtin.shell: |
+    oc get pods -A -o wide > "{{ pods_before_cloud_cm_change }}"
+  changed_when: false
+
+- name: Save the cloud provider ConfigMap in a file
+  ansible.builtin.shell: |
+    oc get cm cloud-provider-config -n openshift-config -o yaml > "{{ config_orig_path }}"
+  changed_when: false
+
+- name: Read original cloud-provider-config
+  ansible.builtin.command: cat "{{ config_orig_path }}"
+  register: result
+  changed_when: false
+
+- name: Set variable from cloud-provider-config to manipulate it
+  ansible.builtin.set_fact:
+    original_cm_yaml: "{{ result.stdout | from_yaml }}"
+
+- name: Save the config.ini in a file for modifications
+  ansible.builtin.copy:
+    content: "{{ original_cm_yaml.data.config }}"
+    dest: "{{ config_ini_path }}"
+    mode: u=rwx,g=rw,o=r
+
+- name: Set lb-provider on config.ini
+  community.general.ini_file:
+    path: "{{ config_ini_path }}"
+    section: LoadBalancer
+    option: lb-provider
+    value: "{{ octavia_provider }}"
+    mode: u=rwx,g=rw,o=r
+  when: octavia_provider is defined
+
+- name: Enable lb-method on config.ini
+  community.general.ini_file:
+    path: "{{ config_ini_path }}"
+    section: LoadBalancer
+    option: lb-method
+    value: "{{ lb_method }}"
+    mode: u=rwx,g=rw,o=r
+  when: lb_method is defined
+
+- name: Enable floating-network-id on config.ini
+  community.general.ini_file:
+    path: "{{ config_ini_path }}"
+    section: LoadBalancer
+    option: floating-network-id
+    value: "{{ lb_fip_net_id }}"
+    mode: u=rwx,g=rw,o=r
+  when: lb_fip_net_id is defined
+
+- name: Enable subnet-id on config.ini
+  community.general.ini_file:
+    path: "{{ config_ini_path }}"
+    section: LoadBalancer
+    option: subnet-id
+    value: "{{ lb_subnet_id }}"
+    mode: u=rwx,g=rw,o=r
+  when: lb_subnet_id is defined
+
+- name: Enable create-monitor on config.ini
+  community.general.ini_file:
+    path: "{{ config_ini_path }}"
+    section: LoadBalancer
+    option: create-monitor
+    value: "{{ lb_create_monitor }}"
+    mode: u=rwx,g=rw,o=r
+  when: lb_create_monitor is defined
+
+- name: Enable monitor-delay on config.ini
+  community.general.ini_file:
+    path: "{{ config_ini_path }}"
+    section: LoadBalancer
+    option: monitor-delay
+    value: "{{ lb_monitor_delay }}"
+    mode: u=rwx,g=rw,o=r
+  when: lb_monitor_delay is defined
+
+- name: Enable monitor-timeout on config.ini
+  community.general.ini_file:
+    path: "{{ config_ini_path }}"
+    section: LoadBalancer
+    option: monitor-timeout
+    value: "{{ lb_monitor_timeout }}"
+    mode: u=rwx,g=rw,o=r
+  when: lb_monitor_timeout is defined
+
+- name: Enable monitor-max-retries on config.ini
+  community.general.ini_file:
+    path: "{{ config_ini_path }}"
+    section: LoadBalancer
+    option: monitor-max-retries
+    value: "{{ lb_monitor_max_retries }}"
+    mode: u=rwx,g=rw,o=r
+  when: lb_monitor_max_retries is defined
+
+- name: Enable internal-lb on config.ini
+  community.general.ini_file:
+    path: "{{ config_ini_path }}"
+    section: LoadBalancer
+    option: internal-lb
+    value: "{{ internal_lb }}"
+    mode: u=rwx,g=rw,o=r
+  when: internal_lb is defined
+
+- name: Enable max-shared-lb on config.ini
+  community.general.ini_file:
+    path: "{{ config_ini_path }}"
+    section: LoadBalancer
+    option: max-shared-lb
+    value: "{{ max_shared_lb }}"
+    mode: u=rwx,g=rw,o=r
+  when: max_shared_lb is defined
+
+- name: Read modified "{{ config_ini_path }}"
+  ansible.builtin.command: cat "{{ config_ini_path }}"
+  changed_when: false
+  register: result
+
+- name: Set variable from "{{ config_ini_path }}"
+  ansible.builtin.set_fact:
+    ini_config: "{{ result.stdout }}"
+
+- name: Overwrite cloud_cm.yaml with new content
+  ansible.builtin.template:
+    src: cloud-provider-config.yaml.j2
+    dest: "{{ config_to_apply_path }}"
+    mode: u=rwx,g=rw,o=r
+
+- name: Apply the modified cloud provider ConfigMap
+  ansible.builtin.command: "oc replace --force --wait --filename {{ config_to_apply_path }}"
+  changed_when: true
+
+- name: Save the resulting cloud provider ConfigMap after application in a file
+  ansible.builtin.command: "oc get cm cloud-provider-config -n openshift-config -o yaml > {{ config_applied_path }}"
+  changed_when: false
+
+- name: Wait until the configuration is succesfully applied in the cluster
+  block:
+    - name: Wait until some node is unschedulable (oc get nodes --field-selector spec.unschedulable=true)
+      kubernetes.core.k8s_info:
+        kubeconfig: "{{ kubeconfig }}"
+        api_version: v1
+        kind: Node
+        field_selectors:
+          - spec.unschedulable=true
+      register: unschedulable_nodes
+      until:
+        - unschedulable_nodes.resources is defined
+        - unschedulable_nodes.resources|length != 0
+      retries: 30
+      delay: 10
+
+    - name: Wait until there are no unschedulable nodes - this means the config has been applied
+      ansible.builtin.include_role:
+        name: tools_cluster_checks
+        tasks_from: wait_until_no_unschedulable_nodes.yml
+      vars:
+        wait_retries: 30
+        wait_delay: 120
+      loop: "{{ range(3) | list }}"
+      loop_control:
+        pause: 120
+
+    - name: Check that there are no unschedulable nodes and cluster is healthy
+      ansible.builtin.include_role:
+        name: tools_cluster_checks
+        tasks_from: wait_until_no_unschedulable_nodes.yml
+      vars:
+        wait_retries: 1
+        wait_delay: 0
+
+    - name: Active wait until cluster is healthy
+      ansible.builtin.include_role:
+        name: tools_cluster_checks
+        tasks_from: wait_until_cluster_is_healthy.yml
+      vars:
+        wait_retries: 6
+        wait_delay: 10
+
+  rescue:
+    - name: Get cluster debug information
+      ansible.builtin.include_role:
+        name: tools_cluster_checks
+        tasks_from: print_cluster_status.yml
+
+    - name: Run must-gather
+      ansible.builtin.include_role:
+        name: tools_must-gather
+      vars:
+        must_gather_dir_suffix: "must-gather-change-cloud-cm"
+        fetch_to_inventory: true
+
+    - name: Fail inside rescue block
+      ansible.builtin.fail:
+        msg: "Cloud config cm change failed. See logs for more information."
+
+  always:
+    - name: Save the pods status in '{{ pods_after_cloud_cm_change }}' after performing the cloud configuration change
+      ansible.builtin.shell: |
+        oc get pods -A -o wide > "{{ pods_after_cloud_cm_change }}"
+      changed_when: false
