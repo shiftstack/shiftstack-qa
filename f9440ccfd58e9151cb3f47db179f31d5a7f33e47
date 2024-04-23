@@ -91,6 +91,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "96c8a6e9_4b28a49f",
+        "filename": "collection/stages/roles/install/tasks/upi/deploy_cluster.yml",
+        "patchSetId": 47
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-04-23T07:45:14Z",
+      "side": 1,
+      "message": "maybe my logic is wrong, but shouldn\u0027t be `changed_when: false` when the command does not change anything and `changed_when: true` when it does?",
+      "parentUuid": "fcb93f54_ad3d96b7",
+      "revId": "f9440ccfd58e9151cb3f47db179f31d5a7f33e47",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "0c520772_1f0fb95f",
         "filename": "collection/stages/roles/install/tasks/upi/prepare_rhcos_image.yml",
         "patchSetId": 47
