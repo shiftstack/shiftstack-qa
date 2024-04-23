@@ -1,0 +1,6 @@
+---
+- name: Upload results to reportportal
+  hosts: localhost
+  gather_facts: no
+  roles:
+    - shiftstack.tools.reportportal
