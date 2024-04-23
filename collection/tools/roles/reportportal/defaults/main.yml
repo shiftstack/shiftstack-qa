@@ -1,0 +1,9 @@
+---
+reportportal_url: https://reportportal-osp.apps.ocp-c1.prod.psi.redhat.com
+reportportal_token: 260a0ac8-a106-4226-9485-56a9790f04c8 # Should be moved to secret
+ssl_verify: false
+ignore_skipped_tests: true
+project: rhel_osp_staging
+launch_name: "shiftstack_testing"
+path: "~/artifacts/*.xml"
+launch_tags: "ocp_testing: true"

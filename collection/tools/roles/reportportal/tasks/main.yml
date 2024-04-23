@@ -1,0 +1,41 @@
+---
+- name: Import tests to Reportportal version 5
+  shiftstack.tools.reportportal_api:
+    url: "{{ reportportal_url }}"
+    token: "{{ reportportal_token }}"
+    ssl_verify: "{{ ssl_verify | bool }}"
+    ignore_skipped_tests: "{{ ignore_skipped_tests | bool }}"
+    project_name: "{{ project }}"
+    launch_name: "{{ launch_name }}"
+    tests_paths: "{{ path }}"
+    launch_tags: "{{ launch_tags }}"
+
+  ignore_errors: true
+  register: import_results
+
+- name: Print import_results
+  ansible.builtin.debug:
+    var: import_results
+
+- name: Fail if reporportal import failed
+  ansible.builtin.fail:
+    msg: Import tests to Reportportal failed
+  when: import_results.failed
+
+- name: Set launch UUID
+  ansible.builtin.set_fact:
+    launch_uuid: "{{ import_results.launch_id }}"
+
+- name: Verify upload succeeded
+  ansible.builtin.uri:
+    url: "{{ reportportal_url }}/api/v1/{{ project }}/launch/{{ launch_uuid }}"
+    method: GET
+    validate_certs: "{{ ssl_verify | bool }}"
+    status_code: 200
+    headers:
+      Accept: "application/json"
+      Authorization: "bearer {{ reportportal_token }}"
+  register: launch_result
+
+- name: write launch_id
+  debug: var=launch_result.json.id
