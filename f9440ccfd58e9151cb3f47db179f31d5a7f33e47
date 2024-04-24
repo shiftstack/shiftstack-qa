@@ -107,6 +107,24 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b1e38679_879f2e31",
+        "filename": "collection/stages/roles/install/tasks/upi/deploy_cluster.yml",
+        "patchSetId": 47
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-04-24T09:31:15Z",
+      "side": 1,
+      "message": "```\nSo if the wait-for shell command fails, will the error be raised (or ignored)?\n```\n^ The `changed_when` shouldn\u0027t affect the command failure.\nIn the case of non-zero RC, the task fails. (As we are not using `ignore_errors` or \u0027failed_when\u0027)",
+      "parentUuid": "96c8a6e9_4b28a49f",
+      "revId": "f9440ccfd58e9151cb3f47db179f31d5a7f33e47",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0c520772_1f0fb95f",
