@@ -43,6 +43,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "ef232fa1_39afbeaa",
+        "filename": "playbooks/ocp_testing.yaml",
+        "patchSetId": 8
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-04-25T15:29:12Z",
+      "side": 1,
+      "message": "Mmm probably yes, right?",
+      "parentUuid": "19f80947_d18f72af",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 8,
+        "endChar": 43
+      },
+      "revId": "24fcc4899b5f02a43e396d7577b1e56fffe5c38d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "4d09c05c_954a9357",
         "filename": "playbooks/ocp_testing.yaml",
         "patchSetId": 8
@@ -126,6 +150,30 @@
       "side": 1,
       "message": "In this case, I believe it\u0027s clearer to pass it directly in the task. Let me explain my arguments: \n\nI think that when we are running openstack-tests, we need to identify what are the creds to connect to both Openstack and Openshift. And these two envvars are the answer. So setting them explicitly in the task helps on the understanding on the task.\n\nFurthermore, we can apply the same logic to OS_CLOUD and we are explicitly passing it in the task, right? It\u0027s kind of inconsistent the behaviour we have for OS_CLOUD and KUBECONFIG. 😊\n\nWe can involve @juriarte@redhat.com as a mediator on this.",
       "parentUuid": "5a9e0729_8bf0bb32",
+      "range": {
+        "startLine": 132,
+        "startChar": 0,
+        "endLine": 139,
+        "endChar": 0
+      },
+      "revId": "24fcc4899b5f02a43e396d7577b1e56fffe5c38d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5391b564_bed24bae",
+        "filename": "playbooks/ocp_testing.yaml",
+        "patchSetId": 8
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-04-25T15:29:12Z",
+      "side": 1,
+      "message": "So we need `KUBECONFIG` for openshift tests (origin), openstack-tests and `oc` shell/command module and `K8S_AUTH_KUBECONFIG` for kubernetes.core.k8s module, right?\nInstead of having global environment vars for roles, I think it\u0027s better to explicitly set them in each task too, for the shake of clarity and avoid confusion and issues with these vars. Otherwise we don\u0027t really know in which modules are actually needed/used.",
+      "parentUuid": "24c08a37_00111bad",
       "range": {
         "startLine": 132,
         "startChar": 0,
