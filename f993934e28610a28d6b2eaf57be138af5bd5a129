@@ -135,6 +135,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "fdff392f_f888ffa2",
+        "filename": "collection/stages/roles/conformance_test/tasks/main.yml",
+        "patchSetId": 6
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-04-25T08:50:38Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "9ad680fa_796814b7",
+      "range": {
+        "startLine": 3,
+        "startChar": 2,
+        "endLine": 3,
+        "endChar": 7
+      },
+      "revId": "f993934e28610a28d6b2eaf57be138af5bd5a129",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "35856585_8ff160df",
@@ -172,6 +196,30 @@
       "side": 1,
       "message": "IMHO, it is better to set it one time in the playbook.",
       "parentUuid": "35856585_8ff160df",
+      "range": {
+        "startLine": 151,
+        "startChar": 0,
+        "endLine": 152,
+        "endChar": 34
+      },
+      "revId": "f993934e28610a28d6b2eaf57be138af5bd5a129",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c85df743_2e441877",
+        "filename": "playbooks/ocp_testing.yaml",
+        "patchSetId": 6
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-04-25T08:50:38Z",
+      "side": 1,
+      "message": "sure!",
+      "parentUuid": "167efc98_fc048044",
       "range": {
         "startLine": 151,
         "startChar": 0,
