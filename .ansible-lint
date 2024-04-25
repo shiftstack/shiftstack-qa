@@ -10,6 +10,7 @@ exclude_paths:
   - .github/
   - excludethis/
   - collection/stages/roles/conformance_test/files/
+  - collection/stages/roles/csi_tests/tasks/run_csi_test.yml
 
 # Ansible-lint does not fail on warnings from the rules or tags listed below
 # warn_list:
