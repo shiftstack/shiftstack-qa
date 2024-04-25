@@ -1,0 +1,50 @@
+---
+- name: Prepare openshift-test
+  ansible.builtin.include_role:
+    name: tools_openshift_tests
+    tasks_from: prepare_openshift_tests.yml
+  vars:
+    csi_test_type: cindercsi
+    repo_name: "{{ csi_test_repo_name }}"
+    results_dir: "{{ csi_test_results_dir }}"
+    go_version_target: "{{ csi_test_go_version }}"
+
+- name: Prepare CSI test
+  ansible.builtin.include_tasks: prepare_csi_test.yml
+
+- name: Check if a openstack-cinder-csi-driver-operator branch URL is available for the OCP version
+  ansible.builtin.uri:
+    url: https://raw.githubusercontent.com/openshift/openstack-cinder-csi-driver-operator/release-{{ discovered_openshift_release }}/test/e2e/manifest.yaml
+  register: result
+  failed_when: false
+
+- name: Set the manifest download URL based on the branch URL status
+  vars:
+    csi_branch: "{% if result.status == 200 %}release-{{ discovered_openshift_release }}{% else %}master{% endif %}"
+  ansible.builtin.set_fact:
+    manifest_url: "https://raw.githubusercontent.com/openshift/openstack-cinder-csi-driver-operator/{{ csi_branch }}/test/e2e/manifest.yaml"
+
+- name: Get the cinder-csi manifest file
+  ansible.builtin.get_url:
+    url: "{{ manifest_url }}"
+    dest: "{{ csi_test_results_dir }}/manifest.yaml"
+    force: yes
+    mode: u=rw,g=rw,o=r
+  vars:
+    csi_test_type: cindercsi
+
+- name: Include Cinder CSI Test tasks
+  ansible.builtin.include_tasks: run_csi_test.yml
+  vars:
+    csi_test_type: cindercsi
+
+- name: Post openshift-test
+  ansible.builtin.include_role:
+    name: tools_openshift_tests
+    tasks_from: post_openshift_tests.yml
+  vars:
+    csi_test_type: cindercsi
+    testsuite_name: "{{ csi_test_testsuite_name }}"
+    key_for_filtering_results: "{{ csi_test_testsuite_name }}"
+    test_name: "{{ csi_test_name }}"
+    results_dir: "{{ csi_test_results_dir }}"

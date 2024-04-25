@@ -6,7 +6,7 @@
   ansible.builtin.git:
     repo: "https://github.com/openshift/{{ repo_name }}.git"
     version: release-{{ discovered_openshift_release }}
-    dest: "{{ artifacts_dir }}/{{ repo_name }}"
+    dest: "{{ artifacts_dir }}/{{ csi_test_repo_name }}"
     force: yes
     depth: 1
   retries: 3
