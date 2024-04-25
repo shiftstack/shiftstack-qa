@@ -11,3 +11,5 @@ stages:
   - verification
   - openstack_test
   - conformance_test
+  - cinder_csi_tests
+  - manila_csi_tests
