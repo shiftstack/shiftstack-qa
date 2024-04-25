@@ -62,6 +62,30 @@
       },
       "revId": "24fcc4899b5f02a43e396d7577b1e56fffe5c38d",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "98c19d5c_ea0a4c63",
+        "filename": "playbooks/ocp_testing.yaml",
+        "patchSetId": 8
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-04-25T06:53:49Z",
+      "side": 1,
+      "message": "I updated the openstack-tests binary calls to make it work: https://review.gerrithub.io/c/shiftstack/shiftstack-qa/+/1193605/8/collection/stages/roles/openstack_test/tasks/run_openstack_test.yml",
+      "parentUuid": "4d09c05c_954a9357",
+      "range": {
+        "startLine": 132,
+        "startChar": 0,
+        "endLine": 139,
+        "endChar": 0
+      },
+      "revId": "24fcc4899b5f02a43e396d7577b1e56fffe5c38d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
