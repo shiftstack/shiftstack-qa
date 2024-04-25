@@ -35,6 +35,24 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a3a85fef_fe6529ad",
+        "filename": "collection/stages/roles/conformance_test/files/conformance-parallel-blocklist.yaml",
+        "patchSetId": 6
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-04-25T08:48:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "20cb963a_b7ec3335",
+      "revId": "f993934e28610a28d6b2eaf57be138af5bd5a129",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "eabd628c_5b75f4eb",
@@ -48,6 +66,24 @@
       "writtenOn": "2024-04-25T06:43:51Z",
       "side": 1,
       "message": "Let\u0027s get rid of this legacy data. I think we can puto only OVNKubernetes and 4.15 here.",
+      "revId": "f993934e28610a28d6b2eaf57be138af5bd5a129",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "98ee417b_c7bcd210",
+        "filename": "collection/stages/roles/conformance_test/files/conformance-serial-blocklist.yaml",
+        "patchSetId": 6
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-04-25T08:48:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "eabd628c_5b75f4eb",
       "revId": "f993934e28610a28d6b2eaf57be138af5bd5a129",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
@@ -77,6 +113,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "9ad680fa_796814b7",
+        "filename": "collection/stages/roles/conformance_test/tasks/main.yml",
+        "patchSetId": 6
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-04-25T08:48:45Z",
+      "side": 1,
+      "message": "I think we can leave it for now and see in the future if it is needed",
+      "parentUuid": "c5e4fa25_a480c767",
+      "range": {
+        "startLine": 3,
+        "startChar": 2,
+        "endLine": 3,
+        "endChar": 7
+      },
+      "revId": "f993934e28610a28d6b2eaf57be138af5bd5a129",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "35856585_8ff160df",
         "filename": "playbooks/ocp_testing.yaml",
         "patchSetId": 6
@@ -88,6 +148,30 @@
       "writtenOn": "2024-04-25T06:43:51Z",
       "side": 1,
       "message": "This is needed for running the test afaik, right? What do you think if we directly set it there (inside the stage)?",
+      "range": {
+        "startLine": 151,
+        "startChar": 0,
+        "endLine": 152,
+        "endChar": 34
+      },
+      "revId": "f993934e28610a28d6b2eaf57be138af5bd5a129",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "167efc98_fc048044",
+        "filename": "playbooks/ocp_testing.yaml",
+        "patchSetId": 6
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-04-25T08:48:45Z",
+      "side": 1,
+      "message": "IMHO, it is better to set it one time in the playbook.",
+      "parentUuid": "35856585_8ff160df",
       "range": {
         "startLine": 151,
         "startChar": 0,
