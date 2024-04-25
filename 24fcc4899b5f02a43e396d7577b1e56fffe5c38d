@@ -16,6 +16,29 @@
       "message": "Tested manually on titan01",
       "revId": "24fcc4899b5f02a43e396d7577b1e56fffe5c38d",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "19f80947_d18f72af",
+        "filename": "playbooks/ocp_testing.yaml",
+        "patchSetId": 8
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-04-25T06:21:56Z",
+      "side": 1,
+      "message": "@rlobillo@redhat.com , @juriarte@redhat.com should we also change it in `playbooks/legacy_ocp_testing.yaml`?\nI have tested the \u0027Post\u0027 and \u0027verification checks\u0027 with this change in legacy env and it looks ok.",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 8,
+        "endChar": 43
+      },
+      "revId": "24fcc4899b5f02a43e396d7577b1e56fffe5c38d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
