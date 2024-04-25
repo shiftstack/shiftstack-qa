@@ -155,6 +155,36 @@
       when: "'conformance_test' in stages"
 
 
+- name: Run Openshift Cinder CSI Tests on OpenShift
+  hosts: installer
+  gather_facts: no
+  vars_files:
+    - "../configs/global.yml"
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+  tasks:
+    - name: Run Openshift Cinder CSI Tests on OCP
+      ansible.builtin.include_role:
+        name: shiftstack.stages.csi_tests
+        tasks_from: openshift_cinder_csi.yml
+      when: "'cinder_csi_tests' in stages"
+
+
+- name: Run Openshift Manila CSI Tests on OpenShift
+  hosts: installer
+  gather_facts: no
+  vars_files:
+    - "../configs/global.yml"
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+  tasks:
+    - name: Run Openshift Manila CSI Tests on OCP
+      ansible.builtin.include_role:
+        name: shiftstack.stages.csi_tests
+        tasks_from: openshift_manila_csi.yml
+      when: "'manila_csi_tests' in stages"
+
+
 - name: Post steps
   hosts: installer
   gather_facts: no
