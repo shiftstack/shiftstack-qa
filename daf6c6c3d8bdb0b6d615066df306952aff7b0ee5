@@ -1,0 +1,176 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "eb2a8a18_89629d21",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-04-25T14:25:08Z",
+      "side": 1,
+      "message": "Ey Yaakov. \n\nPlease, don\u0027t rename `installation_dir` variable to something like `destroy_dir` (or something equivalent) and pass it as a parameter on the ocp_testing and legacy_ocp_testing. I think that helps to clarity, as you are not using that dir for installation but for getting rid of that installation on RHOSP18.",
+      "revId": "daf6c6c3d8bdb0b6d615066df306952aff7b0ee5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ac1640e4_d859cf17",
+        "filename": "collection/stages/roles/cleanup/tasks/detect_env.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-04-25T14:25:08Z",
+      "side": 1,
+      "message": "So if the directory is not there we are considering upi? You are not planning to run the down-*.yaml files on https://github.com/openshift/installer/blob/master/upi/openstack/ ?",
+      "range": {
+        "startLine": 15,
+        "startChar": 24,
+        "endLine": 15,
+        "endChar": 86
+      },
+      "revId": "daf6c6c3d8bdb0b6d615066df306952aff7b0ee5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "71a8caf0_39a50868",
+        "filename": "collection/stages/roles/cleanup/tasks/openstack_cleanup.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-04-25T14:25:08Z",
+      "side": 1,
+      "message": "be careful. We shouldn\u0027t do this. You should destroy only on project not all of them. Please read https://issues.redhat.com/browse/OSPRH-4170?focusedId\u003d24535678\u0026page\u003dcom.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-24535678",
+      "revId": "daf6c6c3d8bdb0b6d615066df306952aff7b0ee5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f66bf496_f3bee775",
+        "filename": "collection/stages/roles/cleanup/tasks/openstack_cleanup.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-04-25T14:25:08Z",
+      "side": 1,
+      "message": "Please only destroy the selected project, not all of them. We want to maintain the concurrency of different shiftstackclient pods working in parallel.",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 15,
+        "endChar": 24
+      },
+      "revId": "daf6c6c3d8bdb0b6d615066df306952aff7b0ee5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "362698d4_3b41f55f",
+        "filename": "collection/stages/roles/cleanup/tasks/openstack_project_cleanup.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-04-25T14:25:08Z",
+      "side": 1,
+      "message": "Aren´t you setting the targt project in openstack_cleanup.yml?",
+      "range": {
+        "startLine": 4,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 105
+      },
+      "revId": "daf6c6c3d8bdb0b6d615066df306952aff7b0ee5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f0e3058b_112061a2",
+        "filename": "collection/stages/roles/cleanup/tasks/openstack_project_cleanup.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-04-25T14:25:08Z",
+      "side": 1,
+      "message": "Couldn\u0027t gather the volumes for an specific project?",
+      "range": {
+        "startLine": 36,
+        "startChar": 0,
+        "endLine": 49,
+        "endChar": 27
+      },
+      "revId": "daf6c6c3d8bdb0b6d615066df306952aff7b0ee5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ef7838bc_e85616ad",
+        "filename": "collection/stages/roles/cleanup/tasks/openstack_project_cleanup.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-04-25T14:25:08Z",
+      "side": 1,
+      "message": "or not 😊",
+      "range": {
+        "startLine": 98,
+        "startChar": 23,
+        "endLine": 98,
+        "endChar": 37
+      },
+      "revId": "daf6c6c3d8bdb0b6d615066df306952aff7b0ee5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e71b33de_d7ffd832",
+        "filename": "jobs_definitions/cleanup.yaml",
+        "patchSetId": 8
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-04-25T14:25:08Z",
+      "side": 1,
+      "message": "Could you please tell me what\u0027s the usecase of this job definition?",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 11
+      },
+      "revId": "daf6c6c3d8bdb0b6d615066df306952aff7b0ee5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
