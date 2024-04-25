@@ -16,6 +16,86 @@
       "message": "* Verified `parallel` conformance tests locally on a legacy virt UPI env with the following command:\n```\ncollection_install \u0026\u0026 ansible-navigator run shiftstack-qa/playbooks/legacy_ocp_testing.yaml --extra-vars \u0027{\"stages\": [\"conformance_test\"]}\u0027 -v\n```\n* Verified with a full IPI job with `serial` conformance tests",
       "revId": "f993934e28610a28d6b2eaf57be138af5bd5a129",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "20cb963a_b7ec3335",
+        "filename": "collection/stages/roles/conformance_test/files/conformance-parallel-blocklist.yaml",
+        "patchSetId": 6
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-04-25T06:43:51Z",
+      "side": 1,
+      "message": "Let\u0027s get rid of this legacy data. I think we can puto only OVNKubernetes and 4.15 here.",
+      "revId": "f993934e28610a28d6b2eaf57be138af5bd5a129",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "eabd628c_5b75f4eb",
+        "filename": "collection/stages/roles/conformance_test/files/conformance-serial-blocklist.yaml",
+        "patchSetId": 6
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-04-25T06:43:51Z",
+      "side": 1,
+      "message": "Let\u0027s get rid of this legacy data. I think we can puto only OVNKubernetes and 4.15 here.",
+      "revId": "f993934e28610a28d6b2eaf57be138af5bd5a129",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c5e4fa25_a480c767",
+        "filename": "collection/stages/roles/conformance_test/tasks/main.yml",
+        "patchSetId": 6
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-04-25T06:43:51Z",
+      "side": 1,
+      "message": "+1",
+      "range": {
+        "startLine": 3,
+        "startChar": 2,
+        "endLine": 3,
+        "endChar": 7
+      },
+      "revId": "f993934e28610a28d6b2eaf57be138af5bd5a129",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "35856585_8ff160df",
+        "filename": "playbooks/ocp_testing.yaml",
+        "patchSetId": 6
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-04-25T06:43:51Z",
+      "side": 1,
+      "message": "This is needed for running the test afaik, right? What do you think if we directly set it there (inside the stage)?",
+      "range": {
+        "startLine": 151,
+        "startChar": 0,
+        "endLine": 152,
+        "endChar": 34
+      },
+      "revId": "f993934e28610a28d6b2eaf57be138af5bd5a129",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
