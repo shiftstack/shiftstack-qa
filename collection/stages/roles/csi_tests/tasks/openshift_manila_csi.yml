@@ -1,0 +1,36 @@
+---
+- name: Prepare openshift-test
+  ansible.builtin.include_role:
+    name: tools_openshift_tests
+    tasks_from: prepare_openshift_tests.yml
+  vars:
+    repo_name: "{{ csi_test_repo_name }}"
+    results_dir: "{{ csi_test_results_dir }}"
+    go_version_target: "{{ csi_test_go_version }}"
+
+- name: Prepare CSI test
+  ansible.builtin.include_tasks: prepare_csi_test.yml
+
+- name: Get the manila-csi manifest file from a template
+  ansible.builtin.template:
+    src: manila_test_manifest.yaml.j2
+    dest: "{{ csi_test_results_dir }}/manifest.yaml"
+    mode: u=rw,g=rw,o=r
+  vars:
+    csi_test_type: manilacsi
+
+- name: Include Manila CSI Test tasks
+  ansible.builtin.include_tasks: run_csi_test.yml
+  vars:
+    csi_test_type: manilacsi
+
+- name: Post openshift-test
+  ansible.builtin.include_role:
+    name: tools_openshift_tests
+    tasks_from: post_openshift_tests.yml
+  vars:
+    csi_test_type: manilacsi
+    testsuite_name: "{{ csi_test_testsuite_name }}"
+    key_for_filtering_results: "{{ csi_test_testsuite_name }}"
+    test_name: "{{ csi_test_name }}"
+    results_dir: "{{ csi_test_results_dir }}"
