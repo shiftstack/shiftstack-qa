@@ -1,0 +1,41 @@
+---
+- name: Run the openshift tests
+  block:
+    - name: Run cinder-csi tests
+      ansible.builtin.shell: >
+        {{ csi_test_executable }} run openshift/csi
+        --output-file {{ csi_test_results_dir }}/{{ csi_test_name }}.log
+        --junit-dir={{ csi_test_results_dir }} > /dev/null
+      environment:
+        KUBECONFIG: "{{ kubeconfig }}"
+        TEST_CSI_DRIVER_FILES: "{{ csi_test_results_dir }}/manifest.yaml"
+      changed_when: true
+
+    - name: Check for any failed openshift tests
+      ansible.builtin.shell: >
+        set -o pipefail &&
+        grep -e "^failed:" {{ csi_test_results_dir }}/{{ csi_test_name }}.log | wc -l
+        || true
+      register: number_of_failed_tests
+      changed_when: false
+
+    - name: Assert that there are no failed tests
+      ansible.builtin.assert:
+        that: number_of_failed_tests.stdout | int == 0
+        fail_msg: "There are failed openshift tests"
+        success_msg: "There are no openshift tests"
+  rescue:
+    - name: Mark the openshift tests as UNSTABLE
+      ansible.builtin.include_role:
+        name: tools_stage_results
+        tasks_from: mark_stage_unstable.yml
+      vars:
+        unstable_msg: >-
+          The openshift test Suite failed.
+
+    - name: Run must-gather
+      ansible.builtin.include_role:
+        name: tools_must-gather
+      vars:
+        must_gather_dir_suffix: "must-gather-{{ csi_test_name }}"
+        fetch_to_inventory: true
