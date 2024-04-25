@@ -161,6 +161,29 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "17665240_5a547268",
+        "filename": "configs/global.yml",
+        "patchSetId": 6
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-04-25T12:19:12Z",
+      "side": 1,
+      "message": "The support for different go versions (go_version_matrix) is not implemented because it\u0027s not needed for now? do you have something in mind?",
+      "range": {
+        "startLine": 88,
+        "startChar": 2,
+        "endLine": 88,
+        "endChar": 27
+      },
+      "revId": "f993934e28610a28d6b2eaf57be138af5bd5a129",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "35856585_8ff160df",
         "filename": "playbooks/ocp_testing.yaml",
         "patchSetId": 6
