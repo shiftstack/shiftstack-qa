@@ -1,15 +1,14 @@
 ---
-openshift_release: 4.15 # It can be "4.10", "4.11", etc. or "4-stable"
+openshift_release: 4.16 # It can be "4.10", "4.11", etc. or "4-stable"
 openshift_build_name: "" # It can be an empty value "" (latest nightly), a given build
 openshift_network_type: OVNKubernetes
-installation_type: ipi
-conformance_test_type: parallel
+installation_type: upi
+deploy_installer_host: true
 stages:
   - prepare
   - install
   - post
   - verification
   - openstack_test
-  - conformance_test
   - cinder_csi_tests
   - manila_csi_tests
