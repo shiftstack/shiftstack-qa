@@ -32,6 +32,7 @@
     --dry-run openshift/conformance/{{ conformance_test_type }} > {{ all_tests_path }}
   environment:
     OS_CLOUD: "{{ user_cloud }}"
+    KUBECONFIG: "{{ kubeconfig }}"
   changed_when: true
 
 - name: Convert the allowlist YAML files to TXT
@@ -78,6 +79,7 @@
         {{ conformance_test_executable }} run openshift/conformance/{{ conformance_test_type }} {{ test_params }}
       environment:
         OS_CLOUD: "{{ user_cloud }}"
+        KUBECONFIG: "{{ kubeconfig }}"
       changed_when: true
 
     - name: Check for any failed openshift tests
