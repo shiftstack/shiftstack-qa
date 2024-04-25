@@ -1,0 +1,25 @@
+---
+- name: Set csi test Parallelism to {{ csi_test_parallel_number }}
+  vars:
+    csi_config_file: 'origin/pkg/testsuites/standard_suites.go'
+  ansible.builtin.lineinfile:
+    path: "{{ csi_config_file }}"
+    regexp: '(\s+)Name: "openshift/csi",'
+    line: '\1Name: "openshift/csi",\n\1Parallelism: {{ csi_test_parallel_number }},'
+    insertafter: '(\s+)Name: "openshift/csi",'
+    backrefs: yes
+
+- name: Build csi tests for tests in the "{{ csi_test_repo_name }}" repository
+  ansible.builtin.shell: |
+    source {{ home_dir }}/.bashrc
+    make WHAT=cmd/openshift-tests
+  args:
+    chdir: "{{ artifacts_dir }}/{{ csi_test_repo_name }}"
+  changed_when: true
+
+- name: Copy openshift-test executable
+  ansible.builtin.copy:
+    src: "{{ artifacts_dir }}/{{ csi_test_repo_name }}/openshift-tests"
+    dest: "{{ csi_test_executable }}"
+    mode: u=rwx,g=rwx,o=rwx
+    remote_src: yes

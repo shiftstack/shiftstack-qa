@@ -1,0 +1,13 @@
+---
+# defaults file for csi_test
+csi_test_parallel_number: "10"
+
+csi_test_name: "csi-{{ csi_test_type }}-test"
+csi_test_dir: "{{ artifacts_dir }}/{{ csi_test_name }}"
+csi_test_results_dir: "{{ artifacts_dir }}/{{ csi_test_name }}-results"
+csi_test_repo_name: origin
+csi_test_executable: "{{ artifacts_dir }}/openshift-tests"
+csi_test_go_version: "{{ tests.default_go_version_target }}"
+csi_test_allowlist_file: ""
+csi_test_blocklist_file: "files/csi-{{ csi_test_type }}-blocklist.yaml"
+csi_test_testsuite_name: "csi/{{ csi_test_type }}"
