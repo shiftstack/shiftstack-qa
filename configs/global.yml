@@ -16,6 +16,7 @@ stage_unstable_flag: "{{ controller_home_dir }}/artifacts/stage_unstable_flag"
 
 admin_cloud: "overcloud"
 admin_env_file: "{{ home_dir }}/{{ admin_cloud }}rc"
+admin_verify_cacert: false
 user_cloud: "shiftstack"
 user_env_file: "{{ home_dir }}/{{ user_cloud }}rc"
 ocp_cluster_name: "ostest"
