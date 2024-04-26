@@ -34,6 +34,7 @@
   openstack.cloud.image_info:
     cloud: "{{ admin_cloud }}"
     image: "{{ installer_vm.image.name }}"
+    verify: "{{ admin_verify_cacert }}"
   register: glance_image_sha_result
 
 - name: Download {{ installer_vm.image.name }} image for the installer host VM if it is not on both Glance and /tmp/
@@ -87,6 +88,7 @@
         interfaces: "{{ installer_vm.subnet.name }}"
         network: "{{ openstack_networks_info.openstack_networks[0].name }}"
         state: present
+        verify: "{{ admin_verify_cacert }}"
       when: custom_router == ''
 
     - name: Create security group {{ installer_vm.sec_group.name }}
@@ -116,6 +118,7 @@
         vcpus: "{{ installer_vm.flavor.vcpus }}"
         disk: "{{ installer_vm.flavor.disk }}"
         state: present
+        verify: "{{ admin_verify_cacert }}"
       when: custom_flavor == ''
 
     - name: Upload the required RHEL image to Glance if there is no RHEL image on Glance yet or its SHA256 is not equal to the RHEL's SHA256 on Glance
@@ -128,6 +131,7 @@
             cloud: "{{ admin_cloud }}"
             name: "{{ installer_vm.image.name }}"
             state: absent
+            verify: "{{ admin_verify_cacert }}"
 
         - name: Upload the {{ installer_vm.image.name }} image to Glance
           openstack.cloud.image:
@@ -139,6 +143,7 @@
             state: present
             filename: "/tmp/{{ installer_vm.image.name }}"
             is_public: yes
+            verify: "{{ admin_verify_cacert }}"
           register: uploaded_image
 
     - name: Creates a key pair with the running users public key

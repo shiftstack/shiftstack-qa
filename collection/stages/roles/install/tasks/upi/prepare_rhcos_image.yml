@@ -35,6 +35,7 @@
   openstack.cloud.image_info:
     cloud: "{{ admin_cloud }}"
     image: "{{ rhcos_image_name }}"
+    verify: "{{ admin_verify_cacert }}"
   register: glance_image_sha_result
 
 - name: Upload the required RHCOS image to Glance if there is no RHCOS image on Glance yet or its SHA256 is not equal to the RHCOS's SHA256 on Glance
@@ -94,6 +95,7 @@
         cloud: "{{ admin_cloud }}"
         name: "{{ rhcos_image_name }}"
         state: absent
+        verify: "{{ admin_verify_cacert }}"
 
     - name: Upload the {{ rhcos_image_name }} {{ rhcos_version }} image to Glance
       openstack.cloud.image:
@@ -106,4 +108,5 @@
         filename: "{{ uncompressed_image }}"
         properties:
           version: "{{ rhcos_version }}"
+        verify: "{{ admin_verify_cacert }}"
       register: uploaded_image

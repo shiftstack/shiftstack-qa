@@ -1,6 +1,5 @@
 ---
 clouds_yaml_file_path: "{{ home_dir }}/.config/openstack/clouds.yaml"
-admin_verify_cacert: false
 project:
   name: "{{ user_cloud }}"
   user: user
