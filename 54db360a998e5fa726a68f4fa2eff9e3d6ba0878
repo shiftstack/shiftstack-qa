@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0eb9d100_dfec7502",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-04-30T13:54:06Z",
+      "side": 1,
+      "message": "Tested locally, I was missing a `\"`:\n\n` rlobillo  ~  tmp  shiftstack-qa  configs  ansible-vault decrypt secret.yaml                                                                                                                                                      main \nDecryption successful\n rlobillo  ~  tmp  shiftstack-qa  configs  cat secret.yaml | yq -r .ocp_pull_secret  | yq .                                                                                                                                       main \n{\n  \"auths\": {\n    \"cloud.openshift.com\": {\n      \"auth\": \"b3BlbnNoaWZ0LXJlbGVhc2UtZGV2K2l0YnJvd25yZWRoYXRjb20xamxkZXV2bGFpMzNnajd4OXBnazUyZzZmZWM6RVVCVFpJNjBTNjZGNVBDVkIwR1JDSUQ3Wkw5SjlDR0NFRzVFWFQ5QlhWUzM4OUg4WFpQNEtZUktOSzRIQlNKWQ\u003d\u003d\",\n      \"email\": \"itbrown@redhat.com\"\n    },\n    \"docker.io\": {\n      \"auth\": \"c2hpZnRzdGFjazphYjg0MWRhYS1mOGU2LTQ3Y2EtYTFkNC00ZjIxOGY0NWJlZTY\u003d\",\n      \"email\": \"imatza@redhat.com\"\n    },\n    \"quay.io\": {\n      \"auth\": \"b3BlbnNoaWZ0LXJlbGVhc2UtZGV2K2l0YnJvd25yZWRoYXRjb20xamxkZXV2bGFpMzNnajd4OXBnazUyZzZmZWM6RVVCVFpJNjBTNjZGNVBDVkIwR1JDSUQ3Wkw5SjlDR0NFRzVFWFQ5QlhWUzM4OUg4WFpQNEtZUktOSzRIQlNKWQ\u003d\u003d\",\n      \"email\": \"itbrown@redhat.com\"\n    },\n    \"registry.connect.redhat.com\": {\n      \"auth\": \"NzU2NzIzNXx1aGMtMUpMZEV1VmxBSTMzZ2o3eDlwR2s1Mkc2ZmVjOmV5SmhiR2NpT2lKU1V6VXhNaUo5LmV5SnpkV0lpT2lJNVlqVTFObVkzWVdaallUQTBNVEJqWVRnNE1tUmpaV1V6TXpZNE5XTTVPU0o5LlktbWhFRElVVHA4U1UySWI2Yno2Qy1NekFrS2EzU1RzSWdaUmRPTmR6ZjhkdzI3d001RkQ3ampXcjh4dnR2Yl9fVm96S002Vl9CbDZta2tLQk5xUlNiVDhkNi1oZG9KZWJueXJaU3lhNENFcVI1bWZobWFkTmVKOE1wV19qRkVXTGJDY3NYejJqczlSSlA5Y2tVdVR5ZFprZzM1TnZYTW02YnpES3JPV015U185MHdGU1czakVwVF9qc1R4cHhlU3VLXzVjZUZwMnZTNkVjeDlxNlQwX0lvTU83cks1VWU5bFVkSUF0RDlsbU9rRC1TVDlJaXZtZ0tyTi1nSnRDRVV0UVYxQnFBUHZINUxwYnNfTEM3NUY3MDg0SktJLTNQeVFOMTYtV19oY1FzYjVPbHFTNWhLVVpSd1BJYmJsbHlCbzJJRlNNbm01OEY0ckZ5U1UybTZNMTk0TktFUEw3S3J1OWNqMmt5eWdDNm1SN2RqcUNrWlJrZmh6QWZURUQ2RDhlMmJNVWJKZ0ZhLUxjSm92QXN5R2xZVnQyZGtQV2pmcDdfWW4yMmRXVDRPME5SMTlGSHpCSkdaZXpoTS0wMUJ5RGVyQkpodFR3X096OUpwcmVZdmJLVWVia21aYS1oejZPcFhyX0F1ZHlrZGNNY21TTFpxMG5aS0UyR2hPMGEyU1owbjBlWVpCd3J6eXNLOTlXZWFrZlNKU0V6ZEpXT1JkNjhpdnRnV0d1ejd4eEJ1aDNKbnRfcUhkRVk5UEx1MlRtbGlsYTE2ZkUyb3RGVkFaeE1YVEI2QTJqd2FoN25GQmt6TzdzTHF1NDVEVmk2NWtWaHdMWjBBcklORnFlSnpRaVRQQ0Y1MU9jTnd4N2dVQ2UtampBVFdWb3p5Szd2RDd0T3cwNm1ZRFVV\",\n      \"email\": \"itbrown@redhat.com\"\n    },\n    \"registry.redhat.io\": {\n      \"auth\": \"NzU2NzIzNXx1aGMtMUpMZEV1VmxBSTMzZ2o3eDlwR2s1Mkc2ZmVjOmV5SmhiR2NpT2lKU1V6VXhNaUo5LmV5SnpkV0lpT2lJNVlqVTFObVkzWVdaallUQTBNVEJqWVRnNE1tUmpaV1V6TXpZNE5XTTVPU0o5LlktbWhFRElVVHA4U1UySWI2Yno2Qy1NekFrS2EzU1RzSWdaUmRPTmR6ZjhkdzI3d001RkQ3ampXcjh4dnR2Yl9fVm96S002Vl9CbDZta2tLQk5xUlNiVDhkNi1oZG9KZWJueXJaU3lhNENFcVI1bWZobWFkTmVKOE1wV19qRkVXTGJDY3NYejJqczlSSlA5Y2tVdVR5ZFprZzM1TnZYTW02YnpES3JPV015U185MHdGU1czakVwVF9qc1R4cHhlU3VLXzVjZUZwMnZTNkVjeDlxNlQwX0lvTU83cks1VWU5bFVkSUF0RDlsbU9rRC1TVDlJaXZtZ0tyTi1nSnRDRVV0UVYxQnFBUHZINUxwYnNfTEM3NUY3MDg0SktJLTNQeVFOMTYtV19oY1FzYjVPbHFTNWhLVVpSd1BJYmJsbHlCbzJJRlNNbm01OEY0ckZ5U1UybTZNMTk0TktFUEw3S3J1OWNqMmt5eWdDNm1SN2RqcUNrWlJrZmh6QWZURUQ2RDhlMmJNVWJKZ0ZhLUxjSm92QXN5R2xZVnQyZGtQV2pmcDdfWW4yMmRXVDRPME5SMTlGSHpCSkdaZXpoTS0wMUJ5RGVyQkpodFR3X096OUpwcmVZdmJLVWVia21aYS1oejZPcFhyX0F1ZHlrZGNNY21TTFpxMG5aS0UyR2hPMGEyU1owbjBlWVpCd3J6eXNLOTlXZWFrZlNKU0V6ZEpXT1JkNjhpdnRnV0d1ejd4eEJ1aDNKbnRfcUhkRVk5UEx1MlRtbGlsYTE2ZkUyb3RGVkFaeE1YVEI2QTJqd2FoN25GQmt6TzdzTHF1NDVEVmk2NWtWaHdMWjBBcklORnFlSnpRaVRQQ0Y1MU9jTnd4N2dVQ2UtampBVFdWb3p5Szd2RDd0T3cwNm1ZRFVV\",\n      \"email\": \"itbrown@redhat.com\"\n    },\n    \"registry.ci.openshift.org\": {\n      \"auth\": \"dXNlcjpzaGEyNTZ+eXMyRllySkhSWVQxXy11RUdqUzRhYi1xMlAybGMxZjhxOUV2X1dFcG1pZw\u003d\u003d\"\n    }\n  }\n}",
+      "revId": "54db360a998e5fa726a68f4fa2eff9e3d6ba0878",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
