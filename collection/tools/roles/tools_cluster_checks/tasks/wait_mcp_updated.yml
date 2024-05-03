@@ -8,6 +8,8 @@
     - name: Wait for the machine config pool to finish the cluster updates
       ansible.builtin.shell: |
         oc wait --all --for=condition=Updated --timeout=1200s mcp
+      environment:
+        KUBECONFIG: "{{ kubeconfig }}"
       retries: "{{ wait_retries }}"
       delay: "{{ wait_delay }}"
       register: result

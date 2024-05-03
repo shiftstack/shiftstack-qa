@@ -18,11 +18,15 @@
   ansible.builtin.shell: |
     oc get pods -A -o wide > "{{ pods_before_cloud_cm_change }}"
   changed_when: false
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
 
 - name: Save the cloud provider ConfigMap in a file
   ansible.builtin.shell: |
     oc get cm cloud-provider-config -n openshift-config -o yaml > "{{ config_orig_path }}"
   changed_when: false
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
 
 - name: Read original cloud-provider-config
   ansible.builtin.shell: |
@@ -150,11 +154,15 @@
   ansible.builtin.shell: |
     oc replace --force --wait --filename "{{ config_to_apply_path }}"
   changed_when: true
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
 
 - name: Save the resulting cloud provider ConfigMap after application in a file
   ansible.builtin.shell: |
     oc get configmap/cloud-provider-config -n openshift-config -o yaml > "{{ config_applied_path }}"
   changed_when: false
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
 
 - name: Wait until the configuration is succesfully applied in the cluster
   block:
@@ -213,3 +221,5 @@
       ansible.builtin.shell: |
         oc get pods -A -o wide > "{{ pods_after_cloud_cm_change }}"
       changed_when: false
+      environment:
+        KUBECONFIG: "{{ kubeconfig }}"

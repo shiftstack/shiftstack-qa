@@ -4,6 +4,8 @@
 - name: Discover running OCP release
   ansible.builtin.command: "oc --request-timeout=2s get clusterversion"
   register: oc_get_clusterversion
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
   changed_when: false
   failed_when: false
 
@@ -15,6 +17,8 @@
         set -o pipefail
         oc --request-timeout=2s get network cluster -o json \
           | jq --raw-output '.spec.networkType'
+      environment:
+        KUBECONFIG: "{{ kubeconfig }}"
       changed_when: false
       register: oc_network
 

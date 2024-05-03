@@ -3,6 +3,7 @@
   block:
     - name: Active wait until all the ClusterOperators are ready
       kubernetes.core.k8s_info:
+        kubeconfig: "{{ kubeconfig }}"
         api_version: config.openshift.io/v1
         kind: ClusterOperator
       register: cluster_operators

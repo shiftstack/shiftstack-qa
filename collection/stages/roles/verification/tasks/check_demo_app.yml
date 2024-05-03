@@ -1,6 +1,7 @@
 ---
 - name: Get existing workers
   kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
     api_version: v1
     kind: Node
     label_selectors:
@@ -28,6 +29,7 @@
 
 - name: "Run the demo application for the project: {{ demo_project_name }}"
   kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
     state: present
     src: "{{ home_dir }}/demo.yaml"
     namespace: "{{ demo_project_name }}"
@@ -35,6 +37,7 @@
 
 - name: "Wait for Pods labelled app=demo: {{ num_workers | int }}"
   kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
     kind: Pod
     namespace: "{{ demo_project_name }}"
     label_selectors:
@@ -52,6 +55,7 @@
 
 - name: Get the demo service
   kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
     kind: Service
     name: demo
     namespace: "{{ demo_project_name }}"
@@ -63,6 +67,8 @@
 
 - name: Check connectivity to the service
   ansible.builtin.command: "oc exec -t {{ first_pod_name }} -n {{ demo_project_name }} -- curl {{ demo_svc_ip }}"
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
   register: pod_result
   retries: 30
   delay: 10
