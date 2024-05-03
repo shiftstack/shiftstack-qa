@@ -2,6 +2,8 @@
 - name: Make sure we are in the default project
   ansible.builtin.shell: |
     oc project default
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
   changed_when: true
   failed_when: false
 

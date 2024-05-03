@@ -7,6 +7,8 @@
 
     - name: Create a Prometheus token
       ansible.builtin.command: oc create token prometheus-k8s -n openshift-monitoring
+      environment:
+        KUBECONFIG: "{{ kubeconfig }}"
       changed_when: true
       register: token
 

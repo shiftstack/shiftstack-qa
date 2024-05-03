@@ -17,6 +17,8 @@
   rescue:
     - name: Get ClusterVersion
       ansible.builtin.command: oc get clusterversion
+      environment:
+        KUBECONFIG: "{{ kubeconfig }}"
       changed_when: false
       register: cluster_version
 
