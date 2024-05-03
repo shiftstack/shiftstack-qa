@@ -1,5 +1,5 @@
 ---
-# Goal: Create pvcs using topology aware storage class and confirms they behave as expected
+# Goal: Create pvcs using default StoraceClass and confirms they behave as expected
 - name: "Re-create project {{ cinder_csi_project_name }}"
   ansible.builtin.include_role:
     name: tools_ocp_project
@@ -64,17 +64,8 @@
   when: edge_nova_az is defined
 
 ### Create & apply manifests:
-#  - New storageClass with each AZ pairing (per worker) is created.
-#  - A pvc using the new storageClass is created.
+#  - A pvc using the default StorageClass is created.
 #  - The pods are instructed to be scheduled on the appropiate nova AZ.
-
-- name: Remove existing topologyaware storageclases
-  kubernetes.core.k8s:
-    state: absent
-    api_version: storage.k8s.io/v1
-    kind: StorageClass
-    name: topology-aware-{{ item }}
-  loop: "{{ range(number_of_workers | int) | list }}"
 
 - name: "Create manifests for namespace {{ cinder_csi_project_name }}"
   ansible.builtin.template:

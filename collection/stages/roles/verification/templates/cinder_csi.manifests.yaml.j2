@@ -1,13 +1,4 @@
 ---
-apiVersion: storage.k8s.io/v1
-kind: StorageClass
-metadata:
-  name: topology-aware-{{ item }}
-provisioner: cinder.csi.openstack.org
-parameters:
-  availability: {{ cinder_az_for_sc[item] }}
-volumeBindingMode: WaitForFirstConsumer
----
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -19,7 +10,7 @@ spec:
   resources:
     requests:
       storage: 1Gi
-  storageClassName: topology-aware-{{ item }}
+  #storageClassName: <undefined will use the default storageClass>
 ---
 apiVersion: apps/v1
 kind: Deployment

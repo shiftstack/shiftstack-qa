@@ -22,11 +22,7 @@ data:
       retention: 1d
       volumeClaimTemplate:
         spec:
-{% if az_enable %}
-          storageClassName: topology-aware-nova
-{% else %}
           #storageClassName: <undefined will use the default storageClass>
-{% endif %}
           resources:
             requests:
               storage: 4Gi
