@@ -13,6 +13,8 @@
             select((.status.conditions[] | select(.type == "Available")).status == "False"
             or (.status.conditions[] | select(.type == "Progressing")).status == "True"
             or (.status.conditions[] | select(.type == "Degraded")).status == "True") | .metadata.name'
+      environment:
+        KUBECONFIG: "{{ kubeconfig }}"
       register: unready_clusteroperators
       changed_when: false
 

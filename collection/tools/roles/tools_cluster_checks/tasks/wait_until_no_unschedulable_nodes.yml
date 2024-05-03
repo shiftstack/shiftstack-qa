@@ -16,6 +16,8 @@
   rescue:
     - name: Get cluster nodes
       ansible.builtin.command: oc get nodes
+      environment:
+        KUBECONFIG: "{{ kubeconfig }}"
       changed_when: false
       register: cluster_nodes
 

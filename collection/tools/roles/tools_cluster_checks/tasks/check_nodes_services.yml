@@ -23,6 +23,8 @@
       ansible.builtin.shell: |
         set -o pipefail
         oc debug -q node/{{ ocp_node }} -- chroot /host sudo systemctl list-units --failed | grep '●' | awk '{print $2}'
+      environment:
+        KUBECONFIG: "{{ kubeconfig }}"
       until: not units_result.failed
       register: units_result
       changed_when: false
