@@ -17,6 +17,7 @@
 
 - name: Apply manifests for {{ manila_project_name }} namespace and check they are running
   kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
     state: present
     src: "{{ home_dir }}/manila.manifests.yaml"
     wait: yes
@@ -25,6 +26,7 @@
 # Check that manila PVC is created on openstack
 - name: Get created PVCs on {{ manila_project_name }}
   kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
     kind: pvc
     namespace: "{{ manila_project_name }}"
   register: existing_pvcs
@@ -41,6 +43,7 @@
 # Check that writes/reads on the manila PVC are persistent across the pods (ReadWriteMany)
 - name: Get pod names
   kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
     kind: Pod
     namespace: "{{ manila_project_name }}"
   register: demo_pods

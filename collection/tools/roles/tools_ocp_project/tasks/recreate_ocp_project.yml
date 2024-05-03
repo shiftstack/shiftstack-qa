@@ -3,6 +3,7 @@
   block:
     - name: Check if {{ project_name }} project exists
       kubernetes.core.k8s_info:
+        kubeconfig: "{{ kubeconfig }}"
         kind: Project
         name: "{{ project_name }}"
         api_version: project.openshift.io/v1
@@ -10,6 +11,7 @@
 
     - name: Delete the {{ project_name }} project
       kubernetes.core.k8s:
+        kubeconfig: "{{ kubeconfig }}"
         state: absent
         api_version: project.openshift.io/v1
         kind: Project
@@ -20,6 +22,7 @@
 
     - name: Wait for the {{ project_name }} project to be deleted
       kubernetes.core.k8s_info:
+        kubeconfig: "{{ kubeconfig }}"
         kind: Project
         name: "{{ project_name }}"
         api_version: project.openshift.io/v1
@@ -34,6 +37,7 @@
 
     - name: Create the {{ project_name }} project
       kubernetes.core.k8s:
+        kubeconfig: "{{ kubeconfig }}"
         state: present
         api_version: project.openshift.io/v1
         kind: Project

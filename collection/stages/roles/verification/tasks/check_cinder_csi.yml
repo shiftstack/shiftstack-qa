@@ -22,6 +22,7 @@
 
 - name: Get existing workers
   kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
     api_version: v1
     kind: Node
     label_selectors:
@@ -76,6 +77,7 @@
 
 - name: "Apply manifests for namespace and check they are running: {{ cinder_csi_project_name }}"
   kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
     state: present
     src: "{{ home_dir }}/cinder_csi_{{ item }}.yaml"
     wait: yes
@@ -85,6 +87,7 @@
 # Check that one cinder volume per PVC is created on openstack
 - name: Get created PVCs
   kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
     kind: pvc
     namespace: "{{ cinder_csi_project_name }}"
   register: existing_pvcs
@@ -120,6 +123,7 @@
 # Check that writes on the PVC are persistent (ReadWriteOnce)
 - name: Get pod names
   kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
     kind: Pod
     namespace: "{{ cinder_csi_project_name }}"
   register: demo_pods
@@ -135,6 +139,7 @@
 
 - name: Delete pods
   kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
     api_version: v1
     kind: Pod
     namespace: "{{ cinder_csi_project_name }}"
@@ -146,6 +151,7 @@
 
 - name: Get recreated pod names
   kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
     kind: Pod
     namespace: "{{ cinder_csi_project_name }}"
     field_selectors:

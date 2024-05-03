@@ -3,6 +3,7 @@
 - name: Set the update channel to null (To avoid CannotRetrieveUpdates alert)
   kubernetes.core.k8s:
     state: present
+    kubeconfig: "{{ kubeconfig }}"
     definition:
       apiVersion: config.openshift.io/v1
       kind: ClusterVersion

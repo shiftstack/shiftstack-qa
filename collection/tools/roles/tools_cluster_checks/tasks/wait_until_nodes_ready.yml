@@ -3,6 +3,7 @@
   block:
     - name: Wait until cluster nodes are ready
       kubernetes.core.k8s_info:
+        kubeconfig: "{{ kubeconfig }}"
         api_version: v1
         kind: Node
       register: nodes
@@ -19,6 +20,8 @@
   rescue:
     - name: Get cluster nodes
       ansible.builtin.command: oc get nodes
+      environment:
+        KUBECONFIG: "{{ kubeconfig }}"
       changed_when: false
       register: cluster_nodes
 

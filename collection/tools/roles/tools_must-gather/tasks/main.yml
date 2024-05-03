@@ -1,6 +1,8 @@
 ---
 - name: Run must-gather for debugging the cluster's status
   ignore_errors: yes # noqa: ignore-errors
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
   block:
     - name: Create oc config directory .kube/
       ansible.builtin.file:
