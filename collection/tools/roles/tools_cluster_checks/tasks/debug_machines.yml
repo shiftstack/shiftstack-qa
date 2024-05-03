@@ -1,6 +1,8 @@
 ---
 - name: Get Instances, Nodes, Machines, and MachineSets information
   ignore_errors: yes # noqa: ignore-errors
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
   block:
     - name: Get OCP machinesets status
       ansible.builtin.command: 'oc get machinesets -A'
