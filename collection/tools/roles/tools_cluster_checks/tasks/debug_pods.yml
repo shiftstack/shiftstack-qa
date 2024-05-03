@@ -1,6 +1,8 @@
 ---
 - name: Check the unready Pods
   ignore_errors: yes # noqa: ignore-errors
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
   block:
     - name: Get the Pods
       ansible.builtin.command: 'oc get pods -A'
