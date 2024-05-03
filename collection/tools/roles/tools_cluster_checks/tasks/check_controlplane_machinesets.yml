@@ -3,6 +3,7 @@
   block:
     - name: Get the Control Plane MachineSet resource
       kubernetes.core.k8s_info:
+        kubeconfig: "{{ kubeconfig }}"
         api_version: machine.openshift.io/v1
         kind: ControlPlaneMachineSet
       register: cpms

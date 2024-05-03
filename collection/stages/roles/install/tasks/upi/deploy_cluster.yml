@@ -73,6 +73,8 @@
         set -o pipefail &&
         oc get csr -o json | jq -r '.items[] | select(.status == {} and (.spec.username | contains("bootstrapper"))) | .metadata.name'
       changed_when: false
+      environment:
+        KUBECONFIG: "{{ kubeconfig }}"
       register: client_csrs
       until: client_csrs.stdout_lines | length >= topology.replicas.worker | int
       retries: "{{ wait_retries }}"
@@ -82,6 +84,8 @@
       ansible.builtin.shell: |
         oc adm certificate approve {{ item }}
       changed_when: true
+      environment:
+        KUBECONFIG: "{{ kubeconfig }}"
       with_items: "{{ client_csrs.stdout_lines }}"
 
     - name: Wait until there are at least {{ topology.replicas.worker }} worker server CSRs (worker-x) in pending status
@@ -89,6 +93,8 @@
         set -o pipefail &&
         oc get csr -o json | jq -r '.items[] | select(.status == {} and (.spec.username | contains("worker"))) | .metadata.name'
       changed_when: false
+      environment:
+        KUBECONFIG: "{{ kubeconfig }}"
       register: server_csrs
       until: server_csrs.stdout_lines|length >= topology.replicas.worker | int
       retries: 30
@@ -98,6 +104,8 @@
       ansible.builtin.shell: |
         oc adm certificate approve {{ item }}
       changed_when: true
+      environment:
+        KUBECONFIG: "{{ kubeconfig }}"
       with_items: "{{ server_csrs.stdout_lines }}"
 
 - name: Wait until the installation is completed

@@ -7,6 +7,7 @@
 
     - name: Ensure the "{{ test_id }}-ns" project is not already present
       kubernetes.core.k8s:
+        kubeconfig: "{{ kubeconfig }}"
         api_version: project.openshift.io/v1
         state: absent
         kind: Project
@@ -22,6 +23,7 @@
 
         - name: Apply the manifest for resource creation
           kubernetes.core.k8s:
+            kubeconfig: "{{ kubeconfig }}"
             state: present
             src: "{{ home_dir }}/lb_verification_resources.yaml"
             wait: yes
@@ -29,6 +31,7 @@
 
     - name: Wait until the LB is created and ready
       kubernetes.core.k8s_info:
+        kubeconfig: "{{ kubeconfig }}"
         api_version: v1
         kind: Service
         namespace: "{{ test_id }}-ns"
@@ -78,6 +81,7 @@
 
     - name: Get pod names
       kubernetes.core.k8s_info:
+        kubeconfig: "{{ kubeconfig }}"
         kind: Pod
         namespace: "{{ test_id }}-ns"
       register: pods
@@ -111,6 +115,7 @@
 
     - name: Delete the "{{ test_id }}-ns" project
       kubernetes.core.k8s:
+        kubeconfig: "{{ kubeconfig }}"
         api_version: project.openshift.io/v1
         state: absent
         kind: Project
@@ -118,6 +123,7 @@
 
     - name: Wait until the project "{{ test_id }}-ns" is deleted
       kubernetes.core.k8s_info:
+        kubeconfig: "{{ kubeconfig }}"
         api_version: project.openshift.io/v1
         kind: Project
         name: "{{ test_id }}-ns"

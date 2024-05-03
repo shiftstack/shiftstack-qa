@@ -4,8 +4,6 @@
   gather_facts: no
   vars_files:
     - "../configs/global.yml"
-  environment:
-    KUBECONFIG: "{{ kubeconfig }}"
   pre_tasks:
     - name: Gather host environment variables
       ansible.builtin.setup:
@@ -78,8 +76,6 @@
     - "../configs/global.yml"
     - "../configs/secret.yaml"
     - "../configs/legacy_ocp_testing.yaml"
-  environment:
-    KUBECONFIG: "{{ kubeconfig }}"
   tasks:
     - name: Install OCP on setup
       ansible.builtin.include_role:
@@ -92,8 +88,6 @@
   gather_facts: no
   vars_files:
     - "../configs/global.yml"
-  environment:
-    KUBECONFIG: "{{ kubeconfig }}"
   tasks:
     - name: Discover OCP version and networkType
       ansible.builtin.include_role:
@@ -111,8 +105,6 @@
   gather_facts: no
   vars_files:
     - "../configs/global.yml"
-  environment:
-    KUBECONFIG: "{{ kubeconfig }}"
   tasks:
     - name: Run OCP verification checks
       ansible.builtin.include_role:
@@ -127,8 +119,6 @@
   gather_facts: no
   vars_files:
     - "../configs/global.yml"
-  environment:
-    KUBECONFIG: "{{ kubeconfig }}"
   tasks:
     - name: Run Openstack-Test on OCP
       ansible.builtin.include_role:
@@ -141,8 +131,6 @@
   gather_facts: no
   vars_files:
     - "../configs/global.yml"
-  environment:
-    KUBECONFIG: "{{ kubeconfig }}"
   tasks:
     - name: Run Openshift Conformance Test on OCP
       ansible.builtin.include_role:

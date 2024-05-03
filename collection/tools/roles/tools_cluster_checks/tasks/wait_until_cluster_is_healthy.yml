@@ -3,6 +3,7 @@
   block:
     - name: Wait until OCP cluster is healthy (available, not progressing and not failing)
       kubernetes.core.k8s_info:
+        kubeconfig: "{{ kubeconfig }}"
         kind: ClusterVersion
       register: cluster_version
       until:
@@ -17,6 +18,8 @@
   rescue:
     - name: Get ClusterVersion
       ansible.builtin.command: oc get clusterversion
+      environment:
+        KUBECONFIG: "{{ kubeconfig }}"
       changed_when: false
       register: cluster_version
 

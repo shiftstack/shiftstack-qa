@@ -1,6 +1,8 @@
 ---
 - name: Get PODs statuses
   ansible.builtin.command: 'oc get pods --all-namespaces -o json'
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
   no_log: true
   changed_when: false
   register: oc_pods
@@ -28,6 +30,7 @@
 
 - name: Get the Image registry config
   kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
     api_version: imageregistry.operator.openshift.io/v1
     kind: Config
     name: cluster
@@ -56,6 +59,7 @@
     # https://docs.openshift.com/container-platform/4.10/registry/configuring_registry_storage/configuring-registry-storage-openstack-user-infrastructure.html
     - name: Set image-registry to trust Swift
       kubernetes.core.k8s:
+        kubeconfig: "{{ kubeconfig }}"
         state: present
         definition:
           apiVersion: imageregistry.operator.openshift.io/v1
@@ -67,6 +71,7 @@
 
     - name: Wait until the operator image-registry is available and not progressing or degraded
       kubernetes.core.k8s_info:
+        kubeconfig: "{{ kubeconfig }}"
         kind: ClusterOperator
         api_version: config.openshift.io/v1
         name: image-registry
@@ -111,6 +116,8 @@
             }
           }'
       changed_when: true
+      environment:
+        KUBECONFIG: "{{ kubeconfig }}"
 
     # Iterate all swift containers - W/A until https://issues.redhat.com/browse/OCPBUGS-15967 is fixed
     - name: Get the images objects in swift for the {{ swift_check_ns }} namespace from the containers
@@ -140,9 +147,12 @@
     - name: Make sure we are in the default project
       ansible.builtin.command: oc project default
       changed_when: true
+      environment:
+        KUBECONFIG: "{{ kubeconfig }}"
 
     - name: Delete {{ swift_check_ns }} project
       kubernetes.core.k8s:
+        kubeconfig: "{{ kubeconfig }}"
         state: absent
         api_version: project.openshift.io/v1
         kind: Project

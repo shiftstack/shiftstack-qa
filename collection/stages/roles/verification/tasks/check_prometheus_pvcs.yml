@@ -7,6 +7,7 @@
 
 - name: Apply configMap for openshift-monitoring namespace and check they are running.
   kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
     state: present
     src: "{{ home_dir }}/cluster-monitoring-config.yaml"
     wait: yes
@@ -15,6 +16,7 @@
 # Check that prometheus PVC is created on openstack
 - name: Get created PVCs on openshift-monitoring
   kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
     kind: pvc
     namespace: "openshift-monitoring"
   register: monitoring_pvcs
@@ -40,6 +42,7 @@
 
 - name: Wait until prometheus pods are recreated
   kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
     kind: Pod
     namespace: "openshift-monitoring"
     label_selectors:
