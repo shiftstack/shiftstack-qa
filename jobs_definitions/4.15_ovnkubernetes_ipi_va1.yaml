@@ -1,6 +1,6 @@
 ---
 openshift_release: 4.15 # It can be "4.10", "4.11", etc. or "4-stable"
-openshift_build_name: "" # It can be an empty value "" (latest nightly), a given build
+openshift_build_name: "candidate" # It can be an empty value "" (latest nightly), a given build
 openshift_network_type: OVNKubernetes
 installation_type: ipi
 stages:
@@ -36,3 +36,4 @@ topology:
   machine_cidr: 10.196.0.0/16
 
 octavia_blocker_bugs_fixed: false # Amphora-Octavia is not working in RHOSP18 until OSPRH-387 and OSPRH-399 are done
+ceph_nfs_ready: false # manila-ganesha is not configured on VA-HCI for now (OSASINFRA-3413)
