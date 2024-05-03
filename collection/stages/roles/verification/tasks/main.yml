@@ -110,6 +110,7 @@
       when:
         - installation_type != 'upi'
         - manila_enabled.rc == 0
+        - ceph_nfs_ready|bool|default(true)
         - edge_nova_az is not defined # Skip due to Openstack Manila is not supported at the Edge
 
     - name: Check cluster health after the verification actions
