@@ -16,6 +16,23 @@
       "message": "Tested on titan19",
       "revId": "8d6427269eb94f8f9b28c85b916af2a07577943c",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "90c3a9dd_1b990664",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-05-06T10:57:08Z",
+      "side": 1,
+      "message": "@rlobillo@redhat.com , @juriarte@redhat.com\nshould we remove the `K8S_AUTH_KUBECONFIG` and `KUBECONFIG` from the https://github.com/shiftstack/shiftstack-qa/tree/main/playbooks?",
+      "revId": "8d6427269eb94f8f9b28c85b916af2a07577943c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
