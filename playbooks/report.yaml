@@ -1,0 +1,33 @@
+---
+- name: Report result if any
+  hosts: localhost
+  vars_files:
+    - "../configs/secret.yaml"
+  gather_facts: no
+  pre_tasks:
+    - name: Gather host environment variables
+      ansible.builtin.setup:
+        gather_subset:
+          - env
+
+  tasks:
+    - name: Define headers and entries
+      set_fact:
+        header: # Will be used only if the sheet doesn't have it.
+          - 'timestamp'
+          - 'ocp_version'
+          - 'osp_version'
+          - 'test_result'
+        input:
+          - "{{ ansible_facts.date_time.iso8601 }}"
+          - "4.15.xxx" # gather from artifacts dir?
+          - "OSP18.0.yyy"
+          - "https://thisisthetestresult.com"
+
+    - name: Push entry in spreadsheet
+      shiftstack.tools.report_entry:
+        credentials: "{{ googleapi_sa }}"
+        job_name: 4.15_ipi_va1
+        header: "{{ header | join(',') }}"
+        input:  "{{ input | join(',') }}"
+        output_spreadsheet: "OSP18-CI Results for OSASINFRA"
