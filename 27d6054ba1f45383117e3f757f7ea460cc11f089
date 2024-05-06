@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a3bafe0b_1f69649d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-05-06T14:17:00Z",
+      "side": 1,
+      "message": "Ey  @imatza@redhat.com, when you have some time I\u0027d like to know your opinion about this. I think you suggested something like this some time ago.",
+      "revId": "27d6054ba1f45383117e3f757f7ea460cc11f089",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "11276a71_88f922f2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-05-06T14:17:00Z",
+      "side": 1,
+      "message": "Ey  @imatza@redhat.com, when you have some time I\u0027d like to know your opinion about this. I think you suggested something like this sometime ago.",
+      "revId": "27d6054ba1f45383117e3f757f7ea460cc11f089",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
