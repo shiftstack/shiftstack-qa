@@ -33,6 +33,24 @@
       "message": "@rlobillo@redhat.com , @juriarte@redhat.com\nshould we remove the `K8S_AUTH_KUBECONFIG` and `KUBECONFIG` from the https://github.com/shiftstack/shiftstack-qa/tree/main/playbooks?",
       "revId": "8d6427269eb94f8f9b28c85b916af2a07577943c",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6807cc9c_0bf74225",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-05-07T10:14:52Z",
+      "side": 1,
+      "message": "I think so, but we need to add K8S_AUTH_KUBECONFIG in all the k8s modules before removing them, right?",
+      "parentUuid": "90c3a9dd_1b990664",
+      "revId": "8d6427269eb94f8f9b28c85b916af2a07577943c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
