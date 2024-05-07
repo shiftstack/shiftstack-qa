@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4e2dcf0f_49f77908",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-05-07T15:38:01Z",
+      "side": 1,
+      "message": "Tested manually in OSP 18 env",
+      "revId": "6b66d395d5ded0e3fc8c81a8521808379ebcd8c5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
