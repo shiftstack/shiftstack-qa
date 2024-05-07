@@ -33,17 +33,17 @@
   openstack.cloud.auth:
     cloud: "{{ user_cloud }}"
 
-- name: Generate RC file for {{ user_cloud }}
-  ansible.builtin.template:
-    src: user_env_file.j2
-    dest: "{{ home_dir }}/{{ user_cloud }}rc"
-    mode: u=rw,g=rw,o=r
-
 - name: Create a directory for the openstack files
   ansible.builtin.file:
     path: "{{ osp_config_dir }}"
     state: directory
     mode: u=rwx,g=rw,o=r
+
+- name: Generate RC file for {{ user_cloud }}
+  ansible.builtin.template:
+    src: user_env_file.j2
+    dest: "{{ osp_config_dir }}/{{ user_cloud }}rc"
+    mode: u=rw,g=rw,o=r
 
 - name: "Copy clouds.yaml to {{ osp_config_dir }}"
   ansible.builtin.copy:

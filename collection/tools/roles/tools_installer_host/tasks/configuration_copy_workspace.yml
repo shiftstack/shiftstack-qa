@@ -1,7 +1,7 @@
 ---
-- name: Copy files from the local home dir to the installer host VM
+- name: Copy files from the OSP config directory to the installer host VM
   ansible.builtin.copy:
-    src: "{{ home_dir }}/{{ item }}"
+    src: "{{ osp_config_dir }}/{{ item }}"
     dest: "~/{{ item }}"
     mode: u=rw,g=rw,o=r
   loop: "{{ files_to_copy }}"
