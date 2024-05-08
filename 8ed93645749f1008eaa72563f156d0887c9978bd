@@ -3,6 +3,46 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "31306c4f_09029e7b",
+        "filename": "collection/stages/roles/csi_tests/tasks/openshift_cinder_csi.yml",
+        "patchSetId": 7
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-05-08T11:12:34Z",
+      "side": 1,
+      "message": "Do we want to support Cinder CSI for OCP \u003c 4.16?\nhttps://code.engineering.redhat.com/gerrit/c/openshift-ir-plugin/+/451680",
+      "revId": "8ed93645749f1008eaa72563f156d0887c9978bd",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6ddbe3db_0094d95b",
+        "filename": "collection/stages/roles/csi_tests/templates/manila_test_manifest.yaml.j2",
+        "patchSetId": 7
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-05-08T11:12:34Z",
+      "side": 1,
+      "message": "is this one still relevant? https://code.engineering.redhat.com/gerrit/c/openshift-ir-plugin/+/311708\n\nWith a virt env, all of the manilacsi tests failed due to the `FromExistingClassName`",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 8,
+        "endChar": 95
+      },
+      "revId": "8ed93645749f1008eaa72563f156d0887c9978bd",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "2df565e7_ad497b19",
         "filename": "jobs_definitions/4.16_ovnkubernetes_upi.yaml",
         "patchSetId": 7
