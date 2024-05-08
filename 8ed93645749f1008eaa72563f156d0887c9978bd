@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2df565e7_ad497b19",
+        "filename": "jobs_definitions/4.16_ovnkubernetes_upi.yaml",
+        "patchSetId": 7
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-05-08T11:03:13Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 13,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 20
+      },
+      "revId": "8ed93645749f1008eaa72563f156d0887c9978bd",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
