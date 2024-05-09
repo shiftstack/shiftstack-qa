@@ -24,6 +24,13 @@
   delay: 10
   until: not result.failed
 
+- name: Install Python packages via pip in the installer host
+  ansible.builtin.pip:
+    name: "{{ item }}"
+    state: present
+  become: yes
+  loop: "{{ installer_python_packages }}"
+
 - name: Install ansible and ansible collections for UPI
   when: installation_type == 'upi'
   block:
@@ -46,13 +53,6 @@
       retries: 10
       delay: 10
       until: not result.failed
-
-    - name: Install Python packages
-      ansible.builtin.pip:
-        name: "{{ item }}"
-        state: present
-      become: yes
-      loop: "{{ installer_python_packages }}"
 
 - name: Ensure that the python command points to python3
   when: installation_type == 'upi'
