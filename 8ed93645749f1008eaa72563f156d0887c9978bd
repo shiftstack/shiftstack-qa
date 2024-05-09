@@ -41,6 +41,52 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e01d35a1_5e621642",
+        "filename": "collection/stages/roles/lb_tests/tasks/main.yml",
+        "patchSetId": 7
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-05-09T10:14:54Z",
+      "side": 1,
+      "message": "ansible-lint failed for me without this change",
+      "range": {
+        "startLine": 16,
+        "startChar": 0,
+        "endLine": 18,
+        "endChar": 0
+      },
+      "revId": "8ed93645749f1008eaa72563f156d0887c9978bd",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ef511f5f_c415343e",
+        "filename": "collection/stages/roles/verification/tasks/main.yml",
+        "patchSetId": 7
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-05-09T10:14:54Z",
+      "side": 1,
+      "message": "this task failed for me without this change",
+      "range": {
+        "startLine": 93,
+        "startChar": 0,
+        "endLine": 93,
+        "endChar": 59
+      },
+      "revId": "8ed93645749f1008eaa72563f156d0887c9978bd",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2df565e7_ad497b19",
@@ -54,6 +100,30 @@
       "writtenOn": "2024-05-08T11:03:13Z",
       "side": 1,
       "message": "remove",
+      "range": {
+        "startLine": 13,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 20
+      },
+      "revId": "8ed93645749f1008eaa72563f156d0887c9978bd",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "951602f9_063a6099",
+        "filename": "jobs_definitions/4.16_ovnkubernetes_upi.yaml",
+        "patchSetId": 7
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-05-09T10:14:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2df565e7_ad497b19",
       "range": {
         "startLine": 13,
         "startChar": 0,

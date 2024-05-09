@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f376fce9_4e91c49c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-05-09T10:14:54Z",
+      "side": 1,
+      "message": "Verified with OCP 4.16 with IPI/UPI on a legacy venv setup.\n\nNote that with a virt env, all of the manilacsi tests failed due to the `FromExistingClassName` - https://review.gerrithub.io/c/shiftstack/shiftstack-qa/+/1193800/8/collection/stages/roles/csi_tests/templates/manila_test_manifest.yaml.j2#8",
+      "revId": "27d4ca15cbd6b7a51bbb4f6765b0217258925ccf",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}

@@ -24,6 +24,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "48ba0018_2f83f77e",
+        "filename": "jobs_definitions/4.15_ovnkubernetes_ipi.yaml",
+        "patchSetId": 6
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-05-09T10:14:54Z",
+      "side": 1,
+      "message": "Verified only with OCP 4.16.\nLet me know if we should CSI tests for OCP \u003c 4.16",
+      "parentUuid": "10ff168d_8628e623",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 16,
+        "endChar": 0
+      },
+      "revId": "38d3196cc97c671e474f64c055c886e85b6e6cb8",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "16adfd5b_264fcdec",
