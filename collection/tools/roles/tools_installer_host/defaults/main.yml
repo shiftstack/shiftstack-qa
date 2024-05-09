@@ -17,13 +17,14 @@ installer_required_packages:
   - 'python3-manilaclient'
   - 'python3-netaddr'
   - 'python3-octaviaclient'
+  - 'python3-pip'
   - 'jq'
   - 'qemu-img'
   - 'make'
 
 installer_python_packages:
-  - 'openshift'
-  - 'pyyaml'
+  #- 'openshift'
+  #- 'pyyaml'
   - 'kubernetes'
   - 'junit2html==26'
   - 'lxml'
