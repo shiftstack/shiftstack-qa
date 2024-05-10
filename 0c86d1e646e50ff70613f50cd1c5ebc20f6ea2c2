@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ac39ad1c_4aaebe87",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-05-10T12:22:40Z",
+      "side": 1,
+      "message": "Tested in https://sf.hosted.upshift.rdu2.redhat.com/logs/12/112/157ca999a65bc80abcabd486102ee3b981d03542/check-gitlab-cee/shiftstack-va1-titan08/6e8e918/logs/controller-0/ci-framework-data/tests/shiftstack/artifacts/ansible-log.txt",
+      "revId": "0c86d1e646e50ff70613f50cd1c5ebc20f6ea2c2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
