@@ -5,6 +5,7 @@ home_dir: "{{ ansible_facts.env['HOME'] }}"
 artifacts_dir: "{{ home_dir }}/artifacts"
 installation_dir: "{{ home_dir }}/installation/{{ user_cloud }}/{{ ocp_cluster_name }}"
 osp_config_dir: "{{ home_dir }}/installation/{{ user_cloud }}/openstack"
+polarion_dir: "{{ artifacts_dir }}/test_results"
 kubeconfig: "{{ installation_dir }}/auth/kubeconfig"
 upi_playbooks_dir: "{{ installation_dir }}"
 
