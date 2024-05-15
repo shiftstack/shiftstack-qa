@@ -194,6 +194,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "4dc49357_285ea914",
+        "filename": "collection/stages/roles/cleanup/tasks/openstack_project_cleanup.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1037821
+      },
+      "writtenOn": "2024-05-15T14:55:54Z",
+      "side": 1,
+      "message": "it was there because I wanted to fetch the name of the project with the ID, but I managed to do that diffrently.",
+      "parentUuid": "6adbaf1e_020d008e",
+      "range": {
+        "startLine": 4,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 105
+      },
+      "revId": "daf6c6c3d8bdb0b6d615066df306952aff7b0ee5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f0e3058b_112061a2",
