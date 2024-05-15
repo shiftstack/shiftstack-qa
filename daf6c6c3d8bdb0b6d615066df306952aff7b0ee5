@@ -41,6 +41,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5e855601_a1e0e6fa",
+        "filename": "collection/stages/roles/cleanup/tasks/detect_env.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1037821
+      },
+      "writtenOn": "2024-05-15T14:54:14Z",
+      "side": 1,
+      "message": "will be implemented on UPI cleanup patch",
+      "parentUuid": "ac1640e4_d859cf17",
+      "range": {
+        "startLine": 15,
+        "startChar": 24,
+        "endLine": 15,
+        "endChar": 86
+      },
+      "revId": "daf6c6c3d8bdb0b6d615066df306952aff7b0ee5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "71a8caf0_39a50868",
@@ -54,6 +78,24 @@
       "writtenOn": "2024-04-25T14:25:08Z",
       "side": 1,
       "message": "be careful. We shouldn\u0027t do this. You should destroy only on project not all of them. Please read https://issues.redhat.com/browse/OSPRH-4170?focusedId\u003d24535678\u0026page\u003dcom.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-24535678",
+      "revId": "daf6c6c3d8bdb0b6d615066df306952aff7b0ee5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "83f6c037_f5eebbf5",
+        "filename": "collection/stages/roles/cleanup/tasks/openstack_cleanup.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1037821
+      },
+      "writtenOn": "2024-05-15T14:54:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "71a8caf0_39a50868",
       "revId": "daf6c6c3d8bdb0b6d615066df306952aff7b0ee5",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
@@ -81,6 +123,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "20911536_2412c3cf",
+        "filename": "collection/stages/roles/cleanup/tasks/openstack_cleanup.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1037821
+      },
+      "writtenOn": "2024-05-15T14:54:14Z",
+      "side": 1,
+      "message": "I made the loop instead of checking before if the project exsists, we have only 1 project as it fetched with : \n```- name: Check if target project exists\n  openstack.cloud.project_info:\n    cloud: \"{{ admin_cloud }}\"\n    name: \"{{ user_cloud }}\"\n  register: project_info```",
+      "parentUuid": "f66bf496_f3bee775",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 15,
+        "endChar": 24
+      },
+      "revId": "daf6c6c3d8bdb0b6d615066df306952aff7b0ee5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "362698d4_3b41f55f",
@@ -94,6 +160,30 @@
       "writtenOn": "2024-04-25T14:25:08Z",
       "side": 1,
       "message": "Aren´t you setting the targt project in openstack_cleanup.yml?",
+      "range": {
+        "startLine": 4,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 105
+      },
+      "revId": "daf6c6c3d8bdb0b6d615066df306952aff7b0ee5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6adbaf1e_020d008e",
+        "filename": "collection/stages/roles/cleanup/tasks/openstack_project_cleanup.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1037821
+      },
+      "writtenOn": "2024-05-15T14:54:14Z",
+      "side": 1,
+      "message": "removed",
+      "parentUuid": "362698d4_3b41f55f",
       "range": {
         "startLine": 4,
         "startChar": 0,
@@ -129,6 +219,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "80fec4c8_183a40f3",
+        "filename": "collection/stages/roles/cleanup/tasks/openstack_project_cleanup.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1037821
+      },
+      "writtenOn": "2024-05-15T14:54:14Z",
+      "side": 1,
+      "message": "I get this error while trying to do it directly : \n```TASK [shiftstack.stages.cleanup : Get all volumes in the specific project] *****\nfatal: [localhost]: FAILED! \u003d\u003e {\"changed\": false, \"msg\": \"Unsupported parameters for (openstack.cloud.volume_info) module: filters. Supported parameters include: all_projects, api_timeout, auth, auth_type, availability_zone, ca_cert, client_cert, client_key, cloud, details, interface, name, region_name, sdk_log_level, sdk_log_path, status, timeout, validate_certs, wait (cacert, cert, endpoint_type, key, verify).\"}   ```",
+      "parentUuid": "f0e3058b_112061a2",
+      "range": {
+        "startLine": 36,
+        "startChar": 0,
+        "endLine": 49,
+        "endChar": 27
+      },
+      "revId": "daf6c6c3d8bdb0b6d615066df306952aff7b0ee5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "ef7838bc_e85616ad",
         "filename": "collection/stages/roles/cleanup/tasks/openstack_project_cleanup.yml",
         "patchSetId": 8
@@ -140,6 +254,30 @@
       "writtenOn": "2024-04-25T14:25:08Z",
       "side": 1,
       "message": "or not 😊",
+      "range": {
+        "startLine": 98,
+        "startChar": 23,
+        "endLine": 98,
+        "endChar": 37
+      },
+      "revId": "daf6c6c3d8bdb0b6d615066df306952aff7b0ee5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4d826e03_cee9335d",
+        "filename": "collection/stages/roles/cleanup/tasks/openstack_project_cleanup.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 1037821
+      },
+      "writtenOn": "2024-05-15T14:54:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ef7838bc_e85616ad",
       "range": {
         "startLine": 98,
         "startChar": 23,
@@ -163,6 +301,30 @@
       "writtenOn": "2024-04-25T14:25:08Z",
       "side": 1,
       "message": "Could you please tell me what\u0027s the usecase of this job definition?",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 11
+      },
+      "revId": "daf6c6c3d8bdb0b6d615066df306952aff7b0ee5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e7d0678b_1dbcb248",
+        "filename": "jobs_definitions/cleanup.yaml",
+        "patchSetId": 8
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1037821
+      },
+      "writtenOn": "2024-05-15T14:54:14Z",
+      "side": 1,
+      "message": "its was just for debugging, removed",
+      "parentUuid": "e71b33de_d7ffd832",
       "range": {
         "startLine": 7,
         "startChar": 0,
