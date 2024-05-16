@@ -1,0 +1,113 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cfcda266_29d5f044",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 15
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-05-16T07:43:10Z",
+      "side": 1,
+      "message": "IPI \u0026 UPI? https://review.gerrithub.io/c/shiftstack/shiftstack-qa/+/1193797/15//COMMIT_MSG#16",
+      "range": {
+        "startLine": 7,
+        "startChar": 8,
+        "endLine": 7,
+        "endChar": 11
+      },
+      "revId": "70d72b1beac61ab4d15917f8e859b94aebde614a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1f45411b_2aeecfab",
+        "filename": "collection/stages/roles/cleanup/tasks/destroy_clusters.yml",
+        "patchSetId": 15
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-05-16T07:43:10Z",
+      "side": 1,
+      "message": "the `installation_type` is our var in the config file.\nwe should determine if there is IPI installation so the cleanup does not depend on the config file, but detect the installed cluster type.",
+      "range": {
+        "startLine": 4,
+        "startChar": 0,
+        "endLine": 4,
+        "endChar": 34
+      },
+      "revId": "70d72b1beac61ab4d15917f8e859b94aebde614a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a567b567_d0a50636",
+        "filename": "collection/stages/roles/cleanup/tasks/destroy_clusters.yml",
+        "patchSetId": 15
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-05-16T07:43:10Z",
+      "side": 1,
+      "message": "so seems this commit-msg is not precise - https://review.gerrithub.io/c/shiftstack/shiftstack-qa/+/1193797/15//COMMIT_MSG#16",
+      "revId": "70d72b1beac61ab4d15917f8e859b94aebde614a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "96f7e25f_303f9edf",
+        "filename": "collection/stages/roles/cleanup/tasks/destroy_ipi.yml",
+        "patchSetId": 15
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-05-16T07:43:10Z",
+      "side": 1,
+      "message": "do you know what is the rc of a successful destroy cluster?\nmaybe it is better to have:\n```\nchanged_when: true\n```",
+      "range": {
+        "startLine": 15,
+        "startChar": 0,
+        "endLine": 15,
+        "endChar": 44
+      },
+      "revId": "70d72b1beac61ab4d15917f8e859b94aebde614a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4b678038_8f25b709",
+        "filename": "collection/stages/roles/cleanup/tasks/main.yml",
+        "patchSetId": 15
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-05-16T07:43:10Z",
+      "side": 1,
+      "message": "what happens if it is an env in installer-host (UPI/Proxy)?",
+      "range": {
+        "startLine": 2,
+        "startChar": 0,
+        "endLine": 2,
+        "endChar": 36
+      },
+      "revId": "70d72b1beac61ab4d15917f8e859b94aebde614a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
