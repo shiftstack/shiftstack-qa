@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a4e927b7_dac097e9",
+        "filename": "collection/tools/roles/tools_openshift_tests/tasks/prepare_openshift_tests.yml",
+        "patchSetId": 11
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-05-16T10:15:57Z",
+      "side": 1,
+      "message": "This looks a typo, right? this \"prepare_opensñhift_tests.yml\" is used for other repos rather than csi_test_repo_name, correct?",
+      "range": {
+        "startLine": 9,
+        "startChar": 34,
+        "endLine": 9,
+        "endChar": 52
+      },
+      "revId": "59d87fda2e882cef4f9d185b80519d83aa06bf48",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
