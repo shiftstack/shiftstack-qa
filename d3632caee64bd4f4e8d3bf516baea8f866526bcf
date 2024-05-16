@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e76451c5_2c27a99d",
+        "filename": "collection/stages/roles/conformance_test/tasks/run_conformance_test.yml",
+        "patchSetId": 12
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-05-16T11:57:58Z",
+      "side": 1,
+      "message": "needed due to -\n1194234: Add kubeconfig envvar on tasks | https://review.gerrithub.io/c/shiftstack/shiftstack-qa/+/1194234",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 34
+      },
+      "revId": "d3632caee64bd4f4e8d3bf516baea8f866526bcf",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
