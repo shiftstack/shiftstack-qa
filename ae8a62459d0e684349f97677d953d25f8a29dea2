@@ -22,6 +22,30 @@
       },
       "revId": "ae8a62459d0e684349f97677d953d25f8a29dea2",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0be42a6d_db8c43e5",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-05-16T07:36:43Z",
+      "side": 1,
+      "message": "yes! It\u0027s https://issues.redhat.com/browse/OSPRH-6235. I\u0027m updating the commit message.",
+      "parentUuid": "0bfb2121_bfad8be0",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 33
+      },
+      "revId": "ae8a62459d0e684349f97677d953d25f8a29dea2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
