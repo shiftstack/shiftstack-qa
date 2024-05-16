@@ -22,6 +22,30 @@
       },
       "revId": "59d87fda2e882cef4f9d185b80519d83aa06bf48",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e3507eac_ff5a0714",
+        "filename": "collection/tools/roles/tools_openshift_tests/tasks/prepare_openshift_tests.yml",
+        "patchSetId": 11
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-05-16T11:00:19Z",
+      "side": 1,
+      "message": "It is a typo. Thanks a lot!\nDone",
+      "parentUuid": "a4e927b7_dac097e9",
+      "range": {
+        "startLine": 9,
+        "startChar": 34,
+        "endLine": 9,
+        "endChar": 52
+      },
+      "revId": "59d87fda2e882cef4f9d185b80519d83aa06bf48",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
