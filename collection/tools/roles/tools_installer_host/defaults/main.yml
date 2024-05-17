@@ -3,7 +3,7 @@
 osp_rhel_matrix:
   '16.2': 'http://download.eng.tlv.redhat.com/rhel-8/rel-eng/RHEL-8/latest-RHEL-8.5.0/compose/BaseOS/x86_64/images/rhel-guest-image-8.5-1174.x86_64.qcow2'
   '17.1': 'http://download.devel.redhat.com/rhel-9/rel-eng/RHEL-9/latest-RHEL-9.2.0/compose/BaseOS/x86_64/images/rhel-guest-image-9.2-20230414.17.x86_64.qcow2'
-  '18.0': 'http://download.devel.redhat.com/rhel-9/rel-eng/RHEL-9/latest-RHEL-9.2.0/compose/BaseOS/x86_64/images/rhel-guest-image-9.2-20230414.17.x86_64.qcow2'
+  '18.0': 'http://download.devel.redhat.com/rhel-9/rel-eng/RHEL-9/latest-RHEL-9.4.0/compose/BaseOS/x86_64/images/rhel-guest-image-9.4-20240419.25.x86_64.qcow2'
 
 installer_image: "{{ osp_rhel_matrix[openstack_version] }}"
 
@@ -27,12 +27,11 @@ installer_python_packages:
   - 'junit2html==26'
   - 'lxml'
 
-installer_ansible_collections:
+installer_upi_ansible_collections:
   - "ansible.netcommon"
   - "ansible.utils"
   - "community.general"
   - "openstack.cloud:1.10.0"
-  - "kubernetes.core:2.3.2"
 
 installer_vm:
   installer_fqdn: "{{ installer_vm_name }}.example.com"
