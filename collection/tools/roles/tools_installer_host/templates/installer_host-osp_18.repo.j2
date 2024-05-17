@@ -1,18 +1,19 @@
 [rhel-9-baseos]
 name=RHEL 9 BaseOS
-baseurl=http://rhsm-pulp.corp.redhat.com/content/eus/rhel9/9.2/$basearch/baseos/os/
+baseurl=http://rhsm-pulp.corp.redhat.com/content/eus/rhel9/9.4/$basearch/baseos/os/
 enabled=1
 gpgcheck=0
 
 [rhel-9-appstream]
 name=RHEL 9 AppStream
-baseurl=http://rhsm-pulp.corp.redhat.com/content/eus/rhel9/9.2/$basearch/appstream/os/
+baseurl=http://rhsm-pulp.corp.redhat.com/content/eus/rhel9/9.4/$basearch/appstream/os/
 enabled=1
 gpgcheck=0
 
-[rhel-9-openstack-tools-17]
-name=RHEL 9 Openstack-Tools 17
-baseurl=http://rhsm-pulp.corp.redhat.com/content/dist/layered/rhel9/$basearch/openstack-tools/17/os/
+[rhel-9-openstack-tools-18]
+name=RHEL 9 Openstack-Tools 18
+baseurl=https://download.devel.redhat.com/rcm-guest/puddles/OpenStack/18.0-RHEL-9/RHOSO-18.0-RHEL-9-20240517.n.1/compose/Tools/x86_64/os/
+#temporary until http://rhsm-pulp.corp.redhat.com/content/dist/layered/rhel9/$basearch/openstack-tools/18/os/ is ready
 enabled=1
 gpgcheck=0
 skip_if_unavailable=1
