@@ -34,20 +34,20 @@
 - name: Install ansible and ansible collections for UPI
   when: installation_type == 'upi'
   block:
-    - name: Install ansible-collections-openstack from RPM for UPI mode installer (installs ansible-core too)
-      become: true
+    - name: Install ansible-core for running UPI playbooks in the installer host
       ansible.builtin.package:
         name:
-          - 'ansible-collections-openstack' # will install ansible-core as dependency
+          - 'ansible-core'
         state: present
       register: result
+      become: true
       retries: 10
       delay: 10
       until: not result.failed
 
-    - name: Install required ansible collections for UPI mode installer
+    - name: Install required ansible collections for UPI mode in the installer host
       ansible.builtin.command: "ansible-galaxy collection install {{ item }} --force-with-deps -vvv"
-      loop: "{{ installer_ansible_collections }}"
+      loop: "{{ installer_upi_ansible_collections }}"
       changed_when: true
       register: result
       retries: 10
@@ -62,7 +62,6 @@
       changed_when: false
       failed_when: false
       register: python_version_output
-
     - name: Set python3 as default if symlink doesn't exist or doesn't point to python3
       ansible.builtin.shell: |
         alternatives --set python /usr/bin/python3
