@@ -1,23 +1,32 @@
 ---
-- name: Create (if needed) API FIP and get the FIP info
-  ansible.builtin.include_tasks: create_fip.yml
-  vars:
-    description: "{{ ocp_api_description }}"
+- name: Create Floating IPs for API and APPS for a non-proxy installation
+  when: not openshift_proxy_installation
+  block:
+    - name: Create (if needed) API FIP and get the FIP info
+      ansible.builtin.include_tasks: create_fip.yml
+      vars:
+        description: "{{ ocp_api_description }}"
 
-- name: Store API FIP
+    - name: Store API FIP
+      ansible.builtin.set_fact:
+        api_fip: "{{ fip_address }}"
+
+    - name: Create (if needed) APPS FIP and get the FIP info
+      ansible.builtin.include_tasks: create_fip.yml
+      vars:
+        description: "{{ ocp_apps_description }}"
+
+    - name: Store APPS FIP
+      ansible.builtin.set_fact:
+        apps_fip: "{{ fip_address }}"
+
+- name: Store restricted network IPs for API and APPS for a openshift-proxy installation
   ansible.builtin.set_fact:
-    api_fip: "{{ fip_address }}"
+    api_fip: "{{ restricted_network.ocp_api_ip }}"
+    apps_fip: "{{ restricted_network.ocp_apps_ip }}"
+  when: openshift_proxy_installation
 
-- name: Create (if needed) APPS FIP and get the FIP info
-  ansible.builtin.include_tasks: create_fip.yml
-  vars:
-    description: "{{ ocp_apps_description }}"
-
-- name: Store APPS FIP
-  ansible.builtin.set_fact:
-    apps_fip: "{{ fip_address }}"
-
-- name: Register Installer API and APP FIPS  in resources.yml
+- name: Register Installer API and APP FIPS in resources.yml
   ansible.builtin.include_role:
     name: shiftstack.tools.tools_register_resources_file
   vars:
