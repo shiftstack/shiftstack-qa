@@ -1,0 +1,12 @@
+server 0.pool.ntp.org iburst minpoll 6 maxpoll 10
+server 1.pool.ntp.org iburst minpoll 6 maxpoll 10
+server 2.pool.ntp.org iburst minpoll 6 maxpoll 10
+server 3.pool.ntp.org iburst minpoll 6 maxpoll 10
+pool clock.corp.redhat.com iburst minpoll 6 maxpoll 10
+bindcmdaddress 127.0.0.1
+bindcmdaddress ::1
+allow 0.0.0.0/0
+driftfile /var/lib/chrony/drift
+logdir /var/log/chrony
+rtcsync
+makestep 1.0 3
