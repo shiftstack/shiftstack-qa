@@ -1,0 +1,41 @@
+acl localnet src {{ restricted_network.cidr }} 
+acl SSL_ports port 443
+acl SSL_ports port 1025-65535
+acl Safe_ports port 80
+acl Safe_ports port 443
+acl Safe_ports port 1025-65535
+acl CONNECT method CONNECT
+http_access deny !Safe_ports
+http_access deny !SSL_ports
+http_access allow localnet
+http_access deny all
+http_port 3128
+https_port 3130 cert=/etc/squid/certs/domain.crt key=/etc/squid/certs/domain.key cafile=/etc/squid/certs/domain.crt
+
+# Leave coredumps in the first cache dir
+coredump_dir /var/spool/squid
+
+auth_param basic program /usr/lib64/squid/basic_ncsa_auth /etc/squid/htpasswd
+auth_param basic children 5
+auth_param basic realm Squid Basic Authentication
+auth_param basic credentialsttl 2 hours
+acl auth_users proxy_auth REQUIRED
+http_access allow auth_users
+
+# Optimize cache (Ref: https://hub.packtpub.com/squid-proxy-server-fine-tuning-achieve-better-performance/)
+cache_mem 2500 MB
+maximum_object_size_in_memory 1 MB
+memory_cache_mode always
+
+#
+# Add any of your own refresh_pattern entries above these.
+#
+refresh_pattern ^ftp:		1440	20%	10080
+refresh_pattern ^gopher:	1440	0%	1440
+refresh_pattern -i (/cgi-bin/|\?) 0	0%	0
+refresh_pattern .		0	20%	4320
+
+dns_v4_first on
+
+# To allow squid to resolve to APPS fip/vip, it is needed to add /etc/hosts here and update it accordingly
+hosts_file /etc/hosts
