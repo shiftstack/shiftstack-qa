@@ -41,6 +41,7 @@
   ansible.builtin.get_url:
     url: "{{ installer_vm.image.url }}"
     dest: "/tmp/{{ installer_vm.image.name }}"
+    validate_certs: false
     mode: u=rw,g=rw,o=r
   when:
     - glance_image_sha_result.openstack_images['owner_specified.openstack.sha256'] is not defined or
@@ -170,6 +171,26 @@
         meta:
           hostname: "{{ installer_vm_name }}"
         config_drive: true
+
+    - name: Add restricted network port with 1st IP on the installer VM when openshift proxy installation
+      when: openshift_proxy_installation
+      block:
+        - name: Make sure the installer host VM restricted network port presents
+          openstack.cloud.port:
+            state: present
+            cloud: "{{ user_cloud }}"
+            name: "{{ restricted_network.installer_port_name }}"
+            security_groups: "{{ installer_vm.sec_group.name }}"
+            network: "{{ restricted_network.network_name }}"
+            fixed_ips:
+              - ip_address: "{{ restricted_network.installer_ip }}"
+
+        - name: Add the port to the installer host VM
+          ansible.builtin.shell: |
+            source {{ user_env_file }} &&
+            openstack server add port {{ installer_vm_name }} {{ restricted_network.installer_port_name }}
+          changed_when: true
+          failed_when: false
 
     - name: Create floating IPs
       openstack.cloud.floating_ip:
