@@ -1,0 +1,92 @@
+---
+# We follow the procedure at:
+# https://docs.openshift.com/container-platform/4.10/post_installation_configuration/machine-configuration-tasks.html#installation-special-config-chrony_post-install-machine-configuration-tasks
+- name: Install Butane
+  become: yes
+  ansible.builtin.get_url:
+    url: https://mirror.openshift.com/pub/openshift-v4/clients/butane/latest/butane
+    dest: /usr/local/bin/butane
+    mode: u=rwx,g=rwx,o=rwx
+
+- name: Get OCP GA version from release.txt and Build the chronyc manifest
+  block:
+    - name: Download the OCP GA version from openshift mirror
+      ansible.builtin.get_url:
+        url: https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/stable/release.txt
+        dest: /tmp/release.txt
+        mode: u=rw,g=rw,o=r
+
+    - name: Extract OpenShift version
+      ansible.builtin.shell: |
+        grep -oP "Version:\s*\K4\.\d+" /tmp/release.txt
+      changed_when: false
+      register: openshift_ga_version
+
+    - name: Set ocp_latest_ga variable
+      ansible.builtin.set_fact:
+        ocp_latest_ga: "{{ openshift_ga_version.stdout }}"
+
+    - name: Build the chronyc manifest
+      vars:
+        ntp_server: "{{ openshift_mirror | ternary(installer_vm.installer_fqdn, restricted_network.installer_ip) }}"
+      ansible.builtin.template:
+        src: 99-node-chronyc.j2
+        dest: "{{ ansible_user_dir }}/99-{{ item }}-chrony"
+        mode: u=rw,g=rw,o=r
+      loop:
+        - worker
+        - master
+
+# Use Butane to translate a human readable Butane config into a machine readable Ignition config
+- name: Build the chrony machine config
+  ansible.builtin.shell: |
+    butane /home/{{ installer_vm_ssh_user }}/99-{{ item }}-chrony -o {{ ansible_user_dir }}/99-{{ item }}-chrony.yaml
+  changed_when: true
+  loop:
+    - worker
+    - master
+
+- name: Apply the chrony manifest
+  kubernetes.core.k8s:
+    state: present
+    src: "/home/{{ installer_vm_ssh_user }}/99-{{ item }}-chrony.yaml"
+  loop:
+    - worker
+    - master
+
+- name: Wait 5 minutes before checking nodes and MCP
+  ansible.builtin.pause:
+    minutes: 5
+
+- name: Wait for the machine config pool to finish the cluster updates
+  ansible.builtin.shell: |
+    oc wait --all --for=condition=Updated --timeout=1200s mcp
+  changed_when: false
+  retries: 3
+  delay: 120
+  register: result
+  until: result.rc == 0
+
+- name: Wait for all the nodes to be ready
+  ansible.builtin.shell: |
+    oc wait --all --for=condition=Ready --timeout=1200s nodes
+  changed_when: false
+  retries: 2
+  delay: 120
+  register: result
+  until: result.rc == 0
+
+# Go over all the OCP nodes and check that NTP is configured correctly by checking that the Stratum from
+# The chronyc tracking command is not 0 in any of them
+- name: Check that the NTP server is reachable from all the OCP nodes
+  ansible.builtin.shell: |
+    set -o pipefail &&
+    for i in $(oc get nodes -o name);
+    do  oc debug -q $i -- chroot /host sudo chronyc tracking|awk '/Stratum/{print $3}'; done | tr -d '\n' |  awk '/0/{exit 1}'
+  environment:
+    KUBECONFIG: "/home/{{ installer_vm_ssh_user }}/{{ ocp_cluster_name }}/auth/kubeconfig"
+  changed_when: false
+  register: ntp_output
+  until: ntp_output is not failed
+  retries: 5
+  delay: 30
