@@ -11,3 +11,7 @@
         name: version
       spec:
         channel: ""
+
+- name: Set the workers and masters NTP server
+  ansible.builtin.include_tasks: set_ntp.yml
+  when: openshift_proxy_installation
