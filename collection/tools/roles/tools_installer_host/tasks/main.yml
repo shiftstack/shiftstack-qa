@@ -22,3 +22,18 @@
 - name: Install packages in the installer VM
   ansible.builtin.import_tasks: configuration_install_packages.yml
   delegate_to: "{{ installer_vm_name }}"
+
+- name: Configure the installer VM for OpenShift proxy installation
+  when: openshift_proxy_installation
+  block:
+    - name: Configure squid on the installer vm
+      ansible.builtin.import_tasks: install_squid.yml
+      delegate_to: "{{ installer_vm_name }}"
+
+    - name: Install and configure dnsmasq on the installer host
+      ansible.builtin.import_tasks: install_dnsmasq.yml
+      delegate_to: "{{ installer_vm_name }}"
+
+    - name: Install NTP server on the installer host
+      ansible.builtin.import_tasks: install_chronyd.yml
+      delegate_to: "{{ installer_vm_name }}"
