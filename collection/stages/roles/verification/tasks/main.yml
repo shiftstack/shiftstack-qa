@@ -86,7 +86,7 @@
       vars:
         # Using internal-lb annotation when cluster is deployed on restricted or provider network (FIPless):
         internal_lb: |
-          {{ (openshift_proxy | default(False) or bm_workers | default(False) or provider_network_primary | default(False)) | bool }}
+          {{ (openshift_proxy_installation | default(False) or bm_workers | default(False) or provider_network_primary | default(False)) | bool }}
       ansible.builtin.include_tasks: check_lb_svc.yml
       when:
         - edge_nova_az is not defined # Skip due to Openstack Manila is not supported at the Edge
@@ -163,7 +163,6 @@
       ansible.builtin.include_role:
         name: tools_must-gather
       vars:
-        fetch_to_inventory: true
         must_gather_dir_suffix: "must-gather-verification"
 
 - name: Fail the playbook in a case of a cluster verification test failure
