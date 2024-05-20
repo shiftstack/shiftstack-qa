@@ -53,6 +53,9 @@ openstack_tlse: false
 openstack_key_file: "{{ home_dir }}/.ssh/rhos-dfg-osasinfra-qe"
 redhat_ca_file: "https://certs.corp.redhat.com/RH-IT-Root-CA.crt"
 
+openshift_proxy_installation: false
+openshift_mirror: false
+
 deploy_installer_host: false
 installer_vm_ssh_user: "cloud-user"
 custom_network: ''
@@ -67,6 +70,18 @@ installer_network: "{{ installer_vm_name | default('installer_host-network', tru
 installer_subnet: "{{ custom_subnet | default('installer_host-subnet', true) }}"
 installer_router: "{{ custom_router | default('installer_host-router', true) }}"
 installer_flavor_name: "{{ custom_flavor| default('m1.medium', true) }}"
+
+restricted_network:
+  network_name: 'restricted_network'
+  subnet_name: 'restricted_subnet'
+  installer_port_name: 'installer_restricted_network_port'
+  cidr: '172.16.0.0/24'
+  pool_start: '172.16.0.8'
+  pool_end: '172.16.0.254'
+  installer_ip: '172.16.0.3'
+  default_gw: '172.16.0.1' # Used with Kuryr and OpenshiftSDN networking types
+  ocp_api_ip: '172.16.0.5'
+  ocp_apps_ip: '172.16.0.7'
 
 inventory:
   dir: "/etc/ansible"

@@ -1,0 +1,94 @@
+---
+- name: Install dnsmasq on the installer-host
+  become: true
+  ansible.builtin.package:
+    name: dnsmasq
+    state: present
+
+- name: Include vars from registered resources
+  ansible.builtin.include_vars:
+    file: "{{ resources_file }}"
+    name: resources
+
+- name: Set APPS IP
+  ansible.builtin.set_fact:
+    apps_fip_ip: "{{ resources.apps_fip }}"
+    installer_host_fip: "{{ resources.installer_fip }}"
+
+- name: Add the FreeIPA and Overcloud IP to dnsmasq
+  when: openstack_tlse | default(false)
+  block:
+    - name: Set freeipa_server variable with the freeipa DNS server IP for the installer host VM (with tls-e only)
+      ansible.builtin.include_role:
+        name: shiftstack.tools.tools_get_deploy_info
+        tasks_from: discover_freeipa_server.yml
+
+    - name: Get Overcloud IP from hosts file
+      ansible.builtin.shell: |
+        set -o pipefail &&
+        awk '{if ($2 ~ "overcloud.redhat.local")print $1}' /etc/hosts | uniq
+      changed_when: false
+      register: hosts_overcloud_ip
+      delegate_to: localhost
+
+    - name: Set Overcloud IP fact
+      ansible.builtin.set_fact:
+        overcloud_ip: "{{ hosts_overcloud_ip.stdout }}"
+
+- name: Create /etc/dnsmasq.conf
+  become: yes
+  ansible.builtin.template:
+    src: dnsmasq.j2
+    dest: /etc/dnsmasq.conf
+    mode: u=rw,g=rw,o=r
+
+- name: Create a file with an external nameserver
+  become: yes
+  vars:
+    external_ns: "{{ openstack_tlse | default(false) | ternary(freeipa_server, infra.dns_servers) }}"
+  ansible.builtin.template:
+    src: resolv.dnsmasq.j2
+    dest: /etc/resolv.dnsmasq
+    mode: u=rw,g=rw,o=r
+
+- name: Start and enable dnsmasq server
+  become: yes
+  ansible.builtin.service:
+    name: dnsmasq
+    enabled: yes
+    state: restarted
+
+- name: Make sure iptables is installed
+  ansible.builtin.package:
+    name: iptables
+    state: present
+  become: yes
+
+- name: Allow new incoming DNS requests
+  become: yes
+  ansible.builtin.iptables:
+    action: insert
+    rule_num: 1
+    chain: INPUT
+    protocol: udp
+    destination_port: 53
+    jump: ACCEPT
+    comment: Accept DNS requests
+
+- name: Backup the /etc/resolv.conf file
+  become: true
+  ansible.builtin.copy:
+    remote_src: yes
+    src: /etc/resolv.conf
+    dest: /etc/resolv.conf.bak
+    force: no
+    mode: u=rwx,g=rwx,o=rwx
+
+- name: Set the default address as the nameserver
+  become: yes
+  ansible.builtin.copy:
+    content: |
+      nameserver {{ ansible_default_ipv4.address }}
+    dest: /etc/resolv.conf
+    mode: u=rwx,g=rwx,o=rwx
+  when: not openshift_mirror | default(False)
