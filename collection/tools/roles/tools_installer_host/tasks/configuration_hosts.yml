@@ -11,6 +11,6 @@
     regexp: "{{ item.regex }}"
     line: "{{ item.row }}"
   vars:
-    api_ip: "{{ resources.api_fip }}"
-    apps_ip: "{{ resources.apps_fip }}"
+    api_ip: "{{ resources.api_accessible_ip }}"
+    apps_ip: "{{ resources.apps_accessible_ip }}"
   loop: "{{ etc_hosts_entries }}"
