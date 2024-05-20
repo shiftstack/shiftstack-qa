@@ -11,7 +11,7 @@
     api_filter: "api.{{ ocp_cluster_name }}.{{ user_cloud }}.com"
     ingress_filter: "oauth-openshift.apps.{{ ocp_cluster_name }}.{{ user_cloud }}.com"
 
-- name: Generate install-config.yaml from template
+- name: Generate an OpenShift install-config.yaml in a non-proxy installation
   ansible.builtin.template:
     src: install-config.yaml.j2
     dest: "{{ home_dir }}/install-config.yaml"
@@ -29,6 +29,33 @@
     installcfg_dns_servers: "{{ infra.dns_servers }}"
     installcfg_api_floating_ip: "{{ precreated_api_fip }}"
     installcfg_ingress_floating_ip: "{{ precreated_ingress_fip }}"
+  when: not openshift_proxy_installation
+
+- name: Generate an OpenShift install-config.yaml in a proxy installation
+  when: openshift_proxy_installation
+  block:
+    - name: Include vars from registered resources
+      ansible.builtin.include_vars:
+        file: "{{ resources_file }}"
+        name: resources
+
+    - name: Generate install-config.yaml from install-config-proxy.yaml.j2 template
+      ansible.builtin.template:
+        src: install-config-proxy.yaml.j2
+        dest: "{{ home_dir }}/install-config.yaml"
+        mode: u=rw,g=rw,o=r
+      vars:
+        installcfg_cluster_name: "{{ ocp_cluster_name }}"
+        installcfg_worker_flavor: "{{ topology.flavors.worker.name }}"
+        installcfg_worker_replicas: "{{ (installation_type == 'upi') | ternary('0', topology.replicas.worker) }}"
+        installcfg_master_flavor: "{{ topology.flavors.master.name }}"
+        installcfg_master_replicas: "{{ topology.replicas.master }}"
+        installcfg_machine_cidr: "{{ resources.restricted_cidr }}"
+        installcfg_network_type: "{{ openshift_network_type }}"
+        installcfg_region: "{{ infra.region }}"
+        installcfg_machines_subnet: "{{ resources.machines_subnet }}"
+        installcfg_api_vip: "{{ precreated_api_fip }}"
+        installcfg_ingress_vip: "{{ precreated_ingress_fip }}"
 
 - name: Copy the install-config.yaml to installation dir
   ansible.builtin.copy:
