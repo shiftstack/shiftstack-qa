@@ -1,0 +1,22 @@
+variant: openshift
+{% if discovered_openshift_release is version(ocp_latest_ga, '<=') %}
+version: {{ discovered_openshift_release }}.0
+{% else %}
+version: {{ ocp_latest_ga }}.0
+{% endif %}
+metadata:
+  name: 99-{{ item }}-chrony
+  labels:
+    machineconfiguration.openshift.io/role: {{ item }}
+storage:
+  files:
+  - path: /etc/chrony.conf
+    mode: 0664
+    overwrite: true
+    contents:
+      inline: |
+        server {{ ntp_server }} iburst
+        driftfile /var/lib/chrony/drift
+        makestep 1.0 3
+        rtcsync
+        logdir /var/log/chrony
