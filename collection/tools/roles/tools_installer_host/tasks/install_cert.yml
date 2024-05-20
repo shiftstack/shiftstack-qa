@@ -1,0 +1,38 @@
+---
+- name: Generate a self-signed SSL certificate using OpenSSL
+  ansible.builtin.shell: |
+    openssl req -newkey rsa:4096 -nodes -sha256 -keyout domain.key \
+      -x509 -days 30  -addext "subjectAltName = IP:{{ restricted_network.installer_ip }},DNS:{{ installer_vm.installer_fqdn }}" \
+      -subj "/C=US/ST=Denial/L=Springfield/O=RedHat/CN=shiftstack.com" \
+      -out domain.crt
+  args:
+    chdir: "{{ certs_dir }}"
+  changed_when: true
+  become: "{{ openshift_proxy_installation | ternary('yes', omit) }}"
+
+- name: Copy certificate to root chain dir
+  ansible.builtin.copy:
+    src: "{{ certs_dir }}/domain.crt"
+    dest: /etc/pki/ca-trust/source/anchors/domain.crt
+    remote_src: yes
+    mode: u=rwx,g=rw,o=r
+  become: yes
+
+- name: Add the CA cert to the trusted root chain in the installer host VM
+  ansible.builtin.command: update-ca-trust extract
+  changed_when: true
+  become: yes
+
+# Store certificate on resources.yaml to be used on install-config.yaml on install role:
+- name: Register cacert content
+  ansible.builtin.command: "cat {{ certs_dir }}/domain.crt"
+  changed_when: false
+  register: cacert_content
+  become: "{{ openshift_proxy_installation | ternary('yes', omit) }}"
+
+- name: Register cacert to resources.yml
+  ansible.builtin.include_role:
+    name: shiftstack.tools.tools_register_resources_file
+  vars:
+    input:
+      additional_trust_bundle: "{{ cacert_content }}"
