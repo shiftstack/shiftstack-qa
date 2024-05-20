@@ -13,8 +13,8 @@
   register: os_networks
 
 - name: Get install-config content to obtain the 1st machineCIDR
-  ansible.builtin.import_role:
-    name: tools_get_deploy_info
+  ansible.builtin.include_role:
+    name: shiftstack.tools.tools_get_deploy_info
     tasks_from: get_ic_content.yml
 
 - name: Get the node subnet
