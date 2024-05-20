@@ -1,0 +1,29 @@
+---
+- name: Create restricted network
+  openstack.cloud.network:
+    cloud: "{{ user_cloud }}"
+    name: "{{ restricted_network.network_name }}"
+    state: present
+
+- name: Create restricted subnet
+  openstack.cloud.subnet:
+    cloud: "{{ user_cloud }}"
+    name: "{{ restricted_network.subnet_name }}"
+    network_name: "{{ restricted_network.network_name }}"
+    cidr: "{{ restricted_network.cidr }}"
+    dns_nameservers:
+      - "{{ restricted_network.installer_ip }}"
+    # OVNKubernetes requirement,further info in BZ1983951
+    gateway_ip: "{{ (openshift_network_type == 'OVNKubernetes') |
+      ternary(restricted_network.installer_ip, restricted_network.default_gw) }}"
+    allocation_pool_start: "{{ restricted_network.pool_start }}"
+    allocation_pool_end: "{{ restricted_network.pool_end }}"
+  register: restricted_subnet
+
+- name: Register restricted subnet cidr and subnet id for machinesSubnet var in install-config
+  ansible.builtin.include_role:
+    name: shiftstack.tools.tools_register_resources_file
+  vars:
+    input:
+      restricted_cidr: "{{ restricted_subnet.subnet.cidr }}"
+      machines_subnet: "{{ restricted_subnet.subnet.id }}"

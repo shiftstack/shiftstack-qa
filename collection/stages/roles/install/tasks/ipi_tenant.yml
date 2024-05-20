@@ -3,21 +3,21 @@
   block:
     - name: Install Openshift
       ansible.builtin.shell: |
-          openshift-install create cluster --log-level debug --dir {{ installation_dir }}
+          openshift-install create cluster --log-level debug --dir {{ ocp_installation_dir }}
       environment:
         OS_CLOUD: "{{ user_cloud }}"
       changed_when: true
   rescue:
     - name: Use an openshift-install flag to wait until the cluster is ready
       ansible.builtin.shell: |
-        openshift-install wait-for install-complete --log-level debug --dir {{ installation_dir }}
+        openshift-install wait-for install-complete --log-level debug --dir {{ ocp_installation_dir }}
       environment:
         OS_CLOUD: "{{ user_cloud }}"
       changed_when: true
 
     - name: Remove the bootstrap resources after the OCP installation succeeded
       ansible.builtin.shell: |
-        openshift-install destroy bootstrap --log-level debug --dir {{ installation_dir }}
+        openshift-install destroy bootstrap --log-level debug --dir {{ ocp_installation_dir }}
       environment:
         OS_CLOUD: "{{ user_cloud }}"
       changed_when: true
@@ -31,12 +31,11 @@
           The openshift installation passed but unexpectedly needed the wait-for flag.
           More info in Jira KURYRQE-1002.
   always:
-    - name: "Copy installation files to {{ artifacts_dir }}"
-      ansible.builtin.copy:
-        src: "{{ item.src }}"
-        dest: "{{ artifacts_dir }}/{{ user_cloud }}/{{ ocp_cluster_name }}"
-        mode: "{{ item.mode }}"
-      loop:
-        - {src: "{{ installation_dir }}/", mode: "0755"}
-        - {src: "{{ osp_config_dir }}", mode: "0755"}
-        - {src: "{{ home_dir }}/install-config.yaml", mode: "0644"}
+    - name: Synchronize artifacts from the Ansible Managed Node to Ansible Controller
+      ansible.posix.synchronize:
+        src: "{{ artifacts_dir }}"
+        dest: "{{ controller_home_dir }}"
+        mode: pull
+        recursive: yes
+        times: false
+        perms: false
