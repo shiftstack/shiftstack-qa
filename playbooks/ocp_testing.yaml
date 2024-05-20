@@ -41,6 +41,11 @@
     - "../configs/global.yml"
     - "../configs/secret.yaml"
     - "../configs/ocp_testing.yaml"
+  pre_tasks:
+    - name: Gather host environment variables
+      ansible.builtin.setup:
+        gather_subset:
+          - network
   tasks:
     - name: Prepare setup for OCP installation
       ansible.builtin.include_role:
