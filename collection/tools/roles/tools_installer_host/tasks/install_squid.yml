@@ -1,0 +1,89 @@
+---
+# Reference: https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/networking_guide/configuring-the-squid-caching-proxy-server
+
+# 1. Setup Certs
+# sudo mkdir -p /etc/squid/certs
+# cd /etc/squid/certs
+# sudo openssl req -newkey rsa:4096 -nodes -sha256 -keyout domain.key -x509 -days 30  -addext "subjectAltName = IP:172.16.0.1" -subj "/C=US/ST=Denial/L=Springfield/O=RedHat/CN=shiftstack.com" -out domain.crt
+# sudo cp /etc/squid/certs/domain.crt /etc/pki/ca-trust/source/anchors/domain.crt
+# sudo update-ca-trust
+- name: Create a directory if it does not exist
+  ansible.builtin.file:
+    path: /etc/squid/certs
+    state: directory
+    mode: u=rwx,g=rw,o=r
+  become: yes
+
+- name: Create self signed certificate
+  vars:
+    certs_dir: "/etc/squid/certs"
+  ansible.builtin.include_tasks: install_cert.yml
+
+# openshift-install requires the proxy cert and openstack certs to be included on clouds.yml,
+- name: Add proxy certificate on the cacert defined in clouds.yaml
+  block:
+    - name: Append proxy certificate on the cacert defined in clouds.yaml
+      ansible.builtin.blockinfile:
+        path: "{{ cacert }}"
+        block: "{{ cacert_content.stdout }}"
+        marker: ''
+        state: present
+      become: yes
+
+    - name: Remove empty lines after adding proxy certificate in clouds.yaml
+      ansible.builtin.lineinfile:
+        path: "{{ cacert }}"
+        regexp: '^$'
+        state: absent
+      become: yes
+
+# 2. Install and configure squid
+# sudo yum install -y httpd-tools
+# sudo dnf install squid -y
+# sudo htpasswd -bBc /etc/squid/htpasswd dummy dummy
+# #create squid.conf
+# sudo systemctl start squid
+# sudo systemctl enable squid
+
+- name: Install packages to run squid
+  ansible.builtin.package:
+    name:
+      - httpd-tools
+      - squid
+    state: present
+  become: yes
+
+- name: Store password
+  ansible.builtin.shell: |
+    htpasswd -bBc /etc/squid/htpasswd dummy dummy
+  changed_when: true
+  become: yes
+
+- name: Create squid.conf
+  ansible.builtin.template:
+    src: squid.conf.j2
+    dest: "/etc/squid/squid.conf"
+    mode: u=rwx,g=rw,o=r
+  become: yes
+
+- name: Start squid
+  ansible.builtin.systemd:
+    name: squid
+    state: started
+    enabled: yes
+  become: yes
+
+- name: Stick squid srv to CPU 3 and 4 with top priority
+  ansible.builtin.replace:
+    path: "/usr/lib/systemd/system/squid.service"
+    regexp: '(\s+)ExecStart=/usr/sbin/squid(\s+)'
+    replace: '\1ExecStart=taskset -c 3,4 nice --19 /usr/sbin/squid\2'
+  become: yes
+
+- name: Reload squid
+  ansible.builtin.systemd:
+    name: squid
+    state: restarted
+    enabled: yes
+    daemon_reload: yes
+  become: yes
