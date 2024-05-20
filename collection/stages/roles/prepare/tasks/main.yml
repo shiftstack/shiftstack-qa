@@ -5,6 +5,11 @@
 - name: Update clouds.yml file with new Project
   ansible.builtin.include_tasks: clouds.yml
 
+- name: Restricted Network Preparations
+  ansible.builtin.include_tasks: restricted_network.yml
+  when:
+    - openshift_proxy_installation
+
 - name: Prepare setup for accessing the OCP Cluster
   ansible.builtin.include_tasks: external_access.yml
 
