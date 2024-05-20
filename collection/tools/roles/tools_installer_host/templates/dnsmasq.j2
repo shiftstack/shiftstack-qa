@@ -1,0 +1,11 @@
+resolv-file=/etc/resolv.dnsmasq
+address=/apps.{{ ocp_cluster_name }}.shiftstack.com/{{ apps_fip_ip }}
+{% if openshift_mirror %}
+no-hosts
+no-resolv
+address=/fake.com/172.16.40.254
+address=/installer-host.example.com/{{ installer_host_fip }}
+{% if openstack_tlse %}
+address=/overcloud.redhat.local/{{ overcloud_ip }}
+{% endif %}
+{% endif %}
