@@ -38,12 +38,13 @@
     max_shared_lb: "2"
     log_directory: "{{ artifacts_dir }}/lb_amphora_sourceip"
 
-- name: Run Openstack-Test on OCP
+- name: Run Openstack-Test on OCP with Amphora LoadBalancer provider and sourceIP lb method
   ansible.builtin.include_role:
     name: shiftstack.stages.openstack_test
   vars:
     openstack_test_results_dir: "{{ artifacts_dir }}/lb_amphora_sourceip"
     openstack_tests_allowlist_file: "{{ lb_allowlist_file }}"
+    openstack_testsuite_name: openstack_tests_lb_amphora_sourceip
 
 - name: Enable OVN provider on cloud-provider-config
   ansible.builtin.include_tasks: change_cloud_cm.yml
@@ -54,9 +55,10 @@
     max_shared_lb: "2"
     log_directory: "{{ artifacts_dir }}/lb_ovn"
 
-- name: Run Openstack-Test on OCP
+- name: Run Openstack-Test on OCP with OVN LoadBalancer provider
   ansible.builtin.include_role:
     name: shiftstack.stages.openstack_test
   vars:
     openstack_test_results_dir: "{{ artifacts_dir }}/lb_ovn"
     openstack_tests_allowlist_file: "{{ lb_allowlist_file }}"
+    openstack_testsuite_name: openstack_tests_lb_ovn
