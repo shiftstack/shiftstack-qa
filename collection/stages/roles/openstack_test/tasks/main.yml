@@ -17,7 +17,7 @@
     name: tools_openshift_tests
     tasks_from: post_openshift_tests.yml
   vars:
-    testsuite_name: "openstack"
+    testsuite_name: "{{ openstack_testsuite_name }}"
     key_for_filtering_results: "openstack"
     test_name: "{{ openstack_test_name }}"
     results_dir: "{{ openstack_test_results_dir }}"

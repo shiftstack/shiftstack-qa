@@ -32,6 +32,6 @@
 - name: Copy XML to {{ polarion_dir }} so it can be gathered by polarion jump.
   ansible.builtin.copy:
     src: "{{ results_dir }}/{{ test_name }}.xml"
-    dest: "{{ polarion_dir }}/{{ test_name }}.xml"
+    dest: "{{ polarion_dir }}/{{ testsuite_name | replace('/', '-') }}.xml"
     remote_src: yes
     mode: u=rwx,g=rwx,o=rwx
