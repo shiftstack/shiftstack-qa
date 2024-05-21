@@ -44,6 +44,7 @@
   vars:
     openstack_test_results_dir: "{{ artifacts_dir }}/lb_amphora_sourceip"
     openstack_tests_allowlist_file: "{{ lb_allowlist_file }}"
+    openstack_testsuite_name: openstack_tests_lb_amphora_sourceip
 
 - name: Enable OVN provider on cloud-provider-config
   ansible.builtin.include_tasks: change_cloud_cm.yml
@@ -60,3 +61,4 @@
   vars:
     openstack_test_results_dir: "{{ artifacts_dir }}/lb_ovn"
     openstack_tests_allowlist_file: "{{ lb_allowlist_file }}"
+    openstack_testsuite_name: openstack_tests_lb_ovn
