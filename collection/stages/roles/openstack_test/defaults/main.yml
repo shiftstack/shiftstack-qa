@@ -1,6 +1,7 @@
 ---
 # defaults file for openstack_test
 openstack_test_name: openstack-test
+openstack_testsuite_name: openstack
 openstack_test_dir: "{{ artifacts_dir }}/{{ openstack_test_name }}"
 openstack_test_results_dir: "{{ artifacts_dir }}/{{ openstack_test_name }}-results"
 openstack_tests_allowlist_file: ""
