@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "50c38060_5fa5aa9b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-05-22T14:24:04Z",
+      "side": 1,
+      "message": "[cloud-admin@shiftstackclient test_results]$ ls -larth\n-rwxrwxrwx. 1 cloud-admin cloud-admin  96K May 22 08:44 openstack.xml\n-rwxrwxrwx. 1 cloud-admin cloud-admin   26 May 22 14:06 csi-cindercsi.xml",
+      "revId": "925376cb4828d018f3211d5c90ee4ab775012379",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
