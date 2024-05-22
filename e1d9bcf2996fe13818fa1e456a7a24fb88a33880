@@ -24,6 +24,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6592a5c7_33b671f0",
+        "filename": "collection/stages/roles/lb_tests/tasks/main.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-05-22T12:39:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "59f89cb2_fcd4269f",
+      "range": {
+        "startLine": 41,
+        "startChar": 0,
+        "endLine": 41,
+        "endChar": 33
+      },
+      "revId": "e1d9bcf2996fe13818fa1e456a7a24fb88a33880",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a749dfac_6cc6b3f7",
@@ -47,6 +71,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "1dcb603f_98260a6d",
+        "filename": "collection/stages/roles/lb_tests/tasks/main.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-05-22T12:39:57Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a749dfac_6cc6b3f7",
+      "range": {
+        "startLine": 58,
+        "startChar": 0,
+        "endLine": 58,
+        "endChar": 33
+      },
+      "revId": "e1d9bcf2996fe13818fa1e456a7a24fb88a33880",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5fdcaf27_0ec55898",
@@ -60,6 +108,30 @@
       "writtenOn": "2024-05-21T14:36:05Z",
       "side": 1,
       "message": "@rlobillo@redhat.com This change affects the CSI xml file naming - https://github.com/shiftstack/shiftstack-qa/blob/main/collection/stages/roles/csi_tests/tasks/openshift_manila_csi.yml#L36\n\nIs this ok?",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 55
+      },
+      "revId": "e1d9bcf2996fe13818fa1e456a7a24fb88a33880",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "79de0a40_172432d4",
+        "filename": "collection/tools/roles/tools_openshift_tests/tasks/post_openshift_tests.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-05-22T12:39:57Z",
+      "side": 1,
+      "message": "Yes, that is the goal. Polarion is taking *.xml and with that change we will have a more appropiate name for the file.",
+      "parentUuid": "5fdcaf27_0ec55898",
       "range": {
         "startLine": 35,
         "startChar": 0,
