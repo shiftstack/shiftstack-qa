@@ -164,6 +164,30 @@
       },
       "revId": "e1d9bcf2996fe13818fa1e456a7a24fb88a33880",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3ad38b8d_00726f62",
+        "filename": "collection/tools/roles/tools_openshift_tests/tasks/post_openshift_tests.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-05-22T12:43:33Z",
+      "side": 1,
+      "message": "@rlobillo@redhat.com is `csi/{{ csi_test_type }}` is a valid name? it uses `/`\n\n[0] https://github.com/shiftstack/shiftstack-qa/blob/main/collection/stages/roles/csi_tests/defaults/main.yml#L11",
+      "parentUuid": "538dafe5_1521566f",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 55
+      },
+      "revId": "e1d9bcf2996fe13818fa1e456a7a24fb88a33880",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
