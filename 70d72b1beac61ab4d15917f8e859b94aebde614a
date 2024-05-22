@@ -24,6 +24,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "334915da_80056e26",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 15
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1037821
+      },
+      "writtenOn": "2024-05-22T16:47:32Z",
+      "side": 1,
+      "message": "only IPI.",
+      "parentUuid": "cfcda266_29d5f044",
+      "range": {
+        "startLine": 7,
+        "startChar": 8,
+        "endLine": 7,
+        "endChar": 11
+      },
+      "revId": "70d72b1beac61ab4d15917f8e859b94aebde614a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1f45411b_2aeecfab",
@@ -37,6 +61,30 @@
       "writtenOn": "2024-05-16T07:43:10Z",
       "side": 1,
       "message": "the `installation_type` is our var in the config file.\nwe should determine if there is IPI installation so the cleanup does not depend on the config file, but detect the installed cluster type.",
+      "range": {
+        "startLine": 4,
+        "startChar": 0,
+        "endLine": 4,
+        "endChar": 34
+      },
+      "revId": "70d72b1beac61ab4d15917f8e859b94aebde614a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9e1399bb_6d174881",
+        "filename": "collection/stages/roles/cleanup/tasks/destroy_clusters.yml",
+        "patchSetId": 15
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 1037821
+      },
+      "writtenOn": "2024-05-22T16:47:32Z",
+      "side": 1,
+      "message": "for now we are considering only ipi, the logic will be implemented in separate patch https://issues.redhat.com/browse/OSPRH-7150",
+      "parentUuid": "1f45411b_2aeecfab",
       "range": {
         "startLine": 4,
         "startChar": 0,
@@ -64,6 +112,24 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "39342f34_883bb156",
+        "filename": "collection/stages/roles/cleanup/tasks/destroy_clusters.yml",
+        "patchSetId": 15
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1037821
+      },
+      "writtenOn": "2024-05-22T16:47:32Z",
+      "side": 1,
+      "message": "commit message fixed",
+      "parentUuid": "a567b567_d0a50636",
+      "revId": "70d72b1beac61ab4d15917f8e859b94aebde614a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "96f7e25f_303f9edf",
@@ -87,6 +153,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e12447cc_260486f9",
+        "filename": "collection/stages/roles/cleanup/tasks/destroy_ipi.yml",
+        "patchSetId": 15
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1037821
+      },
+      "writtenOn": "2024-05-22T16:47:32Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "96f7e25f_303f9edf",
+      "range": {
+        "startLine": 15,
+        "startChar": 0,
+        "endLine": 15,
+        "endChar": 44
+      },
+      "revId": "70d72b1beac61ab4d15917f8e859b94aebde614a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4b678038_8f25b709",
@@ -100,6 +190,30 @@
       "writtenOn": "2024-05-16T07:43:10Z",
       "side": 1,
       "message": "what happens if it is an env in installer-host (UPI/Proxy)?",
+      "range": {
+        "startLine": 2,
+        "startChar": 0,
+        "endLine": 2,
+        "endChar": 36
+      },
+      "revId": "70d72b1beac61ab4d15917f8e859b94aebde614a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "87745c81_786f4f6b",
+        "filename": "collection/stages/roles/cleanup/tasks/main.yml",
+        "patchSetId": 15
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1037821
+      },
+      "writtenOn": "2024-05-22T16:47:32Z",
+      "side": 1,
+      "message": "The logic will be implemented in separate patch https://issues.redhat.com/browse/OSPRH-7150",
+      "parentUuid": "4b678038_8f25b709",
       "range": {
         "startLine": 2,
         "startChar": 0,
