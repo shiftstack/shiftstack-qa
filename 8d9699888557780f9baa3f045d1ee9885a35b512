@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "48beb0c9_9f9e0952",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-05-22T12:40:55Z",
+      "side": 1,
+      "message": "verified locally on titan01 setup:\n\n``$ ll\n-rwxrwxrwx. 1 cloud-admin cloud-admin 98251 May 22 08:44 openstack.xml``",
+      "revId": "8d9699888557780f9baa3f045d1ee9885a35b512",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
