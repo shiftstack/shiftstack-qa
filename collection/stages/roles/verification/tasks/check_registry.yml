@@ -86,6 +86,8 @@
     - name: Create a new application to check image registry
       ansible.builtin.shell: "oc project {{ swift_check_ns }} && oc new-app  https://github.com/itzikb/fooapp --name {{ swift_check_image }}"
       changed_when: true
+      environment:
+        KUBECONFIG: "{{ kubeconfig }}"
 
     - name: Set the Security context of the {{ swift_check_image }} app
       ansible.builtin.shell: |
