@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cf666137_01ae7ac8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-05-23T11:44:17Z",
+      "side": 1,
+      "message": "Verified in titan19 with DT enabling swift: https://github.com/shiftstack/architecture/blob/osasinfra-dt/automation/vars/osasinfra.yaml",
+      "revId": "0f597b2b1cb1c08dc11da494d7c80759b657af0e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
