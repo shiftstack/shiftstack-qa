@@ -26,6 +26,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "ef57cb6c_c7df2e25",
+        "filename": "collection/tools/roles/tools_installer_host/defaults/main.yml",
+        "patchSetId": 5
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-05-27T16:16:17Z",
+      "side": 0,
+      "message": "I\u0027m not very sure about this now as I\u0027m still testing the UPI installation and it\u0027s not necessary.\nThe \"openstack.cloud\" collection for example is necessary because ansible runs the UPI playbooks in the installer host (ansible controller) and require that module. For the tests, even if the target host is the installer host, the ansible controller is the shiftstackclient pod where it\u0027s already installed the \"kubernetes.core\" module.\nDo you think it\u0027s necessary? I can add if it\u0027s needed as I will hit it when running the tests.",
+      "parentUuid": "11f7f886_5c2fb3f4",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 27
+      },
+      "revId": "909fc26b431e2ad24d62ab38c7bc3dbcb4736738",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "f9cebe1f_41757f3c",
         "filename": "collection/tools/roles/tools_installer_host/tasks/configuration_install_packages.yml",
         "patchSetId": 5
@@ -37,6 +61,30 @@
       "writtenOn": "2024-05-27T07:51:14Z",
       "side": 0,
       "message": "why? have you verified it?",
+      "range": {
+        "startLine": 57,
+        "startChar": 0,
+        "endLine": 71,
+        "endChar": 60
+      },
+      "revId": "909fc26b431e2ad24d62ab38c7bc3dbcb4736738",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d530484e_6701dbd3",
+        "filename": "collection/tools/roles/tools_installer_host/tasks/configuration_install_packages.yml",
+        "patchSetId": 5
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-05-27T16:16:17Z",
+      "side": 0,
+      "message": "In the plugin it was necessary for RHEL \u003c 9 (OSP 16 and before) - https://code.engineering.redhat.com/gerrit/plugins/gitiles/openshift-ir-plugin/+/refs/heads/master/roles/installer_host/tasks/configuration/install_packages.yml#60\n\nso shouldn\u0027t be necessary in OSP 18 (RHEL 9.4) as python already points to python3:\n$ python --version\nPython 3.9.18\n\nHaven\u0027t tried yet as UPI is failing before running the python script in the middle of the installation.\n\nIt might be possible for the legacy env though, right? I missed it...",
+      "parentUuid": "f9cebe1f_41757f3c",
       "range": {
         "startLine": 57,
         "startChar": 0,
