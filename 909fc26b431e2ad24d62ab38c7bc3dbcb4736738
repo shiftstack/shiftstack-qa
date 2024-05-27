@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "11f7f886_5c2fb3f4",
+        "filename": "collection/tools/roles/tools_installer_host/defaults/main.yml",
+        "patchSetId": 5
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-05-27T07:51:14Z",
+      "side": 0,
+      "message": "why? I think we need it if we running the `Tests` stages in UPI/Proxy env",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 27
+      },
+      "revId": "909fc26b431e2ad24d62ab38c7bc3dbcb4736738",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f9cebe1f_41757f3c",
+        "filename": "collection/tools/roles/tools_installer_host/tasks/configuration_install_packages.yml",
+        "patchSetId": 5
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-05-27T07:51:14Z",
+      "side": 0,
+      "message": "why? have you verified it?",
+      "range": {
+        "startLine": 57,
+        "startChar": 0,
+        "endLine": 71,
+        "endChar": 60
+      },
+      "revId": "909fc26b431e2ad24d62ab38c7bc3dbcb4736738",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
