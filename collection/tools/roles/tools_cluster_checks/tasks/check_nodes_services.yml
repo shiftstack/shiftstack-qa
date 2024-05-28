@@ -6,8 +6,8 @@
         failed_units_msg_list: []
         unstable_msg: ""
         ignore_services_failing:
-          # https://issues.redhat.com/browse/OCPBUGS-11936
-          - ".*afterburn-hostname.*"
+          # https://issues.redhat.com/browse/OCPBUGS-25737
+          - ".*systemd-network-generator.*"
 
     - name: Get existing nodes
       kubernetes.core.k8s_info:
