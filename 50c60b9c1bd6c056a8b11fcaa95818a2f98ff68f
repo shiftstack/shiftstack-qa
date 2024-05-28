@@ -16,6 +16,23 @@
       "message": "https://rhos-ci-jenkins.lab.eng.tlv2.redhat.com/job/DFG-osasinfra-shiftstack-16.2-gate-infrared-openshift/486/",
       "revId": "50c60b9c1bd6c056a8b11fcaa95818a2f98ff68f",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "be1e6953_dbe5ba4c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-05-28T12:10:45Z",
+      "side": 1,
+      "message": "thank you!",
+      "revId": "50c60b9c1bd6c056a8b11fcaa95818a2f98ff68f",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
