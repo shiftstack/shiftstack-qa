@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "99a0350d_1f8ec03b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-05-28T07:14:21Z",
+      "side": 1,
+      "message": "can you please add a reference? \n\nhttps://code.engineering.redhat.com/gerrit/c/openshift-ir-plugin/+/449117",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 57
+      },
+      "revId": "063c7771852da4b04923aee62fbe390741d8fd4c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
