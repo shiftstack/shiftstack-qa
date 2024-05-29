@@ -72,6 +72,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "66d07854_a824b4a9",
+        "filename": "collection/tools/roles/tools_installer_host/defaults/main.yml",
+        "patchSetId": 5
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-05-29T09:02:40Z",
+      "side": 0,
+      "message": "Agreed to remove it for now as the ansible collections are needed in the ansible controller (shiftstackclient pod) and not in the target hosts (installer host).",
+      "parentUuid": "c77867b8_60e7cf97",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 27
+      },
+      "revId": "909fc26b431e2ad24d62ab38c7bc3dbcb4736738",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f9cebe1f_41757f3c",
@@ -133,6 +157,30 @@
       "side": 0,
       "message": "thanks @juriarte@redhat.com\nlet me know if you want me to try this patch on a virt legacy env",
       "parentUuid": "d530484e_6701dbd3",
+      "range": {
+        "startLine": 57,
+        "startChar": 0,
+        "endLine": 71,
+        "endChar": 60
+      },
+      "revId": "909fc26b431e2ad24d62ab38c7bc3dbcb4736738",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3141cc42_81589ee6",
+        "filename": "collection/tools/roles/tools_installer_host/tasks/configuration_install_packages.yml",
+        "patchSetId": 5
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-05-29T09:02:40Z",
+      "side": 0,
+      "message": "I\u0027ve added it back to keep compatibility with OSP 16.2 legacy envs.",
+      "parentUuid": "0cdebd89_4e9b91e6",
       "range": {
         "startLine": 57,
         "startChar": 0,
