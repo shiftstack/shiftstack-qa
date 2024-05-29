@@ -267,6 +267,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "bbf5ab6c_a5dd4208",
+        "filename": "collection/stages/roles/cleanup/tasks/openstack_project_cleanup.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1037821
+      },
+      "writtenOn": "2024-05-29T08:40:07Z",
+      "side": 1,
+      "message": "there is no project parameter for this one: https://docs.ansible.com/ansible/latest/collections/openstack/cloud/volume_info_module.html",
+      "parentUuid": "80fec4c8_183a40f3",
+      "range": {
+        "startLine": 36,
+        "startChar": 0,
+        "endLine": 49,
+        "endChar": 27
+      },
+      "revId": "daf6c6c3d8bdb0b6d615066df306952aff7b0ee5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "ef7838bc_e85616ad",
         "filename": "collection/stages/roles/cleanup/tasks/openstack_project_cleanup.yml",
         "patchSetId": 8
