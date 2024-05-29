@@ -11,13 +11,6 @@ stages:
   - openstack_test
   - lb_tests
 
-infra: # Store required Openstack deployment info for deploying OCP
-  external_network: public
-  region: regionOne
-  dns_servers:
-    - '192.168.122.1'
-    - '10.47.242.10'
-
 topology:
   flavors:
     master:
