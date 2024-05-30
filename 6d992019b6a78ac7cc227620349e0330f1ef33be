@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "af240004_b1defbb7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-05-30T12:43:28Z",
+      "side": 1,
+      "message": "Do we have a Jira for this task?",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 51
+      },
+      "revId": "6d992019b6a78ac7cc227620349e0330f1ef33be",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cd6ff5be_ae3b1a65",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-05-30T12:43:28Z",
+      "side": 1,
+      "message": "great work. Thanks @juriarte@redhat.com !",
+      "revId": "6d992019b6a78ac7cc227620349e0330f1ef33be",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5840439e_ef7785e2",
+        "filename": "collection/tools/roles/tools_installer_host/tasks/configuration_install_packages.yml",
+        "patchSetId": 7
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-05-30T12:43:28Z",
+      "side": 1,
+      "message": "is it really needed?",
+      "range": {
+        "startLine": 44,
+        "startChar": 0,
+        "endLine": 44,
+        "endChar": 17
+      },
+      "revId": "6d992019b6a78ac7cc227620349e0330f1ef33be",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
