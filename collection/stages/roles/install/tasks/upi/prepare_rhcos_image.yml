@@ -40,8 +40,8 @@
 
 - name: Upload the required RHCOS image to Glance if there is no RHCOS image on Glance yet or its SHA256 is not equal to the RHCOS's SHA256 on Glance
   when: >
-    glance_image_sha_result.openstack_images['owner_specified.openstack.sha256'] is not defined or
-    glance_image_sha_result.openstack_images['owner_specified.openstack.sha256'] != rhcos_sha256
+    glance_image_sha_result.images['owner_specified.openstack.sha256'] is not defined or
+    glance_image_sha_result.images['owner_specified.openstack.sha256'] != rhcos_sha256
   block:
     - name: Check if the uncompressed image file ({{ rhcos_openstack_image }}) already exists and get the SHA256
       ansible.builtin.stat:
