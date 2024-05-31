@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ab7f3d6e_bfacea00",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-05-31T15:27:01Z",
+      "side": 1,
+      "message": "A new pod image is needed with newer openstacksdk in https://gitlab.cee.redhat.com/shiftstack/shiftstack-tools/-/blob/main/osp18/pip_requirements.txt?ref_type\u003dheads#L3",
+      "revId": "930ad642a35eb38dfabd628fcc8164f8ef35bb48",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
