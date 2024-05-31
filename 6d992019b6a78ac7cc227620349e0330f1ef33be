@@ -26,6 +26,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "2f9cf464_f8320840",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-05-31T14:50:11Z",
+      "side": 1,
+      "message": "Yes, thanks 😊",
+      "parentUuid": "af240004_b1defbb7",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 51
+      },
+      "revId": "6d992019b6a78ac7cc227620349e0330f1ef33be",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "cd6ff5be_ae3b1a65",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 7
@@ -78,6 +102,30 @@
       "side": 1,
       "message": "I\u0027m referring here to line 43 -\n```\nbecome: true\n```",
       "parentUuid": "5840439e_ef7785e2",
+      "range": {
+        "startLine": 44,
+        "startChar": 0,
+        "endLine": 44,
+        "endChar": 17
+      },
+      "revId": "6d992019b6a78ac7cc227620349e0330f1ef33be",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "09850363_2681600e",
+        "filename": "collection/tools/roles/tools_installer_host/tasks/configuration_install_packages.yml",
+        "patchSetId": 7
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-05-31T14:50:11Z",
+      "side": 1,
+      "message": "become: true is needed for package installation, it was in a different line in the previous code",
+      "parentUuid": "50529ee0_a946c52d",
       "range": {
         "startLine": 44,
         "startChar": 0,
