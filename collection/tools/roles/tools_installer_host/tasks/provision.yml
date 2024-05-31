@@ -43,8 +43,8 @@
     dest: "/tmp/{{ installer_vm.image.name }}"
     mode: u=rw,g=rw,o=r
   when:
-    - glance_image_sha_result.openstack_images['owner_specified.openstack.sha256'] is not defined or
-      glance_image_sha_result.openstack_images['owner_specified.openstack.sha256'] != rhel_sha_result.stdout
+    - glance_image_sha_result.images['owner_specified.openstack.sha256'] is not defined or
+      glance_image_sha_result.images['owner_specified.openstack.sha256'] != rhel_sha_result.stdout
     - downloaded_image_sha_result.stat.checksum is not defined or
       downloaded_image_sha_result.stat.checksum != rhel_sha_result.stdout
 
@@ -86,7 +86,7 @@
         cloud: "{{ admin_cloud }}"
         name: "{{ installer_vm.router.name }}"
         interfaces: "{{ installer_vm.subnet.name }}"
-        network: "{{ openstack_networks_info.openstack_networks[0].name }}"
+        network: "{{ openstack_networks_info.networks[0].name }}"
         state: present
         verify: "{{ admin_verify_cacert }}"
       when: custom_router == ''
@@ -123,8 +123,8 @@
 
     - name: Upload the required RHEL image to Glance if there is no RHEL image on Glance yet or its SHA256 is not equal to the RHEL's SHA256 on Glance
       when: >
-        glance_image_sha_result.openstack_images['owner_specified.openstack.sha256'] is not defined or
-        glance_image_sha_result.openstack_images['owner_specified.openstack.sha256'] != rhel_sha_result.stdout
+        glance_image_sha_result.images['owner_specified.openstack.sha256'] is not defined or
+        glance_image_sha_result.images['owner_specified.openstack.sha256'] != rhel_sha_result.stdout
       block:
         - name: Remove the RHEL image from Glance
           openstack.cloud.image:
@@ -174,7 +174,7 @@
     - name: Create floating IPs
       openstack.cloud.floating_ip:
         cloud: "{{ user_cloud }}"
-        network: "{{ openstack_networks_info.openstack_networks[0].id }}"
+        network: "{{ openstack_networks_info.networks[0].id }}"
         nat_destination: "{{ installer_vm.network.name }}"
         server: "{{ installer_vm_name }}"
         state: present
