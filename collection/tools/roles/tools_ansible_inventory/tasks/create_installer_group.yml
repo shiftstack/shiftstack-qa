@@ -11,7 +11,7 @@
     installer_vm_exists: true
   when:
     - server_info is succeeded
-    - server_info.openstack_servers | default([]) | length == 1
+    - server_info.servers | default([]) | length == 1
 
 - name: Add host installer to inventory when the installer host VM exists
   when: installer_vm_exists | default(false)
