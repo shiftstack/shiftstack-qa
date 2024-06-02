@@ -134,6 +134,30 @@
       },
       "revId": "6d992019b6a78ac7cc227620349e0330f1ef33be",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ecd4bf72_e035c891",
+        "filename": "collection/tools/roles/tools_installer_host/tasks/configuration_install_packages.yml",
+        "patchSetId": 7
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-06-02T08:46:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "09850363_2681600e",
+      "range": {
+        "startLine": 44,
+        "startChar": 0,
+        "endLine": 44,
+        "endChar": 17
+      },
+      "revId": "6d992019b6a78ac7cc227620349e0330f1ef33be",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
