@@ -50,3 +50,9 @@
     src: "{{ clouds_yaml_file_path }}"
     dest: "{{ osp_config_dir }}"
     mode: u=rwx,g=r,o=r
+
+- name: "Copy secure.yaml to {{ osp_config_dir }}"
+  ansible.builtin.copy:
+    src: "{{ secure_yaml_file_path }}"
+    dest: "{{ osp_config_dir }}"
+    mode: u=rwx,g=r,o=r

@@ -10,6 +10,7 @@ installer_image: "{{ osp_rhel_matrix[openstack_version] }}"
 files_to_copy:
   - "{{ user_env_file | basename }}"
   - "clouds.yaml"
+  - "secure.yaml"
 
 installer_required_packages:
   - 'python3-openstackclient'

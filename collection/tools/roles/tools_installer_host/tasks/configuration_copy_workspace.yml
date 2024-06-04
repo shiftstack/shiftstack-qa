@@ -6,7 +6,7 @@
     mode: u=rw,g=rw,o=r
   loop: "{{ files_to_copy }}"
 
-- name: Copy clouds.yaml to the proper place for OS_CLOUD
+- name: Create symlinks for clouds.yaml and secure.yaml in the proper place for OS_CLOUD
   block:
     - name: Ensure ~/.config/openstack exists in the installer host VM
       ansible.builtin.file:
@@ -14,10 +14,17 @@
         state: directory
         mode: u=rwx,g=rw,o=r
 
-    - name: Copy clouds.yaml to ~/.config/openstack/clouds.yaml
+    - name: Create a symlink to ~/clouds.yaml in ~/.config/openstack/clouds.yaml
       ansible.builtin.file:
         src: ~/clouds.yaml
         dest: ~/.config/openstack/clouds.yaml
+        force: true
+        state: link
+
+    - name: Create a synlink to ~/secure.yaml in ~/.config/openstack/secure.yaml
+      ansible.builtin.file:
+        src: ~/secure.yaml
+        dest: ~/.config/openstack/secure.yaml
         force: true
         state: link
 
