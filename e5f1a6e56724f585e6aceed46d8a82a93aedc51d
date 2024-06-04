@@ -46,6 +46,30 @@
       },
       "revId": "e5f1a6e56724f585e6aceed46d8a82a93aedc51d",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ba61c9ad_0a849ba3",
+        "filename": "configs/ocp_testing.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-06-04T12:39:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ea8765f6_c1c91d6a",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 8,
+        "endChar": 21
+      },
+      "revId": "e5f1a6e56724f585e6aceed46d8a82a93aedc51d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
