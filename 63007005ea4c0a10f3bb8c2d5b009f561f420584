@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "482afcfc_354d17a5",
+        "filename": "collection/stages/roles/cleanup/tasks/destroy_ipi.yml",
+        "patchSetId": 23
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-06-04T08:49:28Z",
+      "side": 1,
+      "message": "The openshift-install binary won\u0027t be probably on the pod, as it is installed on the prepare and we are not storing it in the PVC.\n\nSo, currently a fresh pod won\u0027t have the binary and this task will fail.",
+      "range": {
+        "startLine": 11,
+        "startChar": 32,
+        "endLine": 11,
+        "endChar": 49
+      },
+      "revId": "63007005ea4c0a10f3bb8c2d5b009f561f420584",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
