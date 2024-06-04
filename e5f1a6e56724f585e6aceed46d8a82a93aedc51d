@@ -22,6 +22,30 @@
       },
       "revId": "e5f1a6e56724f585e6aceed46d8a82a93aedc51d",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ea8765f6_c1c91d6a",
+        "filename": "configs/ocp_testing.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-06-04T12:39:00Z",
+      "side": 1,
+      "message": "That value is currently valid specifically for virt. On virt, we are always deploying the setup with fixed CIDRs, so the DNSMASQ (which is running in the hypervisor) always has that IP.\n\nLet\u0027s see what is needed for hybrid, for the moment we don\u0027t know...",
+      "parentUuid": "80e5c4a8_2f0af5db",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 8,
+        "endChar": 21
+      },
+      "revId": "e5f1a6e56724f585e6aceed46d8a82a93aedc51d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
