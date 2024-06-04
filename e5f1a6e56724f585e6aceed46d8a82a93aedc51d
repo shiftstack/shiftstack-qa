@@ -70,6 +70,30 @@
       },
       "revId": "e5f1a6e56724f585e6aceed46d8a82a93aedc51d",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "08199ac0_8e95ef1a",
+        "filename": "configs/ocp_testing.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-06-04T14:26:12Z",
+      "side": 1,
+      "message": "This dnsmasq is able to resolve the Openstack API endpoints, we\u0027ll need something similar from the ci-framework for hybrid setups. In the old CI, if I\u0027m not wrong, we didn\u0027t need to resolve OSP endpoints in SSL deployments (it used IPs and not names) and we run dnsmasq in TLS-E deployments as it needs to resolve OSP endpoints as well.\nIn OSP 18, this is already solved for us if we use the dnsmasq running in the hypervisor.",
+      "parentUuid": "ba61c9ad_0a849ba3",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 8,
+        "endChar": 21
+      },
+      "revId": "e5f1a6e56724f585e6aceed46d8a82a93aedc51d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
