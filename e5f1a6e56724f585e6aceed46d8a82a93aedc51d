@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "80e5c4a8_2f0af5db",
+        "filename": "configs/ocp_testing.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-06-04T12:33:25Z",
+      "side": 1,
+      "message": "where is the cifmw-osp_trunk configured? is it part of the OSP18 installation?\nwhat happens if we run our automation without the CI?",
+      "range": {
+        "startLine": 8,
+        "startChar": 0,
+        "endLine": 8,
+        "endChar": 21
+      },
+      "revId": "e5f1a6e56724f585e6aceed46d8a82a93aedc51d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
