@@ -1,5 +1,6 @@
 ---
 clouds_yaml_file_path: "{{ home_dir }}/.config/openstack/clouds.yaml"
+secure_yaml_file_path: "{{ home_dir }}/.config/openstack/secure.yaml"
 project:
   name: "{{ user_cloud }}"
   user: user
