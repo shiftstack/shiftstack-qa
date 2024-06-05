@@ -289,6 +289,54 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b7c54994_cd3055ab",
+        "filename": "collection/stages/roles/cleanup/tasks/openstack_project_cleanup.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1037821
+      },
+      "writtenOn": "2024-06-05T15:56:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bbf5ab6c_a5dd4208",
+      "range": {
+        "startLine": 36,
+        "startChar": 0,
+        "endLine": 49,
+        "endChar": 27
+      },
+      "revId": "daf6c6c3d8bdb0b6d615066df306952aff7b0ee5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1c128d8d_34245a4a",
+        "filename": "collection/stages/roles/cleanup/tasks/openstack_project_cleanup.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 1037821
+      },
+      "writtenOn": "2024-06-05T15:56:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "bbf5ab6c_a5dd4208",
+      "range": {
+        "startLine": 36,
+        "startChar": 0,
+        "endLine": 49,
+        "endChar": 27
+      },
+      "revId": "daf6c6c3d8bdb0b6d615066df306952aff7b0ee5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ef7838bc_e85616ad",
