@@ -16,6 +16,23 @@
       "message": "Tested in legacy 4.15 IPI with openstack.cloud-2.2.0 and:\n$ pip list | grep openstack\nopenstackclient                4.0.0\nopenstacksdk                   1.0.1\npython-openstackclient         6.0.1",
       "revId": "40ae9ce8a91cb0274be2338aad6cc6bea0b6b145",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1cf0686f_7e4c5450",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-06-05T16:37:11Z",
+      "side": 1,
+      "message": "This change requires an shiftstackclient pod image with openstacksdk\u003d\u003d1.0.1",
+      "revId": "40ae9ce8a91cb0274be2338aad6cc6bea0b6b145",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
