@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "cce77010_db51a544",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-06-05T13:23:00Z",
+      "side": 1,
+      "message": "Tested in OSP 18 env (4.15 IPI VA1), the cluster was installed successfully with 192.168.122.1 as DNS:\n platform:\n   openstack:\n     cloud:            \"shiftstack\"\n     externalNetwork:  \"public\"\n     region:           \"regionOne\"\n     apiFloatingIP:     xx\n     ingressFloatingIP: xx\n     externalDNS:      [\u0027192.168.122.1\u0027]",
+      "revId": "e5f1a6e56724f585e6aceed46d8a82a93aedc51d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "80e5c4a8_2f0af5db",
