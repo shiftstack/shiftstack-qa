@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e2efcad6_e896bdfe",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-06-05T15:50:47Z",
+      "side": 1,
+      "message": "Tested in IPI, for UPI I would need two more patches that are on review.\n\nTASK [shiftstack.stages.prepare : Copy secure.yaml to /home/cloud-admin/installation/shiftstack/openstack] ***                                                                                                                                \nchanged: [localhost]",
+      "revId": "61792bad7356fc5b429b3ab1d852ace5dc2c1305",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
