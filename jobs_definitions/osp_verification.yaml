@@ -1,0 +1,41 @@
+---
+#
+#     * OSP VERIFICATION *
+#
+# - This job will be run in integration pipeline and will be monitored by CI team.
+# - It includes the stages that will exercise the OSP integration in order to
+#     validate the OSP candidate release.
+# - It will use latest stable version of OCP.
+# - It is prepared to run with a full virtualized setup, so the flavors are reduced
+#     from the official OCP documentation to fit on the virtualized resources.
+# - It is prepared to run on top of RHOSP18 OSASINFRA Validated Architecture.
+#
+
+openshift_release: 4-stable # It can be "4.10", "4.11", etc. or "4-stable"
+openshift_build_name: "" # It can be an empty value "" (latest nightly), a given build
+openshift_network_type: OVNKubernetes
+installation_type: ipi
+stages:
+  - prepare
+  - install
+  - post
+  - verification
+  - openstack_test
+  - lb_tests
+
+topology:
+  flavors:
+    master:
+      name: "master"
+      ram: 16384
+      vcpus: 4
+      disk: 25
+    worker:
+      name: "worker"
+      ram: 8192
+      vcpus: 2
+      disk: 25
+  replicas:
+    master: 3
+    worker: 2
+  machine_cidr: 10.196.0.0/16
