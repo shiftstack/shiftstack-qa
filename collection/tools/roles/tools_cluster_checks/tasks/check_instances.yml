@@ -14,7 +14,7 @@
       ansible.builtin.fail:
         msg: "{{ error_msg }}"
       when: item.vm_state != "active"
-      loop: "{{ project_servers.openstack_servers }}"
+      loop: "{{ project_servers.servers }}"
   rescue:
     - name: Get Instances, Machines, and MachineSets information for unhealthy project instances
       ansible.builtin.include_tasks: debug_machines.yml
