@@ -3,6 +3,29 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "88d50d03_4948e9fb",
+        "filename": ".ansible-lint",
+        "patchSetId": 29
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-06-09T19:34:21Z",
+      "side": 1,
+      "message": "Enable installing packages with latest `state`.",
+      "range": {
+        "startLine": 23,
+        "startChar": 0,
+        "endLine": 23,
+        "endChar": 18
+      },
+      "revId": "c1b998a28a1feb3c94a0bcb480a88a18803b5358",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "c8add38e_41a87974",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 29
@@ -14,6 +37,29 @@
       "writtenOn": "2024-06-09T19:31:09Z",
       "side": 1,
       "message": "Verified locally on a legacy virt setup.",
+      "revId": "c1b998a28a1feb3c94a0bcb480a88a18803b5358",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5be05952_88e9d538",
+        "filename": "collection/stages/roles/install/templates/install-config-proxy.yaml.j2",
+        "patchSetId": 29
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-06-09T19:34:21Z",
+      "side": 1,
+      "message": "```bash\n% diff install-config.yaml.j2 install-config-proxy.yaml.j2\n30c30\n\u003c     externalNetwork:  \"{{ installcfg_external_network }}\"\n---\n\u003e     externalNetwork:  \"\"\n32,34c32,37\n\u003c     apiFloatingIP:     \"{{ installcfg_api_floating_ip }}\"\n\u003c     ingressFloatingIP:     \"{{ installcfg_ingress_floating_ip }}\"\n\u003c     externalDNS:      {{ installcfg_dns_servers }}\n---\n\u003e     machinesSubnet: {{ installcfg_machines_subnet }}\n\u003e     apiVIP: \"{{ installcfg_api_vip }}\"\n\u003e     ingressVIP: \"{{ installcfg_ingress_vip }}\"\n\u003e proxy:\n\u003e   httpProxy: http://dummy:dummy@{{restricted_network.installer_ip}}:3128/\n\u003e   httpsProxy: https://dummy:dummy@{{restricted_network.installer_ip}}:3130/\n38a42,43\n\u003e additionalTrustBundle: |\n\u003e   {{ installcfg_additional_trust_bundle }}\n```",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 56
+      },
       "revId": "c1b998a28a1feb3c94a0bcb480a88a18803b5358",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
