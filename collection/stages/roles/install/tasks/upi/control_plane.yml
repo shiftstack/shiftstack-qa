@@ -16,4 +16,4 @@
   ansible.builtin.shell: "{{ script }}" # noqa: command-instead-of-shell
   changed_when: true
   args:
-    chdir: "{{ installation_dir }}"
+    chdir: "{{ ocp_installation_dir }}"
