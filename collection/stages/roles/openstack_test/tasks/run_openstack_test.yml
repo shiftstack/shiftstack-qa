@@ -95,4 +95,3 @@
         name: tools_must-gather
       vars:
         must_gather_dir_suffix: "must-gather-openstack-tests"
-        fetch_to_inventory: true

@@ -109,4 +109,3 @@
         name: tools_must-gather
       vars:
         must_gather_dir_suffix: "must-gather-conformance"
-        fetch_to_inventory: true

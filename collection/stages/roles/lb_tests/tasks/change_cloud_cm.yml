@@ -210,7 +210,6 @@
         name: tools_must-gather
       vars:
         must_gather_dir_suffix: "must-gather-change-cloud-cm"
-        fetch_to_inventory: true
 
     - name: Fail inside rescue block
       ansible.builtin.fail:
