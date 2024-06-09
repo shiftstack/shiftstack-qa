@@ -8,8 +8,8 @@ osp_rhel_matrix:
 installer_image: "{{ osp_rhel_matrix[openstack_version] }}"
 
 files_to_copy:
-  - "{{ user_env_file | basename }}"
-  - "clouds.yaml"
+  - "{{ user_env_file }}"
+  - "{{ osp_config_dir }}/clouds.yaml"
 
 installer_required_packages:
   - 'python3-openstackclient'

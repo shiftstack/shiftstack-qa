@@ -54,11 +54,3 @@
         dest: "{{ must_gather_dir_base }}/{{ must_gather_dir_suffix }}.tar.gz"
         mode: u=rw,g=rw,o=r
       no_log: true
-
-    - name: Fetch {{ must_gather_dir_base }}/{{ must_gather_dir_suffix }}.tar.gz to {{ artifacts_dir }}
-      ansible.builtin.fetch:
-        src: "{{ must_gather_dir_base }}/{{ must_gather_dir_suffix }}.tar.gz"
-        dest: "{{ artifacts_dir }}/{{ must_gather_dir_suffix }}.tar.gz"
-        flat: yes
-      no_log: true
-      when: fetch_to_inventory
