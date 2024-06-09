@@ -38,4 +38,3 @@
         name: tools_must-gather
       vars:
         must_gather_dir_suffix: "must-gather-{{ csi_test_name }}"
-        fetch_to_inventory: true
