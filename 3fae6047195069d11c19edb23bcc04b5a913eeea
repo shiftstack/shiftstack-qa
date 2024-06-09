@@ -18,6 +18,23 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "96ddaf54_b022ebaf",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-06-09T15:42:53Z",
+      "side": 1,
+      "message": "Verified locally during the IPI proxy work.\n\nIf you are ok with this change, we should update it in the ci-framework.",
+      "revId": "3fae6047195069d11c19edb23bcc04b5a913eeea",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "eaff7c57_64f7cdef",
