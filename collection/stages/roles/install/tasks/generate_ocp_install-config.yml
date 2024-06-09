@@ -14,7 +14,7 @@
 - name: Generate install-config.yaml from template
   ansible.builtin.template:
     src: install-config.yaml.j2
-    dest: "{{ home_dir }}/install-config.yaml"
+    dest: "{{ user_cloud_installation_dir }}/install-config.yaml"
     mode: u=rw,g=rw,o=r
   vars:
     installcfg_cluster_name: "{{ ocp_cluster_name }}"
@@ -32,7 +32,7 @@
 
 - name: Copy the install-config.yaml to installation dir
   ansible.builtin.copy:
-    src: "{{ home_dir }}/install-config.yaml"
-    dest: "{{ installation_dir }}/install-config.yaml"
+    src: "{{ user_cloud_installation_dir }}/install-config.yaml"
+    dest: "{{ ocp_installation_dir }}/install-config.yaml"
     remote_src: yes
     mode: u=rwx,g=rwx,o=rwx
