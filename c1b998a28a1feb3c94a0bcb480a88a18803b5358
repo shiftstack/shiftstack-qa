@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c8add38e_41a87974",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 29
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-06-09T19:31:09Z",
+      "side": 1,
+      "message": "Verified locally on a legacy virt setup.",
+      "revId": "c1b998a28a1feb3c94a0bcb480a88a18803b5358",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}

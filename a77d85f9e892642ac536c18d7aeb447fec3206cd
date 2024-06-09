@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "074099e3_0067031f",
+        "filename": "collection/stages/roles/install/templates/install-config-proxy.yaml.j2",
+        "patchSetId": 26
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-06-09T19:31:09Z",
+      "side": 1,
+      "message": "```bash\n% diff install-config.yaml.j2 install-config-proxy.yaml.j2\n30c30\n\u003c     externalNetwork:  \"{{ installcfg_external_network }}\"\n---\n\u003e     externalNetwork:  \"\"\n32,34c32,37\n\u003c     apiFloatingIP:     \"{{ installcfg_api_floating_ip }}\"\n\u003c     ingressFloatingIP:     \"{{ installcfg_ingress_floating_ip }}\"\n\u003c     externalDNS:      {{ installcfg_dns_servers }}\n---\n\u003e     machinesSubnet: {{ installcfg_machines_subnet }}\n\u003e     apiVIP: \"{{ installcfg_api_vip }}\"\n\u003e     ingressVIP: \"{{ installcfg_ingress_vip }}\"\n\u003e proxy:\n\u003e   httpProxy: http://dummy:dummy@{{restricted_network.installer_ip}}:3128/\n\u003e   httpsProxy: https://dummy:dummy@{{restricted_network.installer_ip}}:3130/\n38a42,43\n\u003e additionalTrustBundle: |\n\u003e   {{ installcfg_additional_trust_bundle }}\n```",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 56
+      },
+      "revId": "a77d85f9e892642ac536c18d7aeb447fec3206cd",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
