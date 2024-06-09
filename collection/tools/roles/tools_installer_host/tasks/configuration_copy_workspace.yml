@@ -1,8 +1,8 @@
 ---
 - name: Copy files from the OSP config directory to the installer host VM
   ansible.builtin.copy:
-    src: "{{ osp_config_dir }}/{{ item }}"
-    dest: "~/{{ item }}"
+    src: "{{ item }}"
+    dest: "{{ installer_vm_osp_config_dir }}"
     mode: u=rw,g=rw,o=r
   loop: "{{ files_to_copy }}"
 

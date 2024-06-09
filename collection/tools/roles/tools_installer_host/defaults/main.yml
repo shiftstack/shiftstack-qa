@@ -7,9 +7,17 @@ osp_rhel_matrix:
 
 installer_image: "{{ osp_rhel_matrix[openstack_version] }}"
 
+
 files_to_copy:
-  - "{{ user_env_file | basename }}"
-  - "clouds.yaml"
+  - "{{ user_env_file }}"
+  - "{{ osp_config_dir }}/clouds.yaml"
+
+installer_vm_home_dir: "/home/{{ installer_vm_ssh_user }}"
+installer_vm_artifacts_dir: "{{ installer_vm_home_dir }}/artifacts"
+installer_vm_installation_dir: "{{ installer_vm_artifacts_dir }}/installation"
+installer_vm_user_cloud_installation_dir: "{{ installer_vm_installation_dir }}/{{ user_cloud }}"
+installer_vm_osp_config_dir: "{{ installer_vm_user_cloud_installation_dir }}/openstack"
+
 
 installer_required_packages:
   - 'python3-openstackclient'
