@@ -163,7 +163,6 @@
       ansible.builtin.include_role:
         name: tools_must-gather
       vars:
-        fetch_to_inventory: true
         must_gather_dir_suffix: "must-gather-verification"
 
 - name: Fail the playbook in a case of a cluster verification test failure

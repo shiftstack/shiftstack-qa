@@ -1,8 +1,8 @@
 ---
 - name: Copy files from the OSP config directory to the installer host VM
   ansible.builtin.copy:
-    src: "{{ osp_config_dir }}/{{ item }}"
-    dest: "~/{{ item }}"
+    src: "{{ item }}"
+    dest: "{{ installer_vm_osp_config_dir }}/"
     mode: u=rw,g=rw,o=r
   loop: "{{ files_to_copy }}"
 
@@ -18,7 +18,7 @@
 - name: Copy the secure.yaml file from the OSP config directory to the installer host VM
   ansible.builtin.copy:
     src: "{{ osp_config_dir }}/secure.yaml"
-    dest: "~/secure.yaml"
+    dest: "{{ installer_vm_osp_config_dir }}/secure.yaml"
     mode: u=rw,g=rw,o=r
   when: not (legacy_installation | default(False))
 
@@ -32,14 +32,14 @@
 
     - name: Create a symlink to ~/clouds.yaml in ~/.config/openstack/clouds.yaml
       ansible.builtin.file:
-        src: ~/clouds.yaml
+        src: "{{ installer_vm_osp_config_dir }}/clouds.yaml"
         dest: ~/.config/openstack/clouds.yaml
         force: true
         state: link
 
     - name: Create a symlink to ~/secure.yaml in ~/.config/openstack/secure.yaml
       ansible.builtin.file:
-        src: ~/secure.yaml
+        src: "{{ installer_vm_osp_config_dir }}/secure.yaml"
         dest: ~/.config/openstack/secure.yaml
         force: true
         state: link

@@ -1,13 +1,28 @@
 ---
 # Sets the Ansible Target (a.k.a Managed Node) HOME environment variable to its actual value
 # This ensures scripts and applications running on the target machine know the user's home directory
+# artifacts/
+# ├── installation
+# │   └── shiftstack                   # Dedicated dir for OSP user_cloud - `user_cloud_installation_dir`
+# │       ├── install-config.yaml
+# │       ├── openstack                # OSP config dir - `osp_config_dir`
+# │       │   ├── clouds.yaml
+# │       │   └── shiftstackrc
+# │       └── ostest                   # OCP cluster installation dir - `ocp_installation_dir`
+#
+# Note: The ci-framework job overwriting the 'user_cloud' and 'ocp_cluster_name'.
+#       Reference: https://github.com/openstack-k8s-operators/ci-framework/pull/1882
 home_dir: "{{ ansible_facts.env['HOME'] }}"
 artifacts_dir: "{{ home_dir }}/artifacts"
-installation_dir: "{{ home_dir }}/installation/{{ user_cloud }}/{{ ocp_cluster_name }}"
-osp_config_dir: "{{ home_dir }}/installation/{{ user_cloud }}/openstack"
+installation_dir: "{{ artifacts_dir }}/installation"
+user_cloud: "shiftstack"
+user_cloud_installation_dir: "{{ installation_dir }}/{{ user_cloud }}"
+osp_config_dir: "{{ user_cloud_installation_dir }}/openstack"
+ocp_cluster_name: "ostest"
+ocp_installation_dir: "{{ user_cloud_installation_dir }}/{{ ocp_cluster_name }}"
+kubeconfig: "{{ ocp_installation_dir }}/auth/kubeconfig"
+upi_playbooks_dir: "{{ ocp_installation_dir }}"
 polarion_dir: "{{ artifacts_dir }}/test_results"
-kubeconfig: "{{ installation_dir }}/auth/kubeconfig"
-upi_playbooks_dir: "{{ installation_dir }}"
 
 # Sets the Ansible Controller Node machine's HOME environment variable
 controller_home_dir: "{{ lookup('ansible.builtin.env', 'HOME') }}"
@@ -16,11 +31,11 @@ resources_file: "{{ controller_home_dir }}/artifacts/resources.yml"
 stage_unstable_flag: "{{ controller_home_dir }}/artifacts/stage_unstable_flag"
 
 admin_cloud: "overcloud"
-admin_env_file: "{{ home_dir }}/{{ admin_cloud }}rc"
+admin_env_file: "{{ osp_config_dir }}/{{ admin_cloud }}rc"
 admin_verify_cacert: false
-user_cloud: "shiftstack"
-user_env_file: "{{ home_dir }}/{{ user_cloud }}rc"
-ocp_cluster_name: "ostest"
+user_env_file: "{{ osp_config_dir }}/{{ user_cloud }}rc"
+clouds_yaml_file_path: "{{ home_dir }}/.config/openstack/clouds.yaml"
+secure_yaml_file_path: "{{ home_dir }}/.config/openstack/secure.yaml"
 
 topology:
   flavors:

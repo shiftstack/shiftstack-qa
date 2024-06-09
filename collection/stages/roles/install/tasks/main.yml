@@ -1,12 +1,12 @@
 ---
 - name: Remove the directory for the installation files (if exists)
   ansible.builtin.file:
-    path: "{{ installation_dir }}"
+    path: "{{ ocp_installation_dir }}"
     state: absent
 
 - name: Create a directory for the installation files
   ansible.builtin.file:
-    path: "{{ installation_dir }}"
+    path: "{{ ocp_installation_dir }}"
     state: directory
     mode: u=rwx,g=rw,o=r
 

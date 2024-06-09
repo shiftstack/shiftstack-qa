@@ -45,7 +45,7 @@
     - name: Run the script that modifies the bootstrap ignition file
       ansible.builtin.script:
         cmd: "scripts/upi_bootstrap.py"
-        chdir: "{{ installation_dir }}"
+        chdir: "{{ ocp_installation_dir }}"
         executable: python3
       environment: "{{ env_vars }}"
 
@@ -62,7 +62,7 @@
     container_format: bare
     disk_format: raw
     state: present
-    filename: "{{ installation_dir }}/bootstrap.ign"
+    filename: "{{ ocp_installation_dir }}/bootstrap.ign"
 
 - name: Retrieve the image file string
   block:
@@ -123,5 +123,5 @@
 - name: Generate the secondary ignition config file
   ansible.builtin.template:
     src: "upi_bootstrap-ignition.json.j2"
-    dest: "{{ installation_dir }}/{{ ocp_infra_id }}-bootstrap-ignition.json"
+    dest: "{{ ocp_installation_dir }}/{{ ocp_infra_id }}-bootstrap-ignition.json"
     mode: u=rw,g=rw,o=r

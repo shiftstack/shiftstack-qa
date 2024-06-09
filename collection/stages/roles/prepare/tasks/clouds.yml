@@ -42,7 +42,7 @@
 - name: Generate RC file for {{ user_cloud }}
   ansible.builtin.template:
     src: user_env_file.j2
-    dest: "{{ osp_config_dir }}/{{ user_cloud }}rc"
+    dest: "{{ user_env_file }}"
     mode: u=rw,g=rw,o=r
 
 - name: "Copy clouds.yaml to {{ osp_config_dir }}"
