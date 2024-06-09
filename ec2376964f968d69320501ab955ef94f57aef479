@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1273bc00_08c74e9f",
+        "filename": "collection/tools/roles/tools_must-gather/tasks/main.yml",
+        "patchSetId": 3
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-06-09T15:22:22Z",
+      "side": 0,
+      "message": "not needed as it is already in the artifacts_dir",
+      "range": {
+        "startLine": 58,
+        "startChar": 0,
+        "endLine": 65,
+        "endChar": 0
+      },
+      "revId": "ec2376964f968d69320501ab955ef94f57aef479",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}

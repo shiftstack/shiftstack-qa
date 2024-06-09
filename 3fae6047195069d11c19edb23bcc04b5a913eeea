@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2f9da331_fd022cc9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-06-09T15:22:22Z",
+      "side": 1,
+      "message": "recheck",
+      "revId": "3fae6047195069d11c19edb23bcc04b5a913eeea",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "eaff7c57_64f7cdef",
+        "filename": "collection/stages/roles/install/tasks/ipi_tenant.yml",
+        "patchSetId": 3
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-06-09T15:22:22Z",
+      "side": 1,
+      "message": "sync all of the files in the artifacts_dir instead of specific files.",
+      "range": {
+        "startLine": 34,
+        "startChar": 0,
+        "endLine": 42,
+        "endChar": 0
+      },
+      "revId": "3fae6047195069d11c19edb23bcc04b5a913eeea",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
