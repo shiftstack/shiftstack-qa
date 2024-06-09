@@ -62,23 +62,17 @@
       block:
         - name: Gather bootstrap logs
           ansible.builtin.shell: |
-            openshift-install gather bootstrap --dir {{ installation_dir }} --log-level=debug
+            openshift-install gather bootstrap --dir {{ ocp_installation_dir }} --log-level=debug
           environment:
             SSH_AUTH_SOCK: ""
           failed_when: false
           changed_when: true
 
-        - name: Compress {{ installation_dir }} directory
+        - name: Compress {{ ocp_installation_dir }} directory
           community.general.archive:
-            path: "{{ installation_dir }}"
-            dest: "{{ installation_dir }}.tar.gz"
-            mode: u=rw,g=rw,o=r
-
-        - name: Fetch {{ installation_dir }}.tar.gz to {{ artifacts_dir }}
-          ansible.builtin.fetch:
-            src: "{{ installation_dir }}.tar.gz"
+            path: "{{ ocp_installation_dir }}"
             dest: "{{ artifacts_dir }}/failing_installation_logs.tar.gz"
-            flat: yes
+            mode: u=rw,g=rw,o=r
 
     - name: Get ocp cluster version
       ansible.builtin.command: oc get clusterversion
