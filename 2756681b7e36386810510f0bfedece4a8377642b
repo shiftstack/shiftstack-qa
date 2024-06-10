@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ac89381b_ac0652d1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 28
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-06-10T05:51:03Z",
+      "side": 1,
+      "message": "Hey @ykhodork@redhat.com,\nIf you are all good with my patch, we should rebase this one with the changes. [0]\n\nThanks!\n\n[0] 1196079: Set the installation dir inside the artifacts dir | https://review.gerrithub.io/c/shiftstack/shiftstack-qa/+/1196079",
+      "revId": "2756681b7e36386810510f0bfedece4a8377642b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
