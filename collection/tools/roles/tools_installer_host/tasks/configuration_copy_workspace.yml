@@ -61,17 +61,10 @@
 
     - name: Copy the CA cert from localhost to the installer host VM
       block:
-        - name: Ensure {{ cacert | dirname }} exists in the installer host VM
-          ansible.builtin.file:
-            path: "{{ cacert | dirname }}"
-            state: directory
-            mode: u=rwx,g=rwx,o=rwx
-          become: yes
-
         - name: Copy the CA cert to the installer host VM
           ansible.builtin.copy:
             src: "{{ cacert }}"
-            dest: "{{ cacert }}"
+            dest: "{{ installer_host_cacert }}"
             mode: u=rwx,g=rwx,o=rwx
           become: yes
 
