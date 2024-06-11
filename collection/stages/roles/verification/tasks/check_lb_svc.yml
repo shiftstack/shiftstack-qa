@@ -85,6 +85,7 @@
         kind: Pod
         namespace: "{{ test_id }}-ns"
       register: pods
+      until: pods | length > 0
 
     - name: Store pod names
       ansible.builtin.set_fact:
