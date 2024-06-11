@@ -6,6 +6,15 @@
     mode: u=rw,g=rw,o=r
   loop: "{{ files_to_copy }}"
 
+- name: Change the cacert path in the installer host clouds.yaml
+  ansible.builtin.lineinfile:
+    path: '~/clouds.yaml'
+    regexp: '^(\s*)cacert:'
+    line: '\1cacert: {{ installer_host_cacert }}'
+    insertafter: '{{ user_cloud }}'
+    backrefs: yes
+  when: not (legacy_installation | default(False))
+
 - name: Copy the secure.yaml file from the OSP config directory to the installer host VM
   ansible.builtin.copy:
     src: "{{ osp_config_dir }}/secure.yaml"
@@ -61,17 +70,10 @@
 
     - name: Copy the CA cert from localhost to the installer host VM
       block:
-        - name: Ensure {{ cacert | dirname }} exists in the installer host VM
-          ansible.builtin.file:
-            path: "{{ cacert | dirname }}"
-            state: directory
-            mode: u=rwx,g=rwx,o=rwx
-          become: yes
-
         - name: Copy the CA cert to the installer host VM
           ansible.builtin.copy:
             src: "{{ cacert }}"
-            dest: "{{ cacert }}"
+            dest: "{{ installer_host_cacert }}"
             mode: u=rwx,g=rwx,o=rwx
           become: yes
 
