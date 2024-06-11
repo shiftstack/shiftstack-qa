@@ -36,7 +36,9 @@
     existing_pvc_ids: "{{ existing_pvcs | json_query('resources[].spec.volumeName') | list }}"
 
 - name: Check manila volume for PVC exist
-  ansible.builtin.shell: source {{ user_env_file }} && manila show "{{ item }}"
+  ansible.builtin.shell: openstack share show "{{ item }}"
+  environment:
+    OS_CLOUD: "{{ user_cloud }}"
   changed_when: false
   loop: "{{ existing_pvc_ids }}"
 
