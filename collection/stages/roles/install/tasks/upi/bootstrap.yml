@@ -1,9 +1,15 @@
 ---
 - name: Obtain the base64-encoded CA certificate content
   block:
-    - name: Set CA certificate path fact
+    - name: Set CA certificate path fact (in legacy environment)
       ansible.builtin.set_fact:
-        cacert: "/etc/pki/ca-trust/source/anchors/{{ openstack_tlse | ternary('ca.crt', 'undercloud-cacert.pem') }}"
+        cacert: "{{ openstack_tlse | ternary(cacert_tlse, cacert) }}"
+      when: legacy_installation | default(False)
+
+    - name: Set CA certificate path fact (not legacy environment)
+      ansible.builtin.set_fact:
+        cacert: "{{ deploy_installer_host | ternary(installer_host_cacert, cacert) }}"
+      when: not (legacy_installation | default(False))
 
     - name: Check if the CA certificate {{ cacert }} exists in the installer host VM
       ansible.builtin.stat:
