@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bfe82594_e408366f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-06-12T15:00:58Z",
+      "side": 1,
+      "message": "Ey Itay!\n\nI don\u0027t get it. If we are not doing the fetch anymore, how are you gathering the data from the installer-host in the shiftstackclient pod?",
+      "revId": "09d95c084f26c92d4b68066fe159e2f50fcee8d3",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
