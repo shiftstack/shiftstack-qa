@@ -1,6 +1,29 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "1bd7c961_cc2c95f5",
+        "filename": "collection/stages/roles/install/tasks/ipi_tenant.yml",
+        "patchSetId": 5
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-06-12T21:53:53Z",
+      "side": 0,
+      "message": "Aren\u0027t we loosing the install-config.yaml retrieval?",
+      "range": {
+        "startLine": 42,
+        "startChar": 32,
+        "endLine": 42,
+        "endChar": 51
+      },
+      "revId": "ec2376964f968d69320501ab955ef94f57aef479",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "1273bc00_08c74e9f",
