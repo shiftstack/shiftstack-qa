@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "11cc0633_d7f6e934",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-06-12T14:11:22Z",
+      "side": 1,
+      "message": "Tested in 4.15 UPI in OSP 18.",
+      "revId": "35b97d27874ab84ee7c9c2106134b5a39c437ce1",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
