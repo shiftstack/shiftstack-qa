@@ -139,7 +139,6 @@
         "{{ upi_playbooks_dir }}/down-bootstrap.yaml"      \
         "{{ upi_playbooks_dir }}/down-control-plane.yaml"  \
         "{{ upi_playbooks_dir }}/down-compute-nodes.yaml"  \
-        "{{ upi_playbooks_dir }}/down-load-balancers.yaml" \
         "{{ upi_playbooks_dir }}/down-containers.yaml"     \
         "{{ upi_playbooks_dir }}/down-network.yaml"        \
         "{{ upi_playbooks_dir }}/down-security-groups.yaml"
