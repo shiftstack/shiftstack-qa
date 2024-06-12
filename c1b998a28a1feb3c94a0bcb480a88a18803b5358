@@ -62,6 +62,75 @@
       },
       "revId": "c1b998a28a1feb3c94a0bcb480a88a18803b5358",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "89899888_3ea037a4",
+        "filename": "collection/stages/roles/prepare/tasks/external_access.yml",
+        "patchSetId": 29
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-06-12T14:48:05Z",
+      "side": 1,
+      "message": "This is like this in the plugin and I declare guilty. However, it is not coneptually correct, because in proxy we are not setting FIPs and we are directly using the VIPs.\n\nDo you think it\u0027s too complex to rename the variable to something like \u0027api_accessible_ip\u0027  and \u0027apps_accessible_ip\u0027 and set them to the fip in regular ipi, upi and the vip for proxy/mirror?",
+      "range": {
+        "startLine": 23,
+        "startChar": 0,
+        "endLine": 28,
+        "endChar": 0
+      },
+      "revId": "c1b998a28a1feb3c94a0bcb480a88a18803b5358",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c4f5c37f_63e29f5d",
+        "filename": "collection/stages/roles/prepare/tasks/main.yml",
+        "patchSetId": 29
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-06-12T14:48:05Z",
+      "side": 1,
+      "message": "This is not strictly necessary, right?",
+      "range": {
+        "startLine": 12,
+        "startChar": 6,
+        "endLine": 12,
+        "endChar": 27
+      },
+      "revId": "c1b998a28a1feb3c94a0bcb480a88a18803b5358",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ae7d6e55_b3cdd41a",
+        "filename": "configs/global.yml",
+        "patchSetId": 29
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-06-12T14:48:05Z",
+      "side": 1,
+      "message": "nit",
+      "range": {
+        "startLine": 84,
+        "startChar": 39,
+        "endLine": 84,
+        "endChar": 48
+      },
+      "revId": "c1b998a28a1feb3c94a0bcb480a88a18803b5358",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
