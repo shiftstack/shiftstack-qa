@@ -16,6 +16,12 @@
     - down-security-groups.yaml
     - security-groups.yaml
 
+- name: Overwrite default (180) timeout in bootstrap server creation task (needed in slow envs)
+  ansible.builtin.lineinfile:
+    path: "{{ upi_playbooks_dir }}/bootstrap.yaml"
+    line: "      timeout: 480"
+    insertafter: "os_server"
+
 - name: Get the update-network-resources.yaml playbook
   ansible.builtin.get_url:
     url: "{{ upi_github_repo_url }}/update-network-resources.yaml"
@@ -139,7 +145,6 @@
         "{{ upi_playbooks_dir }}/down-bootstrap.yaml"      \
         "{{ upi_playbooks_dir }}/down-control-plane.yaml"  \
         "{{ upi_playbooks_dir }}/down-compute-nodes.yaml"  \
-        "{{ upi_playbooks_dir }}/down-load-balancers.yaml" \
         "{{ upi_playbooks_dir }}/down-containers.yaml"     \
         "{{ upi_playbooks_dir }}/down-network.yaml"        \
         "{{ upi_playbooks_dir }}/down-security-groups.yaml"
