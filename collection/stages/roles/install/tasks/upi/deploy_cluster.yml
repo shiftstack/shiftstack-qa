@@ -35,10 +35,27 @@
         cmd: "{{ upi_playbooks_dir }}/control-plane.yaml"
       ansible.builtin.include_tasks: run_ansible.yml
 
-- name: Wait until the bootstrap is completed
-  ansible.builtin.shell: |
-    openshift-install wait-for bootstrap-complete --log-level=debug --dir {{ installation_dir }}
-  changed_when: false
+- name: Wait for bootstrap completion
+  block:
+    - name: Wait until the bootstrap is completed
+      ansible.builtin.shell: |
+        openshift-install wait-for bootstrap-complete --log-level=debug --dir {{ installation_dir }}
+      changed_when: true
+
+  rescue:
+    - name: Wait (a second time) until the bootstrap is completed
+      ansible.builtin.shell: |
+        openshift-install wait-for bootstrap-complete --log-level=debug --dir {{ installation_dir }}
+      changed_when: true
+
+    - name: Mark the UPI installation as UNSTABLE
+      ansible.builtin.include_role:
+        name: tools_stage_results
+        tasks_from: mark_stage_unstable.yml
+      vars:
+        unstable_msg: >-
+          The bootstrap completed in UPI deployment but needed a second `wait-for bootstrap-complete`.
+          This should only be needed in slow environments (more frequent with nested virtualization).
 
 - name: Remove the bootstrap resources (down-bootstrap.yaml)
   vars:
@@ -77,8 +94,8 @@
         KUBECONFIG: "{{ kubeconfig }}"
       register: client_csrs
       until: client_csrs.stdout_lines | length >= topology.replicas.worker | int
-      retries: "{{ wait_retries }}"
-      delay: "{{ wait_delay }}"
+      retries: 60
+      delay: 30
 
     - name: Approve the pending client CSRs
       ansible.builtin.shell: |
@@ -108,7 +125,24 @@
         KUBECONFIG: "{{ kubeconfig }}"
       with_items: "{{ server_csrs.stdout_lines }}"
 
-- name: Wait until the installation is completed
-  ansible.builtin.shell: |
-    openshift-install wait-for install-complete --log-level=debug --dir {{ installation_dir }}
-  changed_when: false
+- name: Wait until the installation finishes
+  block:
+    - name: Wait until the installation is completed
+      ansible.builtin.shell: |
+        openshift-install wait-for install-complete --log-level=debug --dir {{ installation_dir }}
+      changed_when: true
+
+  rescue:
+    - name: Wait (a second time) until the installation is completed
+      ansible.builtin.shell: |
+        openshift-install wait-for install-complete --log-level=debug --dir {{ installation_dir }}
+      changed_when: true
+
+    - name: Mark the UPI installation as UNSTABLE
+      ansible.builtin.include_role:
+        name: tools_stage_results
+        tasks_from: mark_stage_unstable.yml
+      vars:
+        unstable_msg: >-
+          The UPI installation completed but needed a second `wait-for install-complete`.
+          This should only be needed in slow environments (more frequent with nested virtualization).
