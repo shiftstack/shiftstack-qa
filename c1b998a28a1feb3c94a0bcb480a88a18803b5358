@@ -43,6 +43,23 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "34b8ad5e_8e0660ef",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 29
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-06-12T21:57:18Z",
+      "side": 1,
+      "message": "In addition to Ramón\u0027s comments, can you please add the job definition for 4.16 as well (and edit the commit msg 😊)? thanks!",
+      "revId": "c1b998a28a1feb3c94a0bcb480a88a18803b5358",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "5be05952_88e9d538",
         "filename": "collection/stages/roles/install/templates/install-config-proxy.yaml.j2",
         "patchSetId": 29
