@@ -24,6 +24,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "1b7d7aeb_e7b4005b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-06-13T13:41:03Z",
+      "side": 1,
+      "message": "Created a task - https://issues.redhat.com/browse/OSPRH-7669",
+      "parentUuid": "ec0a513b_df29c5eb",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 49
+      },
+      "revId": "09d95c084f26c92d4b68066fe159e2f50fcee8d3",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "f54e8335_9788fca4",
