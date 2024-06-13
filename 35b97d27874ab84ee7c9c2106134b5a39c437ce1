@@ -16,6 +16,29 @@
       "message": "Tested in 4.15 UPI in OSP 18.",
       "revId": "35b97d27874ab84ee7c9c2106134b5a39c437ce1",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7682c45a_4ce7d151",
+        "filename": "collection/stages/roles/install/tasks/upi/bootstrap.yml",
+        "patchSetId": 3
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-06-13T08:23:28Z",
+      "side": 1,
+      "message": "maybe we should use vars in `configs/legacy_ocp_testing.yaml` for these CAs?\nLike we have in https://review.gerrithub.io/c/shiftstack/shiftstack-qa/+/1196160/3/configs/ocp_testing.yaml",
+      "range": {
+        "startLine": 6,
+        "startChar": 16,
+        "endLine": 6,
+        "endChar": 116
+      },
+      "revId": "35b97d27874ab84ee7c9c2106134b5a39c437ce1",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
