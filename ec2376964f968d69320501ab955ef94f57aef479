@@ -26,6 +26,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "441d28c0_491b0147",
+        "filename": "collection/stages/roles/install/tasks/ipi_tenant.yml",
+        "patchSetId": 5
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-06-13T12:18:42Z",
+      "side": 0,
+      "message": "no - it will be part of the `user_cloud_installation_dir`\n\n[0] https://review.gerrithub.io/c/shiftstack/shiftstack-qa/+/1196079/5/configs/global.yml#7\n[1] https://review.gerrithub.io/c/shiftstack/shiftstack-qa/+/1196079/5/collection/stages/roles/install/tasks/generate_ocp_install-config.yml",
+      "parentUuid": "1bd7c961_cc2c95f5",
+      "range": {
+        "startLine": 42,
+        "startChar": 32,
+        "endLine": 42,
+        "endChar": 51
+      },
+      "revId": "ec2376964f968d69320501ab955ef94f57aef479",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "1273bc00_08c74e9f",
         "filename": "collection/tools/roles/tools_must-gather/tasks/main.yml",
         "patchSetId": 3

@@ -1,6 +1,63 @@
 {
   "comments": [
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "ec0a513b_df29c5eb",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-06-13T12:18:42Z",
+      "side": 1,
+      "message": "To-Do: add a patch moving the ansible logs to a dedicated dir under the artifacts.",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 49
+      },
+      "revId": "09d95c084f26c92d4b68066fe159e2f50fcee8d3",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f54e8335_9788fca4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-06-13T12:18:42Z",
+      "side": 1,
+      "message": "To-Do: Add the `tree` as a comment in the `configs/global.yml`",
+      "revId": "09d95c084f26c92d4b68066fe159e2f50fcee8d3",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fa7f412f_e7ea5fac",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-06-13T12:18:42Z",
+      "side": 1,
+      "message": "To-Do: move the must-gather to artifacts instead of the installation dir",
+      "revId": "09d95c084f26c92d4b68066fe159e2f50fcee8d3",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "bfe82594_e408366f",
