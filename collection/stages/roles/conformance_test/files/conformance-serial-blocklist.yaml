@@ -7,3 +7,8 @@ blocklist: &all_block_tests
 "4.15":
   "OVNKubernetes":
     <<: *all_block_tests
+
+# OpenShift 4.16
+"4.16":
+  "OVNKubernetes":
+    <<: *all_block_tests
