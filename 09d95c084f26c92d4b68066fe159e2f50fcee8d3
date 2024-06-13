@@ -41,6 +41,24 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "1dbf4821_e87e93fa",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-06-13T12:45:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f54e8335_9788fca4",
+      "revId": "09d95c084f26c92d4b68066fe159e2f50fcee8d3",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "fa7f412f_e7ea5fac",
@@ -54,6 +72,24 @@
       "writtenOn": "2024-06-13T12:18:42Z",
       "side": 1,
       "message": "To-Do: move the must-gather to artifacts instead of the installation dir",
+      "revId": "09d95c084f26c92d4b68066fe159e2f50fcee8d3",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a4659800_cabd2978",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 5
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-06-13T12:45:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa7f412f_e7ea5fac",
       "revId": "09d95c084f26c92d4b68066fe159e2f50fcee8d3",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
