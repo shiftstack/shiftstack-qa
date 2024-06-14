@@ -16,6 +16,24 @@
       "message": "Please mention that this is ovewritting the default value",
       "revId": "6d158182ca306def47932ca325ff0778e40f5106",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8ca05718_987d1f6e",
+        "filename": "collection/stages/roles/install/tasks/upi/retrieve_playbooks.yml",
+        "patchSetId": 4
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-06-14T11:23:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "53801274_ce2a0d8f",
+      "revId": "6d158182ca306def47932ca325ff0778e40f5106",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
