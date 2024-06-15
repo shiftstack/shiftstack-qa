@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "601255d6_965dff14",
+        "filename": "collection/stages/roles/install/tasks/upi/retrieve_playbooks.yml",
+        "patchSetId": 5
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-06-15T20:26:09Z",
+      "side": 0,
+      "message": "can you please address it in the commit-msg? thanks!",
+      "range": {
+        "startLine": 142,
+        "startChar": 0,
+        "endLine": 142,
+        "endChar": 60
+      },
+      "revId": "d34864f7faab465124910cbea54c664ac4641978",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
