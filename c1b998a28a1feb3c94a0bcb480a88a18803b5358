@@ -60,6 +60,24 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "afbada17_291cdcc7",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 29
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-06-16T09:26:28Z",
+      "side": 1,
+      "message": "sure! Done",
+      "parentUuid": "34b8ad5e_8e0660ef",
+      "revId": "c1b998a28a1feb3c94a0bcb480a88a18803b5358",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "5be05952_88e9d538",
         "filename": "collection/stages/roles/install/templates/install-config-proxy.yaml.j2",
         "patchSetId": 29
@@ -106,6 +124,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "04f0993f_77f9ec86",
+        "filename": "collection/stages/roles/prepare/tasks/external_access.yml",
+        "patchSetId": 29
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-06-16T09:26:28Z",
+      "side": 1,
+      "message": "please let me know wdyt about - https://review.gerrithub.io/c/shiftstack/shiftstack-qa/+/1194955/30..31",
+      "parentUuid": "89899888_3ea037a4",
+      "range": {
+        "startLine": 23,
+        "startChar": 0,
+        "endLine": 28,
+        "endChar": 0
+      },
+      "revId": "c1b998a28a1feb3c94a0bcb480a88a18803b5358",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "c4f5c37f_63e29f5d",
         "filename": "collection/stages/roles/prepare/tasks/main.yml",
         "patchSetId": 29
@@ -117,6 +159,30 @@
       "writtenOn": "2024-06-12T14:48:05Z",
       "side": 1,
       "message": "This is not strictly necessary, right?",
+      "range": {
+        "startLine": 12,
+        "startChar": 6,
+        "endLine": 12,
+        "endChar": 27
+      },
+      "revId": "c1b998a28a1feb3c94a0bcb480a88a18803b5358",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "21d4726b_1d55762c",
+        "filename": "collection/stages/roles/prepare/tasks/main.yml",
+        "patchSetId": 29
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-06-16T09:26:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c4f5c37f_63e29f5d",
       "range": {
         "startLine": 12,
         "startChar": 6,
@@ -140,6 +206,30 @@
       "writtenOn": "2024-06-12T14:48:05Z",
       "side": 1,
       "message": "nit",
+      "range": {
+        "startLine": 84,
+        "startChar": 39,
+        "endLine": 84,
+        "endChar": 48
+      },
+      "revId": "c1b998a28a1feb3c94a0bcb480a88a18803b5358",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9074a346_fd24af9d",
+        "filename": "configs/global.yml",
+        "patchSetId": 29
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-06-16T09:26:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ae7d6e55_b3cdd41a",
       "range": {
         "startLine": 84,
         "startChar": 39,
