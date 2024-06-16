@@ -1,0 +1,159 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e44cc302_a9b1aad6",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 29
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-06-16T20:10:01Z",
+      "side": 1,
+      "message": "what about ipi proxy?",
+      "range": {
+        "startLine": 15,
+        "startChar": 0,
+        "endLine": 15,
+        "endChar": 34
+      },
+      "revId": "f3b869b22aee5e2c25e1dfc7f29a385d1bf44ec7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0c30b166_839db3fa",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 29
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-06-16T20:10:01Z",
+      "side": 1,
+      "message": "thanks @ykhodork@redhat.com! added a few comments. maybe it is better to wait for the proxy patches first.\n\n[0] https://review.gerrithub.io/q/topic:%22proxy_installation%22",
+      "revId": "f3b869b22aee5e2c25e1dfc7f29a385d1bf44ec7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4530d960_0272b5f8",
+        "filename": "collection/stages/roles/cleanup/tasks/destroy_clusters.yml",
+        "patchSetId": 29
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-06-16T20:10:01Z",
+      "side": 1,
+      "message": "I think we can use `delegate_to: \"{{ installer_vm_name }}\"` and use it also for the proxy installation. wdyt?\n\n[0] https://review.gerrithub.io/q/topic:%22proxy_installation%22",
+      "range": {
+        "startLine": 2,
+        "startChar": 0,
+        "endLine": 5,
+        "endChar": 0
+      },
+      "revId": "f3b869b22aee5e2c25e1dfc7f29a385d1bf44ec7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5aeac914_d6c88a19",
+        "filename": "collection/stages/roles/cleanup/tasks/destroy_ipi.yml",
+        "patchSetId": 29
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-06-16T20:10:01Z",
+      "side": 1,
+      "message": "```suggestion\n      ansible.builtin.command: \"openshift-install --log-level\u003ddebug destroy cluster --dir {{ ocp_installation_dir }}\"\n```",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 113
+      },
+      "revId": "f3b869b22aee5e2c25e1dfc7f29a385d1bf44ec7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a8091d66_c9dfc67a",
+        "filename": "collection/stages/roles/cleanup/tasks/detect_env.yml",
+        "patchSetId": 29
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-06-16T20:10:01Z",
+      "side": 1,
+      "message": "```suggestion\n    path: \"{{ ocp_installation_dir }}\"\n```\n\nWe are going to change the structure of the installation dir. [0]\nThe `installation_dir` is going to be a general dir for all of the OSP projects.\nCan you please update it accordingly? 10x\n\n[0] https://review.gerrithub.io/c/shiftstack/shiftstack-qa/+/1196079",
+      "range": {
+        "startLine": 10,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 34
+      },
+      "revId": "f3b869b22aee5e2c25e1dfc7f29a385d1bf44ec7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c8c1e56a_4c0ed58e",
+        "filename": "collection/stages/roles/cleanup/tasks/detect_env.yml",
+        "patchSetId": 29
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-06-16T20:10:01Z",
+      "side": 1,
+      "message": "wdyt about `installer_vm_info`",
+      "range": {
+        "startLine": 20,
+        "startChar": 16,
+        "endLine": 20,
+        "endChar": 22
+      },
+      "revId": "f3b869b22aee5e2c25e1dfc7f29a385d1bf44ec7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "72436437_7427cc66",
+        "filename": "collection/stages/roles/cleanup/tasks/detect_env.yml",
+        "patchSetId": 29
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-06-16T20:10:01Z",
+      "side": 1,
+      "message": "all of these tasks are `when: result.openstack_servers|length \u003d\u003d 1`.\nmaybe it is better to have it under a block?",
+      "range": {
+        "startLine": 22,
+        "startChar": 0,
+        "endLine": 43,
+        "endChar": 0
+      },
+      "revId": "f3b869b22aee5e2c25e1dfc7f29a385d1bf44ec7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
