@@ -118,6 +118,30 @@
       },
       "revId": "befbb09ff3e0102e3a41fd7da04213631a8e0259",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1136450f_705e4dfa",
+        "filename": "collection/stages/roles/install/tasks/upi/deploy_cluster.yml",
+        "patchSetId": 6
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-06-17T08:35:38Z",
+      "side": 1,
+      "message": "I\u0027m keeping it 😊",
+      "parentUuid": "9c436767_9bb2a770",
+      "range": {
+        "startLine": 43,
+        "startChar": 6,
+        "endLine": 43,
+        "endChar": 25
+      },
+      "revId": "befbb09ff3e0102e3a41fd7da04213631a8e0259",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
