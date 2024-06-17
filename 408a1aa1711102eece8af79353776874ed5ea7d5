@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9a53e19e_3f2150cb",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 32
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-06-17T08:38:50Z",
+      "side": 1,
+      "message": "@ykhodork@redhat.com do you want to set it as WIP until it is ready for review?",
+      "revId": "408a1aa1711102eece8af79353776874ed5ea7d5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
