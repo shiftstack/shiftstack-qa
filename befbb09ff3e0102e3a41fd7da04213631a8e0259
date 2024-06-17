@@ -46,6 +46,30 @@
       },
       "revId": "befbb09ff3e0102e3a41fd7da04213631a8e0259",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cde479a8_429c3e78",
+        "filename": "collection/stages/roles/install/tasks/upi/deploy_cluster.yml",
+        "patchSetId": 6
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2024-06-17T08:17:11Z",
+      "side": 1,
+      "message": "I think you can just remove it.",
+      "parentUuid": "516ac388_f6af6512",
+      "range": {
+        "startLine": 43,
+        "startChar": 6,
+        "endLine": 43,
+        "endChar": 25
+      },
+      "revId": "befbb09ff3e0102e3a41fd7da04213631a8e0259",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
