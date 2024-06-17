@@ -26,6 +26,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "7bd98e57_c4bd2c64",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 6
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-06-17T19:06:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f186b255_7c08f029",
+      "range": {
+        "startLine": 9,
+        "startChar": 28,
+        "endLine": 9,
+        "endChar": 33
+      },
+      "revId": "e45454d8fe7d5c63a6ac44ddeb1b4f48a5ee3db7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "a6589482_8c965db1",
         "filename": "/PATCHSET_LEVEL",
         "patchSetId": 6
@@ -54,6 +78,24 @@
       "writtenOn": "2024-06-17T14:12:13Z",
       "side": 1,
       "message": "The must-gathers would be now at the same level as the installation dir, right? can you please add it here (will be very helpful) and in the commit msg? thanks!",
+      "revId": "e45454d8fe7d5c63a6ac44ddeb1b4f48a5ee3db7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c65104fd_1e768b32",
+        "filename": "configs/global.yml",
+        "patchSetId": 6
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-06-17T19:06:14Z",
+      "side": 1,
+      "message": "I updated it in the commit-msg.\n\nI\u0027m not sure if the global.yml file is the right place as the must-gather path is part of - https://review.gerrithub.io/c/shiftstack/shiftstack-qa/+/1196079/6/collection/tools/roles/tools_must-gather/defaults/main.yml\n\nwdyt?",
+      "parentUuid": "82ad3d49_a9466756",
       "revId": "e45454d8fe7d5c63a6ac44ddeb1b4f48a5ee3db7",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
