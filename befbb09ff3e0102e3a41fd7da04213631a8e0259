@@ -94,6 +94,30 @@
       },
       "revId": "befbb09ff3e0102e3a41fd7da04213631a8e0259",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9c436767_9bb2a770",
+        "filename": "collection/stages/roles/install/tasks/upi/deploy_cluster.yml",
+        "patchSetId": 6
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-06-17T08:34:46Z",
+      "side": 1,
+      "message": "no.\nit is part of our code convention and the ansible-lint.",
+      "parentUuid": "5f65781b_7e1781c3",
+      "range": {
+        "startLine": 43,
+        "startChar": 6,
+        "endLine": 43,
+        "endChar": 25
+      },
+      "revId": "befbb09ff3e0102e3a41fd7da04213631a8e0259",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
