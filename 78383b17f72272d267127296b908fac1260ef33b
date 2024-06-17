@@ -140,6 +140,30 @@
       },
       "revId": "78383b17f72272d267127296b908fac1260ef33b",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "16c600b7_475f5b90",
+        "filename": "collection/stages/roles/install/tasks/upi/retrieve_playbooks.yml",
+        "patchSetId": 5
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-06-17T10:49:53Z",
+      "side": 1,
+      "message": "Reverted this change as the indent filter only works in templates from or to JSON or YAML format.",
+      "parentUuid": "ab532d4d_7fdc6564",
+      "range": {
+        "startLine": 22,
+        "startChar": 0,
+        "endLine": 22,
+        "endChar": 30
+      },
+      "revId": "78383b17f72272d267127296b908fac1260ef33b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
