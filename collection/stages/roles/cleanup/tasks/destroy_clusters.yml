@@ -3,10 +3,14 @@
   ansible.builtin.include_tasks: destroy_ipi.yml
   when: previous_installation_type == 'ipi'
 
-# Uncomment this when https://issues.redhat.com/browse/OSPRH-6756 is done
-# - name: Destroy UPI cluster
-#   include_tasks: destroy_upi.yml
-#   when: previous_installation_type == 'upi'
+- block:
+    - name: Destroy UPI cluster
+      vars:
+        home_dir: "/home/cloud-user"
+        upi_playbooks_logs_dir: "{{ artifacts_dir }}/playbooks_logs"
+      include_tasks: destroy_upi.yml
+  when: previous_installation_type == 'upi'
+  delegate_to: "{{ installer_vm_name }}"
 
 # - name: Destroy restricted cluster
 #   include_tasks: destroy_restricted.yml

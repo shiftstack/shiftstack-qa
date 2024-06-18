@@ -44,6 +44,10 @@
         project_id: "{{ project.id }}"
       register: floating_ips
 
+    - name: Set fact if subnets are defined
+      ansible.builtin.set_fact:
+        subnets_defined: "{{ subnets.openstack_subnets is defined }}"
+
     - name: Fetch all ports in the subnet
       openstack.cloud.port_info:
         cloud: "{{ admin_cloud }}"
@@ -51,7 +55,11 @@
           subnet_id: "{{ item.id }}"
       register: ports
       loop: "{{ subnets.openstack_subnets }}"
-      when: subnets.openstack_subnets is defined
+      when: subnets_defined
+
+    - name: Set fact if instances are defined
+      ansible.builtin.set_fact:
+        instances_defined: "{{ instances.openstack_servers is defined }}"
 
 - name: Delete ports
   openstack.cloud.port:
@@ -59,7 +67,7 @@
     state: absent
     id: "{{ item.id }}"
   loop: "{{ ports.results | map(attribute='openstack_ports') | flatten }}"
-  when: ports.results | map(attribute='openstack_ports') | flatten | length > 0
+  when: subnets_defined and (ports.results | map(attribute='openstack_ports') | flatten | length > 0)
 
 - name: Delete floating IP
   ansible.builtin.shell: |
@@ -79,6 +87,7 @@
     state: absent
     name: "{{ item.name }}"
   loop: "{{ instances.openstack_servers }}"
+  when: instances_defined
 
 - name: Delete all subnets
   openstack.cloud.subnet:
