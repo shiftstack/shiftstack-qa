@@ -24,6 +24,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "aba3d394_eaf689b8",
+        "filename": "configs/global.yml",
+        "patchSetId": 7
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-06-18T08:51:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b4cbf2ce_997cc4fb",
+      "range": {
+        "startLine": 15,
+        "startChar": 0,
+        "endLine": 15,
+        "endChar": 24
+      },
+      "revId": "87762761b422037d741988a9f342451418f37ab5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c6cec978_ea0a40df",
@@ -37,6 +61,30 @@
       "writtenOn": "2024-06-18T08:12:19Z",
       "side": 1,
       "message": "Would you mind to add a comment here saying that we are overwritting in the job itself thanks to https://github.com/openstack-k8s-operators/ci-framework/pull/1882/files ??",
+      "range": {
+        "startLine": 18,
+        "startChar": 0,
+        "endLine": 18,
+        "endChar": 26
+      },
+      "revId": "87762761b422037d741988a9f342451418f37ab5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "50a9f482_e8ddd67f",
+        "filename": "configs/global.yml",
+        "patchSetId": 7
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-06-18T08:51:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c6cec978_ea0a40df",
       "range": {
         "startLine": 18,
         "startChar": 0,
