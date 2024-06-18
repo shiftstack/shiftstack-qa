@@ -24,6 +24,12 @@
         name: shiftstack.tools.tools_ansible_inventory
         tasks_from: create_installer_group.yml
 
+    - debug:
+        msg: "{{ upi_playbooks_dir }}/inventory.yaml"
+      vars:
+        home_dir: "~"
+      delegate_to: "{{ installer_vm_name }}"
+
     - name: Discover if UPI installation was performed on the installer host VM to destroy
       vars:
         home_dir: "~"
