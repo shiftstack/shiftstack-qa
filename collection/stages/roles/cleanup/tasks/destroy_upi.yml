@@ -1,2 +1,240 @@
 ---
-# destroy UPI
+- name: Delete Openstack resources for OCP UPI deployment
+  block:
+    - name: Remove the '{{ openshift_dualstack.network.name }}' network from the '{{ installer_vm_name }}' (connectivity to IPv6 API in dualstack)
+      ansible.builtin.shell: "openstack server remove network {{ installer_vm_name }} {{ openshift_dualstack.network.name }}"
+      environment:
+        OS_CLOUD: "{{ user_cloud }}"
+      ignore_errors: true
+
+    - name: Create a {{ upi_playbooks_dir }} directory if it does not exist
+      file:
+        path: "{{ upi_playbooks_dir }}"
+        state: directory
+
+    - name: "Check if {{ upi_playbooks_dir }}/down-bootstrap.yaml exists"
+      stat:
+        path: "{{ upi_playbooks_dir }}/down-bootstrap.yaml"
+      register: stat_result_bootstrap
+
+    - name: Debug down-bootstrap.yaml existence
+      debug:
+        msg: "down-bootstrap.yaml exists: {{ stat_result_bootstrap.stat.exists }}"
+
+    #- name: Delete the bootstrap VM (down-bootstrap.yaml)
+    #  vars:
+    #    log_file: "{{ playbooks_logs_dir }}/down-bootstrap.log"
+    #    desc: "Bootstrap VM deletion"
+    #    cmd: "{{ upi_playbooks_dir }}/down-bootstrap.yaml"
+    #  include_tasks: run_down_playbooks.yml
+    #  when: stat_result_bootstrap.stat.exists
+
+    - name: "Check if {{ upi_playbooks_dir }}/down-control-plane.yaml exists"
+      stat:
+        path: "{{ upi_playbooks_dir }}/down-control-plane.yaml"
+      register: stat_result_control_plane
+
+    - name: Debug down-control-plane.yaml existence
+      debug:
+        msg: "down-control-plane.yaml exists: {{ stat_result_control_plane.stat.exists }}"
+
+    #- name: Delete the control plane VMs (down-control-plane.yaml)
+    #  vars:
+    #    log_file: "{{ playbooks_logs_dir }}/down-control-plane.log"
+    #    desc: "Control plane VMs deletion"
+    #    cmd: "{{ upi_playbooks_dir }}/down-control-plane.yaml"
+    #  include_tasks: run_down_playbooks.yml
+    #  when: stat_result_control_plane.stat.exists
+
+    - name: "Check if {{ upi_playbooks_dir }}/down-compute-nodes.yaml exists"
+      stat:
+        path: "{{ upi_playbooks_dir }}/down-compute-nodes.yaml"
+      register: stat_result_compute_nodes
+
+    - name: Debug down-compute-nodes.yaml existence
+      debug:
+        msg: "down-compute-nodes.yaml exists: {{ stat_result_compute_nodes.stat.exists }}"
+
+    #- name: Delete the compute VMs (down-compute-nodes.yaml)
+    #  vars:
+    #    log_file: "{{ playbooks_logs_dir }}/down-compute-nodes.log"
+    #    desc: "Compute VMs deletion"
+    #    cmd: "{{ upi_playbooks_dir }}/down-compute-nodes.yaml"
+    #  include_tasks: run_down_playbooks.yml
+    #  when: stat_result_compute_nodes.stat.exists
+
+    - name: "Check if {{ upi_playbooks_dir }}/down-load-balancers.yaml exists"
+      stat:
+        path: "{{ upi_playbooks_dir }}/down-load-balancers.yaml"
+      register: stat_result_load_balancers
+
+    - name: Debug down-load-balancers.yaml existence
+      debug:
+        msg: "down-load-balancers.yaml exists: {{ stat_result_load_balancers.stat.exists }}"
+
+    #- name: Delete the Load Balancers (down-load-balancers.yaml)
+    #  vars:
+    #    log_file: "{{ playbooks_logs_dir }}/down-load-balancers.log"
+    #    desc: "Load Balancers deletion"
+    #    cmd: "{{ upi_playbooks_dir }}/down-load-balancers.yaml"
+    #  include_tasks: run_down_playbooks.yml
+    #  when: stat_result_load_balancers.stat.exists
+
+    - name: "Check if {{ upi_playbooks_dir }}/down-containers.yaml exists"
+      stat:
+        path: "{{ upi_playbooks_dir }}/down-containers.yaml"
+      register: stat_result_containers
+
+    - name: Debug down-containers.yaml existence
+      debug:
+        msg: "down-containers.yaml exists: {{ stat_result_containers.stat.exists }}"
+
+    #- name: Delete the containers (down-containers.yaml)
+    #  vars:
+    #    log_file: "{{ playbooks_logs_dir }}/down-containers.log"
+    #    desc: "Containers deletion"
+    #    cmd: "{{ upi_playbooks_dir }}/down-containers.yaml"
+    #  include_tasks: run_down_playbooks.yml
+    #  when: stat_result_containers.stat.exists
+
+    - name: "Check if {{ upi_playbooks_dir }}/down-network.yaml exists"
+      stat:
+        path: "{{ upi_playbooks_dir }}/down-network.yaml"
+      register: stat_result_network
+
+    - name: Debug down-network.yaml existence
+      debug:
+        msg: "down-network.yaml exists: {{ stat_result_network.stat.exists }}"
+
+    #- name: Delete network resources (down-network.yaml)
+    #  vars:
+    #    log_file: "{{ playbooks_logs_dir }}/down-network.log"
+    #    desc: "OSP network resources deletion"
+    #    cmd: "{{ upi_playbooks_dir }}/down-network.yaml"
+    #  include_tasks: run_down_playbooks.yml
+    #  when: stat_result_network.stat.exists
+
+    - name: "Check if {{ upi_playbooks_dir }}/down-security-groups.yaml exists"
+      stat:
+        path: "{{ upi_playbooks_dir }}/down-security-groups.yaml"
+      register: stat_result_security_groups
+
+    - name: Debug down-security-groups.yaml existence
+      debug:
+        msg: "down-security-groups.yaml exists: {{ stat_result_security_groups.stat.exists }}"
+
+    #- name: Delete the security groups (down-security-groups.yaml)
+    #  vars:
+    #    log_file: "{{ playbooks_logs_dir }}/down-security-groups.log"
+    #    desc: "OSP security groups deletion"
+    #    cmd: "{{ upi_playbooks_dir }}/down-security-groups.yaml"
+    #  include_tasks: run_down_playbooks.yml
+    #  when: stat_result_security_groups.stat.exists
+
+
+
+
+# ---
+# - name: Delete Openstack resources for OCP UPI deployment
+#   block:
+#     - name: Remove the '{{ openshift_dualstack.network.name }}' network from the '{{ installer_vm_name }}' (connectivity to IPv6 API in dualstack)
+#       ansible.builtin.shell: "openstack server remove network {{ installer_vm_name }} {{ openshift_dualstack.network.name }}"
+#       environment:
+#         OS_CLOUD: "{{ user_cloud }}"
+#       ignore_errors: true
+
+#     - name: Create a {{ upi_playbooks_dir }} directory if it does not exist
+#       file:
+#         path: "{{ upi_playbooks_dir }}"
+#         state: directory
+
+#     - name: "Check if {{ upi_playbooks_dir }}/down-bootstrap.yaml exists"
+#       stat:
+#         path: "{{ upi_playbooks_dir }}/down-bootstrap.yaml"
+#       register: stat_result
+
+#     - name: Delete the bootstrap VM (down-bootstrap.yaml)
+#       vars:
+#         log_file: "{{ playbooks_logs_dir }}/down-bootstrap.log"
+#         desc: "Bootstrap VM deletion"
+#         cmd: "{{ upi_playbooks_dir }}/down-bootstrap.yaml"
+#       include_tasks: run_down_playbooks.yml
+#       when: stat_result.stat.exists
+
+#     - name: "Check if {{ upi_playbooks_dir }}/down-control-plane.yaml exists"
+#       stat:
+#         path: "{{ upi_playbooks_dir }}/down-control-plane.yaml"
+#       register: stat_result
+
+#     - name: Delete the control plane VMs (down-control-plane.yaml)
+#       vars:
+#         log_file: "{{ playbooks_logs_dir }}/down-control-plane.log"
+#         desc: "Control plane VMs deletion"
+#         cmd: "{{ upi_playbooks_dir }}/down-control-plane.yaml"
+#       include_tasks: run_down_playbooks.yml
+#       when: stat_result.stat.exists
+
+#     - name: "Check if {{ upi_playbooks_dir }}/down-compute-nodes.yaml exists"
+#       stat:
+#         path: "{{ upi_playbooks_dir }}/down-compute-nodes.yaml"
+#       register: stat_result
+
+#     - name: Delete the compute VMs (down-compute-nodes.yaml)
+#       vars:
+#         log_file: "{{ playbooks_logs_dir }}/down-compute-nodes.log"
+#         desc: "Compute VMs deletion"
+#         cmd: "{{ upi_playbooks_dir }}/down-compute-nodes.yaml"
+#       include_tasks: run_down_playbooks.yml
+#       when: stat_result.stat.exists
+
+#     - name: "Check if {{ upi_playbooks_dir }}/down-load-balancers.yaml exists"
+#       stat:
+#         path: "{{ upi_playbooks_dir }}/down-load-balancers.yaml"
+#       register: stat_result
+
+#     - name: Delete the Load Balancers (down-load-balancers.yaml)
+#       vars:
+#         log_file: "{{ playbooks_logs_dir }}/down-load-balancers.log"
+#         desc: "Load Balancers deletion"
+#         cmd: "{{ upi_playbooks_dir }}/down-load-balancers.yaml"
+#       include_tasks: run_down_playbooks.yml
+#       when: stat_result.stat.exists
+
+#     - name: "Check if {{ upi_playbooks_dir }}/down-containers.yaml"
+#       stat:
+#         path: "{{ upi_playbooks_dir }}/down-containers.yaml"
+#       register: stat_result
+
+#     - name: Delete the containers (down-containers.yaml)
+#       vars:
+#         log_file: "{{ playbooks_logs_dir }}/down-containers.log"
+#         desc: "Containers deletion"
+#         cmd: "{{ upi_playbooks_dir }}/down-containers.yaml"
+#       include_tasks: run_down_playbooks.yml
+#       when: stat_result.stat.exists
+
+#     - name: "Check if {{ upi_playbooks_dir }}/down-network.yaml"
+#       stat:
+#         path: "{{ upi_playbooks_dir }}/down-network.yaml"
+#       register: stat_result
+
+#     - name: Delete network resources (down-network.yaml)
+#       vars:
+#         log_file: "{{ playbooks_logs_dir }}/down-network.log"
+#         desc: "OSP network resources deletion"
+#         cmd: "{{ upi_playbooks_dir }}/down-network.yaml"
+#       include_tasks: run_down_playbooks.yml
+#       when: stat_result.stat.exists
+
+#     - name: "Check if {{ upi_playbooks_dir }}/down-security-groups.yaml"
+#       stat:
+#         path: "{{ upi_playbooks_dir }}/down-security-groups.yaml"
+#       register: stat_result
+
+#     - name: Delete the security groups (down-security-groups.yaml)
+#       vars:
+#         log_file: "{{ playbooks_logs_dir }}/down-security-groups.log"
+#         desc: "OSP security groups deletion"
+#         cmd: "{{ upi_playbooks_dir }}/down-security-groups.yaml"
+#       include_tasks: run_down_playbooks.yml
+#       when: stat_result.stat.exists
