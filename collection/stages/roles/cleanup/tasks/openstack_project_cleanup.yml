@@ -1,109 +1,128 @@
 ---
-- name: Fetch all OpenStack resources related to the project
+
+# TO-DO: this playbook is not tested, and should implemented completely :) 
+
+- name: Fetch and delete all OpenStack resources related to the project
   block:
-    - name: Get all instances in the project
-      openstack.cloud.server_info:
-        cloud: "{{ admin_cloud }}"
-        filters:
-          all_tenants: 1
-          project_id: "{{ project.id }}"
+    - name: Fetch instances
+      command: >
+        openstack --os-cloud "{{ user_cloud }}" server list -f json
       register: instances
 
-    - name: Get all networks in the project
-      openstack.cloud.networks_info:
-        cloud: "{{ admin_cloud }}"
-        filters:
-          tenant_id: "{{ project.id }}"
-      register: networks
+    - name: Delete instances
+      shell: >
+        openstack --os-cloud "{{ user_cloud }}" server delete {{ item.ID }}
+      with_items: "{{ instances.stdout | from_json }}"
+      when: instances.stdout | from_json | length > 0
 
-    - name: Get all subnets in the project
-      openstack.cloud.subnets_info:
-        cloud: "{{ admin_cloud }}"
-        filters:
-          tenant_id: "{{ project.id }}"
-      register: subnets
+    - name: Fetch instances to verify deletion
+      command: >
+        openstack --os-cloud "{{ user_cloud }}" server list -f json
+      register: instances_after_deletion
 
-    - name: Get all volumes in all projects
-      openstack.cloud.volume_info:
-        cloud: "{{ admin_cloud }}"
-        all_projects: yes
-      register: all_volumes
-
-    - name: Check if volumes are present
-      ansible.builtin.set_fact:
-        volumes_present: "{{ 'openstack_volumes' in all_volumes }}"
-
-    - name: Filter volumes by project_id
-      ansible.builtin.set_fact:
-        volumes: "{{ all_volumes.openstack_volumes | selectattr('os-vol-tenant-attr:tenant_id', 'equalto', project.id) | list }}"
-      when: volumes_present
-
-    - name: Get all floating IPs in the project
-      openstack.cloud.floating_ip_info:
-        cloud: "{{ admin_cloud }}"
-        project_id: "{{ project.id }}"
+    - name: Fetch floating IPs
+      command: >
+        openstack --os-cloud "{{ user_cloud }}" floating ip list -f json
       register: floating_ips
 
-    - name: Fetch all ports in the subnet
-      openstack.cloud.port_info:
-        cloud: "{{ admin_cloud }}"
-        filters:
-          subnet_id: "{{ item.id }}"
+    - name: Delete all floating IPs
+      ansible.builtin.shell:
+        cmd: "openstack floating ip delete {{ item['Floating IP Address'] }}"
+      environment:
+        OS_CLOUD: "{{ user_cloud }}"
+      loop: "{{ floating_ips.stdout | from_json }}"
+      when:
+        - floating_ips.stdout | from_json | length > 0
+
+    - name: Fetch ports
+      command: >
+        openstack --os-cloud "{{ user_cloud }}" port list -f json
       register: ports
-      loop: "{{ subnets.openstack_subnets }}"
-      when: subnets.openstack_subnets is defined
 
-- name: Delete ports
-  openstack.cloud.port:
-    cloud: "{{ admin_cloud }}"
-    state: absent
-    id: "{{ item.id }}"
-  loop: "{{ ports.results | map(attribute='openstack_ports') | flatten }}"
-  when: ports.results | map(attribute='openstack_ports') | flatten | length > 0
+    - name: Fetch routers
+      command: >
+        openstack --os-cloud "{{ user_cloud }}" router list -f json
+      register: routers
 
-- name: Delete floating IP
-  ansible.builtin.shell: |
-    openstack floating ip delete {{ item.floating_ip_address }}
-  environment:
-    OS_CLOUD: "{{ admin_cloud }}"
-  loop: "{{ floating_ips.floating_ips }}"
-  when:
-    - floating_ips.floating_ips is defined
-    - floating_ips.floating_ips | length > 0
-  register: result
-  changed_when: "'Deleted' in result.stdout"
+    - name: Detach router interfaces
+      shell: >
+        openstack --os-cloud "{{ user_cloud }}" router remove port {{ item.router_id }} {{ item.port_id }}
+      loop: >
+        {{ (routers.stdout | from_json | map(attribute='ID') | product(ports.stdout | from_json | selectattr('device_owner', 'equalto', 'network:router_interface') | map(attribute='ID'))) | list | map('combine', [{'router_id': item[0]}, {'port_id': item[1]}]) }}
+      when: routers.stdout | from_json | length > 0
 
-- name: Delete all instances
-  openstack.cloud.server:
-    cloud: "{{ admin_cloud }}"
-    state: absent
-    name: "{{ item.name }}"
-  loop: "{{ instances.openstack_servers }}"
+    - name: Delete ports
+      shell: >
+        openstack --os-cloud "{{ user_cloud }}" port delete {{ item.ID }}
+      with_items: "{{ ports.stdout | from_json }}"
+      when: ports.stdout | from_json | length > 0
 
-- name: Delete all subnets
-  openstack.cloud.subnet:
-    cloud: "{{ admin_cloud }}"
-    state: absent
-    name: "{{ item.name }}"
-  loop: "{{ subnets.openstack_subnets }}"
+    - name: Fetch ports to verify deletion
+      command: >
+        openstack --os-cloud "{{ user_cloud }}" port list -f json
+      register: ports_after_deletion
 
-- name: Delete all networks
-  openstack.cloud.network:
-    cloud: "{{ admin_cloud }}"
-    state: absent
-    name: "{{ item.name }}"
-  loop: "{{ networks.openstack_networks }}"
+# TO-DO: you should seek in which project the installer host router is located.
+    - name: Delete routers
+      shell: >
+        openstack --os-cloud "{{ user_cloud }}" router delete {{ item.ID }}
+      with_items: "{{ routers.stdout | from_json }}"
+      when: routers.stdout | from_json | length > 0
 
-- name: Delete all volumes
-  openstack.cloud.volume:
-    cloud: "{{ admin_cloud }}"
-    state: absent
-    display_name: "{{ item.display_name }}"
-  loop: "{{ volumes.openstack_volumes }}"
-  when: volumes_present
+    - name: Fetch subnets
+      command: >
+        openstack --os-cloud "{{ user_cloud }}" subnet list -f json
+      register: subnets
 
-- name: Delete project
-  openstack.cloud.project:
-    cloud: "{{ admin_cloud }}"
-    state: absent
-    name: "{{ project.name }}"
+    - name: Delete subnets
+      shell: >
+        openstack --os-cloud "{{ user_cloud }}" subnet delete {{ item.ID }}
+      with_items: "{{ subnets.stdout | from_json }}"
+      when: subnets.stdout | from_json | length > 0
+
+    - name: Fetch subnets to verify deletion
+      command: >
+        openstack --os-cloud "{{ user_cloud }}" subnet list -f json
+      register: subnets_after_deletion
+
+    - name: Fetch networks
+      command: >
+        openstack --os-cloud "{{ user_cloud }}" network list -f json
+      register: networks
+
+    - name: Delete networks
+      shell: >
+        openstack --os-cloud "{{ user_cloud }}" network delete {{ item.ID }}
+      with_items: "{{ networks.stdout | from_json }}"
+      when: networks.stdout | from_json | length > 0
+
+    - name: Fetch networks to verify deletion
+      command: >
+        openstack --os-cloud "{{ user_cloud }}" network list -f json
+      register: networks_after_deletion
+
+    - name: Fetch volumes
+      command: >
+        openstack --os-cloud "{{ user_cloud }}" volume list --all-projects -f json
+      register: all_volumes
+
+    - name: Delete volumes
+      shell: >
+        openstack --os-cloud "{{ user_cloud }}" volume delete {{ item.ID }}
+      with_items: "{{ all_volumes.stdout | from_json }}"
+      when: all_volumes.stdout | from_json | length > 0
+
+    - name: Fetch volumes to verify deletion
+      command: >
+        openstack --os-cloud "{{ user_cloud }}" volume list --all-projects -f json
+      register: volumes_after_deletion
+
+    # Uncomment and use the following section if you need to delete the project after all resources are cleaned up.
+    # - name: Fetch project to delete
+    #   command: >
+    #     openstack --os-cloud "{{ user_cloud }}" project list -f json
+    #   register: projects
+
+    # - name: Delete project
+    #   shell: >
+    #     openstack --os-cloud "{{ user_cloud }}" project delete {{ project.id }}

@@ -1,10 +1,4 @@
 ---
-- name: Check if target project exists
-  openstack.cloud.project_info:
-    cloud: "{{ admin_cloud }}"
-    name: "{{ user_cloud }}"
-  register: project_info
-
 - name: Check if target cluster directory exists
   ansible.builtin.stat:
     path: "{{ installation_dir }}"
@@ -26,7 +20,7 @@
 
     - name: Discover if UPI installation was performed on the installer host VM to destroy
       vars:
-        home_dir: "~"
+        home_dir: "/home/{{ installer_vm_ssh_user }}"
       ansible.builtin.stat:
         path: "{{ upi_playbooks_dir }}/inventory.yaml"
       ignore_errors: yes

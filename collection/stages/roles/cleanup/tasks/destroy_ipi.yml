@@ -7,6 +7,7 @@
 - name: Destroy OCP Cluster (IPI)
   when: cluster_directory.stat.exists
   block:
+  # TO-DO: openshift-install binary will not be available in a new pod
     - name: Run 'openshift-install destroy cluster'
       ansible.builtin.command: "openshift-install --log-level=debug destroy cluster --dir {{ ocp_installation_dir }}"
       async: 2400 # Timeout after 40 minutes

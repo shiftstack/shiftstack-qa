@@ -1,4 +1,11 @@
 ---
+# TO-DO : you can use the content of openstack_project_cleanup.yml here under a block and remove the file.
+- name: Check if target project exists
+  openstack.cloud.project_info:
+    cloud: "{{ admin_cloud }}"
+    name: "{{ user_cloud }}"
+  register: project_info
+
 - name: Proceed with cleanup tasks for each project
   ansible.builtin.include_tasks: openstack_project_cleanup.yml
   loop: "{{ project_info.projects }}"
