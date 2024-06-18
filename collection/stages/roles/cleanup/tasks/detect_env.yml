@@ -16,24 +16,30 @@
     server: "{{ installer_vm_name }}"
   register: installer_vm_info
 
-- name: Detect previous installation type
-  when: installer_vm_info.servers | length == 1
-  block:
-    - name: Update the Ansible inventory in case there is installer host to destroy
-      ansible.builtin.include_role:
-        name: shiftstack.tools.tools_ansible_inventory
-        tasks_from: create_installer_group.yml
+# - name: Detect previous installation type
+#   when: installer_vm_info.servers | length == 1
+#   block:
+#     - name: Update the Ansible inventory in case there is installer host to destroy
+#       ansible.builtin.include_role:
+#         name: shiftstack.tools.tools_ansible_inventory
+#         tasks_from: create_installer_group.yml
 
-    - name: Discover if UPI installation was performed on the installer host VM to destroy
-      vars:
-        home_dir: "~"
-      ansible.builtin.stat:
-        path: "{{ upi_playbooks_dir }}/inventory.yaml"
-      ignore_errors: yes
-      register: upi_inventory_stat
-      delegate_to: "{{ installer_vm_name }}"
+#     - debug:
+#         msg: "{{ upi_playbooks_dir }}/inventory.yaml"
+#       vars:
+#         home_dir: "~"
+#       delegate_to: "{{ installer_vm_name }}"
 
-      # ipi is default in case there is no installer host
-    - name: Setting previous installation type based on inventory presence
-      ansible.builtin.set_fact:
-        previous_installation_type: "{{ 'upi' if upi_inventory_stat.stat.exists else 'restricted' }}"
+#     - name: Discover if UPI installation was performed on the installer host VM to destroy
+#       vars:
+#         home_dir: "~"
+#       ansible.builtin.stat:
+#         path: "{{ upi_playbooks_dir }}/inventory.yaml"
+#       ignore_errors: yes
+#       register: upi_inventory_stat
+#       delegate_to: "{{ installer_vm_name }}"
+
+#       # ipi is default in case there is no installer host
+#     - name: Setting previous installation type based on inventory presence
+#       ansible.builtin.set_fact:
+#         previous_installation_type: "{{ 'upi' if upi_inventory_stat.stat.exists else 'restricted' }}"
