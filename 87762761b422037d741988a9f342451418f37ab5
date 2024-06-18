@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b4cbf2ce_997cc4fb",
+        "filename": "configs/global.yml",
+        "patchSetId": 7
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-06-18T08:12:19Z",
+      "side": 1,
+      "message": "Would you mind to add a comment here saying that we are overwritting in the job itself thanks to https://github.com/openstack-k8s-operators/ci-framework/pull/1882/files ??",
+      "range": {
+        "startLine": 15,
+        "startChar": 0,
+        "endLine": 15,
+        "endChar": 24
+      },
+      "revId": "87762761b422037d741988a9f342451418f37ab5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c6cec978_ea0a40df",
+        "filename": "configs/global.yml",
+        "patchSetId": 7
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-06-18T08:12:19Z",
+      "side": 1,
+      "message": "Would you mind to add a comment here saying that we are overwritting in the job itself thanks to https://github.com/openstack-k8s-operators/ci-framework/pull/1882/files ??",
+      "range": {
+        "startLine": 18,
+        "startChar": 0,
+        "endLine": 18,
+        "endChar": 26
+      },
+      "revId": "87762761b422037d741988a9f342451418f37ab5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
