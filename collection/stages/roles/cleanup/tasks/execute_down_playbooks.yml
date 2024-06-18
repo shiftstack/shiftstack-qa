@@ -1,0 +1,44 @@
+- name: "Generate script {{ cmd | basename }}.sh for {{ desc }}"
+  copy:
+    content: |
+      #!/bin/bash
+      export ANSIBLE_HOST_KEY_CHECKING=False
+      source {{ user_env_file }}
+
+      ansible-playbook -i "{{ upi_playbooks_dir }}/inventory.yaml" "{{ cmd }}" > "{{ log_file }}"
+    dest: "{{ home_dir }}/{{ cmd | basename }}.sh"
+    mode: 0750
+
+- name: "Run {{ cmd | basename }}.sh"
+  command: "{{ home_dir }}/{{ cmd | basename }}.sh"
+  args:
+    chdir: "{{ upi_playbooks_dir }}"
+  register: result
+  failed_when: false
+  changed_when: false
+
+- name: Fetch playbook logs if failing
+  fetch:
+    src: "{{ log_file }}"
+    dest: "{{ inventory_dir }}/{{ log_file }}"
+    flat: yes
+  when: result.rc != 0
+
+- name: Print error message
+  fail:
+    msg: |
+      "Running ansible playbook {{ cmd | basename }} from {{ cmd | basename }}.sh failed!
+      Please check following log file {{ log_file }} on the inventory or installer host VM."
+  when:
+    - result.rc != 0
+    - not upi_forced_cleanup|default(False)
+
+- name: Print error message and continue
+  debug:
+    msg: |
+      "Running ansible playbook {{ cmd | basename }} from {{ cmd | basename }}.sh failed!
+      Continuing as force_cleanup flag is set.
+      Please check following log file {{ log_file }} on the inventory or installer host VM."
+  when:
+    - result.rc != 0
+    - upi_forced_cleanup|default(False)
