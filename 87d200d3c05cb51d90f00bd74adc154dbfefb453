@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0180f001_0c898d7e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 12
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-06-19T11:57:27Z",
+      "side": 1,
+      "message": "Yaakov found some installer-host issue as a result of this change.\nFixed by - https://review.gerrithub.io/c/shiftstack/shiftstack-qa/+/1196079/9..12",
+      "revId": "87d200d3c05cb51d90f00bd74adc154dbfefb453",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
