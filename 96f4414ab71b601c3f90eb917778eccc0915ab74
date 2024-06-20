@@ -1,0 +1,12 @@
+Verified+1: Yaakov Khodorkovski <ykhodork@redhat.com>
+Verified+1: rhosqeauto <aopincar+rhosqeauto@redhat.com>
+Code-Review+2: Ramón Lobillo <rlobillo@redhat.com>
+Code-Review+1: Yaakov Khodorkovski <ykhodork@redhat.com>
+Verified+1: Itay Matza <imatza@redhat.com>
+Submitted-by: Ramón Lobillo <rlobillo@redhat.com>
+Submitted-at: Thu, 20 Jun 2024 09:11:58 +0000
+Reviewed-on: https://review.gerrithub.io/c/shiftstack/shiftstack-qa/+/1196079
+Comments-Total: 26
+Comments-Unresolved: 2
+Project: shiftstack/shiftstack-qa
+Branch: refs/heads/main
