@@ -22,6 +22,23 @@
       },
       "revId": "e46fa09032d23e10dc166c86398f496804a146e9",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "91c035f8_a4f5aff2",
+        "filename": "collection/stages/roles/cleanup/tasks/openstack_cleanup.yml",
+        "patchSetId": 33
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-06-25T08:51:17Z",
+      "side": 1,
+      "message": "Please move the project_info task here to gather the project_info of the {{ user_cloud }} and remove the loop. Thanks!",
+      "revId": "e46fa09032d23e10dc166c86398f496804a146e9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
