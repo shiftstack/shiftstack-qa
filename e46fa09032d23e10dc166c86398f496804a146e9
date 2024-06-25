@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "803fc8e7_a96d56f1",
+        "filename": "collection/stages/roles/cleanup/tasks/destroy_ipi.yml",
+        "patchSetId": 33
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-06-25T08:33:37Z",
+      "side": 1,
+      "message": "The binary won\u0027t be there. Please add OSPRH-7508 as a comment here so we can fix this in the near future. Thanks!",
+      "range": {
+        "startLine": 10,
+        "startChar": 17,
+        "endLine": 10,
+        "endChar": 34
+      },
+      "revId": "e46fa09032d23e10dc166c86398f496804a146e9",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
