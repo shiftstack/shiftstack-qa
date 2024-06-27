@@ -7,11 +7,11 @@
       source {{ user_env_file }}
 
       ansible-playbook -i "{{ upi_inventory_file }}" "{{ cmd }}" > "{{ log_file }}"
-    dest: "{{ home_dir }}/{{ cmd | basename }}.sh"
+    dest: "{{ upi_scripts_dir }}/{{ cmd | basename }}.sh"
     mode: u=rwx,g=rx,o=r
 
 - name: "Run {{ cmd | basename }}.sh"
-  ansible.builtin.command: "{{ home_dir }}/{{ cmd | basename }}.sh"
+  ansible.builtin.command: "{{ upi_scripts_dir }}/{{ cmd | basename }}.sh"
   args:
     chdir: "{{ upi_playbooks_dir }}"
   register: result
