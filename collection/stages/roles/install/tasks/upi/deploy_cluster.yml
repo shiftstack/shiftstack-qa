@@ -39,13 +39,13 @@
   block:
     - name: Wait until the bootstrap is completed
       ansible.builtin.shell: |
-        openshift-install wait-for bootstrap-complete --log-level=debug --dir {{ installation_dir }}
+        openshift-install wait-for bootstrap-complete --log-level=debug --dir {{ ocp_installation_dir }}
       changed_when: false
 
   rescue:
     - name: Wait (a second time) until the bootstrap is completed
       ansible.builtin.shell: |
-        openshift-install wait-for bootstrap-complete --log-level=debug --dir {{ installation_dir }}
+        openshift-install wait-for bootstrap-complete --log-level=debug --dir {{ ocp_installation_dir }}
       changed_when: false
 
     - name: Mark the UPI installation as UNSTABLE
@@ -129,13 +129,13 @@
   block:
     - name: Wait until the installation is completed
       ansible.builtin.shell: |
-        openshift-install wait-for install-complete --log-level=debug --dir {{ installation_dir }}
+        openshift-install wait-for install-complete --log-level=debug --dir {{ ocp_installation_dir }}
       changed_when: false
 
   rescue:
     - name: Wait (a second time) until the installation is completed
       ansible.builtin.shell: |
-        openshift-install wait-for install-complete --log-level=debug --dir {{ installation_dir }}
+        openshift-install wait-for install-complete --log-level=debug --dir {{ ocp_installation_dir }}
       changed_when: false
 
     - name: Mark the UPI installation as UNSTABLE
