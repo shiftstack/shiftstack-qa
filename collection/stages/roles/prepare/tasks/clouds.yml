@@ -27,7 +27,7 @@
     backup: true
     unsafe_writes: true
   vars:
-    indentation: "{{ (legacy_installation | default(False)) | ternary(1, 4) }}"
+    indentation: "{{ (legacy_installation | default(False)) | ternary(2, 4) }}"
 
 - name: Test it is possible to access {{ user_cloud }}
   openstack.cloud.auth:
