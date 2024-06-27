@@ -4,6 +4,7 @@
     - name: Set CA certificate path fact (in legacy environment)
       ansible.builtin.set_fact:
         cacert: "{{ openstack_tlse | ternary(cacert_tlse, cacert) }}"
+        installer_host_cacert: "{{ cacert }}"
       when: legacy_installation | default(False)
 
     - name: Set CA certificate path fact (not legacy environment)
