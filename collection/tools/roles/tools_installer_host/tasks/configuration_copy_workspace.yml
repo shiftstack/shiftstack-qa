@@ -73,7 +73,7 @@
         - name: Copy the CA cert to the installer host VM
           ansible.builtin.copy:
             src: "{{ cacert }}"
-            dest: "{{ installer_host_cacert }}"
+            dest: "{{  installer_host_cacert | ternary(installer_host_cacert, cacert) }}"
             mode: u=rwx,g=rwx,o=rwx
           become: yes
 
