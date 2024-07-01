@@ -3,7 +3,7 @@
   ansible.builtin.shell: |
     openssl req -newkey rsa:4096 -nodes -sha256 -keyout domain.key \
       -x509 -days 30  -addext "subjectAltName = IP:{{ restricted_network.installer_ip }},DNS:{{ installer_vm.installer_fqdn }}" \
-      -subj "/C=US/ST=Denial/L=Springfield/O=RedHat/CN=shiftstack.com" \
+      -subj "/C=US/ST=Denial/L=Springfield/O=RedHat/CN={{ user_cloud }}.local" \
       -out domain.crt
   args:
     chdir: "{{ certs_dir }}"

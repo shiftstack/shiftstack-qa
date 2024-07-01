@@ -1,5 +1,5 @@
 resolv-file=/etc/resolv.dnsmasq
-address=/apps.{{ ocp_cluster_name }}.shiftstack.com/{{ apps_accessible_ip }}
+address=/apps.{{ ocp_cluster_name }}.{{ user_cloud }}.local/{{ apps_accessible_ip }}
 {% if openshift_mirror %}
 no-hosts
 no-resolv

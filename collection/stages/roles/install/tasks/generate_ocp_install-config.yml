@@ -8,8 +8,8 @@
                       select('search', ingress_filter) |
                       first | split() | first }}"
   vars:
-    api_filter: "api.{{ ocp_cluster_name }}.{{ user_cloud }}.com"
-    ingress_filter: "oauth-openshift.apps.{{ ocp_cluster_name }}.{{ user_cloud }}.com"
+    api_filter: "api.{{ ocp_cluster_name }}.{{ user_cloud }}.local"
+    ingress_filter: "oauth-openshift.apps.{{ ocp_cluster_name }}.{{ user_cloud }}.local"
 
 - name: Generate an OpenShift install-config.yaml in a non-proxy installation
   ansible.builtin.template:
