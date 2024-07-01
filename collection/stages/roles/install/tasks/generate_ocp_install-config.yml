@@ -8,8 +8,8 @@
                       select('search', ingress_filter) |
                       first | split() | first }}"
   vars:
-    api_filter: "api.{{ ocp_cluster_name }}.{{ user_cloud }}.com"
-    ingress_filter: "oauth-openshift.apps.{{ ocp_cluster_name }}.{{ user_cloud }}.com"
+    api_filter: "api.{{ ocp_cluster_name }}.{{ ocp_base_domain }}"
+    ingress_filter: "oauth-openshift.apps.{{ ocp_cluster_name }}.{{ ocp_base_domain }}"
 
 - name: Generate an OpenShift install-config.yaml in a non-proxy installation
   ansible.builtin.template:
@@ -17,6 +17,7 @@
     dest: "{{ user_cloud_installation_dir }}/install-config.yaml"
     mode: u=rw,g=rw,o=r
   vars:
+    installcfg_ocp_base_domain: "{{ ocp_base_domain }}"
     installcfg_cluster_name: "{{ ocp_cluster_name }}"
     installcfg_worker_flavor: "{{ topology.flavors.worker.name }}"
     installcfg_worker_replicas: "{{ (installation_type == 'upi') | ternary('0', topology.replicas.worker) }}"
@@ -45,6 +46,7 @@
         dest: "{{ user_cloud_installation_dir }}/install-config.yaml"
         mode: u=rw,g=rw,o=r
       vars:
+        installcfg_ocp_base_domain: "{{ ocp_base_domain }}"
         installcfg_cluster_name: "{{ ocp_cluster_name }}"
         installcfg_worker_flavor: "{{ topology.flavors.worker.name }}"
         installcfg_worker_replicas: "{{ (installation_type == 'upi') | ternary('0', topology.replicas.worker) }}"

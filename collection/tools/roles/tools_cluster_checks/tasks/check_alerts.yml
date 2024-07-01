@@ -14,7 +14,7 @@
 
     - name: Get alerts from Prometheus API
       ansible.builtin.uri:
-        url: https://prometheus-k8s-openshift-monitoring.apps.{{ ocp_cluster_name }}.shiftstack.com/api/v1/alerts
+        url: https://prometheus-k8s-openshift-monitoring.apps.{{ ocp_cluster_name }}.{{ ocp_base_domain }}/api/v1/alerts
         headers:
           Authorization: "Bearer {{ token.stdout }}"
         validate_certs: false
