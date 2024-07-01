@@ -21,16 +21,16 @@ project:
     load_balancers: 1000
     load_balancer_listeners: 5000
     load_balancer_pools: 5000
-ocp_api_description: "API {{ ocp_cluster_name }}.{{ user_cloud }}.com"
-ocp_apps_description: "APPS {{ ocp_cluster_name }}.{{ user_cloud }}.com"
-ocp_bootstrap_fip_description: "Bootstrap {{ ocp_cluster_name }}.{{ user_cloud }}.com"
+ocp_api_description: "API {{ ocp_cluster_name }}.{{ user_cloud }}.local"
+ocp_apps_description: "APPS {{ ocp_cluster_name }}.{{ user_cloud }}.local"
+ocp_bootstrap_fip_description: "Bootstrap {{ ocp_cluster_name }}.{{ user_cloud }}.local"
 etc_hosts_entries:
-  - {regex: 'api\..*\.{{ user_cloud }}.com', row: '{{ api_ip }} api.{{ ocp_cluster_name }}.{{ user_cloud }}.com'}
-  - {regex: 'oauth-openshift.apps\..*\.{{ user_cloud }}.com', row: '{{ apps_ip }} oauth-openshift.apps.{{ ocp_cluster_name }}.{{ user_cloud }}.com'}
-  - {regex: 'console-openshift-console.apps\..*\.{{ user_cloud }}.com', row: '{{ apps_ip }} console-openshift-console.apps.{{ ocp_cluster_name }}.{{ user_cloud }}.com'}
-  - {regex: 'downloads-openshift-console.apps\..*\.{{ user_cloud }}.com', row: '{{ apps_ip }} downloads-openshift-console.apps.{{ ocp_cluster_name }}.{{ user_cloud }}.com'}
-  - {regex: 'canary-openshift-ingress-canary.apps\..*\.{{ user_cloud }}.com', row: '{{ apps_ip }} canary-openshift-ingress-canary.apps.{{ ocp_cluster_name }}.{{ user_cloud }}.com'}
-  - {regex: 'alertmanager-main-openshift-monitoring.apps\..*\.{{ user_cloud }}.com', row: '{{ apps_ip }} alertmanager-main-openshift-monitoring.apps.{{ ocp_cluster_name }}.{{ user_cloud }}.com'}
-  - {regex: 'grafana-openshift-monitoring.apps\..*\.{{ user_cloud }}.com', row: '{{ apps_ip }} grafana-openshift-monitoring.apps.{{ ocp_cluster_name }}.{{ user_cloud }}.com'}
-  - {regex: 'prometheus-k8s-openshift-monitoring.apps\..*\.{{ user_cloud }}.com', row: '{{ apps_ip }} prometheus-k8s-openshift-monitoring.apps.{{ ocp_cluster_name }}.{{ user_cloud }}.com'}
-  - {regex: 'thanos-querier-openshift-monitoring.apps\..*\.{{ user_cloud }}.com', row: '{{ apps_ip }} thanos-querier-openshift-monitoring.apps.{{ ocp_cluster_name }}.{{ user_cloud }}.com'}
+  - {regex: 'api\..*\.{{ user_cloud }}.local', row: '{{ api_ip }} api.{{ ocp_cluster_name }}.{{ user_cloud }}.local'}
+  - {regex: 'oauth-openshift.apps\..*\.{{ user_cloud }}.local', row: '{{ apps_ip }} oauth-openshift.apps.{{ ocp_cluster_name }}.{{ user_cloud }}.local'}
+  - {regex: 'console-openshift-console.apps\..*\.{{ user_cloud }}.local', row: '{{ apps_ip }} console-openshift-console.apps.{{ ocp_cluster_name }}.{{ user_cloud }}.local'}
+  - {regex: 'downloads-openshift-console.apps\..*\.{{ user_cloud }}.local', row: '{{ apps_ip }} downloads-openshift-console.apps.{{ ocp_cluster_name }}.{{ user_cloud }}.local'}
+  - {regex: 'canary-openshift-ingress-canary.apps\..*\.{{ user_cloud }}.local', row: '{{ apps_ip }} canary-openshift-ingress-canary.apps.{{ ocp_cluster_name }}.{{ user_cloud }}.local'}
+  - {regex: 'alertmanager-main-openshift-monitoring.apps\..*\.{{ user_cloud }}.local', row: '{{ apps_ip }} alertmanager-main-openshift-monitoring.apps.{{ ocp_cluster_name }}.{{ user_cloud }}.local'}
+  - {regex: 'grafana-openshift-monitoring.apps\..*\.{{ user_cloud }}.local', row: '{{ apps_ip }} grafana-openshift-monitoring.apps.{{ ocp_cluster_name }}.{{ user_cloud }}.local'}
+  - {regex: 'prometheus-k8s-openshift-monitoring.apps\..*\.{{ user_cloud }}.local', row: '{{ apps_ip }} prometheus-k8s-openshift-monitoring.apps.{{ ocp_cluster_name }}.{{ user_cloud }}.local'}
+  - {regex: 'thanos-querier-openshift-monitoring.apps\..*\.{{ user_cloud }}.local', row: '{{ apps_ip }} thanos-querier-openshift-monitoring.apps.{{ ocp_cluster_name }}.{{ user_cloud }}.local'}
