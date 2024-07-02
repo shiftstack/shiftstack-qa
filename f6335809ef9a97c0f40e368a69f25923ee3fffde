@@ -24,6 +24,78 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f559c246_34ee7758",
+        "filename": "collection/stages/roles/install/tasks/generate_ocp_install-config.yml",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-07-02T07:35:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e1132d21_c13344f1",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 67
+      },
+      "revId": "f6335809ef9a97c0f40e368a69f25923ee3fffde",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2e4657a8_9e453baa",
+        "filename": "collection/stages/roles/install/tasks/generate_ocp_install-config.yml",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-07-02T07:35:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e1132d21_c13344f1",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 67
+      },
+      "revId": "f6335809ef9a97c0f40e368a69f25923ee3fffde",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c6c3e978_226f7b7d",
+        "filename": "collection/stages/roles/install/tasks/generate_ocp_install-config.yml",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-07-02T07:35:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e1132d21_c13344f1",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 67
+      },
+      "revId": "f6335809ef9a97c0f40e368a69f25923ee3fffde",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "db22295e_f62ca10d",
@@ -37,6 +109,54 @@
       "writtenOn": "2024-07-01T18:45:42Z",
       "side": 1,
       "message": "wdyt about having it as a var in https://github.com/shiftstack/shiftstack-qa/blob/main/configs/global.yml?  (as you are doing in https://code.engineering.redhat.com/gerrit/c/openshift-ir-plugin/+/452560).\n\nFor example, the suggestion at - https://review.gerrithub.io/c/shiftstack/shiftstack-qa/+/1196914/2/collection/stages/roles/install/tasks/generate_ocp_install-config.yml#11",
+      "range": {
+        "startLine": 3,
+        "startChar": 0,
+        "endLine": 3,
+        "endChar": 36
+      },
+      "revId": "f6335809ef9a97c0f40e368a69f25923ee3fffde",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0102d061_ea728988",
+        "filename": "collection/stages/roles/install/templates/install-config-proxy.yaml.j2",
+        "patchSetId": 2
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-07-02T07:35:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "db22295e_f62ca10d",
+      "range": {
+        "startLine": 3,
+        "startChar": 0,
+        "endLine": 3,
+        "endChar": 36
+      },
+      "revId": "f6335809ef9a97c0f40e368a69f25923ee3fffde",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d8988775_8aacdc2c",
+        "filename": "collection/stages/roles/install/templates/install-config-proxy.yaml.j2",
+        "patchSetId": 2
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-07-02T07:35:06Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "db22295e_f62ca10d",
       "range": {
         "startLine": 3,
         "startChar": 0,
