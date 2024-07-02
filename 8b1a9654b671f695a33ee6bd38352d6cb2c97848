@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b2bb832b_5aa28684",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-07-02T14:11:20Z",
+      "side": 1,
+      "message": "Solution is working:\n```\n[cloud-admin@shiftstackclient-shiftstack ostest]$ oc get machines -A\nNAMESPACE               NAME                          PHASE          TYPE     REGION      ZONE   AGE\nopenshift-machine-api   ostest-7gflz-master-0         Running        master   regionOne   nova   14m\nopenshift-machine-api   ostest-7gflz-master-1                                                    14m\nopenshift-machine-api   ostest-7gflz-master-2         Running        master   regionOne   nova   14m\nopenshift-machine-api   ostest-7gflz-worker-0-lp2tn   Provisioning                               2m40s\nopenshift-machine-api   ostest-7gflz-worker-0-n8s2b   Provisioning                               2m40s\n[cloud-admin@shiftstackclient-shiftstack ostest]$ OS_CLOUD\u003dshiftstack openstack server list\n+--------------------------------------+-----------------------------+--------+-----------------------------------------------------------------------------------------------+--------------------+--------+\n| ID                                   | Name                        | Status | Networks                                                                                      | Image              | Flavor |\n+--------------------------------------+-----------------------------+--------+-----------------------------------------------------------------------------------------------+--------------------+--------+\n| aff70587-1791-461d-ba9a-def9babbb770 | ostest-7gflz-worker-0-lp2tn | BUILD  |                                                                                               | ostest-7gflz-rhcos | worker |\n| 71034d37-369f-4ddc-bd12-a0ae51eb8d17 | ostest-7gflz-master-1       | ACTIVE | k8s-clusterapi-cluster-openshift-cluster-api-guests-ostest-7gflz\u003d10.196.1.123                 | ostest-7gflz-rhcos | master |\n| 2b0dada5-2c84-44d2-8eb7-aafe67b3d210 | ostest-7gflz-master-2       | ACTIVE | k8s-clusterapi-cluster-openshift-cluster-api-guests-ostest-7gflz\u003d10.196.1.118                 | ostest-7gflz-rhcos | master |\n| 956ac1e5-0c87-4f2d-bf45-d0d5ae1da9aa | ostest-7gflz-master-0       | ACTIVE | k8s-clusterapi-cluster-openshift-cluster-api-guests-ostest-7gflz\u003d10.196.3.66                  | ostest-7gflz-rhcos | master |\n| a1082d99-a7a2-4864-b0c0-0bb9814e8322 | ostest-7gflz-bootstrap      | ACTIVE | k8s-clusterapi-cluster-openshift-cluster-api-guests-ostest-7gflz\u003d10.196.3.92, 192.168.122.237 | ostest-7gflz-rhcos | master |\n+--------------------------------------+-----------------------------+--------+-----------------------------------------------------------------------------------------------+--------------------+--------+\n```",
+      "revId": "8b1a9654b671f695a33ee6bd38352d6cb2c97848",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
