@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0eaad940_45f43f99",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-07-03T13:10:36Z",
+      "side": 1,
+      "message": "Please add the whole URL for the jira issue in the commit msg (it\u0027s configured to detect jira issues)",
+      "revId": "7e11ef2296e51452841308c6e7c718d1c1848419",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
