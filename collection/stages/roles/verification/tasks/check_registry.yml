@@ -84,7 +84,7 @@
       delay: 15
 
     - name: Create a new application to check image registry
-      ansible.builtin.shell: "oc project {{ swift_check_ns }} && oc new-app  https://github.com/itzikb/fooapp --name {{ swift_check_image }}"
+      ansible.builtin.shell: "oc project {{ swift_check_ns }} && oc new-app  https://github.com/itzikb/fooapp --name {{ swift_check_image }} --allow-missing-images"
       changed_when: true
       environment:
         KUBECONFIG: "{{ kubeconfig }}"
