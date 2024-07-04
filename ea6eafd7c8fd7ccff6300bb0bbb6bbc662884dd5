@@ -16,6 +16,23 @@
       "message": "recheck",
       "revId": "ea6eafd7c8fd7ccff6300bb0bbb6bbc662884dd5",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1aa103c9_0247690e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 8
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-07-04T11:16:54Z",
+      "side": 1,
+      "message": "It is needed to unblock the cleanup role work.\nVerified locally.",
+      "revId": "ea6eafd7c8fd7ccff6300bb0bbb6bbc662884dd5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
