@@ -1,0 +1,51 @@
+---
+- name: Check if the "{{ installer_vm_name }}" exists on the "{{ user_cloud }}" project
+  openstack.cloud.server_info:
+    cloud: "{{ user_cloud }}"
+    server: "{{ installer_vm_name }}"
+  register: installer_vm_info
+
+- name: Detect the OpenShift installation type in case there is no installer VM
+  when: installer_vm_info.servers | length == 0
+  block:
+    - name: Check if the target cluster directory exists
+      ansible.builtin.stat:
+        path: "{{ ocp_installation_dir }}"
+      register: cluster_directory_check
+
+    - name: Set OpenShift IPI installation type in case the target cluster directory exists
+      ansible.builtin.set_fact:
+        existing_ocp_installation_type: "ipi"
+      when: cluster_directory_check.stat.exists
+
+- name: Detect the OpenShift installation type in case there is an installer VM
+  when: installer_vm_info.servers | length == 1
+  block:
+    - name: Update the Ansible inventory in case there is installer host to destroy
+      ansible.builtin.include_role:
+        name: shiftstack.tools.tools_ansible_inventory
+        tasks_from: create_installer_group.yml
+
+    - name: Discover if UPI installation was performed on the installer host VM to destroy
+      vars:
+        home_dir: "~"
+      ansible.builtin.stat:
+        path: "{{ upi_playbooks_dir }}/inventory.yaml"
+      failed_when: false
+      register: upi_inventory_stat
+      delegate_to: "{{ installer_vm_name }}"
+
+    - name: Set OpenShift UPI installation type in case the target UPI inventory.yaml file exists
+      ansible.builtin.set_fact:
+        existing_ocp_installation_type: "upi"
+      when: upi_inventory_stat.stat.exists
+
+    - name: Set OpenShift IPI-Proxy (restricted) installation type in case the target UPI inventory.yaml file doesn't exist
+      ansible.builtin.set_fact:
+        existing_ocp_installation_type: "restricted"
+      when: not upi_inventory_stat.stat.exists
+
+- name: Fail if there is more than one installer VM
+  ansible.builtin.fail:
+    msg: "There is more than one installer VM"
+  when: installer_vm_info.servers | length > 1

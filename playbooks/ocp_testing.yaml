@@ -65,7 +65,7 @@
         gather_subset:
           - env
 
-    - name: Set the openstack_version based on the previous discovery
+    - name: Set the openstack_version based on the existing OCP discovery
       ansible.builtin.set_fact:
         openstack_version: "{{ hostvars['localhost']['openstack_version'] }}"
   tasks:
