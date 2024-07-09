@@ -1,0 +1,25 @@
+---
+- name: Check if OCP cluster directory exists
+  ansible.builtin.stat:
+    path: "{{ ocp_installation_dir }}"
+  register: ocp_cluster_directory
+
+- name: Destroy OCP Cluster and remove the OCP cluster directory (IPI)
+  when: ocp_cluster_directory.stat.exists
+  block:
+    # To-Do: https://issues.redhat.com/browse/OSPRH-7508
+    - name: Run 'openshift-install destroy cluster'
+      ansible.builtin.shell: |
+          openshift-install destroy cluster --log-level debug --dir {{ ocp_installation_dir }}
+      environment:
+        OS_CLOUD: "{{ user_cloud }}"
+      changed_when: true
+
+    - name: Remove the OCP cluster directory
+      ansible.builtin.file:
+        path: "{{ ocp_installation_dir }}"
+        state: absent
+  rescue:
+    - name: Fail if the OpenShift cleanup did not succeed
+      ansible.builtin.fail:
+        msg: "Destroy OpenShift Cluster failed or timed out"
