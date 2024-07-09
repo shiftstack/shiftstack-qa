@@ -1,2 +1,5 @@
 ---
 # defaults file for cleanup
+
+# Set the OpenShift installation type to None
+existing_ocp_installation_type: ""
