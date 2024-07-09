@@ -1,0 +1,22 @@
+---
+- name: Get the project info for "{{ user_cloud }}"
+  openstack.cloud.project_info:
+    cloud: "{{ admin_cloud }}"
+    name: "{{ user_cloud }}"
+  register: project_info
+
+- name: Cleanup all OpenStack resources related to the project
+  when: project_info.projects | length > 0
+  block:
+    - name: Purge the OpenStack project
+      project_purge:
+        cloud: "{{ admin_cloud }}"
+        project: "{{ user_cloud }}"
+        keep_project: true
+        remove_external_networks: false
+
+    - name: Delete project "{{ user_cloud }}"
+      openstack.cloud.project:
+        cloud: "{{ admin_cloud }}"
+        state: absent
+        name: "{{ user_cloud }}"

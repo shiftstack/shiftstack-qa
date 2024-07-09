@@ -4,6 +4,7 @@ openshift_build_name: "candidate" # It can be an empty value "" (latest nightly)
 openshift_network_type: OVNKubernetes
 installation_type: ipi
 stages:
+  - cleanup
   - prepare
   - install
   - post
