@@ -1,0 +1,77 @@
+---
+- name: Fetch all OpenStack resources related to the project
+  vars:
+    resource_types:
+      - ports
+      - security_groups
+      - networks
+      - volumes
+      - servers
+  block:
+    - name: Get project ID for "{{ user_cloud }}"
+      openstack.cloud.openstack_cloud_project_info:
+        cloud: "{{ admin_cloud }}"
+        name: "{{ user_cloud }}"
+      register: project_info
+
+    - name: Fail if project "{{ user_cloud }}" not found
+      ansible.builtin.fail:
+        msg: "Project {{ user_cloud }} not found in {{ admin_cloud }} cloud"
+      when: project_info.projects is empty
+
+    - name: Delete ports associated with the project
+      openstack.cloud.openstack_cloud_port:
+        cloud: "{{ admin_cloud }}"
+        state: absent
+        project_id: "{{ project_info.projects[0].id }}"
+      when: project_info.projects is not empty
+
+    - name: Delete security groups associated with the project
+      openstack.cloud.openstack_cloud_security_group:
+        cloud: "{{ admin_cloud }}"
+        state: absent
+        project_id: "{{ project_info.projects[0].id }}"
+      when: project_info.projects is not empty
+
+    - name: Delete networks associated with the project
+      openstack.cloud.openstack_cloud_network:
+        cloud: "{{ admin_cloud }}"
+        state: absent
+        project_id: "{{ project_info.projects[0].id }}"
+      when: project_info.projects is not empty
+
+    - name: Detach volumes from servers
+      openstack.cloud.openstack_cloud_volume_attach:
+        cloud: "{{ admin_cloud }}"
+        state: absent
+        server: "{{ item.name }}"
+        volume: "{{ item.attached_volumes[0].id }}"  # Adjust for multiple volumes
+      loop: "{{ project_info.projects[0].servers }}"
+      when: project_info.projects is not empty
+
+    - name: Delete volumes associated with the project
+      openstack.cloud.openstack_cloud_volume:
+        cloud: "{{ admin_cloud }}"
+        state: absent
+        project_id: "{{ project_info.projects[0].id }}"
+      when: project_info.projects is not empty
+
+    - name: Delete servers associated with the project
+      openstack.cloud.openstack_cloud_server:
+        cloud: "{{ admin_cloud }}"
+        state: absent
+        name: "{{ item.name }}"
+      loop: "{{ project_info.projects[0].servers }}"
+      when: project_info.projects is not empty
+
+    - name: Delete project
+      openstack.cloud.openstack_cloud_project:
+        cloud: "{{ admin_cloud }}"
+        state: absent
+        name: "{{ user_cloud }}"
+      when: project_info.projects is not empty
+
+    - name: Informational message about project deletion
+      ansible.builtin.debug:
+        msg: "Project {{ user_cloud }} has been deleted from {{ admin_cloud }} cloud."
+      when: project_info.projects is not empty
