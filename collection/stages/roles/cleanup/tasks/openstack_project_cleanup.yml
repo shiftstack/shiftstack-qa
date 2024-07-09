@@ -1,0 +1,26 @@
+---
+- name: Get project ID for "{{ user_cloud }}"
+  openstack.cloud.project_info:
+    cloud: "{{ admin_cloud }}"
+    name: "{{ user_cloud }}"
+  register: project_info
+
+- name: Cleanup all OpenStack resources related to the project
+  when: project_info.projects | length > 0
+  block:
+    - name: Purge the OpenStack project
+      purge_openstack_project:
+        cloud: "{{ admin_cloud }}"
+        project_name: "{{ user_cloud }}"
+        keep_project: true
+        remove_external_networks: false
+
+    - name: Delete project
+      openstack.cloud.project:
+        cloud: "{{ admin_cloud }}"
+        state: absent
+        name: "{{ user_cloud }}"
+
+    - name: Informational message about project deletion
+      ansible.builtin.debug:
+        msg: "Project {{ user_cloud }} has been deleted from {{ admin_cloud }} cloud."
