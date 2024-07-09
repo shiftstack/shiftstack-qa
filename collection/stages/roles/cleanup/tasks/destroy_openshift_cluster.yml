@@ -1,0 +1,11 @@
+---
+- name: Destroy IPI cluster
+  ansible.builtin.include_tasks: destroy_ipi.yml
+  when: existing_ocp_installation_type == 'ipi'
+
+- name: Remove API and APPS fip/vip from the /etc/hosts file
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    regexp: "{{ ocp_cluster_name }}"
+    state: absent
