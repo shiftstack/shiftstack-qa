@@ -1,0 +1,21 @@
+{% for _resource in resources %}
+- name: Gather information about the OpenStack "{{ _resource }}"
+{% if _resource in ['network', 'subnet', 'router'] %}
+  openstack.cloud.{{ _resource }}s_info:
+{% else %}
+  openstack.cloud.{{ _resource }}_info:
+{% endif %}
+    cloud: "{{ admin_cloud }}"
+    filters:
+      project_id: "{{ _project_id }}"
+  register: {{ _resource }}s_info
+
+- name: Delete the OpenStack resource "{{ _resource }}"
+  openstack.cloud.{{ _resource }}:
+    cloud: "{{ admin_cloud }}"
+    state: absent
+    name: "{{ '{{ item.name }}' }}"
+  loop: "{{ '{{ ' ~ _resource ~ 's_info.' ~ _resource ~ 's' ~ ' }}' }}"
+  when: {{ _resource ~ 's_info.' ~ _resource ~ 's'}} | length > 0
+
+{% endfor %}
