@@ -1,0 +1,19 @@
+---
+- name: Gather information about the OpenStack resource
+  openstack.cloud.{{ _resource }}_info:
+    cloud: "{{ admin_cloud }}"
+    filters:
+      project_id: "{{ _project_id }}"
+  register: resource_info
+
+- name: Set the resource info list
+  ansible.builtin.set_fact:
+    resource_info_result: "{{ resource_info[_resource + 's'] }}"
+
+- name: Delete the OpenStack resource
+  openstack.cloud.{{ _resource }}:
+    cloud: "{{ admin_cloud }}"
+    state: absent
+    name: "{{ item.name }}"
+  loop: "{{ resource_info_result }}"
+  when: resource_info_result is not empty

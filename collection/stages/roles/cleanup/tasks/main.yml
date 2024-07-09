@@ -1,2 +1,28 @@
 ---
-# tasks file for cleanup
+- name: Check if OpenStack "{{ user_cloud }}" project exists
+  openstack.cloud.project_info:
+    cloud: "{{ admin_cloud }}"
+    name: "{{ user_cloud }}"
+  register: openstack_project_info
+
+- name: Cleanup the ShiftStack setup
+  when: openstack_project_info.projects | length > 0
+  block:
+    - name: Discover the OpenShift installation type
+      ansible.builtin.include_tasks: detect_ocp_installation.yml
+
+    - name: Destroy the OpenShift cluster if it exists
+      ansible.builtin.include_tasks: destroy_openshift_cluster.yml
+      when: existing_ocp_installation_type != ''
+
+    - name: Cleanup the OpenStack project
+      vars:
+        project: "{{ openstack_project_info.projects[0] }}"
+      ansible.builtin.include_tasks: openstack_project_cleanup.yml
+
+- name: Restore the OpenStack original config directory (includes the clouds.yaml and secure.yaml)
+  ansible.builtin.copy:
+    src: "{{ home_dir }}/.original-config/openstack/"
+    dest: "{{ home_dir }}/.config/openstack/"
+    remote_src: yes
+    mode: u=rw,g=rw,o=r

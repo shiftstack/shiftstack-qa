@@ -1,0 +1,75 @@
+---
+- name: Cleanup all OpenStack resources related to the project
+  block:
+    - name: Get project ID for "{{ user_cloud }}"
+      openstack.cloud.project_info:
+        cloud: "{{ admin_cloud }}"
+        name: "{{ user_cloud }}"
+      register: project_info
+
+    - name: Fail if project "{{ user_cloud }}" not found
+      ansible.builtin.fail:
+        msg: "Project {{ user_cloud }} not found in {{ admin_cloud }} cloud"
+      when: project_info.projects is empty
+
+    - name: Delete ports associated with the project
+      openstack.cloud.port:
+        cloud: "{{ admin_cloud }}"
+        state: absent
+        name: "{{ item.name }}"
+        filters:
+          project_id: "{{ project_info.projects[0].id }}"
+      loop: "{{ project_info.projects[0].ports }}"
+      when: project_info.projects[0].ports
+
+    - name: Delete floating IPs associated with the project (Optional)
+      openstack.cloud.floatingip:
+        cloud: "{{ admin_cloud }}"
+        state: absent
+        address: "{{ item.floating_ip_address }}"
+      loop: "{{ floating_ips.floating_ips }}"
+      when: floating_ips.floating_ips | default([]) | length > 0
+
+    - name: Delete volumes associated with the project
+      openstack.cloud.volume:
+        cloud: "{{ admin_cloud }}"
+        state: absent
+        display_name: "{{ item.display_name }}"
+      loop: "{{ volumes.volume | default([]) }}"
+      when: volumes.openstack_volumes | default([]) | length > 0
+
+    - name: Check if instances (servers) are present
+      ansible.builtin.set_fact:
+        servers_present: "{{ instances.openstack_servers | default([]) | length > 0 }}"
+      when: instances.openstack_servers is defined
+
+    - name: Delete servers associated with the project
+      openstack.cloud.server:
+        cloud: "{{ admin_cloud }}"
+        state: absent
+        name: "{{ item.name }}"
+      loop: "{{ instances.openstack_servers | default([]) }}"
+      when: servers_present
+
+    - name: Include tasks file to cleanup the OpenStack resources
+      ansible.builtin.include_tasks: cleanup_openstack_resource.yml
+      loop:
+        - ports
+        - volumes
+        - networks
+        - security_groups
+        - servers
+      loop_control:
+        loop_var: _resource
+
+    - name: Delete project
+      openstack.cloud.project:
+        cloud: "{{ admin_cloud }}"
+        state: absent
+        name: "{{ user_cloud }}"
+      when: project_info.projects is not empty
+
+    - name: Informational message about project deletion
+      ansible.builtin.debug:
+        msg: "Project {{ user_cloud }} has been deleted from {{ admin_cloud }} cloud."
+      when: project_info.projects is not empty
