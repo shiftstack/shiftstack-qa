@@ -1,0 +1,4 @@
+{% for domain, ip in tools_dnsmasq_domains | zip(tools_dnsmasq_ips) %}
+address=/{{ domain }}/{{ ip }}
+{% endfor %}
+
