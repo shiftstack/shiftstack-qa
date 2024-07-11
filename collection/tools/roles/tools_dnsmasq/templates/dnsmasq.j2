@@ -1,0 +1,6 @@
+resolv-file=/etc/resolv.orig
+{% for domain, ip in tools_dnsmasq.domains | zip(tools_dnsmasq.ips) %}
+address=/{{ domain }}/{{ ip }}
+{% endfor %}
+no-hosts
+no-resolv

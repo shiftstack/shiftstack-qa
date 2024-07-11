@@ -1,0 +1,26 @@
+---
+- name: Restore /etc/resolv.conf
+  become: true
+  ansible.builtin.copy:
+    remote_src: yes
+    src: /etc/resolv.conf.orig
+    dest: /etc/resolv.conf
+    mode: u=rwx,g=rwx,o=rwx
+
+- name: Remove /etc/resolv.conf.bak
+  become: true
+  ansible.builtin.file:
+    path: /etc/resolv.conf.orig
+    state: absent
+
+- name: Remove dnsmasq from the undercloud
+  become: true
+  ansible.builtin.service:
+    name: dnsmasq
+    state: stopped
+
+- name: Remove dnsmasq from the undercloud
+  become: true
+  ansible.builtin.package:
+    name: dnsmasq
+    state: absent
