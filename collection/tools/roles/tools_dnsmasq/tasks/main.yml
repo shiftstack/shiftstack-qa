@@ -1,0 +1,61 @@
+---
+- name: Assert that the required vars exist and are matching the expected content
+  ansible.builtin.assert:
+    that:
+      - tools_dnsmasq_domains is defined
+      - tools_dnsmasq_ips is defined
+      - tools_dnsmasq_domains|length == tools_dnsmasq_ips|length
+
+- name: Install dnsmasq
+  become: true
+  ansible.builtin.package:
+    name: dnsmasq
+    state: present
+
+- name: Create /etc/dnsmasq.conf
+  become: yes
+  ansible.builtin.template:
+    src: dnsmasq.j2
+    dest: /etc/dnsmasq.conf
+    mode: u=rwx,g=rwx,o=rwx
+
+- name: Backup the /etc/resolv.conf file
+  become: true
+  ansible.builtin.copy:
+    remote_src: yes
+    src: /etc/resolv.conf
+    dest: /etc/resolv.conf.orig
+    mode: u=rwx,g=rwx,o=rwx
+    force: no
+
+- name: Set localhost as the nameserver
+  become: yes
+  ansible.builtin.copy:
+    content: |
+      nameserver 127.0.0.1
+    dest: /etc/resolv.conf
+    mode: u=rwx,g=rwx,o=rwx
+
+- name: Start and enable dnsmasq server
+  become: yes
+  ansible.builtin.service:
+    name: dnsmasq
+    enabled: yes
+    state: restarted
+
+- name: Test DNS resolution with dig
+  ansible.builtin.command:
+    cmd: dig +short {{ tools_dnsmasq_domains[0] }}
+  register: dig_result
+  changed_when: false
+
+- name: Verify the resolved IP
+  ansible.builtin.assert:
+    that:
+      - dig_result.stdout.strip() == tools_dnsmasq_ips[0]
+    fail_msg: |
+      {{ tools_dnsmasq_domains[0] }} DNS resolution did not
+      return the expected IP {{ tools_dnsmasq_ips[0] }}
+    success_msg: |
+      {{ tools_dnsmasq_domains[0] }} DNS resolution returned
+      the expected IP {{ tools_dnsmasq_ips[0] }}
