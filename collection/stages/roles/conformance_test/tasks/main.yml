@@ -1,28 +1,47 @@
 ---
 # tasks file for conformance_test
-# TO-DO: Check if "Install and configure dnsmasq" is needed
 # TO-DO: Check if "Set image registry to disable until BZ#1810461 is solved" is needed
+- name: Run conformance tests
+  block:
 
-- name: Prepare openshift-test
-  ansible.builtin.include_role:
-    name: tools_openshift_tests
-    tasks_from: prepare_openshift_tests.yml
-  vars:
-    repo_name: "{{ conformance_test_repo_name }}"
-    results_dir: "{{ conformance_test_results_dir }}"
-    go_version_target: "{{ conformance_tests_go_version }}"
+    - name: Include vars from registered resources
+      ansible.builtin.include_vars:
+        file: "{{ resources_file }}"
+        name: resources
 
-- name: Include Conformance-Test tasks
-  ansible.builtin.include_tasks: run_conformance_test.yml
+    - name: Install DNSMASQ in the target
+      ansible.builtin.include_role:
+        name: tools_dnsmasq
+      vars:
+        tools_dnsmasq_domains:
+          - "apps.{{ ocp_cluster_name }}.{{ ocp_base_domain }}"
+        tools_dnsmasq_ips:
+          - "{{ resources.apps_accessible_ip }}"
 
-- name: Post openshift-test
-  ansible.builtin.include_role:
-    name: tools_openshift_tests
-    tasks_from: post_openshift_tests.yml
-  vars:
-    testsuite_name: "{{ conformance_test_testsuite_name }}"
-    key_for_filtering_results: "{{ conformance_test_testsuite_name }}"
-    test_name: "{{ conformance_test_name }}"
-    results_dir: "{{ conformance_test_results_dir }}"
+    - name: Prepare openshift-test
+      ansible.builtin.include_role:
+        name: tools_openshift_tests
+        tasks_from: prepare_openshift_tests.yml
+      vars:
+        repo_name: "{{ conformance_test_repo_name }}"
+        results_dir: "{{ conformance_test_results_dir }}"
+        go_version_target: "{{ conformance_tests_go_version }}"
 
-# TO-DO: Check if "Remove dnsmasq" is needed
+    - name: Include Conformance-Test tasks
+      ansible.builtin.include_tasks: run_conformance_test.yml
+
+    - name: Post openshift-test
+      ansible.builtin.include_role:
+        name: tools_openshift_tests
+        tasks_from: post_openshift_tests.yml
+      vars:
+        testsuite_name: "{{ conformance_test_testsuite_name }}"
+        key_for_filtering_results: "{{ conformance_test_testsuite_name }}"
+        test_name: "{{ conformance_test_name }}"
+        results_dir: "{{ conformance_test_results_dir }}"
+
+  always:
+    - name: Remove dnsmasq
+      ansible.builtin.include_role:
+        name: tools_dnsmasq
+        tasks_from: dnsmasq_remove.yml
