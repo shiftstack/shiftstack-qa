@@ -1,0 +1,25 @@
+---
+# /etc/resolv.conf is protected inside the pod
+# and the only way to edit it is by redirection.
+- name: Restore /etc/resolv.conf
+  become: true
+  ansible.builtin.command:
+    cmd: "cat /etc/resolv.conf.orig > /etc/resolv.conf"
+  changed_when: true
+
+- name: Remove /etc/resolv.conf.oring
+  become: true
+  ansible.builtin.file:
+    path: /etc/resolv.conf.orig
+    state: absent
+
+- name: Stop dnsmasq if running
+  become: yes
+  ansible.builtin.shell: "set -o pipefail && pkill dnsmasq || true"
+  changed_when: true
+
+- name: Remove dnsmasq
+  become: true
+  ansible.builtin.package:
+    name: dnsmasq
+    state: absent
