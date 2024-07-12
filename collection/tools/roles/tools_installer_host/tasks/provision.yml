@@ -64,11 +64,12 @@
         state: present
       when: custom_network == ''
 
-    - name: Register externally accessible networks
+    - name: Register the externally accessible network {{ infra.external_network }}
       openstack.cloud.networks_info:
         cloud: "{{ user_cloud }}"
         filters:
           router:external: true
+          name: "{{ infra.external_network }}"
       register: openstack_networks_info
 
     - name: Create subnet {{ installer_vm.subnet.name }}
@@ -84,12 +85,12 @@
 
     - name: Create router {{ installer_vm.router.name }}
       openstack.cloud.router:
-        cloud: "{{ admin_cloud }}"
+        cloud: "{{ user_cloud }}"
         name: "{{ installer_vm.router.name }}"
         interfaces: "{{ installer_vm.subnet.name }}"
         network: "{{ openstack_networks_info.networks[0].name }}"
         state: present
-        verify: "{{ admin_verify_cacert }}"
+        #verify: "{{ admin_verify_cacert }}"
       when: custom_router == ''
 
     - name: Create security group {{ installer_vm.sec_group.name }}
@@ -201,6 +202,9 @@
         state: present
         wait: yes
       register: installer_vm_fip
+
+    - debug:
+        var: installer_vm_fip
 
     - name: Verify the installer host is reachable via fip {{ installer_vm_fip.floating_ip.floating_ip_address }}
       ansible.builtin.command: ping -c1 {{ installer_vm_fip.floating_ip.floating_ip_address }}
