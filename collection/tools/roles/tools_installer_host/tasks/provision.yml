@@ -64,13 +64,6 @@
         state: present
       when: custom_network == ''
 
-    - name: Register externally accessible networks
-      openstack.cloud.networks_info:
-        cloud: "{{ user_cloud }}"
-        filters:
-          router:external: true
-      register: openstack_networks_info
-
     - name: Create subnet {{ installer_vm.subnet.name }}
       openstack.cloud.subnet:
         cloud: "{{ user_cloud }}"
@@ -84,12 +77,11 @@
 
     - name: Create router {{ installer_vm.router.name }}
       openstack.cloud.router:
-        cloud: "{{ admin_cloud }}"
+        cloud: "{{ user_cloud }}"
         name: "{{ installer_vm.router.name }}"
         interfaces: "{{ installer_vm.subnet.name }}"
-        network: "{{ openstack_networks_info.networks[0].name }}"
+        network: "{{ infra.external_network }}"
         state: present
-        verify: "{{ admin_verify_cacert }}"
       when: custom_router == ''
 
     - name: Create security group {{ installer_vm.sec_group.name }}
@@ -195,7 +187,7 @@
     - name: Create floating IPs
       openstack.cloud.floating_ip:
         cloud: "{{ user_cloud }}"
-        network: "{{ openstack_networks_info.networks[0].id }}"
+        network: "{{ infra.external_network }}"
         nat_destination: "{{ installer_vm.network.name }}"
         server: "{{ installer_vm_name }}"
         state: present
