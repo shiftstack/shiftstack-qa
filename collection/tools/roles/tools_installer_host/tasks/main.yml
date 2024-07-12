@@ -5,7 +5,7 @@
 - name: Create the installer group (and add a host) in the inventory
   ansible.builtin.include_tasks: add_installer_host_to_installer_group.yml
   vars:
-    installer_host_fip: "{{ installer_vm_fip.floating_ip.floating_ip_address }}"
+    installer_host_fip: "{{ installer_vm_fip.stdout }}"
 
 - name: Copy workspace files from the undercloud to the installer VM
   ansible.builtin.import_tasks: configuration_copy_workspace.yml
