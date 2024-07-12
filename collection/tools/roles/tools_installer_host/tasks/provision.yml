@@ -64,13 +64,6 @@
         state: present
       when: custom_network == ''
 
-    - name: Register externally accessible networks
-      openstack.cloud.networks_info:
-        cloud: "{{ user_cloud }}"
-        filters:
-          router:external: true
-      register: openstack_networks_info
-
     - name: Create subnet {{ installer_vm.subnet.name }}
       openstack.cloud.subnet:
         cloud: "{{ user_cloud }}"
@@ -84,12 +77,11 @@
 
     - name: Create router {{ installer_vm.router.name }}
       openstack.cloud.router:
-        cloud: "{{ admin_cloud }}"
+        cloud: "{{ user_cloud }}"
         name: "{{ installer_vm.router.name }}"
         interfaces: "{{ installer_vm.subnet.name }}"
-        network: "{{ openstack_networks_info.networks[0].name }}"
+        network: "{{ infra.external_network }}"
         state: present
-        verify: "{{ admin_verify_cacert }}"
       when: custom_router == ''
 
     - name: Create security group {{ installer_vm.sec_group.name }}
@@ -192,18 +184,23 @@
           changed_when: true
           failed_when: false
 
-    - name: Create floating IPs
-      openstack.cloud.floating_ip:
-        cloud: "{{ user_cloud }}"
-        network: "{{ openstack_networks_info.networks[0].id }}"
-        nat_destination: "{{ installer_vm.network.name }}"
-        server: "{{ installer_vm_name }}"
-        state: present
-        wait: yes
+    - name: Create the floating IP for the installer host VM
+      ansible.builtin.command: |
+        openstack floating ip create --description 'Installer host' {{ infra.external_network }} -c name -f value
       register: installer_vm_fip
+      changed_when: true
+      environment:
+        OS_CLOUD: "{{ user_cloud }}"
 
-    - name: Verify the installer host is reachable via fip {{ installer_vm_fip.floating_ip.floating_ip_address }}
-      ansible.builtin.command: ping -c1 {{ installer_vm_fip.floating_ip.floating_ip_address }}
+    - name: Assign the floating IP to the installer host VM
+      ansible.builtin.command: |
+        openstack server add floating ip {{ installer_vm_name }} {{ installer_vm_fip.stdout }}
+      changed_when: true
+      environment:
+        OS_CLOUD: "{{ user_cloud }}"
+
+    - name: Verify the installer host is reachable via fip {{ installer_vm_fip.stdout }}
+      ansible.builtin.command: ping -c1 {{ installer_vm_fip.stdout }}
       changed_when: false
       register: ping_result
       retries: 10
@@ -211,7 +208,7 @@
       until: ping_result.rc == 0
 
     - name: Verify the ssh connection to the installer host
-      ansible.builtin.command: ssh {{ installer_vm_ssh_user }}@{{ installer_vm_fip.floating_ip.floating_ip_address }} hostname
+      ansible.builtin.command: ssh {{ installer_vm_ssh_user }}@{{ installer_vm_fip.stdout}} hostname
       changed_when: false
       register: ssh_result
       retries: 10
@@ -223,4 +220,4 @@
     name: shiftstack.tools.tools_register_resources_file
   vars:
     input:
-      installer_fip: "{{ installer_vm_fip.floating_ip.floating_ip_address }}"
+      installer_fip: "{{ installer_vm_fip.stdout }}"
