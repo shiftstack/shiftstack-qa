@@ -8,7 +8,7 @@
 
 - name: Change the cacert path in the installer host clouds.yaml
   ansible.builtin.lineinfile:
-    path: '~/clouds.yaml'
+    path: "{{ installer_vm_osp_config_dir }}/clouds.yaml"
     regexp: '^(\s*)cacert:'
     line: '\1cacert: {{ installer_host_cacert }}'
     insertafter: '{{ user_cloud }}'
