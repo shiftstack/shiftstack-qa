@@ -64,11 +64,12 @@
         state: present
       when: custom_network == ''
 
-    - name: Register externally accessible networks
+    - name: Register the externally accessible network {{ infra.external_network }}
       openstack.cloud.networks_info:
         cloud: "{{ user_cloud }}"
         filters:
           router:external: true
+          name: "{{ infra.external_network }}"
       register: openstack_networks_info
 
     - name: Create subnet {{ installer_vm.subnet.name }}
