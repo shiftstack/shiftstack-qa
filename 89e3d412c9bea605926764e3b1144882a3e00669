@@ -16,6 +16,23 @@
       "message": "recheck",
       "revId": "89e3d412c9bea605926764e3b1144882a3e00669",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "293f1b71_a34f745a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-07-16T20:16:54Z",
+      "side": 1,
+      "message": "Verified by Jon in a local deployment:\n```\nTASK [shiftstack.tools.tools_openshift_tests : Create the \"/home/cloud-user/artifacts/lb_amphora_sourceip/allowlist.txt\" file] ***\nchanged: [installer-host]\n\nTASK [shiftstack.tools.tools_openshift_tests : Write the yaml tests list in \"/home/cloud-user/artifacts/lb_amphora_sourceip/allowlist.txt\"] ***\nchanged: [installer-host] \u003d\u003e (item\u003d{\u0027key\u0027: \u0027.*[lb].*\u0027, \u0027value\u0027: {\u0027note\u0027: \u0027Load Balancer tests\u0027}})\n\nTASK [Convert the blocklist YAML files to TXT] *********************************\nskipping: [installer-host] \u003d\u003e (item\u003d) \nskipping: [installer-host]\n\nTASK [shiftstack.stages.openstack_test : Prepare the tests list to run] ********\nchanged: [installer-host]\n```",
+      "revId": "89e3d412c9bea605926764e3b1144882a3e00669",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
