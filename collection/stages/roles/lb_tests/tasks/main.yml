@@ -1,10 +1,4 @@
 ---
-- name: Create lb_allowlist_file
-  ansible.builtin.copy:
-    dest: "{{ lb_allowlist_file }}"
-    content: "{{ lb_testfilter }}"
-    mode: u=rw,g=rw,o=r
-
 - name: Get the external network
   openstack.cloud.networks_info:
     cloud: "{{ user_cloud }}"
