@@ -8,6 +8,7 @@
     repo_name: "{{ openstack_test_name }}"
     results_dir: "{{ openstack_test_results_dir }}"
     go_version_target: "{{ openstack_tests_go_version }}"
+    reset_result_dir: "{{ openstack_reset_result_dir | default(yes) }}"
 
 - name: Include Openstack-Test tasks
   ansible.builtin.include_tasks: run_openstack_test.yml

@@ -23,15 +23,22 @@
     junit2html {{ results_dir }}/{{ test_name }}.xml {{ results_dir }}/{{ test_name }}.html
   changed_when: true
 
-- name: Create {{ polarion_dir }} if it does not exist
+- name: Create {{ report_dir }} if it does not exist
   ansible.builtin.file:
-    path: "{{ polarion_dir }}"
+    path: "{{ report_dir }}"
     mode: u=rwx,g=rw,o=r
     state: directory
 
-- name: Copy XML to {{ polarion_dir }} so it can be gathered by polarion jump.
+- name: Copy XML to {{ report_dir }} so it can be gathered by polarion jump.
   ansible.builtin.copy:
     src: "{{ results_dir }}/{{ test_name }}.xml"
-    dest: "{{ polarion_dir }}/{{ testsuite_name | replace('/', '-') }}.xml"
+    dest: "{{ report_dir }}/{{ testsuite_name | replace('/', '-') }}.xml"
+    remote_src: yes
+    mode: u=rwx,g=rwx,o=rwx
+
+- name: Copy HTML to {{ report_dir }} so it can be gathered by eodweb.
+  ansible.builtin.copy:
+    src: "{{ results_dir }}/{{ test_name }}.html"
+    dest: "{{ report_dir }}/{{ testsuite_name | replace('/', '-') }}.html"
     remote_src: yes
     mode: u=rwx,g=rwx,o=rwx

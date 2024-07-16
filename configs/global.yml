@@ -23,7 +23,7 @@ ocp_cluster_name: "ostest"
 ocp_installation_dir: "{{ user_cloud_installation_dir }}/{{ ocp_cluster_name }}"
 kubeconfig: "{{ ocp_installation_dir }}/auth/kubeconfig"
 upi_playbooks_dir: "{{ ocp_installation_dir }}"
-polarion_dir: "{{ artifacts_dir }}/test_results"
+report_dir: "{{ artifacts_dir }}/test_results"
 
 # Sets the Ansible Controller Node machine's HOME environment variable
 controller_home_dir: "{{ lookup('ansible.builtin.env', 'HOME') }}"
