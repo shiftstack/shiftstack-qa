@@ -35,3 +35,10 @@
     dest: "{{ polarion_dir }}/{{ testsuite_name | replace('/', '-') }}.xml"
     remote_src: yes
     mode: u=rwx,g=rwx,o=rwx
+
+- name: Copy HTML to {{ polarion_dir }} so it can be gathered by eodweb.
+  ansible.builtin.copy:
+    src: "{{ results_dir }}/{{ test_name }}.html"
+    dest: "{{ polarion_dir }}/{{ testsuite_name | replace('/', '-') }}.html"
+    remote_src: yes
+    mode: u=rwx,g=rwx,o=rwx
