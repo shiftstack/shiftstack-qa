@@ -1,0 +1,4 @@
+---
+all_allow_list: &all_allow_list
+  ".*[lb].*":
+    note: "Load Balancer tests"
