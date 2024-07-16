@@ -1,11 +1,4 @@
 ---
-- name: Get the external network
-  openstack.cloud.networks_info:
-    cloud: "{{ user_cloud }}"
-    filters:
-      router:external: true
-  register: os_networks
-
 - name: Get install-config content to obtain the 1st machineCIDR
   ansible.builtin.include_role:
     name: shiftstack.tools.tools_get_deploy_info
@@ -27,7 +20,6 @@
     lb_monitor_delay: "{{ cloud_provider_config.lb_monitor_delay }}"
     lb_monitor_timeout: "{{ cloud_provider_config.lb_monitor_timeout }}"
     lb_monitor_max_retries: "{{ cloud_provider_config.lb_monitor_max_retries }}"
-    lb_fip_net_id: "{{ os_networks.networks[0].id }}"
     lb_subnet_id: "{{ os_subnets.subnets[0].id }}"
     max_shared_lb: "2"
     log_directory: "{{ artifacts_dir }}/lb_amphora_sourceip"
@@ -39,6 +31,7 @@
     openstack_test_results_dir: "{{ artifacts_dir }}/lb_amphora_sourceip"
     openstack_tests_allowlist_file: "{{ lb_allowlist_file }}"
     openstack_testsuite_name: openstack_tests_lb_amphora_sourceip
+    openstack_reset_result_dir: no
 
 - name: Enable OVN provider on cloud-provider-config
   ansible.builtin.include_tasks: change_cloud_cm.yml
@@ -56,3 +49,4 @@
     openstack_test_results_dir: "{{ artifacts_dir }}/lb_ovn"
     openstack_tests_allowlist_file: "{{ lb_allowlist_file }}"
     openstack_testsuite_name: openstack_tests_lb_ovn
+    openstack_reset_result_dir: no
