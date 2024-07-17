@@ -72,6 +72,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "d364c5cc_9151551c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 19
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-07-17T11:59:23Z",
+      "side": 1,
+      "message": "yeah, it\u0027s bit confusing. I added that \n`when: \"\u0027prepare\u0027 in stages\"`\nbecause it was deleting the clouds.yaml when I want to run only tests. So it\u0027s different thing.\n\nNow, the original reason why we need to move the clouds.yml from .original-config to .config is because the clouds.yaml that is mounted on the pod is read-only. So we are mounting on the .original-config and then first thing is to move to .config which is rw.\n\nPlease take a look at my previous comments and let me know your opinion. Basically, I think we need to restore the original pre_task and on cleanup pick the PVC clouds.yml and restore it back later.",
+      "parentUuid": "8d764ac9_5105df34",
+      "revId": "08940228ac58c697d05ee438402ce10444ef7e33",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "72dc4e9a_7f741a18",
         "filename": "collection/stages/plugins/modules/project_purge.py",
         "patchSetId": 19
