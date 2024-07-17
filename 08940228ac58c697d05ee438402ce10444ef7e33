@@ -70,6 +70,109 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "72dc4e9a_7f741a18",
+        "filename": "collection/stages/plugins/modules/project_purge.py",
+        "patchSetId": 19
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-07-17T11:54:22Z",
+      "side": 1,
+      "message": "how cool is this!! 😮\n\nwhere did you find the skeleton?",
+      "revId": "08940228ac58c697d05ee438402ce10444ef7e33",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ff873d7b_1cff8b69",
+        "filename": "collection/stages/plugins/modules/project_purge.py",
+        "patchSetId": 19
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-07-17T11:54:22Z",
+      "side": 1,
+      "message": "should we add here network trunks, manila shares and swift containers too?",
+      "range": {
+        "startLine": 114,
+        "startChar": 0,
+        "endLine": 114,
+        "endChar": 6
+      },
+      "revId": "08940228ac58c697d05ee438402ce10444ef7e33",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "21829e43_a0edd97c",
+        "filename": "collection/stages/roles/cleanup/tasks/destroy_ipi.yml",
+        "patchSetId": 19
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-07-17T11:54:22Z",
+      "side": 1,
+      "message": "I believe this won\u0027t work on the pod because you don\u0027t have the binary openshift-install and you don\u0027t have the clouds.yaml with the {{ user_cloud }} creds in the proper place (you need to recover from the PVC).",
+      "range": {
+        "startLine": 13,
+        "startChar": 10,
+        "endLine": 13,
+        "endChar": 94
+      },
+      "revId": "08940228ac58c697d05ee438402ce10444ef7e33",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "067a3726_d52afedf",
+        "filename": "collection/stages/roles/cleanup/tasks/main.yml",
+        "patchSetId": 19
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-07-17T11:54:22Z",
+      "side": 1,
+      "message": "As you are setting cleanup stage in the first position in the palybook, You need to use the clouds.yaml stored on the PVC for running the cleanup on the project that was created by another pod (you\u0027ll find it on the PVC).",
+      "revId": "08940228ac58c697d05ee438402ce10444ef7e33",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "011dbf7b_0c7efc83",
+        "filename": "collection/stages/roles/cleanup/tasks/main.yml",
+        "patchSetId": 19
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-07-17T11:54:22Z",
+      "side": 1,
+      "message": "Would you mind to add an assert that confirms that length \u003d\u003d 1? If length \u003e 1 we can just simply fail - Something wrong is happening",
+      "range": {
+        "startLine": 9,
+        "startChar": 49,
+        "endLine": 9,
+        "endChar": 52
+      },
+      "revId": "08940228ac58c697d05ee438402ce10444ef7e33",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "0a133222_02789c86",
