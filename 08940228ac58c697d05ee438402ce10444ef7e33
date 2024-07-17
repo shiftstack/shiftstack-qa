@@ -153,6 +153,29 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "ac28d670_43d7194f",
+        "filename": "collection/stages/roles/cleanup/tasks/destroy_openshift_cluster.yml",
+        "patchSetId": 19
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-07-17T13:43:28Z",
+      "side": 1,
+      "message": "This is a good to have, but in RHOSO deployments it shouldn\u0027t be there, as the cleanup is run on a fresh pod where the /etc/hosts hasn\u0027t been manipulated.",
+      "range": {
+        "startLine": 6,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 17
+      },
+      "revId": "08940228ac58c697d05ee438402ce10444ef7e33",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "067a3726_d52afedf",
         "filename": "collection/stages/roles/cleanup/tasks/main.yml",
         "patchSetId": 19
