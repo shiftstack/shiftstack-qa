@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c3a98307_826a5bed",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-07-17T09:30:18Z",
+      "side": 1,
+      "message": "Verified on https://sf.hosted.upshift.rdu2.redhat.com/logs/61/461/7e58cbf68b1d5f1f8ad65013efff530ef5817317/check-gitlab-cee/titan20-shiftstack/b68c061/logs/controller-0/ci-framework-data/tests/shiftstack/artifacts/must-gather-change-cloud-cm/quay-io-openshift-release-dev-ocp-v4-0-art-dev-sha256-f5442f81dbc7b2609b50bdefb5d87e162fde9e32fd780c88ec3862e4054a1b5f/namespaces/openshift-config/core/configmaps.yaml\n\nThe floating-network-id is the public one: \n\n`floating-network-id \u003d b9d9cb02-5bcc-490a-a51c-7a63b663c054`\n\nversus\n\n```\n$ OS_CLOUD\u003dshiftstack openstack network list\n+--------------------------------------+------------------------------------------------------------------+--------------------------------------+\n| ID                                   | Name                                                             | Subnets                              |\n+--------------------------------------+------------------------------------------------------------------+--------------------------------------+\n| 322a7f4c-37bb-4727-a110-5f0bd5e99ab2 | octavia-provider-net                                             | 93a87c61-2c0e-4a66-94c6-4151eff352a7 |\n| 9096bffa-fccb-4e69-a9fc-148c20ca214e | k8s-clusterapi-cluster-openshift-cluster-api-guests-ostest-hqg6d | fefdd4bf-ee51-4746-a035-52a5623ced75 |\n| b9d9cb02-5bcc-490a-a51c-7a63b663c054 | public                                                           | 0e6378f1-5749-4ac1-80b1-25f3759e0a14 |\n+--------------------------------------+------------------------------------------------------------------+--------------------------------------+\n```",
+      "revId": "5d385d2b9f16add2686f9b2edf64a9e6a0e61e49",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
