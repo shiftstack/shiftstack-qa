@@ -37,6 +37,7 @@
   loop:
     - inventory.yaml
     # - network.yaml
+    - down-network.yaml
 
 # TODO: remove this workaround when the issue updating the router in network.yaml is fixed
 - name: Workaround for https://issues.redhat.com/browse/SOSQE-213?focusedId=23699292&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-23699292
