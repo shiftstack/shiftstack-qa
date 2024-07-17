@@ -56,6 +56,30 @@
       },
       "revId": "5d385d2b9f16add2686f9b2edf64a9e6a0e61e49",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "08c14e39_0e655b50",
+        "filename": "collection/tools/roles/tools_openshift_tests/tasks/post_openshift_tests.yml",
+        "patchSetId": 4
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-07-17T10:33:17Z",
+      "side": 1,
+      "message": "any suggestion?",
+      "parentUuid": "58629234_447049ec",
+      "range": {
+        "startLine": 42,
+        "startChar": 14,
+        "endLine": 42,
+        "endChar": 26
+      },
+      "revId": "5d385d2b9f16add2686f9b2edf64a9e6a0e61e49",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
