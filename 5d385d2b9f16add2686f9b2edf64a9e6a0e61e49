@@ -20,6 +20,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "ae29cb93_21d969ff",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-07-17T09:57:04Z",
+      "side": 1,
+      "message": "can you please merge the following patch and then rebase this patch?\n\n1197919: Fix the allow list for LB tests | https://review.gerrithub.io/c/shiftstack/shiftstack-qa/+/1197919",
+      "revId": "5d385d2b9f16add2686f9b2edf64a9e6a0e61e49",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "58629234_447049ec",
         "filename": "collection/tools/roles/tools_openshift_tests/tasks/post_openshift_tests.yml",
         "patchSetId": 4
