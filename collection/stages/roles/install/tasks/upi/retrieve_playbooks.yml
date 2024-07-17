@@ -12,7 +12,6 @@
     - down-compute-nodes.yaml
     - down-containers.yaml
     - down-control-plane.yaml
-    - down-network.yaml
     - down-security-groups.yaml
     - security-groups.yaml
 
