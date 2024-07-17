@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "21ab4a0f_108b99da",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 19
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-07-17T15:01:22Z",
+      "side": 1,
+      "message": "Verified https://issues.redhat.com/browse/OSPRH-7685?focusedId\u003d25146974\u0026page\u003dcom.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-25146974",
+      "revId": "3bf4ed9303cc72e69cce6f3005eaae99a0998b52",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
