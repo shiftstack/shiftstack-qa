@@ -37,6 +37,23 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "bf3ac89f_46122bf3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 19
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-07-17T11:23:58Z",
+      "side": 1,
+      "message": "what if we don\u0027t run cleanup, as for example we are doing in the osp-verification?\n\nIn that case, the copy for ~/.original-config/openstack/clouds.yaml to ~/.config/openstack/clouds.yaml is still needed I think.",
+      "revId": "08940228ac58c697d05ee438402ce10444ef7e33",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "0a133222_02789c86",
         "filename": "collection/stages/roles/cleanup/tasks/openstack_project_cleanup.yml",
         "patchSetId": 19
