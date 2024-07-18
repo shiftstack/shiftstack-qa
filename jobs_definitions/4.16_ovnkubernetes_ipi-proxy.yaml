@@ -11,3 +11,23 @@ stages:
   - post
   - verification
   - openstack_test
+topology:
+  flavors:
+    master:
+      name: "master"
+      ram: 16384
+      vcpus: 4
+      disk: 40
+    worker:
+      name: "worker"
+      ram: 8192
+      vcpus: 2
+      disk: 40
+    bootstrap:
+      name: "bootstrap"
+      ram: 16384
+      vcpus: 4
+      disk: 40
+  replicas:
+    master: 3
+    worker: 3
