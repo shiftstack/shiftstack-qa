@@ -16,6 +16,24 @@
       "message": "Maybe it\u0027s worth to remove the network.yaml",
       "revId": "1850f13d3cb998dd3c1a3148570cd6d40c014212",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1a92b283_79265663",
+        "filename": "collection/stages/roles/install/tasks/upi/prepare_upi_installation.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-07-18T06:08:58Z",
+      "side": 1,
+      "message": "We should be retrieving the network.yaml playbook as well, but due to a bug it\u0027s not working, and it\u0027s retrieved from a different location, wich a working version of network.yaml. I\u0027ll remove the w/a once it\u0027s fixed.",
+      "parentUuid": "e328c10e_26e93b24",
+      "revId": "1850f13d3cb998dd3c1a3148570cd6d40c014212",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
