@@ -105,6 +105,7 @@
       failed_when: false
       changed_when: false
 
+    # TODO(itzikb) - Remove proxy condition when https://issues.redhat.com/browse/OSPRH-9130 is fixed
     - name: Run manila checks if it is enabled on OSP
       ansible.builtin.include_tasks: check_manila.yml
       when:
@@ -112,6 +113,7 @@
         - manila_enabled.rc == 0
         - ceph_nfs_ready|default(true)|bool
         - edge_nova_az is not defined # Skip due to Openstack Manila is not supported at the Edge
+        - not openshift_proxy_installation|default(false)|bool
 
     - name: Check cluster health after the verification actions
       block:
