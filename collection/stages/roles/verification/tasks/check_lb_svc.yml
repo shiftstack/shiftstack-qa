@@ -40,8 +40,8 @@
           - spec.type=LoadBalancer
       register: test_svc
       until: test_svc.resources[0].status.loadBalancer.ingress[0].ip is defined
-      retries: 20
-      delay: 15
+      retries: "{{ wait_retries }}"
+      delay: "{{ wait_delay }}"
 
     - name: Save the LB ingress address
       ansible.builtin.set_fact:
