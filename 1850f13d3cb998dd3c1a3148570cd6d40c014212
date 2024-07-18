@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e328c10e_26e93b24",
+        "filename": "collection/stages/roles/install/tasks/upi/prepare_upi_installation.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2024-07-18T05:38:35Z",
+      "side": 1,
+      "message": "Maybe it\u0027s worth to remove the network.yaml",
+      "revId": "1850f13d3cb998dd3c1a3148570cd6d40c014212",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
