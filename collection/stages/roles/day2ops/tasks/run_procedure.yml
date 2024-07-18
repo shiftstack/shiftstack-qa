@@ -1,0 +1,37 @@
+---
+- name: Assert that the day2ops procedure task file exists
+  ansible.builtin.assert:
+    that:
+      - procedure_task_file in day2ops_available_procedures
+    fail_msg: |
+      The {{ procedure_task_file }} is not available inside this role.
+      Please use one of the following by setting it inside the list var
+      'day2ops_step' removing the extension '.yml':
+      {{ day2ops_available_procedures | to_nice_json }}
+    success_msg: |
+      Running task file {{ procedure_task_file }}
+
+- name: Run day2ops procedure {{ procedure_task_file }}
+  block:
+
+    - name: Run the day2ops procedure
+      ansible.builtin.include_tasks: "procedures/{{ procedure_task_file }}"
+
+    - name: Run verification after day2ops procedure
+      ansible.builtin.include_role:
+        name: shiftstack.stages.verification
+      vars:
+        post_installation: false
+
+  always:
+    - name: Run must-gather
+      ansible.builtin.include_role:
+        name: tools_must-gather
+      vars:
+        must_gather_dir_suffix: "{{ procedure_task_file | regex_replace('\\.yml$', ''') }}"
+
+    - name: Fail the playbook in a case of failure
+      ansible.builtin.fail:
+        msg: >
+          Failed! See logs and must-gather for more information.
+          The {{ procedure_task_file }} task file failed.
