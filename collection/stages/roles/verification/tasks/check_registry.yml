@@ -36,11 +36,10 @@
     name: cluster
   register: image_registry_config
 
-# We assume that Swift is the baceknd for the image registry
+# We assume that Swift is the backend for the image registry
 # Reference: https://issues.redhat.com/browse/OSASINFRA-3177
 - name: Check registry in post installation
   when:
-    - post_installatin|default(False)
     - "'swift' in image_registry_config.resources[0].spec.storage"
     - not openshift_mirror|default(False)
   block:

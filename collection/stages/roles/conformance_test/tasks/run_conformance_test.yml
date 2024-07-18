@@ -108,4 +108,4 @@
       ansible.builtin.include_role:
         name: tools_must-gather
       vars:
-        must_gather_dir_suffix: "must-gather-conformance"
+        must_gather_suffix: "{{ conformance_test_name }}"
