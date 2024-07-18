@@ -1,6 +1,6 @@
 ---
 openshift_release: 4.16 # It can be "4.10", "4.11", etc. or "4-stable"
-openshift_build_name: "" # It can be an empty value "" (latest nightly), a given build
+openshift_build_name: "candidate" # It can be an empty value "" (latest nightly), a given build
 openshift_network_type: OVNKubernetes
 installation_type: ipi
 deploy_installer_host: true
@@ -11,3 +11,18 @@ stages:
   - post
   - verification
   - openstack_test
+topology:
+  flavors:
+    master:
+      name: "master"
+      ram: 16384
+      vcpus: 4
+      disk: 25
+    worker:
+      name: "worker"
+      ram: 8192
+      vcpus: 2
+      disk: 25
+  replicas:
+    master: 3
+    worker: 2

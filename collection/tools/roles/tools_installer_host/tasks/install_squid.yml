@@ -24,7 +24,7 @@
   block:
     - name: Append proxy certificate on the cacert defined in clouds.yaml
       ansible.builtin.blockinfile:
-        path: "{{ cacert }}"
+        path: "{{ installer_host_cacert }}"
         block: "{{ cacert_content.stdout }}"
         marker: ''
         state: present
