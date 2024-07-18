@@ -155,15 +155,14 @@
         verification_failed: true
         failed_task: "{{ (ansible_failed_task is defined) | ternary(ansible_failed_task.name, 'UNKNOWN') }}"
 
-- name: Collect cluster information if any error occurred
-  when: stage_unstable|default(False) or
-        verification_failed|default(False)
-  block:
-    - name: Run must-gather
-      ansible.builtin.include_role:
-        name: tools_must-gather
-      vars:
-        must_gather_dir_suffix: "must-gather-verification"
+- name: Run must-gather
+  when:
+    - stage_unstable|default(False) or verification_failed|default(False)
+    - skip_mustgather_generation|default(False) is false
+  ansible.builtin.include_role:
+    name: tools_must-gather
+  vars:
+    must_gather_suffix: "verification"
 
 - name: Fail the playbook in a case of a cluster verification test failure
   ansible.builtin.fail:
