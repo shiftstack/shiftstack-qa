@@ -13,6 +13,7 @@ controlPlane:
     openstack:
       type: "{{ installcfg_master_flavor }}"
   replicas: {{ installcfg_master_replicas }}
+  rootVolume: {{ installcfg_controlplane_rootvolume_config }}
 metadata:
   name: "{{ installcfg_cluster_name }}"
 networking:
