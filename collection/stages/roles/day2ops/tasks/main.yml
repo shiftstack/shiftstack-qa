@@ -1,2 +1,21 @@
 ---
-# tasks file for day2ops
+# Intentionally empty.
+#
+# Please set day2ops in the stages
+# as a member of the list an as a key for the
+# list of day2ops procedures you want to run.
+#
+# Example:
+#
+# stages:
+#   [...]
+#   day2ops:
+#     - <name_of_the_playbook>
+#     - <other_playbook>
+#
+# The ocp_testing playbook will run the
+# include_role with
+#    tasks_from: <name_of_the_playbook>.yml
+# and then
+#    tasks_from: <other_playbook>.yml
+#
