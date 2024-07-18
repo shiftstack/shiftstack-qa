@@ -24,6 +24,7 @@
     installcfg_worker_replicas: "{{ (installation_type == 'upi') | ternary('0', topology.replicas.worker) }}"
     installcfg_master_flavor: "{{ topology.flavors.master.name }}"
     installcfg_master_servergrouppolicy: "{{ topology.servergroups.master | default('') }}"
+    installcfg_controlplane_rootvolume_config: "{{ topology.controlplane_rootvolume | default({}) }}"
     installcfg_master_replicas: "{{ topology.replicas.master }}"
     installcfg_machine_cidr: "{{ topology.machine_cidr }}"
     installcfg_network_type: "{{ openshift_network_type }}"
