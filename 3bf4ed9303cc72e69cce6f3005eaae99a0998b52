@@ -41,6 +41,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ae1e47d6_3b122b89",
+        "filename": "collection/stages/roles/conformance_test/tasks/main.yml",
+        "patchSetId": 19
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-07-18T11:15:02Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "09bb6409_9db91321",
+      "range": {
+        "startLine": 41,
+        "startChar": 0,
+        "endLine": 41,
+        "endChar": 2
+      },
+      "revId": "3bf4ed9303cc72e69cce6f3005eaae99a0998b52",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "9e1397c6_26bd1f53",
@@ -54,6 +78,30 @@
       "writtenOn": "2024-07-18T05:59:17Z",
       "side": 1,
       "message": "Have you tried to see if systemd can be used in the container?",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 9,
+        "endChar": 2
+      },
+      "revId": "3bf4ed9303cc72e69cce6f3005eaae99a0998b52",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dcc469cd_b1bd0827",
+        "filename": "collection/tools/roles/tools_dnsmasq/tasks/main.yml",
+        "patchSetId": 19
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-07-18T11:15:02Z",
+      "side": 1,
+      "message": "I tried, it\u0027s not working. Please check: https://forums.docker.com/t/systemctl-status-is-not-working-in-my-docker-container/9075",
+      "parentUuid": "9e1397c6_26bd1f53",
       "range": {
         "startLine": 9,
         "startChar": 0,
@@ -89,6 +137,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "b93ee824_747b1bd2",
+        "filename": "collection/tools/roles/tools_dnsmasq/tasks/main.yml",
+        "patchSetId": 19
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-07-18T11:15:02Z",
+      "side": 1,
+      "message": "I\u0027d say because it is more readable but no strong opinion on this.",
+      "parentUuid": "be84ebea_c9cf5a7c",
+      "range": {
+        "startLine": 25,
+        "startChar": 4,
+        "endLine": 25,
+        "endChar": 8
+      },
+      "revId": "3bf4ed9303cc72e69cce6f3005eaae99a0998b52",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "c346df5f_70b54ad1",
         "filename": "collection/tools/roles/tools_dnsmasq/tasks/main.yml",
         "patchSetId": 19
@@ -100,6 +172,30 @@
       "writtenOn": "2024-07-18T05:59:17Z",
       "side": 1,
       "message": "What about using the dig module?",
+      "range": {
+        "startLine": 56,
+        "startChar": 0,
+        "endLine": 56,
+        "endChar": 2
+      },
+      "revId": "3bf4ed9303cc72e69cce6f3005eaae99a0998b52",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8ce8cf82_58d19d51",
+        "filename": "collection/tools/roles/tools_dnsmasq/tasks/main.yml",
+        "patchSetId": 19
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-07-18T11:15:02Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "c346df5f_70b54ad1",
       "range": {
         "startLine": 56,
         "startChar": 0,
