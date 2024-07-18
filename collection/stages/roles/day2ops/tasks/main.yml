@@ -1,2 +1,29 @@
 ---
-# tasks file for day2ops
+- name: Obtain a list of procedures that you can run
+  ansible.builtin.find:
+    paths: "{{ role_path }}/tasks/procedures"
+    recurse: no
+    file_type: file
+  register: find_output
+  delegate_to: localhost
+
+- name: Create list var of available procedures
+  ansible.builtin.set_fact:
+    day2ops_available_procedures:
+      "{{ find_output.files | map(attribute='path') | map('basename') | list }}"
+
+- name: Assert that there is at least one procedure to run
+  ansible.builtin.assert:
+    that:
+      - day2ops_steps | length > 0
+    fail_msg: |
+      Day2ops role has been called without any procedure to run.
+      Please set day2ops_steps with at least one element
+      from the following list (removing the extension '.yml'):
+      {{ day2ops_available_procedures }}
+
+- name: Run day2ops procedures sequentially
+  ansible.builtin.include_tasks: run_procedure.yml
+  vars:
+    procedure_task_file: "{{ item }}.yml"
+  loop: "{{ day2ops_steps }}"

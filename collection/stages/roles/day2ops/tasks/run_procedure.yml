@@ -1,0 +1,17 @@
+---
+- name: Assert that the day2ops procedure task file exists
+  ansible.builtin.assert:
+    that:
+      - "{{ procedure_task_file }} in day2ops_available_procedures"
+    fail_msg: |
+      The {{ procedure_task_file }} is not available inside this role.
+      Please use one of the following (removing the extension '.yml'):
+      {{ day2ops_available_procedures }}
+    success_msg: |
+      Running task file {{ procedure_task_file }}
+
+- name: Run the day2ops procedure
+  ansible.builtin.include_tasks: "procedures/{{ procedure_task_file }}"
+
+# TBD Run verification role?
+# always: Generate day2ops?
