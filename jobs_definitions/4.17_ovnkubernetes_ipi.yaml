@@ -1,0 +1,40 @@
+---
+openshift_release: 4.17 # It can be "4.10", "4.11", etc. or "4-stable"
+openshift_build_name: "" # It can be an empty value "" (latest nightly), a given build
+openshift_network_type: OVNKubernetes
+installation_type: ipi
+conformance_test_type: parallel
+stages:
+  - prepare
+  - install
+  - post
+  - verification
+  - day2ops
+  - openstack_test
+  - conformance_test
+  - cinder_csi_tests
+  - manila_csi_tests
+
+day2ops_procedures:
+  - moving-etcd-to-ephemeral
+
+topology:
+  flavors:
+    master:
+      name: "master"
+      ram: 16384
+      vcpus: 4
+      disk: 30
+      ephemeral: 10
+    worker:
+      name: "worker"
+      ram: 8192
+      vcpus: 2
+      disk: 25
+  replicas:
+    master: 3
+    worker: 2
+  machine_cidr: 10.196.0.0/16
+  controlplane_rootvolume:
+    size: 30
+    types: ['__DEFAULT__', '__DEFAULT__', '__DEFAULT__']
