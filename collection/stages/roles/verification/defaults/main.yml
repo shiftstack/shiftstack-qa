@@ -16,3 +16,4 @@ alerts_to_ignore:
   - 'KubePodNotReady'
   - 'ClusterNotUpgradeable'
 demo_image: "quay.io/kuryr/demo"
+skip_mustgather_generation: false # Set it to true if you want to generate the must-gather outside this role.

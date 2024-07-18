@@ -58,6 +58,7 @@
     ram: "{{ item.value.ram }}"
     vcpus: "{{ item.value.vcpus }}"
     disk: "{{ item.value.disk }}"
+    ephemeral: "{{ item.value.ephemeral | default(omit) }}"
     verify: "{{ admin_verify_cacert }}"
   register: flavors
   loop: "{{ lookup('ansible.builtin.dict', topology.flavors) }}"
