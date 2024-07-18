@@ -117,9 +117,21 @@
       ansible.builtin.include_role:
         name: shiftstack.stages.verification
       vars:
-        post_installatin: true
+        post_installation: true
       when: "'verification' in stages"
 
+- name: Day2ops OpenShift stage
+  hosts: installer
+  gather_facts: no
+  vars_files:
+    - "../configs/global.yml"
+  tasks:
+    - name: Run day2 operations on OCP
+      ansible.builtin.include_role:
+        name: shiftstack.stages.day2ops
+      vars:
+        day2ops_steps: "{{ day2ops_procedures }}"
+      when: "'day2ops' in stages"
 
 - name: Run Openstack-Test on OpenShift
   hosts: installer
