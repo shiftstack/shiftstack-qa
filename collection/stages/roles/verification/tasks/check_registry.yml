@@ -40,7 +40,7 @@
 # Reference: https://issues.redhat.com/browse/OSASINFRA-3177
 - name: Check registry in post installation
   when:
-    - post_installatin|default(False)
+    - post_installation|default(False)
     - "'swift' in image_registry_config.resources[0].spec.storage"
     - not openshift_mirror|default(False)
   block:

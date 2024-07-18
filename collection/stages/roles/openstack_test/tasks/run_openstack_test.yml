@@ -94,4 +94,4 @@
       ansible.builtin.include_role:
         name: tools_must-gather
       vars:
-        must_gather_dir_suffix: "must-gather-openstack-tests"
+        must_gather_suffix: "must-gather-openstack-tests"

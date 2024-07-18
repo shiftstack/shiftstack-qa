@@ -208,7 +208,7 @@
       until: ping_result.rc == 0
 
     - name: Verify the ssh connection to the installer host
-      ansible.builtin.command: ssh {{ installer_vm_ssh_user }}@{{ installer_vm_fip.stdout}} hostname
+      ansible.builtin.command: ssh {{ installer_vm_ssh_user }}@{{ installer_vm_fip.stdout }} hostname
       changed_when: false
       register: ssh_result
       retries: 10

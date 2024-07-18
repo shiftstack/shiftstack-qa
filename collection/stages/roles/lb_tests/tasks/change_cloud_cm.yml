@@ -209,7 +209,7 @@
       ansible.builtin.include_role:
         name: tools_must-gather
       vars:
-        must_gather_dir_suffix: "must-gather-change-cloud-cm"
+        must_gather_suffix: "must-gather-change-cloud-cm"
 
     - name: Fail inside rescue block
       ansible.builtin.fail:
