@@ -1,0 +1,109 @@
+---
+# https://docs.openshift.com/container-platform/4.15/installing/installing_openstack/deploying-openstack-with-rootVolume-etcd-on-local-disk.html
+- name: Edit CPMS to add the additional block ephemeral device that is used by etcd
+  when: installation_type != 'upi'
+  block:
+    - name: Edit CPMS to add the additional block ephemeral device that is used by etcd
+      environment:
+        KUBECONFIG: "{{ kubeconfig }}"
+      ansible.builtin.shell: |
+        oc patch ControlPlaneMachineSet/cluster -n openshift-machine-api --type json -p '
+        [
+            {
+              "op": "add",
+              "path": "/spec/template/machines_v1beta1_machine_openshift_io/spec/providerSpec/value/additionalBlockDevices",
+              "value": [
+                {
+                  "name": "etcd",
+                  "sizeGiB": 10,
+                  "storage": {
+                    "type": "Local"
+                  }
+                }
+              ]
+            }
+          ]
+        '
+      changed_when: true
+
+    - name: Active wait until all the ClusterOperators are ready
+      ansible.builtin.include_role:
+        name: tools_cluster_checks
+        tasks_from: wait_until_cluster_operators_ready.yml
+        vars:
+          wait_delay: 60
+
+    - name: Wait until OCP cluster is healthy
+      ansible.builtin.include_role:
+        name: tools_cluster_checks
+        tasks_from: wait_until_cluster_is_healthy.yml
+
+    - name: Wait until cluster nodes are ready
+      ansible.builtin.include_role:
+        name: tools_cluster_checks
+        tasks_from: wait_until_nodes_ready.yml
+
+    - name: Wait until there are no unschedulable nodes
+      ansible.builtin.include_role:
+        name: tools_cluster_checks
+        tasks_from: wait_until_no_unschedulable_nodes.yml
+
+    - name: Check the Control Plane MachineSet is healthy
+      ansible.builtin.include_role:
+        name: tools_cluster_checks
+        tasks_from: check_controlplane_machinesets.yml
+
+- name: Deploying on OpenStack with rootVolume and etcd on local disk
+  block:
+    - name: Load machineconfig 98-var-lib-etcd
+      environment:
+        KUBECONFIG: "{{ kubeconfig }}"
+      kubernetes.core.k8s:
+        state: present
+        definition: "{{ lookup('file', '../files/98-var-lib-etcd.yaml') | from_yaml }}"
+
+    - name: Wait for the MCP to finish the cluster updates
+      ansible.builtin.include_role:
+        name: tools_cluster_checks
+        tasks_from: wait_mcp_updated.yml
+
+    - name: Active wait until all the ClusterOperators are ready
+      ansible.builtin.include_role:
+        name: tools_cluster_checks
+        tasks_from: wait_until_cluster_operators_ready.yml
+
+    - name: Wait until OCP cluster is healthy
+      ansible.builtin.include_role:
+        name: tools_cluster_checks
+        tasks_from: wait_until_cluster_is_healthy.yml
+
+    - name: Wait until cluster nodes are ready
+      ansible.builtin.include_role:
+        name: tools_cluster_checks
+        tasks_from: wait_until_nodes_ready.yml
+
+    - name: Wait until there are no unschedulable nodes
+      ansible.builtin.include_role:
+        name: tools_cluster_checks
+        tasks_from: wait_until_no_unschedulable_nodes.yml
+
+    - name: Get OCP master nodes
+      kubernetes.core.k8s_info:
+        api_version: v1
+        kind: Node
+        label_selectors:
+          - node-role.kubernetes.io/master
+      register: masters
+
+    - name: Store the OCP master nodes names
+      ansible.builtin.set_fact:
+        ocp_masters: "{{ masters | json_query('resources[*].metadata.name') | list }}"
+
+    - name: Confirm that there is a disk on masters poiting to /var/lib/etcd
+      ansible.builtin.shell: |
+        set -o pipefail && \
+        oc debug node/{{ item }} -- chroot /host lsblk | grep /var/lib/etcd
+      environment:
+        KUBECONFIG: "{{ kubeconfig }}"
+      loop: "{{ ocp_masters | list }}"
+      changed_when: false
