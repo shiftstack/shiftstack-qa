@@ -51,6 +51,6 @@
     - name: Compress must-gather output
       community.general.archive:
         path: "{{ must_gather_dir }}"
-        dest: "{{ must_gather_dir_base }}/{{ must_gather_dir_suffix }}.tar.gz"
+        dest: "{{ must_gather_dir_base }}/must-gather-{{ must_gather_suffix }}.tar.gz"
         mode: u=rw,g=rw,o=r
       no_log: true
