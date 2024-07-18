@@ -1,0 +1,31 @@
+---
+- name: Active wait until the CPMS reconciliation has started
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
+    api_version: machine.openshift.io/v1
+    kind: ControlPlaneMachineSet
+    namespace: openshift-machine-api
+  register: cpms
+  until:
+    - cpms is not failed
+    - cpms.resources is defined
+    - cpms | json_query('resources[*].status.conditions[?type==`Progressing`].status') | unique == [["True"]]
+    - cpms | json_query('resources[*].status.conditions[?type==`Progressing`].reason') | unique == [["NeedsUpdateReplicas"]]
+  # Fixed values - the reconciliation should start in 2 min
+  retries: 12
+  delay: 10
+
+- name: Active wait until the CPMS reconciliation is completed
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
+    api_version: machine.openshift.io/v1
+    kind: ControlPlaneMachineSet
+    namespace: openshift-machine-api
+  register: cpms
+  until:
+    - cpms is not failed
+    - cpms.resources is defined
+    - cpms | json_query('resources[*].status.conditions[?type==`Progressing`].status') | unique == [["False"]]
+    - cpms | json_query('resources[*].status.conditions[?type==`Progressing`].reason') | unique == [["AllReplicasUpdated"]]
+  retries: "{{ wait_retries }}"
+  delay: "{{ wait_delay }}"
