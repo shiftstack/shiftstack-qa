@@ -37,4 +37,4 @@
       ansible.builtin.include_role:
         name: tools_must-gather
       vars:
-        must_gather_dir_suffix: "must-gather-{{ csi_test_name }}"
+        must_gather_suffix: "{{ csi_test_name }}"
