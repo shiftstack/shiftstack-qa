@@ -88,6 +88,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c879bc3a_83b444d1",
+        "filename": "collection/stages/roles/lb_tests/tasks/main.yml",
+        "patchSetId": 8
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-07-19T14:52:57Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "e5866287_1fb24a58",
+      "range": {
+        "startLine": 2,
+        "startChar": 0,
+        "endLine": 6,
+        "endChar": 23
+      },
+      "revId": "24fcc4899b5f02a43e396d7577b1e56fffe5c38d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "727aa8a0_e6215f9b",
