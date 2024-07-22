@@ -159,6 +159,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b98d15b5_8d8ded4c",
+        "filename": "collection/tools/roles/tools_dnsmasq/tasks/main.yml",
+        "patchSetId": 19
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2024-07-22T09:31:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b93ee824_747b1bd2",
+      "range": {
+        "startLine": 25,
+        "startChar": 4,
+        "endLine": 25,
+        "endChar": 8
+      },
+      "revId": "3bf4ed9303cc72e69cce6f3005eaae99a0998b52",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "c346df5f_70b54ad1",
