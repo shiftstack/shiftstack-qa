@@ -52,6 +52,24 @@
       "parentUuid": "1a92b283_79265663",
       "revId": "1850f13d3cb998dd3c1a3148570cd6d40c014212",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "22820e85_0c424390",
+        "filename": "collection/stages/roles/install/tasks/upi/prepare_upi_installation.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-07-22T09:01:56Z",
+      "side": 1,
+      "message": "The comment is in the line 42 and I have a task to tackle this: https://issues.redhat.com/browse/SOSQE-1408",
+      "parentUuid": "e8255195_65a09442",
+      "revId": "1850f13d3cb998dd3c1a3148570cd6d40c014212",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
