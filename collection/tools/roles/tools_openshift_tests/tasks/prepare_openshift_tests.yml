@@ -15,7 +15,7 @@
   until: openshift_repo is succeeded
 
 - name: Remove the tests results directory ({{ results_dir }}) if it exists
-  when: reset_result_dir | default(yes)
+  when: reset_result_dir | default(True)
   ansible.builtin.file:
     path: "{{ results_dir }}"
     state: absent
