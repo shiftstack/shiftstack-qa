@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f3d64c3b_6bb948e6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-07-22T14:37:20Z",
+      "side": 1,
+      "message": "Tested locally in giant27:\n\n```\n 0│---\n 1│duration: 0.366541\n 2│end: \u00272024-07-22T14:35:37.396232+00:00\u0027\n 3│event_loop: null\n 4│host: localhost\n 5│play: Run Openstack-Test on OpenShift\n 6│play_pattern: installer\n 7│playbook: /home/cloud-admin/shiftstack-qa/playbooks/ocp_testing.yaml\n 8│remote_addr: localhost\n 9│res:\n10│  _ansible_no_log: null\n11│  changed: false\n12│  invocation:\n13│    module_args:\n14│      _diff_peek: null\n15│      _original_basename: null\n16│      access_time: null\n17│      access_time_format: \u0027%Y%m%d%H%M.%S\u0027\n18│      attributes: null\n19│      follow: true\n20│      force: false\n21│      group: null\n22│      mode: null\n23│      modification_time: null\n24│      modification_time_format: \u0027%Y%m%d%H%M.%S\u0027\n25│      owner: null\n26│      path: /home/cloud-admin/artifacts/openstack-test-results\n27│      recurse: false\n28│      selevel: null\n29│      serole: null\n30│      setype: null\n31│      seuser: null\n32│      src: null\n33│      state: absent\n34│      unsafe_writes: false\n35│  path: /home/cloud-admin/artifacts/openstack-test-results\n36│  state: absent\n37│resolved_action: ansible.builtin.file\n38│resolved_role: shiftstack.tools.tools_openshift_tests\n39│role: tools_openshift_tests\n40│start: \u00272024-07-22T14:35:37.029691+00:00\u0027\n41│task: Remove the tests results directory (/home/cloud-admin/artifacts/openstack-test-results)\n42│  if it exists\n43│task_action: ansible.builtin.file\n44│task_args: \u0027\u0027\n45│task_path: /home/cloud-admin/.ansible/collections/ansible_collections/shiftstack/tools/roles/tools_openshift_tests/tasks/prepare_openshift_tests.yml:17\n```",
+      "revId": "68a139dc1701235224cc1a4c4e15a1c295f8d8a2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
