@@ -105,6 +105,24 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "4261683c_e8d0fbfc",
+        "filename": "collection/stages/plugins/modules/project_purge.py",
+        "patchSetId": 19
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-07-23T10:06:23Z",
+      "side": 1,
+      "message": "A collaboration between me and GPT \u003d]",
+      "parentUuid": "72dc4e9a_7f741a18",
+      "revId": "08940228ac58c697d05ee438402ce10444ef7e33",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ff873d7b_1cff8b69",
@@ -118,6 +136,30 @@
       "writtenOn": "2024-07-17T11:54:22Z",
       "side": 1,
       "message": "should we add here network trunks, manila shares and swift containers too?",
+      "range": {
+        "startLine": 114,
+        "startChar": 0,
+        "endLine": 114,
+        "endChar": 6
+      },
+      "revId": "08940228ac58c697d05ee438402ce10444ef7e33",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "216ea00a_7d16980a",
+        "filename": "collection/stages/plugins/modules/project_purge.py",
+        "patchSetId": 19
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-07-23T10:06:23Z",
+      "side": 1,
+      "message": "- Trunk removal is not straightforward. [0-4]\n- Add support of swift container.\n- Have some issues with the Manila support. I think we can skip it for now and add it in the future if needed. wdyt?\n\n\n\n[0] https://access.redhat.com/solutions/4629401\n[1] https://bugzilla.redhat.com/show_bug.cgi?id\u003d1779138\n[2] https://bugs.launchpad.net/neutron/+bug/2030718\n[3] https://adam.younglogic.com/2019/11/deleting-trunks-before-ports\n[4] https://bugzilla.redhat.com/show_bug.cgi?id\u003d1749473",
+      "parentUuid": "ff873d7b_1cff8b69",
       "range": {
         "startLine": 114,
         "startChar": 0,
@@ -153,6 +195,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "29dd885b_1ea6a35c",
+        "filename": "collection/stages/roles/cleanup/tasks/destroy_ipi.yml",
+        "patchSetId": 19
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-07-23T10:06:23Z",
+      "side": 1,
+      "message": "I think we discussed to have it as part of another task - https://issues.redhat.com/browse/OSPRH-7508",
+      "parentUuid": "21829e43_a0edd97c",
+      "range": {
+        "startLine": 13,
+        "startChar": 10,
+        "endLine": 13,
+        "endChar": 94
+      },
+      "revId": "08940228ac58c697d05ee438402ce10444ef7e33",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "ac28d670_43d7194f",
         "filename": "collection/stages/roles/cleanup/tasks/destroy_openshift_cluster.yml",
         "patchSetId": 19
@@ -164,6 +230,30 @@
       "writtenOn": "2024-07-17T13:43:28Z",
       "side": 1,
       "message": "This is a good to have, but in RHOSO deployments it shouldn\u0027t be there, as the cleanup is run on a fresh pod where the /etc/hosts hasn\u0027t been manipulated.",
+      "range": {
+        "startLine": 6,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 17
+      },
+      "revId": "08940228ac58c697d05ee438402ce10444ef7e33",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c9cec949_aa725e0a",
+        "filename": "collection/stages/roles/cleanup/tasks/destroy_openshift_cluster.yml",
+        "patchSetId": 19
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-07-23T10:06:23Z",
+      "side": 1,
+      "message": "so I assume nothing won\u0027t be removed in such a case. isn\u0027t it?\nit removes just the `regexp: \"{{ ocp_cluster_name }}\"` if they found in the file.",
+      "parentUuid": "ac28d670_43d7194f",
       "range": {
         "startLine": 6,
         "startChar": 0,
@@ -193,6 +283,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "13a3c933_266fed73",
+        "filename": "collection/stages/roles/cleanup/tasks/main.yml",
+        "patchSetId": 19
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-07-23T10:06:23Z",
+      "side": 1,
+      "message": "isn\u0027t this part of the pod creation before running the collection? the clouds.yaml is not in place?",
+      "parentUuid": "067a3726_d52afedf",
+      "revId": "08940228ac58c697d05ee438402ce10444ef7e33",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "011dbf7b_0c7efc83",
         "filename": "collection/stages/roles/cleanup/tasks/main.yml",
         "patchSetId": 19
@@ -204,6 +312,30 @@
       "writtenOn": "2024-07-17T11:54:22Z",
       "side": 1,
       "message": "Would you mind to add an assert that confirms that length \u003d\u003d 1? If length \u003e 1 we can just simply fail - Something wrong is happening",
+      "range": {
+        "startLine": 9,
+        "startChar": 49,
+        "endLine": 9,
+        "endChar": 52
+      },
+      "revId": "08940228ac58c697d05ee438402ce10444ef7e33",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "52a265d6_e6e6e74c",
+        "filename": "collection/stages/roles/cleanup/tasks/main.yml",
+        "patchSetId": 19
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-07-23T10:06:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "011dbf7b_0c7efc83",
       "range": {
         "startLine": 9,
         "startChar": 49,
