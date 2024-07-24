@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fb4cfc16_b0c717a0",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 23
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-07-24T15:33:15Z",
+      "side": 1,
+      "message": "Verified locally on titan20",
+      "revId": "9cf68a45c9635e9441cb9a007340eb11b7da6ba4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
