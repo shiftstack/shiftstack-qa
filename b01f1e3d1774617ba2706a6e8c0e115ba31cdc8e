@@ -22,6 +22,30 @@
       },
       "revId": "b01f1e3d1774617ba2706a6e8c0e115ba31cdc8e",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "337aa95d_3c29f13b",
+        "filename": "collection/stages/roles/install/templates/install-config.yaml.j2",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-07-25T09:48:49Z",
+      "side": 1,
+      "message": "I\u0027d like to avoid an if statement in the file.\n\nEmpty and not set is the same for the installer. Don\u0027t you think this is cleaner?",
+      "parentUuid": "9a8293fa_12b77617",
+      "range": {
+        "startLine": 16,
+        "startChar": 6,
+        "endLine": 16,
+        "endChar": 23
+      },
+      "revId": "b01f1e3d1774617ba2706a6e8c0e115ba31cdc8e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
