@@ -39,3 +39,6 @@ topology:
     master: 3
     worker: 2
   machine_cidr: 10.196.0.0/16
+  servergroups:
+    master: "anti-affinity"
+    worker: "anti-affinity"
