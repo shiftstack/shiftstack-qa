@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9a8293fa_12b77617",
+        "filename": "collection/stages/roles/install/templates/install-config.yaml.j2",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2024-07-25T09:42:24Z",
+      "side": 1,
+      "message": "I think if it\u0027s empty it should be ommited",
+      "range": {
+        "startLine": 16,
+        "startChar": 6,
+        "endLine": 16,
+        "endChar": 23
+      },
+      "revId": "b01f1e3d1774617ba2706a6e8c0e115ba31cdc8e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
