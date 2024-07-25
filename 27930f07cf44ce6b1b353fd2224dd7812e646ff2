@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a3e2fc87_8d9af152",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2024-07-25T07:46:42Z",
+      "side": 1,
+      "message": "Installation was successful , failed on LB test https://sf.hosted.upshift.rdu2.redhat.com/zuul/t/tripleo-ci-internal/build/35b0607f03f14337ab6cb60bdfb75323/log/job-output.txt",
+      "revId": "27930f07cf44ce6b1b353fd2224dd7812e646ff2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
