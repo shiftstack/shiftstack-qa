@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2d81b8d9_3d423dd0",
+        "filename": "collection/stages/roles/verification/tasks/check_lb_svc.yml",
+        "patchSetId": 3
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-07-29T09:57:46Z",
+      "side": 1,
+      "message": "I would avoid using a global var for the retries and delay values, and set them directly in the task as those values depend on the task itself and cannot be handled globally.",
+      "revId": "3ee68ac7db09cc92a9d4a5b40773d92437ee3929",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
