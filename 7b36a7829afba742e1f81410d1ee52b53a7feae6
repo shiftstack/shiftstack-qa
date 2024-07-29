@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f0f659c3_8e9255c4",
+        "filename": "collection/stages/roles/day2ops/README.md",
+        "patchSetId": 24
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-07-29T09:53:53Z",
+      "side": 1,
+      "message": "nit: keyword",
+      "range": {
+        "startLine": 21,
+        "startChar": 50,
+        "endLine": 21,
+        "endChar": 57
+      },
+      "revId": "7b36a7829afba742e1f81410d1ee52b53a7feae6",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
