@@ -52,6 +52,24 @@
       "parentUuid": "7e3b1070_07f94d52",
       "revId": "3ee68ac7db09cc92a9d4a5b40773d92437ee3929",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7c841200_a99bc675",
+        "filename": "collection/stages/roles/verification/tasks/check_lb_svc.yml",
+        "patchSetId": 3
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2024-07-29T11:42:45Z",
+      "side": 1,
+      "message": "I think it\u0027s just this one and if I can use a variable with a default why not use it?",
+      "parentUuid": "7c790253_a7fd47b6",
+      "revId": "3ee68ac7db09cc92a9d4a5b40773d92437ee3929",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
