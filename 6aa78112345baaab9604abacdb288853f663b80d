@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7f28d570_e696816e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 26
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2024-07-30T07:42:18Z",
+      "side": 1,
+      "message": "nit and a question",
+      "revId": "6aa78112345baaab9604abacdb288853f663b80d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1cd40fca_e3c97fc2",
+        "filename": "collection/stages/roles/day2ops/tasks/procedures/moving-etcd-to-ephemeral.yml",
+        "patchSetId": 26
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2024-07-30T07:42:18Z",
+      "side": 1,
+      "message": "nit",
+      "range": {
+        "startLine": 83,
+        "startChar": 48,
+        "endLine": 83,
+        "endChar": 55
+      },
+      "revId": "6aa78112345baaab9604abacdb288853f663b80d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
