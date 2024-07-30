@@ -39,6 +39,30 @@
       },
       "revId": "6aa78112345baaab9604abacdb288853f663b80d",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d4cb8688_cbef445d",
+        "filename": "collection/stages/roles/day2ops/tasks/procedures/moving-etcd-to-ephemeral.yml",
+        "patchSetId": 26
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-07-30T19:23:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1cd40fca_e3c97fc2",
+      "range": {
+        "startLine": 83,
+        "startChar": 48,
+        "endLine": 83,
+        "endChar": 55
+      },
+      "revId": "6aa78112345baaab9604abacdb288853f663b80d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
