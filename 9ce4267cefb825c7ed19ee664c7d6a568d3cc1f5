@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7bb7e06a_03e91db0",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 33
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-07-31T09:00:17Z",
+      "side": 1,
+      "message": "Verified locally in titan19\n\n```\n2024-07-31 08:35:51,990 p\u003d488341 u\u003dcloud-admin n\u003dansible | TASK [Wait for the CPMS update to be applied] **********************************\n2024-07-31 08:35:52,101 p\u003d488341 u\u003dcloud-admin n\u003dansible | TASK [shiftstack.tools.tools_cluster_checks : Active wait until the CPMS reconciliation is completed] ***\n2024-07-31 08:35:54,838 p\u003d488341 u\u003dcloud-admin n\u003dansible | ok: [localhost]\n```",
+      "revId": "9ce4267cefb825c7ed19ee664c7d6a568d3cc1f5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
