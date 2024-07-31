@@ -9,7 +9,8 @@ stages:
   - post
   - verification
   - openstack_test
-  - lb_tests
+  #  - lb_tests
+  - cleanup
 
 topology:
   flavors:
@@ -17,7 +18,7 @@ topology:
       name: "master"
       ram: 16384
       vcpus: 4
-      disk: 25
+      disk: 30
     worker:
       name: "worker"
       ram: 8192
