@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1c7889bc_9aecffed",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-07-31T13:36:24Z",
+      "side": 1,
+      "message": "Verified locally in titan19: \n\n- Without rootVolumes (job_definitions/osp_verification.yaml:\n```\ncontrolPlane:\n  name: master\n  platform:\n    openstack:\n      type: \"master\"\n      serverGroupPolicy: \"anti-affinity\"\n  replicas: 3\n```\n\n- With rootVolumes (job_definitions/4.17_ovnkubernetes_ipi.yaml):\n\n\u0027\u0027\u0027\ncontrolPlane:\n  name: master\n  platform:\n    openstack:\n      type: \"master\"\n      serverGroupPolicy: \"\"\n      rootVolume: {\u0027size\u0027: 30, \u0027types\u0027: [\u0027__DEFAULT__\u0027, \u0027__DEFAULT__\u0027, \u0027__DEFAULT__\u0027]}\n\n\u0027\u0027\u0027",
+      "revId": "c0adf2ff9ac65a3e6b2d06ec53220ca09fc4a4c2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
