@@ -14,7 +14,9 @@ controlPlane:
     openstack:
       type: "{{ installcfg_master_flavor }}"
       serverGroupPolicy: "{{ installcfg_master_servergrouppolicy }}"
+      {%- if installcfg_ctrl_rootvolume is != {} +%}
       rootVolume: {{ installcfg_ctrl_rootvolume }}
+      {%- endif +%}
   replicas: {{ installcfg_master_replicas }}
 metadata:
   name: "{{ installcfg_cluster_name }}"
