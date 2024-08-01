@@ -88,6 +88,24 @@
       "parentUuid": "7c841200_a99bc675",
       "revId": "3ee68ac7db09cc92a9d4a5b40773d92437ee3929",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1aeb7ad5_d4af6e2c",
+        "filename": "collection/stages/roles/verification/tasks/check_lb_svc.yml",
+        "patchSetId": 3
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2024-08-01T06:32:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "212ed3be_edc90aac",
+      "revId": "3ee68ac7db09cc92a9d4a5b40773d92437ee3929",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
