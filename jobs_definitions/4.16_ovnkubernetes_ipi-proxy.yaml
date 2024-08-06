@@ -17,7 +17,7 @@ topology:
       name: "master"
       ram: 16384
       vcpus: 4
-      disk: 25
+      disk: 40
     worker:
       name: "worker"
       ram: 8192
