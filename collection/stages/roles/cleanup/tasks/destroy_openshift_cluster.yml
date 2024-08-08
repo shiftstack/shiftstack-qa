@@ -1,7 +1,14 @@
 ---
 - name: Destroy IPI cluster
-  ansible.builtin.include_tasks: destroy_ipi.yml
+  ansible.builtin.import_tasks: destroy_ipi.yml
   when: existing_ocp_installation_type == 'ipi'
+
+- name: Destroy IPI Proxy (restricted) cluster
+  vars:
+    home_dir: "~"
+  ansible.builtin.import_tasks: destroy_ipi.yml
+  delegate_to: "{{ installer_vm_name }}"
+  when: existing_ocp_installation_type == 'restricted'
 
 - name: Remove API and APPS fip/vip from the /etc/hosts file
   become: true
