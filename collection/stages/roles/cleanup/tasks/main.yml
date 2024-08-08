@@ -26,10 +26,3 @@
       vars:
         project: "{{ openstack_project_info.projects[0] }}"
       ansible.builtin.include_tasks: openstack_project_cleanup.yml
-
-- name: Restore the OpenStack original config directory (includes the clouds.yaml and secure.yaml)
-  ansible.builtin.copy:
-    src: "{{ home_dir }}/.original-config/openstack/"
-    dest: "{{ home_dir }}/.config/openstack/"
-    remote_src: yes
-    mode: u=rwx,g=rwx,o=rwx
