@@ -224,13 +224,18 @@ class ProjectPurge(OpenStackModule):
                         res.fixed_ips[0]['ip_address'])
                     self.conn.network.update_ip(floating_ip.id, port_id=None)
             elif resource == 'router':
-                interfaces = self.conn.network.ports(
-                    filters={'device_id': res.id})
-                for iface in interfaces:
-                    self.conn.network.remove_interface_from_router(
-                        res.id, port_id=iface.id)
+                router_ifs_internal = self.conn.list_router_interfaces(res.id, 'internal')
+                for port in router_ifs_internal:
                     self.log(
-                        f"Detached interface {iface.id} from router {res.id}")
+                        f"Detaching interface {port.id} from router {res.id}")
+                    try:
+                        self.conn.network.remove_interface_from_router(
+                            res.id, port_id=port.id)
+                        self.log(
+                            f"Detached interface {port.id} from router {res.id}")
+                    except Exception as e:
+                        self.log(
+                            f"Failed to detach interface {port.id} from router {res.id}: {str(e)}")
             delete_method(self.conn, res.id)
             self.log(f"{resource} with ID: {res.id} deleted successfully")
         else:
