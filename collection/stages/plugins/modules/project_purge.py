@@ -227,10 +227,16 @@ class ProjectPurge(OpenStackModule):
                 interfaces = self.conn.network.ports(
                     filters={'device_id': res.id})
                 for iface in interfaces:
-                    self.conn.network.remove_interface_from_router(
-                        res.id, port_id=iface.id)
                     self.log(
-                        f"Detached interface {iface.id} from router {res.id}")
+                        f"Detaching interface {iface.id} from router {res.id}")
+                    try:
+                        self.conn.network.remove_interface_from_router(
+                            res.id, port_id=iface.id)
+                        self.log(
+                            f"Detached interface {iface.id} from router {res.id}")
+                    except Exception as e:
+                        self.log(
+                            f"Failed to detach interface {iface.id} from router {res.id}: {str(e)}")
             delete_method(self.conn, res.id)
             self.log(f"{resource} with ID: {res.id} deleted successfully")
         else:
