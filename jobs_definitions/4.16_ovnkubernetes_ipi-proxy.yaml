@@ -6,6 +6,7 @@ installation_type: ipi
 deploy_installer_host: true
 openshift_proxy_installation: true
 stages:
+  - cleanup
   - prepare
   - install
   - post
