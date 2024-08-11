@@ -217,6 +217,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "276d6c42_bc45e351",
+        "filename": "collection/stages/roles/cleanup/tasks/destroy_ipi.yml",
+        "patchSetId": 19
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-08-11T07:36:53Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "29dd885b_1ea6a35c",
+      "range": {
+        "startLine": 13,
+        "startChar": 10,
+        "endLine": 13,
+        "endChar": 94
+      },
+      "revId": "08940228ac58c697d05ee438402ce10444ef7e33",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ac28d670_43d7194f",
@@ -264,6 +288,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a40338ac_7075c289",
+        "filename": "collection/stages/roles/cleanup/tasks/destroy_openshift_cluster.yml",
+        "patchSetId": 19
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-08-11T07:36:53Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "c9cec949_aa725e0a",
+      "range": {
+        "startLine": 6,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 17
+      },
+      "revId": "08940228ac58c697d05ee438402ce10444ef7e33",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "067a3726_d52afedf",
@@ -295,6 +343,24 @@
       "side": 1,
       "message": "isn\u0027t this part of the pod creation before running the collection? the clouds.yaml is not in place?",
       "parentUuid": "067a3726_d52afedf",
+      "revId": "08940228ac58c697d05ee438402ce10444ef7e33",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cfaa6217_8ae73481",
+        "filename": "collection/stages/roles/cleanup/tasks/main.yml",
+        "patchSetId": 19
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-08-11T07:36:53Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "13a3c933_266fed73",
       "revId": "08940228ac58c697d05ee438402ce10444ef7e33",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
