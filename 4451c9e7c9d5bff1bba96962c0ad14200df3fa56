@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e0b2f50f_2ef9d9d5",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2024-08-12T06:29:35Z",
+      "side": 1,
+      "message": "https://gitlab.cee.redhat.com/ci-framework/ci-framework-testproject/-/merge_requests/458\nhttps://sf.hosted.upshift.rdu2.redhat.com/zuul/t/tripleo-ci-internal/build/15b58ecb030d4105972484835b2c5f2a",
+      "revId": "4451c9e7c9d5bff1bba96962c0ad14200df3fa56",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
