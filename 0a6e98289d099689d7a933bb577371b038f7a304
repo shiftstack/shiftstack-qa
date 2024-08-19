@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "da6f8417_1a2b4b01",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 10
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-08-19T08:24:19Z",
+      "side": 1,
+      "message": "Verified:\n```\n   Play name                                                                                                                       Ok   Changed    Unreachable     Failed   Skipped    Ignored    In progress     Task count         Progress\n 0│Cleanup the OCP setup and prepare the environment for testing OCP on legacy OSP (17.1 or 16.2)                                  41        12              0          0        14          0              0             55         Complete\n 1│Prepare the OpenShift environment for installation and testing new candidate                                                   115        67              0          0        23          0              0            138         Complete\n 2│Prepare the OpenShift installer and client in the installer host                                                                14         6              0          0         8          0              0             22         Complete\n 3│Install OpenShift new candidate on OSP                                                                                          11         5              0          0         4          0              0             15         Complete\n 4│Post OpenShift installation stage                                                                                               21         6              0          0         0          0              0             21         Complete\n 5│Verify the OpenShift cluster                                                                                                     0         0              0          0         1          0              0              1         Complete\n 6│Run Openstack-Test on OpenShift                                                                                                  0         0              0          0         1          0              0              1         Complete\n 7│Run Openshift Conformance Test on OpenShift                                                                                      0         0              0          0         1          0              0              1         Complete\n 8│Run Openshift Cinder CSI Tests on OpenShift                                                                                      0         0              0          0         1          0              0              1         Complete\n 9│Run Openshift Manila CSI Tests on OpenShift                                                                                      0         0              0          0         1          0              0              1         Complete\n10│Post steps                                                                                                                       3         1              0          0         0          0              0              3         Complete\n```",
+      "revId": "0a6e98289d099689d7a933bb577371b038f7a304",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}

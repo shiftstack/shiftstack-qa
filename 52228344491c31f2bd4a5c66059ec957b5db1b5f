@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "51b67acf_8da6464f",
+        "filename": "collection/stages/plugins/modules/project_purge.py",
+        "patchSetId": 9
+      },
+      "lineNbr": 239,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-08-19T08:24:19Z",
+      "side": 1,
+      "message": "From the execution log:\n```\n34│  - \u0027Deleting router with ID: 741395f4-b0aa-49d0-96b9-d6d6f8ef7a3b\u0027                                                                                                                                                                       ▒\n35│  - Detaching interface 27bec38f-f15a-457f-a5cb-b39d91bc0130 from router 741395f4-b0aa-49d0-96b9-d6d6f8ef7a3b                                                                                                                             ▒\n36│  - Detached interface 27bec38f-f15a-457f-a5cb-b39d91bc0130 from router 741395f4-b0aa-49d0-96b9-d6d6f8ef7a3b                                                                                                                              ▒\n37│  - \u0027Router with id: 741395f4-b0aa-49d0-96b9-d6d6f8ef7a3b deleted successfully\u0027                                                                                                                                                           ▒\n```",
+      "range": {
+        "startLine": 227,
+        "startChar": 0,
+        "endLine": 239,
+        "endChar": 0
+      },
+      "revId": "52228344491c31f2bd4a5c66059ec957b5db1b5f",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dd2902cd_94e8b02e",
+        "filename": "collection/tools/roles/tools_installer_host/tasks/install_squid.yml",
+        "patchSetId": 9
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-08-19T08:24:19Z",
+      "side": 1,
+      "message": "@juriarte@redhat.com, @itzikb@redhat.com do you see any issue with this change on OSP 18 env?\n\n[0] https://redhat-internal.slack.com/archives/CMLGK0SFM/p1723559298843919",
+      "range": {
+        "startLine": 27,
+        "startChar": 0,
+        "endLine": 27,
+        "endChar": 28
+      },
+      "revId": "52228344491c31f2bd4a5c66059ec957b5db1b5f",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
