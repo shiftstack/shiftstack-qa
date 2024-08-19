@@ -104,6 +104,7 @@ inventory:
   hosts_file: "{{ artifacts_dir }}/hosts-installer"
   backup_file: "{{ artifacts_dir }}/hosts-installer.bck"
 
+upi_playbooks_logs_dir: "{{ upi_playbooks_dir }}/playbooks_logs"
 openshift_upi:
   network:
     name: network-upi
