@@ -5,6 +5,7 @@ openshift_network_type: OVNKubernetes
 installation_type: upi
 deploy_installer_host: true
 stages:
+  - cleanup
   - prepare
   - install
   - post
