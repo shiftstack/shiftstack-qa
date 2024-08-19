@@ -10,6 +10,13 @@
   delegate_to: "{{ installer_vm_name }}"
   when: existing_ocp_installation_type == 'restricted'
 
+- name: Destroy UPI cluster
+  vars:
+    home_dir: "~"
+  ansible.builtin.import_tasks: destroy_upi.yml
+  delegate_to: "{{ installer_vm_name }}"
+  when: existing_ocp_installation_type == 'upi'
+
 - name: Remove API and APPS fip/vip from the /etc/hosts file
   become: true
   ansible.builtin.lineinfile:
