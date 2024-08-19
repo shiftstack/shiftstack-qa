@@ -1,0 +1,103 @@
+---
+- name: Create a {{ upi_playbooks_dir }} directory if it does not exist
+  ansible.builtin.file:
+    path: "{{ upi_playbooks_dir }}"
+    state: directory
+    mode: u=rwx,g=rw,o=r
+
+- name: Create the playbooks_logs directory if it does not exist
+  ansible.builtin.file:
+    path: "{{ upi_playbooks_logs_dir }}"
+    state: directory
+    mode: u=rwx,g=rw,o=r
+
+- name: Check if {{ upi_playbooks_dir }}/down-bootstrap.yaml exists
+  ansible.builtin.stat:
+    path: "{{ upi_playbooks_dir }}/down-bootstrap.yaml"
+  register: stat_result
+
+- name: Delete the bootstrap VM (down-bootstrap.yaml)
+  vars:
+    log_file: "{{ upi_playbooks_logs_dir }}/down-bootstrap.log"
+    desc: "Bootstrap VM deletion"
+    cmd: "{{ upi_playbooks_dir }}/down-bootstrap.yaml"
+  ansible.builtin.include_tasks: run_ansible.yml
+  when: stat_result.stat.exists
+
+- name: Check if {{ upi_playbooks_dir }}/down-control-plane.yaml exists
+  ansible.builtin.stat:
+    path: "{{ upi_playbooks_dir }}/down-control-plane.yaml"
+  register: stat_result
+
+- name: Delete the control plane VMs (down-control-plane.yaml)
+  vars:
+    log_file: "{{ upi_playbooks_logs_dir }}/down-control-plane.log"
+    desc: "Control plane VMs deletion"
+    cmd: "{{ upi_playbooks_dir }}/down-control-plane.yaml"
+  ansible.builtin.include_tasks: run_ansible.yml
+  when: stat_result.stat.exists
+
+- name: Check if {{ upi_playbooks_dir }}/down-compute-nodes.yaml exists
+  ansible.builtin.stat:
+    path: "{{ upi_playbooks_dir }}/down-compute-nodes.yaml"
+  register: stat_result
+
+- name: Delete the compute VMs (down-compute-nodes.yaml)
+  vars:
+    log_file: "{{ upi_playbooks_logs_dir }}/down-compute-nodes.log"
+    desc: "Compute VMs deletion"
+    cmd: "{{ upi_playbooks_dir }}/down-compute-nodes.yaml"
+  ansible.builtin.include_tasks: run_ansible.yml
+  when: stat_result.stat.exists
+
+- name: Check if {{ upi_playbooks_dir }}/down-load-balancers.yaml exists
+  ansible.builtin.stat:
+    path: "{{ upi_playbooks_dir }}/down-load-balancers.yaml"
+  register: stat_result
+
+- name: Delete the Load Balancers (down-load-balancers.yaml)
+  vars:
+    log_file: "{{ upi_playbooks_logs_dir }}/down-load-balancers.log"
+    desc: "Load Balancers deletion"
+    cmd: "{{ upi_playbooks_dir }}/down-load-balancers.yaml"
+  ansible.builtin.include_tasks: run_ansible.yml
+  when: stat_result.stat.exists
+
+- name: Check if {{ upi_playbooks_dir }}/down-containers.yaml
+  ansible.builtin.stat:
+    path: "{{ upi_playbooks_dir }}/down-containers.yaml"
+  register: stat_result
+
+- name: Delete the containers (down-containers.yaml)
+  vars:
+    log_file: "{{ upi_playbooks_logs_dir }}/down-containers.log"
+    desc: "Containers deletion"
+    cmd: "{{ upi_playbooks_dir }}/down-containers.yaml"
+  ansible.builtin.include_tasks: run_ansible.yml
+  when: stat_result.stat.exists
+
+- name: Check if {{ upi_playbooks_dir }}/down-network.yaml
+  ansible.builtin.stat:
+    path: "{{ upi_playbooks_dir }}/down-network.yaml"
+  register: stat_result
+
+- name: Delete network resources (down-network.yaml)
+  vars:
+    log_file: "{{ upi_playbooks_logs_dir }}/down-network.log"
+    desc: "OSP network resources deletion"
+    cmd: "{{ upi_playbooks_dir }}/down-network.yaml"
+  ansible.builtin.include_tasks: run_ansible.yml
+  when: stat_result.stat.exists
+
+- name: Check if {{ upi_playbooks_dir }}/down-security-groups.yaml"
+  ansible.builtin.stat:
+    path: "{{ upi_playbooks_dir }}/down-security-groups.yaml"
+  register: stat_result
+
+- name: Delete the security groups (down-security-groups.yaml)
+  vars:
+    log_file: "{{ upi_playbooks_logs_dir }}/down-security-groups.log"
+    desc: "OSP security groups deletion"
+    cmd: "{{ upi_playbooks_dir }}/down-security-groups.yaml"
+  ansible.builtin.include_tasks: run_ansible.yml
+  when: stat_result.stat.exists
