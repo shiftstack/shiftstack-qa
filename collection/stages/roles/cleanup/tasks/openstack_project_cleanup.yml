@@ -3,6 +3,7 @@
   openstack.cloud.project_info:
     cloud: "{{ admin_cloud }}"
     name: "{{ user_cloud }}"
+    verify: "{{ admin_verify_cacert }}"
   register: project_info
 
 - name: Cleanup all OpenStack resources related to the project
@@ -14,9 +15,11 @@
         project: "{{ user_cloud }}"
         keep_project: true
         remove_external_networks: false
+        verify: "{{ admin_verify_cacert }}"
 
     - name: Delete project "{{ user_cloud }}"
       openstack.cloud.project:
         cloud: "{{ admin_cloud }}"
         state: absent
         name: "{{ user_cloud }}"
+        verify: "{{ admin_verify_cacert }}"
