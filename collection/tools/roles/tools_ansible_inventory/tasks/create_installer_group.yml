@@ -1,4 +1,8 @@
 ---
+- name: Reset the 'installer_vm_exists' value
+  ansible.builtin.set_fact:
+    installer_vm_exists: false
+
 - name: Check if '{{ user_cloud }}' includes '{{ installer_vm_name }}'
   openstack.cloud.server_info:
     cloud: "{{ user_cloud }}"
@@ -14,7 +18,7 @@
     - server_info.servers | default([]) | length == 1
 
 - name: Add host installer to inventory when the installer host VM exists
-  when: installer_vm_exists | default(false)
+  when: installer_vm_exists
   block:
     - name: Include vars from registered resources
       ansible.builtin.include_vars:
@@ -29,7 +33,7 @@
         installer_host_fip: "{{ resources.installer_fip }}"
 
 - name: Add host localhost to inventory when the installer host VM doesn't exist
-  when: not installer_vm_exists | default(false)
+  when: not installer_vm_exists
   block:
     - name: Flush the inventory in a case the {{ installer_group }} group is present
       ansible.builtin.include_role:

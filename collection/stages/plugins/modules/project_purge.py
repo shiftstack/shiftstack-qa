@@ -116,6 +116,10 @@ RESOURCE_HANDLERS = {
         'list': lambda conn, filters: conn.object_store.containers(details=True, **filters),
         'delete': lambda conn, resource_id: conn.object_store.delete_container(resource_id)
     },
+    'flavor': {
+        'list': lambda conn, filters: conn.compute.flavors(**filters),
+        'delete': lambda conn, resource_id: conn.compute.delete_flavor(resource_id)
+    },
 }
 
 
@@ -190,9 +194,25 @@ class ProjectPurge(OpenStackModule):
         if handler:
             list_method = handler['list']
             filters = {'project_id': project_id}
+
+            # Handle specific logic for server resource
+            if resource == 'server':
+                filters = {'all_projects': True}
+                servers = list(list_method(self.conn, filters=filters))
+                return [server for server in servers if server.project_id == project_id]
+
+            # Handle logic for network resource
             if resource == 'network' and not include_external_networks:
                 filters['router:external'] = False
-            return list(list_method(self.conn, filters=filters))
+
+            # Call the list method with the appropriate filters
+            resources = list(list_method(self.conn, filters=filters))
+
+            # Additional filtering for resources without native project_id filtering
+            if resource in ['image', 'swift_container']:
+                resources = [res for res in resources if res.owner == project_id]
+
+            return resources
         else:
             raise Exception(f"Unsupported resource type: {resource}")
 

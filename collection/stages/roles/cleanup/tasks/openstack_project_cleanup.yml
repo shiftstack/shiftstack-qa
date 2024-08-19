@@ -3,6 +3,7 @@
   openstack.cloud.project_info:
     cloud: "{{ admin_cloud }}"
     name: "{{ user_cloud }}"
+    verify: "{{ admin_verify_cacert }}"
   register: project_info
 
 - name: Cleanup all OpenStack resources related to the project
@@ -20,3 +21,4 @@
         cloud: "{{ admin_cloud }}"
         state: absent
         name: "{{ user_cloud }}"
+        verify: "{{ admin_verify_cacert }}"

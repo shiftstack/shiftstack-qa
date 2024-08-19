@@ -11,7 +11,9 @@
     mode: u=rwx,g=rw,o=r
 
 - name: Prepare for UPI installation
-  ansible.builtin.include_tasks: upi/prepare_upi_installation.yml
+  ansible.builtin.include_role:
+    name: tools_upi
+    tasks_from: prepare_upi_installation.yml
   when:
     - installation_type == 'upi'
 
