@@ -3,6 +3,7 @@
   openstack.cloud.project_info:
     cloud: "{{ admin_cloud }}"
     name: "{{ user_cloud }}"
+    verify: "{{ admin_verify_cacert }}"
   register: openstack_project_info
 
 - name: Fail if more than one OpenStack "{{ user_cloud }}" project exist
