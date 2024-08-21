@@ -1,3 +1,4 @@
 ---
 # defaults file for day2ops
 day2ops_steps: []
+day2ops_report_filename: shiftstack-qa-day2ops-results.xml
