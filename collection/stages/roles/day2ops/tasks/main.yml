@@ -27,6 +27,18 @@
       from the following list (removing the .yml extension):
       {{ day2ops_available_procedures | to_nice_json }}
 
+- name: Create report file if it does not exist
+  ansible.builtin.file:
+    path: "{{ report_dir }}"
+    mode: u=rwx,g=rw,o=r
+    state: directory
+
+- name: Generate empty report file
+  ansible.builtin.template:
+    src: day2ops-report.xml.j2
+    dest: "{{ report_dir }}/{{ day2ops_report_filename }}"
+    mode: u=rw,g=rw,o=r
+
 - name: Run day2ops procedures sequentially
   ansible.builtin.include_tasks: run_procedure.yml
   vars:
