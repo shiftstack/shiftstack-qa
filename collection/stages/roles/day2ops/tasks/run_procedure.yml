@@ -24,7 +24,22 @@
       vars:
         skip_mustgather_generation: true
 
+    - name: Write SUCCESS entry on junit report
+      community.general.xml:
+        path: "{{ report_dir }}/{{ day2ops_report_filename }}"
+        xpath: /day2ops/{{ procedure_task_file | regex_replace('\\.yml$', '') }}
+        add_children:
+          - result: PASSED
+
   rescue:
+    - name: Write FAILED entry on junit report
+      community.general.xml:
+        path: "{{ report_dir }}/{{ day2ops_report_filename }}"
+        xpath: /day2ops/{{ procedure_task_file | regex_replace('\\.yml$', '') }}
+        add_children:
+          - result: FAILED
+          - failed_task: "{{ (ansible_failed_task is defined) | ternary(ansible_failed_task.name, 'UNKNOWN') }}"
+
     - name: Run must-gather
       ansible.builtin.include_role:
         name: tools_must-gather
