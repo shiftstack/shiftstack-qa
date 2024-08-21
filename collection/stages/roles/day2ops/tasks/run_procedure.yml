@@ -1,5 +1,4 @@
 ---
-# TBD: Pending to be improved as part of https://issues.redhat.com/browse/OSPRH-4171
 - name: Assert that the day2ops procedure task file exists
   ansible.builtin.assert:
     that:
@@ -13,7 +12,22 @@
       Running task file {{ procedure_task_file }}
 
 - name: Run day2ops procedure {{ procedure_task_file }}
+  vars:
+    procedure: "{{ procedure_task_file | regex_replace('\\.yml$', '') }}"
+    report_path: "{{ report_dir }}/{{ day2ops_report_filename }}"
   block:
+
+    - name: Create entry on report
+      community.general.xml:
+        path: "{{ report_path }}"
+        xpath: /day2ops/{{ procedure }}
+
+    - name: Store start time on report for {{ procedure }}
+      community.general.xml:
+        path: "{{ report_path }}"
+        xpath: /day2ops/{{ procedure }}
+        attribute: start_time
+        value: "{{ lookup('pipe', 'date +%Y-%m-%dT%H:%M:%S') }}"
 
     - name: Run the day2ops procedure
       ansible.builtin.include_tasks: "procedures/{{ procedure_task_file }}"
@@ -24,15 +38,44 @@
       vars:
         skip_mustgather_generation: true
 
+    - name: Write result:SUCCESS on report for {{ procedure }}
+      community.general.xml:
+        path: "{{ report_path }}"
+        xpath: /day2ops/{{ procedure }}
+        attribute: result
+        value: PASSED
+
   rescue:
+    - name: Write result:FAILED on report for {{ procedure }}
+      community.general.xml:
+        path: "{{ report_path }}"
+        xpath: /day2ops/{{ procedure }}
+        attribute: result
+        value: FAILED
+
+    - name: Write failed_task on report for {{ procedure }}
+      community.general.xml:
+        path: "{{ report_path }}"
+        xpath: /day2ops/{{ procedure }}
+        attribute: failed_task
+        value: "{{ (ansible_failed_task is defined) | ternary(ansible_failed_task.name, 'UNKNOWN') }}"
+
     - name: Run must-gather
       ansible.builtin.include_role:
         name: tools_must-gather
       vars:
-        must_gather_suffix: "{{ procedure_task_file | regex_replace('\\.yml$', '') }}"
+        must_gather_suffix: "{{ procedure }}"
 
     - name: Fail the playbook in a case of failure
       ansible.builtin.fail:
         msg: >
           Failed! See logs and must-gather for more information.
           The {{ procedure_task_file }} task file failed.
+
+  always:
+    - name: Write end_time on report for {{ procedure }}
+      community.general.xml:
+        path: "{{ report_path }}"
+        xpath: /day2ops/{{ procedure }}
+        attribute: end_time
+        value: "{{ lookup('pipe', 'date +%Y-%m-%dT%H:%M:%S') }}"
