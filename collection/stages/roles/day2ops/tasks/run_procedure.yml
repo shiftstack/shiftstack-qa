@@ -15,6 +15,18 @@
 - name: Run day2ops procedure {{ procedure_task_file }}
   block:
 
+    - name: Create entry on report
+      community.general.xml:
+        path: "{{ report_dir }}/{{ day2ops_report_filename }}"
+        xpath: /day2ops/{{ procedure_task_file | regex_replace('\\.yml$', '') }}
+
+    - name: Store start time on report
+      community.general.xml:
+        path: "{{ report_dir }}/{{ day2ops_report_filename }}"
+        xpath: /day2ops/{{ procedure_task_file | regex_replace('\\.yml$', '') }}
+        attribute: start_time
+        value: "TBD"
+
     - name: Run the day2ops procedure
       ansible.builtin.include_tasks: "procedures/{{ procedure_task_file }}"
 
@@ -24,7 +36,42 @@
       vars:
         skip_mustgather_generation: true
 
+    - name: Write SUCCESS entry on junit report
+      community.general.xml:
+        path: "{{ report_dir }}/{{ day2ops_report_filename }}"
+        xpath: /day2ops/{{ procedure_task_file | regex_replace('\\.yml$', '') }}
+        attribute: result
+        value: PASSED
+
+    - name: Store end time on report
+      community.general.xml:
+        path: "{{ report_dir }}/{{ day2ops_report_filename }}"
+        xpath: /day2ops/{{ procedure_task_file | regex_replace('\\.yml$', '') }}
+        attribute: end_time
+        value: "TBD"
+
   rescue:
+    - name: Write result:FAILED on junit report for the procedure
+      community.general.xml:
+        path: "{{ report_dir }}/{{ day2ops_report_filename }}"
+        xpath: /day2ops/{{ procedure_task_file | regex_replace('\\.yml$', '') }}
+        attribute: result
+        value: FAILED
+
+    - name: Write failed_task on junit report for the procedure
+      community.general.xml:
+        path: "{{ report_dir }}/{{ day2ops_report_filename }}"
+        xpath: /day2ops/{{ procedure_task_file | regex_replace('\\.yml$', '') }}
+        attribute: failed_task
+        value: "{{ (ansible_failed_task is defined) | ternary(ansible_failed_task.name, 'UNKNOWN') }}"
+
+    - name: Store end time on report
+      community.general.xml:
+        path: "{{ report_dir }}/{{ day2ops_report_filename }}"
+        xpath: /day2ops/{{ procedure_task_file | regex_replace('\\.yml$', '') }}
+        attribute: end_time
+        value: "TBD"
+
     - name: Run must-gather
       ansible.builtin.include_role:
         name: tools_must-gather
