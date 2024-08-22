@@ -45,6 +45,30 @@
       },
       "revId": "52228344491c31f2bd4a5c66059ec957b5db1b5f",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2e50abdd_a818b337",
+        "filename": "collection/tools/roles/tools_installer_host/tasks/install_squid.yml",
+        "patchSetId": 9
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-08-22T11:05:40Z",
+      "side": 1,
+      "message": "The differences between legacy and OSP 18 in relation to CA certificate are:\n- In legacy we have an undercloud with RHEL, the CA cert location is \"/etc/pki/ca-trust/source/anchors/undercloud-cacert.pem\" (already in the system bundle)\n- In OSP 18 we have a pod with Fedora, the CA cert location is \"{{ home_dir }}/.original-config/cert/ca.crt\" (not in the system bundle), it\u0027s mounted as a volume like in the openstackclient pod\n\nWhen we deploy an installer host (RHEL):\n- In legacy it is being copied to the same location \"/etc/pki/ca-trust/source/anchors/undercloud-cacert.pem\" and then added to the system bundle\n   · \u0027cacert\u0027 is used for CA cert location in both the undercloud and the installer host\n- In OSP 18 we copy \"{{ home_dir }}/.original-config/cert/ca.crt\" from the pod to \"/etc/pki/ca-trust/source/anchors/ca.crt\" in the installer host and then added to the system bundle (https://review.gerrithub.io/c/shiftstack/shiftstack-qa/+/1196160)\n   · \u0027cacert\u0027 is used for CA cert location in the pod\n   · \u0027installer_host_cacert\u0027 is used for CA cert location in the installer host\n\nSo in this case I think it\u0027s necessary to differentiate between legacy and non legacy envs:\n```\n cacert: \"{{ legacy_installation | ternary(cacert, installer_host_cacert) }}\"\n```\n\nIn any case when testing it in OSP 18 I would check the content of \"/etc/pki/ca-trust/source/anchors/ca.crt\" in the installer host, it should contain two appended certificates if I\u0027m not wrong.",
+      "parentUuid": "dd2902cd_94e8b02e",
+      "range": {
+        "startLine": 27,
+        "startChar": 0,
+        "endLine": 27,
+        "endChar": 28
+      },
+      "revId": "52228344491c31f2bd4a5c66059ec957b5db1b5f",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
