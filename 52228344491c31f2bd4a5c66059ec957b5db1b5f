@@ -69,6 +69,30 @@
       },
       "revId": "52228344491c31f2bd4a5c66059ec957b5db1b5f",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a465e5fc_ed31f85a",
+        "filename": "collection/tools/roles/tools_installer_host/tasks/install_squid.yml",
+        "patchSetId": 9
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-08-22T14:52:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2e50abdd_a818b337",
+      "range": {
+        "startLine": 27,
+        "startChar": 0,
+        "endLine": 27,
+        "endChar": 28
+      },
+      "revId": "52228344491c31f2bd4a5c66059ec957b5db1b5f",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
