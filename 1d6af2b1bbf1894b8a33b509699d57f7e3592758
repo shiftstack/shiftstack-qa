@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f19a1719_06c5b9d7",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-08-22T13:39:29Z",
+      "side": 1,
+      "message": "tested locally:\n\n```\n$ cat test_results/shiftstack-qa-day2ops-results.xml \n\u003c?xml version\u003d\u00271.0\u0027 encoding\u003d\u0027UTF-8\u0027?\u003e\n\u003cday2ops\u003e\n\u003cmoving-etcd-to-ephemeral start_time\u003d\"2024-08-22T13:32:09\" result\u003d\"FAILED\" failed_task\u003d\"fail on purpose\" end_time\u003d\"2024-08-22T13:36:14\"/\u003e\u003c/day2ops\u003e\n```",
+      "revId": "1d6af2b1bbf1894b8a33b509699d57f7e3592758",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
