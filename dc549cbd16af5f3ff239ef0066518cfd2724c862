@@ -96,6 +96,30 @@
       },
       "revId": "dc549cbd16af5f3ff239ef0066518cfd2724c862",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7e7e12c4_6e3d768e",
+        "filename": "collection/tools/roles/tools_upi/tasks/run_ansible.yml",
+        "patchSetId": 18
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-08-22T14:45:14Z",
+      "side": 1,
+      "message": "sure it is. thanks!",
+      "parentUuid": "6bb37079_683e2f21",
+      "range": {
+        "startLine": 19,
+        "startChar": 16,
+        "endLine": 19,
+        "endChar": 21
+      },
+      "revId": "dc549cbd16af5f3ff239ef0066518cfd2724c862",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
