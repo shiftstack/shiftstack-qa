@@ -16,6 +16,46 @@
       "message": "recheck",
       "revId": "dc549cbd16af5f3ff239ef0066518cfd2724c862",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9ac79f8b_811f0070",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 18
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-08-22T14:26:00Z",
+      "side": 1,
+      "message": "Verified with RHOSO titan02 env and UPI installation.",
+      "revId": "dc549cbd16af5f3ff239ef0066518cfd2724c862",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2b70b728_690ebe82",
+        "filename": "collection/stages/roles/cleanup/tasks/openstack_project_cleanup.yml",
+        "patchSetId": 18
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-08-22T14:26:00Z",
+      "side": 1,
+      "message": "Run example on titan02 with UPI installation:\n```\n32│  messages:\n33│  - \u0027Deleting floating_ip with ID: 470c325c-2ec1-4e3d-82a0-7589497cbe6f\u0027\n34│  - \u0027Floating_ip with id: 470c325c-2ec1-4e3d-82a0-7589497cbe6f deleted successfully\u0027\n35│  - \u0027Deleting floating_ip with ID: 780b244a-a7e1-4794-842e-2898f5123354\u0027\n36│  - \u0027Floating_ip with id: 780b244a-a7e1-4794-842e-2898f5123354 deleted successfully\u0027\n37│  - \u0027Deleting floating_ip with ID: ad155ce5-38ac-48ee-9338-49a3a56755f8\u0027\n38│  - \u0027Floating_ip with id: ad155ce5-38ac-48ee-9338-49a3a56755f8 deleted successfully\u0027\n39│  - \u0027Deleting floating_ip with ID: d2cc7b6f-ba42-4627-8fe4-10fbeb08b385\u0027\n40│  - \u0027Floating_ip with id: d2cc7b6f-ba42-4627-8fe4-10fbeb08b385 deleted successfully\u0027\n41│  - \u0027Deleting router with ID: d9379bd8-4fba-4ba5-a963-0339ad6289ee\u0027\n42│  - Detaching interface a21fab0c-14db-4b89-95d4-5c6a5b683377 from router d9379bd8-4fba-4ba5-a963-0339ad6289ee\n43│  - Detached interface a21fab0c-14db-4b89-95d4-5c6a5b683377 from router d9379bd8-4fba-4ba5-a963-0339ad6289ee                                                                                                      ▒\n44│  - \u0027Router with id: d9379bd8-4fba-4ba5-a963-0339ad6289ee deleted successfully\u0027                                                                                                                                   ▒\n45│  - \u0027Deleting server with ID: c436603b-ed6c-4d34-af41-aea32efc5712\u0027                                                                                                                                               ▒\n46│  - \u0027Server with id: c436603b-ed6c-4d34-af41-aea32efc5712 deleted successfully\u0027                                                                                                                                   ▒\n47│  - \u0027Deleting port with ID: 469e49d2-7f04-4921-9b96-96398042362a\u0027                                                                                                                                                 ▒\n48│  - \u0027Port with id: 469e49d2-7f04-4921-9b96-96398042362a deleted successfully\u0027                                                                                                                                     ▒\n49│  - \u0027Deleting port with ID: ceb02a67-aa58-4e90-84e5-0b21ef8ae83e\u0027                                                                                                                                                 ▒\n50│  - \u0027Port with id: ceb02a67-aa58-4e90-84e5-0b21ef8ae83e deleted successfully\u0027                                                                                                                                     ▒\n51│  - \u0027Deleting subnet with ID: 760217a7-59ce-4738-9f84-39445c4ff74d\u0027                                                                                                                                               ▒\n52│  - \u0027Subnet with id: 760217a7-59ce-4738-9f84-39445c4ff74d deleted successfully\u0027                                                                                                                                   ▒\n53│  - \u0027Deleting network with ID: 50315816-38be-46b7-a663-bca8354def89\u0027                                                                                                                                              ▒\n54│  - \u0027Network with id: 50315816-38be-46b7-a663-bca8354def89 deleted successfully\u0027                                                                                                                                  ▒\n55│  - \u0027Deleting image with ID: e9096d03-71aa-4d3c-be94-c3464f312c2c\u0027                                                                                                                                                ▒\n56│  - \u0027Image with id: e9096d03-71aa-4d3c-be94-c3464f312c2c deleted successfully\u0027                                                                                                                                    ▒\n57│  - \u0027Deleting security_group with ID: 59be9534-25e5-459f-a4b2-9153806f452d\u0027                                                                                                                                       ▒\n58│  - \u0027Security_group with id: 59be9534-25e5-459f-a4b2-9153806f452d deleted successfully\u0027                                                                                                                           ▒\n59│  - \u0027Deleting security_group with ID: f8be4de8-2988-493e-a2d8-697769208d99\u0027                                                                                                                                       ▒\n60│  - \u0027Security_group with id: f8be4de8-2988-493e-a2d8-697769208d99 deleted successfully\u0027                                                                                                                           ▒\n61│  - \u0027Deleting flavor with ID: 5b6baeaf-8fbd-4c01-bcad-da5f70cea17b\u0027                                                                                                                                               ▒\n62│  - \u0027Flavor with id: 5b6baeaf-8fbd-4c01-bcad-da5f70cea17b deleted successfully\u0027                                                                                                                                   ▒\n63│  - \u0027Deleting flavor with ID: 9ed856e3-65bd-48ff-bbd8-b2d0475dd25a\u0027                                                                                                                                               ▒\n64│  - \u0027Flavor with id: 9ed856e3-65bd-48ff-bbd8-b2d0475dd25a deleted successfully\u0027                                                                                                                                   ▒\n65│  - \u0027Deleting flavor with ID: b04facbe-0e77-43d5-8153-c43beb6aa256\u0027                                                                                                                                               ▒\n66│  - \u0027Flavor with id: b04facbe-0e77-43d5-8153-c43beb6aa256 deleted successfully\u0027                                                                                                                                   ▒\n67│  - \u0027Deleting flavor with ID: b5c29a6e-63d9-4aee-aaa1-46e1e19f7b45\u0027                                                                                                                                               ▒\n68│  - \u0027Flavor with id: b5c29a6e-63d9-4aee-aaa1-46e1e19f7b45 deleted successfully\u0027                                                                                                                                   ▒\n69│  - \u0027Deleting flavor with ID: ca5d371e-6064-4fc0-8999-c298a5e68a11\u0027                                                                                                                                               ▒\n70│  - \u0027Flavor with id: ca5d371e-6064-4fc0-8999-c298a5e68a11 deleted successfully\u0027                                                                                                                                   ▒\n71│  - \u0027Deleting flavor with ID: fb6faa63-fa8d-443d-b258-9682cd64756f\u0027                                                                                                                                               ▒\n72│  - \u0027Flavor with id: fb6faa63-fa8d-443d-b258-9682cd64756f deleted successfully\u0027                                                                                                                                   ▒\n73│  msg: Project shiftstack purged successfully\n```",
+      "range": {
+        "startLine": 12,
+        "startChar": 0,
+        "endLine": 12,
+        "endChar": 39
+      },
+      "revId": "dc549cbd16af5f3ff239ef0066518cfd2724c862",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
