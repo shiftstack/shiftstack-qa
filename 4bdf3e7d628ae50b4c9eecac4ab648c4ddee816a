@@ -39,6 +39,30 @@
       },
       "revId": "4bdf3e7d628ae50b4c9eecac4ab648c4ddee816a",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b3e2ee8c_6e6a3a10",
+        "filename": "collection/stages/roles/day2ops/templates/day2ops-report.xml.j2",
+        "patchSetId": 6
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-08-26T11:04:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7c0de476_7aa76835",
+      "range": {
+        "startLine": 1,
+        "startChar": 1,
+        "endLine": 1,
+        "endChar": 8
+      },
+      "revId": "4bdf3e7d628ae50b4c9eecac4ab648c4ddee816a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
