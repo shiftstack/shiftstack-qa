@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "71b44e97_1f69bf39",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-08-26T10:53:51Z",
+      "side": 1,
+      "message": "great work!!",
+      "revId": "4bdf3e7d628ae50b4c9eecac4ab648c4ddee816a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7c0de476_7aa76835",
+        "filename": "collection/stages/roles/day2ops/templates/day2ops-report.xml.j2",
+        "patchSetId": 6
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-08-26T10:53:51Z",
+      "side": 1,
+      "message": "maybe we want to call it `shiftstack-day2ops`?",
+      "range": {
+        "startLine": 1,
+        "startChar": 1,
+        "endLine": 1,
+        "endChar": 8
+      },
+      "revId": "4bdf3e7d628ae50b4c9eecac4ab648c4ddee816a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
