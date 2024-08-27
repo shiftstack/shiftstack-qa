@@ -33,6 +33,24 @@
       "message": "@imatza@redhat.com I\u0027ve just merged the proxy cleanup and now this one has a conflict. Would you mind to resolve it?",
       "revId": "7339463c44ae11b060fe69eafe191dbf4da8824c",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "77c60af8_2fde9aef",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 20
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-08-27T10:08:06Z",
+      "side": 1,
+      "message": "@rlobillo@redhat.com done. thanks!",
+      "parentUuid": "1500a730_6046bd36",
+      "revId": "7339463c44ae11b060fe69eafe191dbf4da8824c",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
