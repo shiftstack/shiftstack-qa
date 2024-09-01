@@ -1,5 +1,32 @@
 ---
 # Goal: Create pvcs using manila storage class and confirms they behave as expected
+- name: "Create the {{ openshift_manila_type }} manila share type"
+  ansible.builtin.command: "openstack share type create {{ openshift_manila_type }} false"
+  environment:
+    OS_CLOUD: "{{ admin_cloud }}"
+  changed_when: true
+
+- name: Get Storage class
+  kubernetes.core.k8s_info:
+    kind: StorageClass
+    name: "csi-manila-{{ openshift_manila_type }}"
+  register: scs
+  retries: 60
+  delay: 15
+  kubeconfig: "{{ kubeconfig }}"
+  until: scs.resources|length == 1
+
+- name: "Delete the {{ openshift_manila_type }} manila share type"
+  ansible.builtin.command: "openstack share type delete {{ openshift_manila_type }}"
+  environment:
+    OS_CLOUD: "{{ admin_cloud }}"
+  changed_when: true
+
+- name: Delete the storage class
+  kubernetes.core.k8s:
+    api_version: v1
+    kind: StorageClass
+    name: "csi-manila-{{ openshift_manila_type }}"
 
 - name: Re-create {{ manila_project_name }} project
   ansible.builtin.include_role:
