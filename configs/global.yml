@@ -70,6 +70,7 @@ openstack_key_file: "{{ home_dir }}/.ssh/rhos-dfg-osasinfra-qe"
 redhat_ca_file: "https://certs.corp.redhat.com/RH-IT-Root-CA.crt"
 
 openshift_proxy_installation: false
+openshift_manila_type: "foo"
 openshift_mirror: false
 
 deploy_installer_host: false
