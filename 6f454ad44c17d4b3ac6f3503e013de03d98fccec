@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cda2a867_61438558",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2024-09-01T11:52:22Z",
+      "side": 1,
+      "message": "https://rhos-ci-staging-jenkins.lab.eng.tlv2.redhat.com/job/DFG-osasinfra-shiftstack_ci-ocp_testing/66/",
+      "revId": "6f454ad44c17d4b3ac6f3503e013de03d98fccec",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
