@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b6e3a1d0_3b8f5db4",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-09-03T10:20:44Z",
+      "side": 1,
+      "message": "This patch fix the following failure - https://sf.hosted.upshift.rdu2.redhat.com/zuul/t/tripleo-ci-internal/build/eebe329d3aa84c72b7584e53566e1443/log/logs/controller-0/ci-framework-data/tests/shiftstack/artifacts/ansible_logs/ansible-log.txt",
+      "revId": "4c08fdf6dce3c52a09a74bafce8835418a5ca76e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
