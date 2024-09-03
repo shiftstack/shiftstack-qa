@@ -5,25 +5,35 @@
     name: "{{ user_cloud }}"
     verify: "{{ admin_verify_cacert }}"
   register: openstack_project_info
+  ignore_errors: true # noqa: ignore-errors
 
-- name: Fail if more than one OpenStack "{{ user_cloud }}" project exist
-  ansible.builtin.fail:
-    msg: >-
-      Cleanup failed.
-      More than one OpenStack "{{ user_cloud }}" project: {{ openstack_project_info.projects | length }}
-  when: openstack_project_info.projects | length > 1
+- name: Notify that the OpenStack cloud doesn't exist
+  ansible.builtin.debug:
+    msg: |
+      OpenStack cloud does not exist: "{{ admin_cloud }}"
+  when: openstack_project_info is failed
 
-- name: Cleanup the ShiftStack setup
-  when: openstack_project_info.projects | length == 1
+- name: Cleanup the OpenStack project in the case the OpenStack cloud exists
+  when: openstack_project_info is succeeded
   block:
-    - name: Discover the OpenShift installation type
-      ansible.builtin.include_tasks: detect_ocp_installation.yml
+    - name: Fail if more than one OpenStack "{{ user_cloud }}" project exist
+      ansible.builtin.fail:
+        msg: >-
+          Cleanup failed.
+          More than one OpenStack "{{ user_cloud }}" project: {{ openstack_project_info.projects | length }}
+      when: openstack_project_info.projects | length > 1
 
-    - name: Destroy the OpenShift cluster if it exists
-      ansible.builtin.include_tasks: destroy_openshift_cluster.yml
-      when: existing_ocp_installation_type != ''
+    - name: Cleanup the ShiftStack setup
+      when: openstack_project_info.projects | length == 1
+      block:
+        - name: Discover the OpenShift installation type
+          ansible.builtin.include_tasks: detect_ocp_installation.yml
 
-    - name: Cleanup the OpenStack project
-      vars:
-        project: "{{ openstack_project_info.projects[0] }}"
-      ansible.builtin.include_tasks: openstack_project_cleanup.yml
+        - name: Destroy the OpenShift cluster if it exists
+          ansible.builtin.include_tasks: destroy_openshift_cluster.yml
+          when: existing_ocp_installation_type != ''
+
+        - name: Cleanup the OpenStack project
+          vars:
+            project: "{{ openstack_project_info.projects[0] }}"
+          ansible.builtin.include_tasks: openstack_project_cleanup.yml
