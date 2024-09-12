@@ -1,0 +1,11 @@
+Verified+1: rhosqeauto <aopincar+rhosqeauto@redhat.com>
+Code-Review+2: Ramón Lobillo <rlobillo@redhat.com>
+Code-Review+1: Jon Uriarte <juriarte@redhat.com>
+Code-Review+1: Itay Matza <imatza@redhat.com>
+Code-Review+1: Ziv Greenberg <zgreenbe@redhat.com>
+Submitted-by: Ramón Lobillo <rlobillo@redhat.com>
+Submitted-at: Thu, 12 Sep 2024 09:14:22 +0000
+Reviewed-on: https://review.gerrithub.io/c/shiftstack/shiftstack-qa/+/1200472
+Comments-Total: 2
+Project: shiftstack/shiftstack-qa
+Branch: refs/heads/main
