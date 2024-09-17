@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6a34a0d8_e9b63ac8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-09-17T09:38:36Z",
+      "side": 1,
+      "message": "Let\u0027s wait a bit about the evolution of the bug and the coming runs to evaluate if we should merge this.",
+      "revId": "db98ecccc1af925aba47ecd7131763ce51e1fa87",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
