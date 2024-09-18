@@ -4,7 +4,6 @@
   gather_facts: no
   vars_files:
     - "../configs/global.yml"
-    - "../configs/ocp_testing.yaml"
   pre_tasks:
     - name: Gather host environment variables
       ansible.builtin.setup:
@@ -40,7 +39,6 @@
   vars_files:
     - "../configs/global.yml"
     - "../configs/secret.yaml"
-    - "../configs/ocp_testing.yaml"
   tasks:
     - name: Prepare setup for OCP installation
       ansible.builtin.include_role:
@@ -82,7 +80,6 @@
   vars_files:
     - "../configs/global.yml"
     - "../configs/secret.yaml"
-    - "../configs/ocp_testing.yaml"
   tasks:
     - name: Install OCP on setup
       ansible.builtin.include_role:
