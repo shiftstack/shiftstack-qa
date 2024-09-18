@@ -1,4 +1,5 @@
 ---
+admin_cloud: "overcloud"
 cacert: "/etc/pki/ca-trust/source/anchors/undercloud-cacert.pem"
 cacert_tlse: "/etc/pki/ca-trust/source/anchors/ca.crt"
 legacy_installation: true
