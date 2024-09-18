@@ -1,7 +1,7 @@
 ---
 # Goal: Create pvcs using manila storage class and confirms they behave as expected
 - name: "Create the {{ openshift_manila_type }} manila share type"
-  ansible.builtin.command: "openstack share type create {{ openshift_manila_type }} false"
+  ansible.builtin.command: "openstack share type create {{ openshift_manila_type }} false {{ '--insecure' if not admin_verify_cacert else '' }}"
   environment:
     OS_CLOUD: "{{ admin_cloud }}"
   changed_when: true
@@ -17,7 +17,7 @@
   until: scs.resources|length == 1
 
 - name: "Delete the {{ openshift_manila_type }} manila share type"
-  ansible.builtin.command: "openstack share type delete {{ openshift_manila_type }}"
+  ansible.builtin.command: "openstack share type delete {{ openshift_manila_type }} {{ '--insecure' if not admin_verify_cacert else '' }}"
   environment:
     OS_CLOUD: "{{ admin_cloud }}"
   changed_when: true

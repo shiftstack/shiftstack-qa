@@ -1,9 +1,0 @@
----
-admin_cloud: default
-cacert: "{{ home_dir }}/.original-config/cert/ca.crt"
-installer_host_cacert: "/etc/pki/ca-trust/source/anchors/ca.crt"
-infra: # Store required Openstack deployment info for deploying OCP
-  external_network: public
-  region: regionOne
-  dns_servers:
-    - '192.168.122.1'

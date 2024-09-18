@@ -12,9 +12,11 @@
 #
 # Note: The ci-framework job overwriting the 'user_cloud' and 'ocp_cluster_name'.
 #       Reference: https://github.com/openstack-k8s-operators/ci-framework/pull/1882
+cacert: "{{ home_dir }}/.original-config/cert/ca.crt"
 home_dir: "{{ ansible_facts.env['HOME'] }}"
 artifacts_dir: "{{ home_dir }}/artifacts"
 installation_dir: "{{ artifacts_dir }}/installation"
+installer_host_cacert: "/etc/pki/ca-trust/source/anchors/ca.crt"
 user_cloud: "shiftstack"
 ocp_base_domain: "{{ user_cloud }}.local"
 user_cloud_installation_dir: "{{ installation_dir }}/{{ user_cloud }}"
@@ -31,7 +33,7 @@ controller_home_dir: "{{ lookup('ansible.builtin.env', 'HOME') }}"
 resources_file: "{{ controller_home_dir }}/artifacts/resources.yml"
 stage_unstable_flag: "{{ controller_home_dir }}/artifacts/stage_unstable_flag"
 
-admin_cloud: "overcloud"
+admin_cloud: "default"
 admin_env_file: "{{ osp_config_dir }}/{{ admin_cloud }}rc"
 admin_verify_cacert: false
 user_env_file: "{{ osp_config_dir }}/{{ user_cloud }}rc"
@@ -118,6 +120,12 @@ openshift_upi:
     name: ingress-upi
   router:
     name: ingress-upi
+
+infra: # Store required Openstack deployment info for deploying OCP
+  external_network: public
+  region: regionOne
+  dns_servers:
+    - '192.168.122.1'
 
 tests:
   default_go_version_target: '1.22.5'
