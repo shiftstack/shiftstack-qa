@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "65af1cc3_5c446fea",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-09-18T13:54:20Z",
+      "side": 1,
+      "message": "It would be good to know the minimum required disk and ram for the host running the job. (we need to be cautious when increasing the flavors as they need to fit in the host deploying osp + ocp)",
+      "revId": "3c269b843f6a78c80f1b26ec1e03e92c6009627b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
