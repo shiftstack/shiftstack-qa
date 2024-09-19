@@ -1,54 +1,5 @@
 ---
-# https://docs.openshift.com/container-platform/4.15/installing/installing_openstack/deploying-openstack-with-rootVolume-etcd-on-local-disk.html
-- name: Edit CPMS to add the additional block ephemeral device that is used by etcd
-  when: installation_type != 'upi'
-  block:
-    - name: Edit CPMS to add the additional block ephemeral device that is used by etcd
-      environment:
-        KUBECONFIG: "{{ kubeconfig }}"
-      ansible.builtin.shell: |
-        oc patch ControlPlaneMachineSet/cluster -n openshift-machine-api --type json -p '
-        [
-            {
-              "op": "add",
-              "path": "/spec/template/machines_v1beta1_machine_openshift_io/spec/providerSpec/value/additionalBlockDevices",
-              "value": [
-                {
-                  "name": "etcd",
-                  "sizeGiB": 10,
-                  "storage": {
-                    "type": "Local"
-                  }
-                }
-              ]
-            }
-          ]
-        '
-      changed_when: true
-
-    - name: Wait for the CPMS update to be applied
-      ansible.builtin.include_role:
-        name: tools_cluster_checks
-        tasks_from: wait_cpms_updated.yml
-      vars:
-        wait_retries: 60
-        wait_delay: 120
-
-    - name: Check the Control Plane MachineSet is healthy
-      ansible.builtin.include_role:
-        name: tools_cluster_checks
-        tasks_from: check_controlplane_machinesets.yml
-
-    - name: Active wait until all the ClusterOperators are ready
-      ansible.builtin.include_role:
-        name: tools_cluster_checks
-        tasks_from: wait_until_cluster_operators_ready.yml
-
-    - name: Wait until cluster nodes are ready
-      ansible.builtin.include_role:
-        name: tools_cluster_checks
-        tasks_from: wait_until_nodes_ready.yml
-
+# https://docs.openshift.com/container-platform/4.17/installing/installing_openstack/deploying-openstack-with-rootVolume-etcd-on-local-disk.html
 - name: Load machineconfig 98-var-lib-etcd
   kubernetes.core.k8s:
     kubeconfig: "{{ kubeconfig }}"
@@ -100,8 +51,6 @@
   vars:
     units: # From files/98-var-lib-etcd.yaml
       - var-lib-etcd.mount
-      # TODO: Take action once this thread is resolved: https://github.com/openshift/release/pull/48616/files#r1697456913
-      # - create-local-etcd.service
       - migrate-to-local-etcd.service
       - relabel-var-lib-etcd.service
   ansible.builtin.shell: |
