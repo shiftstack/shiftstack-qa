@@ -34,9 +34,21 @@ platform:
     cloud:            "{{ user_cloud }}"
     externalNetwork:  "{{ installcfg_external_network }}"
     region:           "{{ installcfg_region }}"
+{% if installation_type == 'upi' %}
+    apiVIPs: ["{{ installcfg_api_vip }}"]
+    ingressVIPs: ["{{ installcfg_ingress_vip }}"]
+    controlPlanePort:
+      network:
+        name: "{{ installcfg_machine_network_name }}"
+      fixedIPs:
+        - subnet:
+            name: "{{ installcfg_machine_subnet_name }}"
+{% endif %}
     apiFloatingIP:     "{{ installcfg_api_floating_ip }}"
     ingressFloatingIP:     "{{ installcfg_ingress_floating_ip }}"
+{% if installation_type != 'upi' %}
     externalDNS:      {{ installcfg_dns_servers }}
+{% endif %}
 pullSecret: |
   {{ ocp_pull_secret }}
 sshKey: |

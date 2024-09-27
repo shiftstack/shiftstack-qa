@@ -3,13 +3,9 @@
 upi_inventory_file: "{{ upi_playbooks_dir }}/inventory.yaml"
 upi_scripts_dir: "{{ user_cloud_installation_dir }}"
 upi_github_repo_url: "https://raw.githubusercontent.com/openshift/installer/release-{{ openshift_release }}/upi/openstack/"
+upi_netid_file: "{{ upi_playbooks_dir }}/netid.json"
 
 upi_inventory_file_values:
-  - {regexp: "os_network:.*", replace: "os_network: '{{ openshift_upi.network.name }}'"}
-  - {regexp: "os_port_api:.*", replace: "os_port_api: '{{ openshift_upi.api_vip_port.name }}'"}
-  - {regexp: "os_port_ingress:.*", replace: "os_port_ingress: '{{ openshift_upi.ingress_vip_port.name }}'"}
-  - {regexp: "os_router:.*", replace: "os_router: '{{ openshift_upi.router.name }}'"}
-  - {regexp: "os_subnet:.*", replace: "os_subnet: '{{ openshift_upi.subnets.ipv4.name }}'"}
   - {regexp: "os_subnet_range:.*", replace: "os_subnet_range: '{{ topology.machine_cidr }}'"}
   - {regexp: "os_external_network:.*", replace: "os_external_network: '{{ infra.external_network }}'"}
   - {regexp: "os_api_fip:.*", replace: "os_api_fip: '{{ resources.api_accessible_ip }}'"}
