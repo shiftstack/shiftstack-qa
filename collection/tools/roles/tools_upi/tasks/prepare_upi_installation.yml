@@ -29,23 +29,35 @@
 #
 # Upstream docs: https://github.com/openshift/installer/blob/release-4.15/docs/user/openstack/install_upi.md#create-network-api-and-ingress-ports
 
-- name: Get the UPI inventory and network resources creation playbook from '{{ upi_github_repo_url }}'
+- name: Get the UPI inventory, common file and network resources creation playbook from '{{ upi_github_repo_url }}'
   ansible.builtin.get_url:
     url: "{{ upi_github_repo_url }}/{{ item }}"
     dest: "{{ upi_playbooks_dir }}"
     mode: u=rw,g=rw,o=r
   loop:
+    - common.yaml
     - inventory.yaml
-    # - network.yaml
+    - network.yaml
     - down-network.yaml
 
-# TODO: remove this workaround when the issue updating the router in network.yaml is fixed
-- name: Workaround for https://issues.redhat.com/browse/SOSQE-213?focusedId=23699292&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-23699292
-  ansible.builtin.get_url:
-    url: "https://file.rdu.redhat.com/juriarte/upi/network.yaml"
-    dest: "{{ upi_playbooks_dir }}"
-    mode: u=rw,g=rw,o=r
-    validate_certs: false
+- name: Create a unique identifier for resource naming
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail
+      dd if=/dev/urandom count=4 bs=1 2>/dev/null | hexdump -e '"%02x"'
+    executable: /bin/bash
+  changed_when: true
+  register: random_id
+
+- name: Set network identifier
+  ansible.builtin.set_fact:
+    upi_net_id: "openshift-{{ random_id.stdout }}"
+
+- name: Store the network identifier '{{ upi_net_id }}' in a JSON file
+  ansible.builtin.copy:
+    content: "{{ {'os_net_id': upi_net_id} | to_nice_json }}"
+    dest: "{{ upi_netid_file }}"
+    mode: u=rw,g=r,o=r
 
 - name: Include vars from registered resources
   ansible.builtin.include_vars:
