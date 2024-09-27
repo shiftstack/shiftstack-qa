@@ -11,6 +11,44 @@
     api_filter: "api.{{ ocp_cluster_name }}.{{ ocp_base_domain }}"
     ingress_filter: "oauth-openshift.apps.{{ ocp_cluster_name }}.{{ ocp_base_domain }}"
 
+- name: Discover the machine network and subnet names, api VIP and ingress VIP looking by '{{ upi_net_id }}'
+  when: installation_type == 'upi'
+  block:
+    - name: Gather networks information
+      openstack.cloud.networks_info:
+        cloud: "{{ user_cloud }}"
+      register: networks_info
+
+    - name: Set the machine network name fact
+      ansible.builtin.set_fact:
+        machine_network_name: "{{ networks_info.networks | selectattr('name', 'search', upi_net_id) | map(attribute='name') | list | first }}"
+
+    - name: Gather subnets information
+      openstack.cloud.subnets_info:
+        cloud: "{{ user_cloud }}"
+      register: subnets_info
+
+    - name: Set the machine subnet name fact
+      ansible.builtin.set_fact:
+        machine_subnet_name: "{{ subnets_info.subnets | selectattr('name', 'search', upi_net_id) | map(attribute='name') | list | first }}"
+
+    - name: Gather ports information
+      openstack.cloud.port_info:
+        cloud: "{{ user_cloud }}"
+      register: ports_info
+
+    - name: Set the API VIP fact
+      vars:
+        filtered_port: "{{ ports_info.ports | selectattr('name', 'search', upi_net_id) | selectattr('name', 'search', 'api') | list }}"
+      ansible.builtin.set_fact:
+        api_vip: "{{ filtered_port | map(attribute='fixed_ips') | map('json_query', '[0].ip_address') | list | first }}"
+
+    - name: Set the Ingress VIP fact
+      vars:
+        filtered_port: "{{ ports_info.ports | selectattr('name', 'search', upi_net_id) | selectattr('name', 'search', 'ingress') | list }}"
+      ansible.builtin.set_fact:
+        ingress_vip: "{{ filtered_port | map(attribute='fixed_ips') | map('json_query', '[0].ip_address') | list | first }}"
+
 - name: Generate an OpenShift install-config.yaml in a non-proxy installation
   ansible.builtin.template:
     src: install-config.yaml.j2
@@ -33,6 +71,10 @@
     installcfg_dns_servers: "{{ infra.dns_servers }}"
     installcfg_api_floating_ip: "{{ precreated_api_fip }}"
     installcfg_ingress_floating_ip: "{{ precreated_ingress_fip }}"
+    installcfg_machine_network_name: "{{ (installation_type == 'upi') | ternary(machine_network_name, omit) }}"
+    installcfg_machine_subnet_name: "{{ (installation_type == 'upi') | ternary(machine_subnet_name, omit) }}"
+    installcfg_api_vip: "{{ (installation_type == 'upi') | ternary(api_vip, omit) }}"
+    installcfg_ingress_vip: "{{ (installation_type == 'upi') | ternary(ingress_vip, omit) }}"
   when: not openshift_proxy_installation
 
 - name: Generate an OpenShift install-config.yaml in a proxy installation
