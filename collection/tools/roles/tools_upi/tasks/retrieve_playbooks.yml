@@ -14,18 +14,13 @@
     - down-control-plane.yaml
     - down-security-groups.yaml
     - security-groups.yaml
+    - update-network-resources.yaml
 
 - name: Overwrite default (180) timeout in bootstrap server creation task (needed in slow envs)
   ansible.builtin.lineinfile:
     path: "{{ upi_playbooks_dir }}/bootstrap.yaml"
     line: "      timeout: 480"
     insertafter: "os_server"
-
-- name: Get the update-network-resources.yaml playbook
-  ansible.builtin.get_url:
-    url: "{{ upi_github_repo_url }}/update-network-resources.yaml"
-    dest: "{{ upi_playbooks_dir }}"
-    mode: u=rw,g=rw,o=r
 
 - name: Remove {{ local_template_dir }} directory in the ansible controller if exists
   ansible.builtin.file:
@@ -40,15 +35,6 @@
     mode: u=rwx,g=rw,o=r
   delegate_to: localhost
 
-- name: Get the playbook templates from {{ upi_github_repo_url }}
-  ansible.builtin.get_url:
-    url: "{{ upi_github_repo_url }}/{{ item }}"
-    dest: "{{ local_template_dir }}/{{ item }}.j2"
-    mode: u=rw,g=rw,o=r
-  loop:
-    - common.yaml
-  delegate_to: localhost
-
 - name: Replace the hardcoded values in '{{ upi_inventory_file }}'
   ansible.builtin.replace:
     path: "{{ upi_inventory_file }}"
@@ -60,80 +46,7 @@
     - {regexp: "os_cp_nodes_number:.*", replace: "os_cp_nodes_number: {{ topology.replicas.master }}"}
     - {regexp: "os_compute_nodes_number:.*", replace: "os_compute_nodes_number: {{ topology.replicas.worker }}"}
 
-- name: Replace the network and subnet values in common.yaml.j2 when we are using an existing network
-  ansible.builtin.replace:
-    path: "{{ local_template_dir }}/common.yaml.j2"
-    regexp: "{{ item.regexp }}"
-    replace: "{{ item.replace }}"
-  with_items:
-    - {regexp: "os_network:.*", replace: "os_network: {{ custom_network }}"}
-    - {regexp: "os_subnet:.*", replace: "os_subnet: {{ custom_subnet }}"}
-  when:
-    - custom_network != ''
-  delegate_to: localhost
-
-- name: Add bootstrap flavor to common.yaml.j2
-  ansible.builtin.blockinfile:
-    path: "{{ local_template_dir }}/common.yaml.j2"
-    block: |
-        # bootstrap flavor
-              os_bootstrap_flavor: "{{ topology.flavors.bootstrap.name }}"
-        # workers flavors
-              os_workers_flavors: {{ osp_workers_flavors | default([]) }}
-  delegate_to: localhost
-
-- name: Add  worker ports to common.yaml.j2
-  ansible.builtin.blockinfile:
-    path: "{{ local_template_dir }}/common.yaml.j2"
-    marker: "#{mark} workers_ports"
-    block: |
-        # workers ports
-              os_worker_ports: {{ custom_ports }}
-  delegate_to: localhost
-  when: custom_ports
-
-# TODO: Needs to be adapted for OCP >= 4.15, os_router is defined in inventory.yaml
-# instead of in common.yaml so the custom_router param needs to be passed in the
-# prepare stage and the replacement done in create_network_resources.yml
-- name: Replace the the router value in common.yaml.j2 when we are using an existing router
-  ansible.builtin.replace:
-    path: "{{ local_template_dir }}/common.yaml.j2"
-    regexp: "{{ item.regexp }}"
-    replace: "{{ item.replace }}"
-  with_items:
-    - {regexp: "os_router:.*", replace: "os_router: {{ custom_router }}"}
-  when: custom_router != ''
-  delegate_to: localhost
-
-- name: Generate the common playbook file based on the template
-  ansible.builtin.template:
-    src: "{{ local_template_dir }}/common.yaml.j2"
-    dest: "{{ upi_playbooks_dir }}/common.yaml"
-    mode: u=rw,g=rw,o=r
-  vars:
-    infraID: "{{ ocp_infra_id }}" # noqa: var-naming[pattern]
-
-- name: Copy the network.yaml playbook to the installer host VM when using predefined network and router
-  ansible.builtin.copy:
-    src: "playbooks/sriov/{{ item }}.yaml"
-    dest: "{{ upi_playbooks_dir }}/{{ item }}.yaml"
-    mode: u=rw,g=rw,o=r
-  when:
-    - custom_network != ''
-    - custom_router != ''
-  loop:
-    - network
-    - compute-nodes
-    - control-plane
-
-- name: Copy the bootstrap.yaml playbook to the installer host VM when using predefined network and router
-  ansible.builtin.copy:
-    src: "playbooks/sriov/bootstrap.yaml"
-    dest: "{{ upi_playbooks_dir }}/bootstrap.yaml"
-    mode: u=rw,g=rw,o=r
-  when: custom_network != '' and custom_router != ''
-
-- name: Copy the manual destroy script (not executed by the job)
+- name: Copy the manual destroy script (not executed by the job) to '{{ upi_playbooks_dir }}'
   ansible.builtin.copy:
     content: |
       #!/bin/bash
@@ -147,5 +60,5 @@
         "{{ upi_playbooks_dir }}/down-containers.yaml"     \
         "{{ upi_playbooks_dir }}/down-network.yaml"        \
         "{{ upi_playbooks_dir }}/down-security-groups.yaml"
-    dest: "{{ home_dir }}/manual-destroy.sh"
+    dest: "{{ upi_playbooks_dir }}/manual-destroy.sh"
     mode: u=rw,g=rw,o=r
