@@ -14,18 +14,13 @@
     - down-control-plane.yaml
     - down-security-groups.yaml
     - security-groups.yaml
+    - update-network-resources.yaml
 
 - name: Overwrite default (180) timeout in bootstrap server creation task (needed in slow envs)
   ansible.builtin.lineinfile:
     path: "{{ upi_playbooks_dir }}/bootstrap.yaml"
     line: "      timeout: 480"
     insertafter: "os_server"
-
-- name: Get the update-network-resources.yaml playbook
-  ansible.builtin.get_url:
-    url: "{{ upi_github_repo_url }}/update-network-resources.yaml"
-    dest: "{{ upi_playbooks_dir }}"
-    mode: u=rw,g=rw,o=r
 
 - name: Remove {{ local_template_dir }} directory in the ansible controller if exists
   ansible.builtin.file:
@@ -38,15 +33,6 @@
     path: "{{ local_template_dir }}"
     state: directory
     mode: u=rwx,g=rw,o=r
-  delegate_to: localhost
-
-- name: Get the playbook templates from {{ upi_github_repo_url }}
-  ansible.builtin.get_url:
-    url: "{{ upi_github_repo_url }}/{{ item }}"
-    dest: "{{ local_template_dir }}/{{ item }}.j2"
-    mode: u=rw,g=rw,o=r
-  loop:
-    - common.yaml
   delegate_to: localhost
 
 - name: Replace the hardcoded values in '{{ upi_inventory_file }}'
@@ -71,7 +57,6 @@
   when:
     - custom_network != ''
   delegate_to: localhost
-
 - name: Add bootstrap flavor to common.yaml.j2
   ansible.builtin.blockinfile:
     path: "{{ local_template_dir }}/common.yaml.j2"
@@ -81,7 +66,6 @@
         # workers flavors
               os_workers_flavors: {{ osp_workers_flavors | default([]) }}
   delegate_to: localhost
-
 - name: Add  worker ports to common.yaml.j2
   ansible.builtin.blockinfile:
     path: "{{ local_template_dir }}/common.yaml.j2"
@@ -104,7 +88,6 @@
     - {regexp: "os_router:.*", replace: "os_router: {{ custom_router }}"}
   when: custom_router != ''
   delegate_to: localhost
-
 - name: Generate the common playbook file based on the template
   ansible.builtin.template:
     src: "{{ local_template_dir }}/common.yaml.j2"
@@ -112,7 +95,6 @@
     mode: u=rw,g=rw,o=r
   vars:
     infraID: "{{ ocp_infra_id }}" # noqa: var-naming[pattern]
-
 - name: Copy the network.yaml playbook to the installer host VM when using predefined network and router
   ansible.builtin.copy:
     src: "playbooks/sriov/{{ item }}.yaml"
@@ -125,7 +107,6 @@
     - network
     - compute-nodes
     - control-plane
-
 - name: Copy the bootstrap.yaml playbook to the installer host VM when using predefined network and router
   ansible.builtin.copy:
     src: "playbooks/sriov/bootstrap.yaml"
@@ -133,7 +114,7 @@
     mode: u=rw,g=rw,o=r
   when: custom_network != '' and custom_router != ''
 
-- name: Copy the manual destroy script (not executed by the job)
+- name: Copy the manual destroy script (not executed by the job) to '{{ upi_playbooks_dir }}'
   ansible.builtin.copy:
     content: |
       #!/bin/bash
@@ -147,5 +128,5 @@
         "{{ upi_playbooks_dir }}/down-containers.yaml"     \
         "{{ upi_playbooks_dir }}/down-network.yaml"        \
         "{{ upi_playbooks_dir }}/down-security-groups.yaml"
-    dest: "{{ home_dir }}/manual-destroy.sh"
+    dest: "{{ upi_playbooks_dir }}/manual-destroy.sh"
     mode: u=rw,g=rw,o=r
