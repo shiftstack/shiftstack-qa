@@ -108,18 +108,6 @@ inventory:
   backup_file: "{{ artifacts_dir }}/hosts-installer.bck"
 
 upi_playbooks_logs_dir: "{{ upi_playbooks_dir }}/playbooks_logs"
-openshift_upi:
-  network:
-    name: network-upi
-  subnets:
-    ipv4:
-      name: subnet-upi
-  api_vip_port:
-    name: api-upi
-  ingress_vip_port:
-    name: ingress-upi
-  router:
-    name: ingress-upi
 
 infra: # Store required Openstack deployment info for deploying OCP
   external_network: public
