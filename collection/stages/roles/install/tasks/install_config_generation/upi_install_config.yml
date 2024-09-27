@@ -1,0 +1,63 @@
+---
+# Discover the machine network and subnet names, api VIP and ingress VIP looking by '{{ upi_net_id }}'.
+# Those names are defined in the common.yaml UPI playbook.
+- name: Gather networks information
+  openstack.cloud.networks_info:
+    cloud: "{{ user_cloud }}"
+  register: networks_info
+
+- name: Set the machine network name fact
+  ansible.builtin.set_fact:
+    machine_network_name: "{{ networks_info.networks | selectattr('name', 'search', upi_net_id) | map(attribute='name') | list | first }}"
+
+- name: Gather subnets information
+  openstack.cloud.subnets_info:
+    cloud: "{{ user_cloud }}"
+  register: subnets_info
+
+- name: Set the machine subnet name fact
+  ansible.builtin.set_fact:
+    machine_subnet_name: "{{ subnets_info.subnets | selectattr('name', 'search', upi_net_id) | map(attribute='name') | list | first }}"
+
+- name: Gather ports information
+  openstack.cloud.port_info:
+    cloud: "{{ user_cloud }}"
+  register: ports_info
+
+- name: Set the API VIP fact
+  vars:
+    filtered_port: "{{ ports_info.ports | selectattr('name', 'search', upi_net_id) | selectattr('name', 'search', 'api') | list }}"
+  ansible.builtin.set_fact:
+    api_vip: "{{ filtered_port | map(attribute='fixed_ips') | map('json_query', '[0].ip_address') | list | first }}"
+
+- name: Set the Ingress VIP fact
+  vars:
+    filtered_port: "{{ ports_info.ports | selectattr('name', 'search', upi_net_id) | selectattr('name', 'search', 'ingress') | list }}"
+  ansible.builtin.set_fact:
+    ingress_vip: "{{ filtered_port | map(attribute='fixed_ips') | map('json_query', '[0].ip_address') | list | first }}"
+
+- name: Generate install-config.yaml from install-config-upi.yaml.j2 template
+  ansible.builtin.template:
+    src: install-config-upi.yaml.j2
+    dest: "{{ user_cloud_installation_dir }}/install-config.yaml"
+    mode: u=rw,g=rw,o=r
+  vars:
+    installcfg_ocp_base_domain: "{{ ocp_base_domain }}"
+    installcfg_cluster_name: "{{ ocp_cluster_name }}"
+    installcfg_worker_flavor: "{{ topology.flavors.worker.name }}"
+    installcfg_worker_servergrouppolicy: "{{ topology.servergroups.worker | default('') }}"
+    installcfg_worker_replicas: "{{ '0' }}"
+    installcfg_master_flavor: "{{ topology.flavors.master.name }}"
+    installcfg_master_servergrouppolicy: "{{ topology.servergroups.master | default('') }}"
+    installcfg_ctrl_rootvolume: "{{ topology.controlplane_rootvolume | default({}) }}"
+    installcfg_master_replicas: "{{ topology.replicas.master }}"
+    installcfg_machine_cidr: "{{ topology.machine_cidr }}"
+    installcfg_network_type: "{{ openshift_network_type }}"
+    installcfg_external_network: "{{ infra.external_network }}"
+    installcfg_region: "{{ infra.region }}"
+    installcfg_api_floating_ip: "{{ precreated_api_fip }}"
+    installcfg_ingress_floating_ip: "{{ precreated_ingress_fip }}"
+    installcfg_machine_network_name: "{{ machine_network_name }}"
+    installcfg_machine_subnet_name: "{{ machine_subnet_name }}"
+    installcfg_api_vip: "{{ api_vip }}"
+    installcfg_ingress_vip: "{{ ingress_vip }}"
