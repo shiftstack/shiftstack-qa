@@ -1,0 +1,40 @@
+---
+- name: Prepare the OpenShift environment for installation and testing new candidate
+  hosts: localhost
+  gather_facts: no
+  vars_files:
+    - "../../configs/global.yml"
+    - "../../configs/secret.yaml"
+  tasks:
+    - name: Prepare setup for OCP installation
+      ansible.builtin.include_role:
+        name: shiftstack.stages.prepare
+      when: "'prepare' in stages"
+  post_tasks:
+    - name: Update the Ansible inventory in case not deploying an installer host
+      ansible.builtin.include_role:
+        name: shiftstack.tools.tools_ansible_inventory
+        tasks_from: create_installer_group.yml
+      when: "not deploy_installer_host"
+
+
+- name: Prepare the OpenShift installer and client in the installer host
+  hosts: installer
+  gather_facts: no
+  vars_files:
+    - "../../configs/global.yml"
+  pre_tasks:
+    - name: Gather host environment variables
+      ansible.builtin.setup:
+        gather_subset:
+          - env
+
+    - name: Set the openstack_version based on the previous discovery
+      ansible.builtin.set_fact:
+        openstack_version: "{{ hostvars['localhost']['openstack_version'] }}"
+  tasks:
+    - name: Get OCP installer and client in the installer host
+      ansible.builtin.include_role:
+        name: shiftstack.stages.prepare
+        tasks_from: get_installer.yml
+      when: "'prepare' in stages"

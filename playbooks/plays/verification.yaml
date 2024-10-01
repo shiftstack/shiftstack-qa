@@ -1,0 +1,10 @@
+---
+- name: Verify the OpenShift cluster
+  hosts: installer
+  gather_facts: no
+  vars_files:
+    - "../../configs/global.yml"
+  tasks:
+    - name: Run OCP verification checks
+      ansible.builtin.include_role:
+        name: shiftstack.stages.verification

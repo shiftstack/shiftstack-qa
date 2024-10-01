@@ -1,0 +1,16 @@
+---
+- name: Post OpenShift installation stage
+  hosts: installer
+  gather_facts: no
+  vars_files:
+    - "../configs/global.yml"
+  tasks:
+    - name: Discover OCP version and networkType
+      ansible.builtin.include_role:
+        name: shiftstack.tools.tools_get_deploy_info
+        tasks_from: discover_ocp_version.yml
+
+    - name: Run post operations and OCP verification checks on setup
+      ansible.builtin.include_role:
+        name: shiftstack.stages.post
+      when: "'post' in stages"

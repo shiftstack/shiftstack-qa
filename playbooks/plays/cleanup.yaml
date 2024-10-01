@@ -1,0 +1,56 @@
+---
+- name: Cleanup the OCP setup and prepare the environment for testing OCP on OpenStack 18
+  hosts: localhost
+  gather_facts: no
+  vars_files:
+    - "../../configs/global.yml"
+  pre_tasks:
+    - name: Gather host environment variables
+      ansible.builtin.setup:
+        gather_subset:
+          - env
+
+    - name: Cleanup workspace flags - Remove the stage_unstable_flag if it exists
+      ansible.builtin.file:
+        path: "{{ stage_unstable_flag }}"
+        state: absent
+  tasks:
+    - name: Main cleanup block
+      block:
+        - name: Fail if the OpenShift cleanup did not succeed
+          ansible.builtin.fail:
+            msg: "Destroy OpenShift Cluster failed or timed out"
+
+        - name: Discover the OSP version
+          ansible.builtin.include_role:
+            name: shiftstack.tools.tools_get_deploy_info
+            tasks_from: discover_osp_version.yml
+
+        - name: Cleanup the setup
+          ansible.builtin.include_role:
+            name: shiftstack.stages.cleanup
+          when: "'cleanup' in stages"
+
+        - name: Restore the OpenStack original config directory (includes the clouds.yaml and secure.yaml)
+          ansible.builtin.copy:
+            src: "{{ home_dir }}/.original-config/openstack/"
+            dest: "{{ home_dir }}/.config/openstack/"
+            remote_src: yes
+            mode: u=rwx,g=rwx,o=rwx
+          when: "'cleanup' in stages or 'prepare' in stages"
+
+      always:
+        - name: Check if source directory exists
+          ansible.builtin.stat:
+            path: "{{ artifacts_dir }}"
+          register: source_dir_stat
+
+        - name: Synchronize artifacts from the Ansible Managed Node to Ansible Controller
+          ansible.posix.synchronize:
+            src: "{{ artifacts_dir }}"
+            dest: "{{ controller_home_dir }}"
+            mode: pull
+            recursive: yes
+            times: false
+            perms: false
+          when: source_dir_stat.stat.exists
