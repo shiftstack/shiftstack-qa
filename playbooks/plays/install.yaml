@@ -1,0 +1,29 @@
+---
+- name: Install OpenShift new candidate on OSP
+  hosts: installer
+  gather_facts: no
+  vars_files:
+    - "../../configs/global.yml"
+    - "../../configs/secret.yaml"
+  tasks:
+    - name: Main block
+      block:
+        - name: Install OCP on setup
+          ansible.builtin.include_role:
+            name: shiftstack.stages.install
+
+      rescue:
+        - name: Check if source directory exists
+          ansible.builtin.stat:
+            path: "{{ artifacts_dir }}"
+          register: source_dir_stat
+
+        - name: Synchronize artifacts from the Ansible Managed Node to Ansible Controller
+          ansible.posix.synchronize:
+            src: "{{ artifacts_dir }}"
+            dest: "{{ controller_home_dir }}"
+            mode: pull
+            recursive: yes
+            times: false
+            perms: false
+          when: source_dir_stat.stat.exists
