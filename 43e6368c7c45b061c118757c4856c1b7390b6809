@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7a186b74_a4a6bee9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 9
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-10-01T20:20:33Z",
+      "side": 1,
+      "message": "Tested 4.16 UPI installation, cleanup and IPI installation",
+      "revId": "43e6368c7c45b061c118757c4856c1b7390b6809",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
