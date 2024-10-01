@@ -1,0 +1,34 @@
+---
+- name: Cleanup the OCP setup and prepare the environment for testing OCP on OpenStack 18
+  hosts: localhost
+  gather_facts: no
+  vars_files:
+    - "../../configs/global.yml"
+  pre_tasks:
+    - name: Gather host environment variables
+      ansible.builtin.setup:
+        gather_subset:
+          - env
+
+    - name: Cleanup workspace flags - Remove the stage_unstable_flag if it exists
+      ansible.builtin.file:
+        path: "{{ stage_unstable_flag }}"
+        state: absent
+  tasks:
+    - name: Discover the OSP version
+      ansible.builtin.include_role:
+        name: shiftstack.tools.tools_get_deploy_info
+        tasks_from: discover_osp_version.yml
+
+    - name: Cleanup the setup
+      ansible.builtin.include_role:
+        name: shiftstack.stages.cleanup
+      when: "'cleanup' in stages"
+
+    - name: Restore the OpenStack original config directory (includes the clouds.yaml and secure.yaml)
+      ansible.builtin.copy:
+        src: "{{ home_dir }}/.original-config/openstack/"
+        dest: "{{ home_dir }}/.config/openstack/"
+        remote_src: yes
+        mode: u=rwx,g=rwx,o=rwx
+      when: "'cleanup' in stages or 'prepare' in stages"
