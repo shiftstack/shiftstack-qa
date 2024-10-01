@@ -33,6 +33,7 @@
         mode: u=rwx,g=rwx,o=rwx
       when: "'cleanup' in stages or 'prepare' in stages"
 
+
 - name: Prepare the OpenShift environment for installation and testing new candidate
   hosts: localhost
   gather_facts: no
@@ -115,6 +116,7 @@
         name: shiftstack.stages.verification
       when: "'verification' in stages"
 
+
 - name: Day2ops OpenShift stage
   hosts: installer
   gather_facts: no
@@ -128,6 +130,7 @@
         day2ops_steps: "{{ day2ops_procedures }}"
       when: "'day2ops' in stages"
 
+
 - name: Run Openstack-Test on OpenShift
   hosts: installer
   gather_facts: no
@@ -139,6 +142,7 @@
         name: shiftstack.stages.openstack_test
       when: "'openstack_test' in stages"
 
+
 - name: Run LB-Test on OpenShift
   hosts: installer
   gather_facts: no
@@ -149,6 +153,7 @@
       ansible.builtin.include_role:
         name: shiftstack.stages.lb_tests
       when: "'lb_tests' in stages"
+
 
 - name: Run Openshift Conformance Test on OpenShift
   hosts: installer
@@ -194,15 +199,20 @@
   vars_files:
     - "../configs/global.yml"
   pre_tasks:
+    - name: Clear host errors to ensure post-tasks run even after failures in previous steps
+      ansible.builtin.meta: clear_host_errors
+      tags: always
     - name: Gather host environment variables
       ansible.builtin.setup:
         gather_subset:
           - env
+      tags: always
   tasks:
     - name: Check if source directory exists
       ansible.builtin.stat:
         path: "{{ artifacts_dir }}"
       register: source_dir_stat
+      tags: always
 
     - name: Synchronize artifacts from the Ansible Managed Node to Ansible Controller
       ansible.posix.synchronize:
@@ -213,3 +223,4 @@
         times: false
         perms: false
       when: source_dir_stat.stat.exists
+      tags: always
