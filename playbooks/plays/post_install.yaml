@@ -1,0 +1,34 @@
+---
+- name: Post OpenShift installation stage
+  hosts: installer
+  gather_facts: no
+  vars_files:
+    - "../configs/global.yml"
+  tasks:
+    - name: Main block
+      block:
+        - name: Discover OCP version and networkType
+          ansible.builtin.include_role:
+            name: shiftstack.tools.tools_get_deploy_info
+            tasks_from: discover_ocp_version.yml
+
+        - name: Run post operations and OCP verification checks on setup
+          ansible.builtin.include_role:
+            name: shiftstack.stages.post
+          when: "'post' in stages"
+
+      always:
+        - name: Check if source directory exists
+          ansible.builtin.stat:
+            path: "{{ artifacts_dir }}"
+          register: source_dir_stat
+
+        - name: Synchronize artifacts from the Ansible Managed Node to Ansible Controller
+          ansible.posix.synchronize:
+            src: "{{ artifacts_dir }}"
+            dest: "{{ controller_home_dir }}"
+            mode: pull
+            recursive: yes
+            times: false
+            perms: false
+          when: source_dir_stat.stat.exists
