@@ -168,30 +168,3 @@
         name: shiftstack.stages.csi_tests
         tasks_from: openshift_manila_csi.yml
       when: "'manila_csi_tests' in stages"
-
-
-- name: Post steps
-  hosts: installer
-  gather_facts: no
-  vars_files:
-    - "../configs/global.yml"
-  pre_tasks:
-    - name: Gather host environment variables
-      ansible.builtin.setup:
-        gather_subset:
-          - env
-  tasks:
-    - name: Check if source directory exists
-      ansible.builtin.stat:
-        path: "{{ artifacts_dir }}"
-      register: source_dir_stat
-
-    - name: Synchronize artifacts from the Ansible Managed Node to Ansible Controller
-      ansible.posix.synchronize:
-        src: "{{ artifacts_dir }}"
-        dest: "{{ controller_home_dir }}"
-        mode: pull
-        recursive: yes
-        times: false
-        perms: false
-      when: source_dir_stat.stat.exists
