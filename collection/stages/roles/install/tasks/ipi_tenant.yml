@@ -30,12 +30,3 @@
         unstable_msg: >-
           The openshift installation passed but unexpectedly needed the wait-for flag.
           More info in Jira KURYRQE-1002.
-  always:
-    - name: Synchronize artifacts from the Ansible Managed Node to Ansible Controller
-      ansible.posix.synchronize:
-        src: "{{ artifacts_dir }}"
-        dest: "{{ controller_home_dir }}"
-        mode: pull
-        recursive: yes
-        times: false
-        perms: false
