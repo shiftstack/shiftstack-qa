@@ -1,15 +1,10 @@
 ---
 - name: Cleanup the OCP setup and prepare the environment for testing OCP on OpenStack 18
   hosts: localhost
-  gather_facts: no
+  gather_facts: yes
   vars_files:
     - "../configs/global.yml"
   pre_tasks:
-    - name: Gather host environment variables
-      ansible.builtin.setup:
-        gather_subset:
-          - env
-
     - name: Cleanup workspace flags - Remove the stage_unstable_flag if it exists
       ansible.builtin.file:
         path: "{{ stage_unstable_flag }}"
@@ -33,7 +28,7 @@
         mode: u=rwx,g=rwx,o=rwx
       when: "'cleanup' in stages or 'prepare' in stages"
 
-- name: Prepare the OpenShift environment for installation and testing new candidate
+- name: Prepare the OpenShift environment
   hosts: localhost
   gather_facts: no
   vars_files:
@@ -44,50 +39,22 @@
       ansible.builtin.include_role:
         name: shiftstack.stages.prepare
       when: "'prepare' in stages"
-  post_tasks:
+
     - name: Update the Ansible inventory in case not deploying an installer host
       ansible.builtin.include_role:
         name: shiftstack.tools.tools_ansible_inventory
         tasks_from: create_installer_group.yml
       when: "not deploy_installer_host"
 
+- name: Prepare the OpenShift installer
+  ansible.builtin.import_playbook: plays/prepare.yaml
+  when: "'prepare' in stages"
 
-- name: Prepare the OpenShift installer and client in the installer host
-  hosts: installer
-  gather_facts: no
-  vars_files:
-    - "../configs/global.yml"
-  pre_tasks:
-    - name: Gather host environment variables
-      ansible.builtin.setup:
-        gather_subset:
-          - env
+- name: Install OpenShift
+  ansible.builtin.import_playbook: plays/install.yaml
+  when: "'install' in stages"
 
-    - name: Set the openstack_version based on the previous discovery
-      ansible.builtin.set_fact:
-        openstack_version: "{{ hostvars['localhost']['openstack_version'] }}"
-  tasks:
-    - name: Get OCP installer and client in the installer host
-      ansible.builtin.include_role:
-        name: shiftstack.stages.prepare
-        tasks_from: get_installer.yml
-      when: "'prepare' in stages"
-
-
-- name: Install OpenShift new candidate on OSP
-  hosts: installer
-  gather_facts: no
-  vars_files:
-    - "../configs/global.yml"
-    - "../configs/secret.yaml"
-  tasks:
-    - name: Install OCP on setup
-      ansible.builtin.include_role:
-        name: shiftstack.stages.install
-      when: "'install' in stages"
-
-
-- name: Post OpenShift installation stage
+- name: Discover OCP version and networkType
   hosts: installer
   gather_facts: no
   vars_files:
@@ -98,118 +65,34 @@
         name: shiftstack.tools.tools_get_deploy_info
         tasks_from: discover_ocp_version.yml
 
-    - name: Run post operations and OCP verification checks on setup
-      ansible.builtin.include_role:
-        name: shiftstack.stages.post
-      when: "'post' in stages"
+- name: Post-Installation
+  ansible.builtin.import_playbook: plays/post_install.yaml
+  when: "'post' in stages"
 
-
-- name: Verify the OpenShift cluster
-  hosts: installer
-  gather_facts: no
-  vars_files:
-    - "../configs/global.yml"
-  tasks:
-    - name: Run OCP verification checks
-      ansible.builtin.include_role:
-        name: shiftstack.stages.verification
-      when: "'verification' in stages"
+- name: Run OpenShift Verification stage
+  ansible.builtin.import_playbook: plays/verification.yaml
+  when: "'verification' in stages"
 
 - name: Day2ops OpenShift stage
-  hosts: installer
-  gather_facts: no
-  vars_files:
-    - "../configs/global.yml"
-  tasks:
-    - name: Run day2 operations on OCP
-      ansible.builtin.include_role:
-        name: shiftstack.stages.day2ops
-      vars:
-        day2ops_steps: "{{ day2ops_procedures }}"
-      when: "'day2ops' in stages"
+  ansible.builtin.import_playbook: plays/day2ops.yaml
+  when: "'day2ops' in stages"
 
 - name: Run Openstack-Test on OpenShift
-  hosts: installer
-  gather_facts: no
-  vars_files:
-    - "../configs/global.yml"
-  tasks:
-    - name: Run Openstack-Test on OCP
-      ansible.builtin.include_role:
-        name: shiftstack.stages.openstack_test
-      when: "'openstack_test' in stages"
+  ansible.builtin.import_playbook: plays/openstack_test.yaml
+  when: "'openstack_test' in stages"
 
 - name: Run LB-Test on OpenShift
-  hosts: installer
-  gather_facts: no
-  vars_files:
-    - "../configs/global.yml"
-  tasks:
-    - name: Run LB-Test on OCP
-      ansible.builtin.include_role:
-        name: shiftstack.stages.lb_tests
-      when: "'lb_tests' in stages"
+  ansible.builtin.import_playbook: plays/lb_tests.yaml
+  when: "'lb_tests' in stages"
 
 - name: Run Openshift Conformance Test on OpenShift
-  hosts: installer
-  gather_facts: no
-  vars_files:
-    - "../configs/global.yml"
-  tasks:
-    - name: Run Openshift Conformance Test on OCP
-      ansible.builtin.include_role:
-        name: shiftstack.stages.conformance_test
-      when: "'conformance_test' in stages"
-
+  ansible.builtin.import_playbook: plays/conformance_test.yaml
+  when: "'conformance_test' in stages"
 
 - name: Run Openshift Cinder CSI Tests on OpenShift
-  hosts: installer
-  gather_facts: no
-  vars_files:
-    - "../configs/global.yml"
-  tasks:
-    - name: Run Openshift Cinder CSI Tests on OCP
-      ansible.builtin.include_role:
-        name: shiftstack.stages.csi_tests
-        tasks_from: openshift_cinder_csi.yml
-      when: "'cinder_csi_tests' in stages"
-
+  ansible.builtin.import_playbook: plays/cinder_csi.yaml
+  when: "'cinder_csi_tests' in stages"
 
 - name: Run Openshift Manila CSI Tests on OpenShift
-  hosts: installer
-  gather_facts: no
-  vars_files:
-    - "../configs/global.yml"
-  tasks:
-    - name: Run Openshift Manila CSI Tests on OCP
-      ansible.builtin.include_role:
-        name: shiftstack.stages.csi_tests
-        tasks_from: openshift_manila_csi.yml
-      when: "'manila_csi_tests' in stages"
-
-
-- name: Post steps
-  hosts: installer
-  gather_facts: no
-  vars_files:
-    - "../configs/global.yml"
-  pre_tasks:
-    - name: Gather host environment variables
-      ansible.builtin.setup:
-        gather_subset:
-          - env
-  tasks:
-    - name: Check if source directory exists
-      ansible.builtin.stat:
-        path: "{{ artifacts_dir }}"
-      register: source_dir_stat
-
-    - name: Synchronize artifacts from the Ansible Managed Node to Ansible Controller
-      ansible.posix.synchronize:
-        src: "{{ artifacts_dir }}"
-        dest: "{{ controller_home_dir }}"
-        mode: pull
-        recursive: yes
-        times: false
-        perms: false
-      when: source_dir_stat.stat.exists
+  ansible.builtin.import_playbook: plays/manila_csi.yaml
+  when: "'manila_csi_tests' in stages"

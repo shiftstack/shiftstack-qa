@@ -1,0 +1,18 @@
+---
+- name: Run Openshift Cinder CSI Tests on OpenShift
+  hosts: installer
+  gather_facts: no
+  vars_files:
+    - "../../configs/global.yml"
+  tasks:
+    - name: Main block
+      block:
+        - name: Run Openshift Cinder CSI Tests on OpenShift
+          ansible.builtin.include_role:
+            name: shiftstack.stages.csi_tests
+            tasks_from: openshift_cinder_csi.yml
+      always:
+        - name: Synchronize artifacts from the Ansible Managed Node to Ansible Controller
+          ansible.builtin.include_role:
+            name: shiftstack.tools.tools_ansible_inventory
+            tasks_from: sync_artifacts.yml

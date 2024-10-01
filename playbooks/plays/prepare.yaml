@@ -1,0 +1,27 @@
+---
+- name: Prepare the OpenShift installer and client on the installer host
+  hosts: installer
+  gather_facts: no
+  vars_files:
+    - "../../configs/global.yml"
+  pre_tasks:
+    - name: Gather host environment variables
+      ansible.builtin.setup:
+        gather_subset:
+          - env
+
+    - name: Set the OpenStack version based on the previous discovery
+      ansible.builtin.set_fact:
+        openstack_version: "{{ hostvars['localhost']['openstack_version'] }}"
+  tasks:
+    - name: Main block
+      block:
+        - name: Fetch OCP installer and client
+          ansible.builtin.include_role:
+            name: shiftstack.stages.prepare
+            tasks_from: get_installer.yml
+      always:
+        - name: Synchronize artifacts to the Ansible Controller
+          ansible.builtin.include_role:
+            name: shiftstack.tools.tools_ansible_inventory
+            tasks_from: sync_artifacts.yml

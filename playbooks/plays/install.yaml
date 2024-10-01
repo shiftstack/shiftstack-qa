@@ -1,0 +1,18 @@
+---
+- name: Install OpenShift new candidate on OSP
+  hosts: installer
+  gather_facts: no
+  vars_files:
+    - "../../configs/global.yml"
+    - "../../configs/secret.yaml"
+  tasks:
+    - name: Main block
+      block:
+        - name: Install OCP on setup
+          ansible.builtin.include_role:
+            name: shiftstack.stages.install
+      always:
+        - name: Synchronize artifacts from the Ansible Managed Node to Ansible Controller
+          ansible.builtin.include_role:
+            name: shiftstack.tools.tools_ansible_inventory
+            tasks_from: sync_artifacts.yml
