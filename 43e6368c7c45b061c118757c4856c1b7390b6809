@@ -16,6 +16,29 @@
       "message": "Tested 4.16 UPI installation, cleanup and IPI installation",
       "revId": "43e6368c7c45b061c118757c4856c1b7390b6809",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "38e31c2c_6e17413f",
+        "filename": "collection/stages/roles/install/templates/install-config.yaml.j2",
+        "patchSetId": 9
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-10-02T09:37:26Z",
+      "side": 1,
+      "message": "We were trying to avoid this kind of ifs in the template, because we wanted to avoid what is happening in the plugin where the template is very difficult to maintain.\n\nI think we can create another template only for UPI, in the same way we did for proxy. what do you think?",
+      "range": {
+        "startLine": 37,
+        "startChar": 6,
+        "endLine": 37,
+        "endChar": 23
+      },
+      "revId": "43e6368c7c45b061c118757c4856c1b7390b6809",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
