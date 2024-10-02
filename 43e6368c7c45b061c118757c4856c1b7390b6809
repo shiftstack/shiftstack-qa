@@ -39,6 +39,30 @@
       },
       "revId": "43e6368c7c45b061c118757c4856c1b7390b6809",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "382b9a96_818ed19a",
+        "filename": "collection/stages/roles/install/templates/install-config.yaml.j2",
+        "patchSetId": 9
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-10-02T14:06:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "38e31c2c_6e17413f",
+      "range": {
+        "startLine": 37,
+        "startChar": 6,
+        "endLine": 37,
+        "endChar": 23
+      },
+      "revId": "43e6368c7c45b061c118757c4856c1b7390b6809",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
