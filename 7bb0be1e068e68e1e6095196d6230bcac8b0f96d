@@ -34,6 +34,24 @@
       "parentUuid": "c6499606_0fa7efd0",
       "revId": "7bb0be1e068e68e1e6095196d6230bcac8b0f96d",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "34b6d07b_027d1fe0",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 10
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-10-04T08:19:39Z",
+      "side": 1,
+      "message": "IPI deployment was ok",
+      "parentUuid": "0680fce5_f53f7e29",
+      "revId": "7bb0be1e068e68e1e6095196d6230bcac8b0f96d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
