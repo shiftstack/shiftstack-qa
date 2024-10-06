@@ -13,14 +13,14 @@
     line: '\1cacert: {{ installer_host_cacert }}'
     insertafter: '{{ user_cloud }}'
     backrefs: yes
-  when: not (legacy_installation | default(False))
+  when: not legacy_installation
 
 - name: Copy the secure.yaml file from the OSP config directory to the installer host VM
   ansible.builtin.copy:
     src: "{{ osp_config_dir }}/secure.yaml"
     dest: "{{ installer_vm_osp_config_dir }}/secure.yaml"
     mode: u=rw,g=rw,o=r
-  when: not (legacy_installation | default(False))
+  when: not legacy_installation
 
 - name: Create symlinks for clouds.yaml and secure.yaml in the proper place for OS_CLOUD
   block:
@@ -43,7 +43,7 @@
         dest: ~/.config/openstack/secure.yaml
         force: true
         state: link
-      when: not (legacy_installation | default(False))
+      when: not legacy_installation
 
 - name: Copy ssh private key to the installer host VM
   ansible.builtin.copy:

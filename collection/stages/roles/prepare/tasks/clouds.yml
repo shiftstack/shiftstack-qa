@@ -27,7 +27,7 @@
     backup: true
     unsafe_writes: true
   vars:
-    indentation: "{{ (legacy_installation | default(False)) | ternary(2, 4) }}"
+    indentation: "{{ legacy_installation | ternary(2, 4) }}"
 
 - name: Test it is possible to access {{ user_cloud }}
   openstack.cloud.auth:
@@ -56,4 +56,4 @@
     src: "{{ secure_yaml_file_path }}"
     dest: "{{ osp_config_dir }}"
     mode: u=rwx,g=r,o=r
-  when: not (legacy_installation | default(False))
+  when: not legacy_installation

@@ -17,6 +17,7 @@ home_dir: "{{ ansible_facts.env['HOME'] }}"
 artifacts_dir: "{{ home_dir }}/artifacts"
 installation_dir: "{{ artifacts_dir }}/installation"
 installer_host_cacert: "/etc/pki/ca-trust/source/anchors/ca.crt"
+legacy_installation: false
 user_cloud: "shiftstack"
 ocp_base_domain: "{{ user_cloud }}.local"
 user_cloud_installation_dir: "{{ installation_dir }}/{{ user_cloud }}"
