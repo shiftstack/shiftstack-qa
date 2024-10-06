@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "91a1318d_99a6097c",
+        "filename": "jobs_definitions/4.17_ovnkubernetes_ipi-proxy.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2024-10-06T05:46:13Z",
+      "side": 1,
+      "message": "Shouldn\u0027t it be 4.17?",
+      "range": {
+        "startLine": 2,
+        "startChar": 21,
+        "endLine": 2,
+        "endChar": 23
+      },
+      "revId": "988ddbc92fbae0383a7e85ce4d3954fce3bce249",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
