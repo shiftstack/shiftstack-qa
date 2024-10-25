@@ -33,6 +33,23 @@
       "message": "Looks good Itay!\nDo you think\n```\n        - name: Check if source directory exists\n          ansible.builtin.stat:\n            path: \"{{ artifacts_dir }}\"\n          register: source_dir_stat\n        - name: Synchronize artifacts from the Ansible Managed Node to Ansible Controller\n          ansible.posix.synchronize:\n            src: \"{{ artifacts_dir }}\"\n            dest: \"{{ controller_home_dir }}\"\n            mode: pull\n            recursive: yes\n            times: false\n            perms: false\n          when: source_dir_stat.stat.exists\n```\n\ncan be defined in a common place?",
       "revId": "75f96599da9c8a6ca9b3cb45b61e700e3e133bd2",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4c4d9280_b4a225df",
+        "filename": "playbooks/ocp_testing.yaml",
+        "patchSetId": 7
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-10-25T09:56:04Z",
+      "side": 1,
+      "message": "Should it be inside a play as well?",
+      "revId": "75f96599da9c8a6ca9b3cb45b61e700e3e133bd2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
