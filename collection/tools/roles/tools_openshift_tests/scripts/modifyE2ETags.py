@@ -25,6 +25,10 @@ testsuite_name = str(sys.argv[4])
 
 test_time = str(int(time.time())).encode("utf-8")
 
+# To meet droute requirements:
+if 'duration' in root.attrib:
+  del root.attrib['duration']
+
 for ts in root:
   if 'tests' in ts.keys() and \
     (ts.get('tests') == '0' or ts.get('tests') == ts.get('skipped')):
@@ -35,7 +39,7 @@ for ts in root:
     ts.set('name', testsuite_name)
     ts.set('timestamp', test_time)
     print('TestSuite name changed to', tests)
-    
+
     for tc in ts:
         if tc.tag == 'properties':
            ts.remove(tc)
