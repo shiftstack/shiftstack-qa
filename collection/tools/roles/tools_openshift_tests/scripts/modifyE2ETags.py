@@ -25,6 +25,10 @@ testsuite_name = str(sys.argv[4])
 
 test_time = str(int(time.time())).encode("utf-8")
 
+# Remove the attribute 'id' from testsuites
+if 'duration' in root.attrib:
+  del root.attrib['duration']
+
 for ts in root:
   if 'tests' in ts.keys() and \
     (ts.get('tests') == '0' or ts.get('tests') == ts.get('skipped')):
