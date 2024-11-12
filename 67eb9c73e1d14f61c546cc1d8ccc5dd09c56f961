@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "26494fd0_0255df49",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-11-12T10:32:15Z",
+      "side": 1,
+      "message": "Verified locally:\n```\n  $ python modifyE2ETags.py openstack_tests_lb_ovn.xml output.xml openstack openstack_tests_lb_ovn  \n  [...]\n $ head -1 output.xml                                                                                                                                            \n\u003ctestsuites\u003e\u003ctestsuite name\u003d\"openstack_tests_lb_ovn\" time\u003d\"584.0\" timestamp\u003d\"1731407401\" tests\u003d\"22\"\u003e\u003ctestcase name\u003d\"ig-installer_Suite_openshift_openstack_lb_Serial_The_Openstack_platform_should_create_a_TCP_OVN_LoadBalancer_when_LoadBalancerService_ingressController_is_created_on_Openshift\" classname\u003d\"no-testclass\" time\u003d\"53.3\"/\u003e\u003ctestcase name\u003d\"ig-installer_Suite_openshift_openstack_lb_Serial_The_Openstack_platform_should_create_a_UDP_OVN_LoadBalancer_when_a_UDP_svc_with_type_LoadBalancer_is_created_on_Openshift\" classname\u003d\"no-testclass\" time\u003d\"78.0\"/\u003e\u003ctestcase name\u003d\"ig-installer_Suite_openshift_openstack_lb_Serial_The_Openstack_platform_should_create_an_UDP_OVN_LoadBalancer_using_a_pre-created_FIP_when_an_UDP_LoadBalancer_svc_setting_the_LoadBalancerIP_spec_is_created_on_Openshift\" classname\u003d\"no-testclass\" time\u003d\"28.3\"/\u003e\u003ctestcase name\u003d\"ig-installer_Suite_openshift_openstack_lb_Serial_The_Openstack_platform_should_create_a_TCP_OVN_LoadBalancer_when_a_TCP_svc_with_type_LoadBalancer_and_IP_family_policy_PreferDualStack_and_IP_families_IPv6_IPv4_is_created_on_Openshift\" classname\u003d\"no-testclass\" time\u003d\"1.8\"\u003e\u003csystem-out\u003e  Nov 12 02:11:15.139: INFO: Enabling in-tree volume drivers\n```",
+      "revId": "67eb9c73e1d14f61c546cc1d8ccc5dd09c56f961",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
