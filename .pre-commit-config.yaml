@@ -11,3 +11,11 @@ repos:
         # args: [-p, ./ansible/*]
         additional_dependencies:
           - jmespath
+
+  - repo: local
+    hooks:
+      - id: validate-jira-commit
+        name: Validate Jira Commit Message
+        entry: python3 validate_jira.py
+        language: system
+        stages: [commit-msg]
