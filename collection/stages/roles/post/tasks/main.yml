@@ -15,3 +15,17 @@
 - name: Set the workers and masters NTP server
   ansible.builtin.include_tasks: set_ntp.yml
   when: openshift_proxy_installation
+
+- name: Disable image Registry Operator redirects
+  # To pull images directly from Red Hat OpenStack Platform (RHOSP) Swift storage
+  # https://docs.openshift.com/container-platform/4.17/registry/configuring_registry_storage/configuring-registry-storage-openstack-user-infrastructure.html#registry-configuring-registry-storage-swift-trust_configuring-registry-storage-openstack-user-infrastructure
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    definition:
+      apiVersion: imageregistry.operator.openshift.io/v1
+      kind: Config
+      metadata:
+        name: cluster
+      spec:
+        disableRedirect: true

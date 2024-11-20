@@ -55,19 +55,6 @@
       vars:
         project_name: "{{ swift_check_ns }}"
 
-    # https://docs.openshift.com/container-platform/4.10/registry/configuring_registry_storage/configuring-registry-storage-openstack-user-infrastructure.html
-    - name: Set image-registry to trust Swift
-      kubernetes.core.k8s:
-        kubeconfig: "{{ kubeconfig }}"
-        state: present
-        definition:
-          apiVersion: imageregistry.operator.openshift.io/v1
-          kind: Config
-          metadata:
-            name: cluster
-          spec:
-            disableRedirect: true
-
     - name: Wait until the operator image-registry is available and not progressing or degraded
       kubernetes.core.k8s_info:
         kubeconfig: "{{ kubeconfig }}"

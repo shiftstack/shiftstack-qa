@@ -1,9 +1,7 @@
 ---
 # tasks file for conformance_test
-# TO-DO: Check if "Set image registry to disable until BZ#1810461 is solved" is needed
 - name: Run conformance tests
   block:
-
     - name: Include vars from registered resources
       ansible.builtin.include_vars:
         file: "{{ resources_file }}"
@@ -39,7 +37,6 @@
         key_for_filtering_results: "{{ conformance_test_testsuite_name }}"
         test_name: "{{ conformance_test_name }}"
         results_dir: "{{ conformance_test_results_dir }}"
-
   always:
     - name: Remove dnsmasq
       ansible.builtin.include_role:
