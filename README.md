@@ -48,9 +48,17 @@ oc rsh shiftstackclient -n openstack \
   ansible-navigator replay /home/cloud-admin/artifacts/{playbook_name}-artifact-{time_stamp}.json -m interactive
 ```
 
-## Enable hooks in your setup
+## Pre-Commit Hooks
+This project uses `pre-commit` to enforce coding standards and commit message validation. To ensure all hooks work correctly:
+1. **Pre-commit stage hooks**: Validate staged files before committing (e.g., `ansible-lint`).
+2. **Commit-msg hooks**: Validate commit messages (e.g., ensure Jira task links).
 
+### Enable hooks
 Requires Python>=3.9
 ```
-pip install pre-commit &&  git config --global init.templateDir ~/.git-template && pre-commit init-templatedir ~/.git-template && pre-commit install
+pip install pre-commit
+git config --global init.templateDir ~/.git-template
+pre-commit init-templatedir ~/.git-template
+pre-commit install
+pre-commit install --hook-type commit-msg
 ```
