@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "25618fee_dbb62b90",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-11-20T19:58:16Z",
+      "side": 1,
+      "message": "Verified in https://code.engineering.redhat.com/gerrit/c/openshift-ir-plugin/+/454152",
+      "revId": "2ef272f147266d3f85897c27f1172b0d1937df6a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
