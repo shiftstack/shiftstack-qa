@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ec099ca6_1e77ba7e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-11-21T16:22:14Z",
+      "side": 1,
+      "message": "Verified -\nExample #1: Commit without a Jira link -\n```\nimatza@imatza-mac:~/git/shiftstack-qa % git commit -m \"This is a test commit without a Jira ID\"\n\nValidate Jira Commit Message.............................................Failed\n- hook id: validate-jira-commit\n- exit code: 1\n\nERROR: Line 3 must contain a Jira task ID in the format PROJECT-123 or a valid URL. Found: Change-Id: Ife1073827a05b2b1a60dcbf3d30ea31471f4f150\n```\nExample #2: Commit includes a Jira Key in the third line -\n```\nimatza@imatza-mac:~/git/shiftstack-qa % git commit -m \"This is a test commit *with* a Jira ID\" -m \"PROJECT-123\"\n\nValidate Jira Commit Message.............................................Passed\n[test a5846ea] This is a test commit *with* a Jira ID\n 1 file changed, 0 insertions(+), 0 deletions(-)\n create mode 100644 test_file\n\nimatza@imatza-mac:~/git/shiftstack-qa % git log | head\ncommit a5846ea31a548d2c7e730e05c121eee16e884d12\nAuthor: Itay Matza \u003cimatza@redhat.com\u003e\nDate:   Thu Nov 21 18:01:42 2024 +0200\n\n    This is a test commit *with* a Jira ID\n\n    https://issues.redhat.com/browse/PROJECT-123\n\n    Change-Id: Ibaf3cfa15f43de9acc81ed1e9e48e4f0386a8c98\n```\n^ The Jira key was replaced with a full URL",
+      "revId": "208c5d656f8c17938c7c9cacb50f33f3942e5d65",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
