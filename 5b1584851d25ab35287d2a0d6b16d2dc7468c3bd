@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "20a4ff4d_75c63173",
+        "filename": "playbooks/ocp_testing.yaml",
+        "patchSetId": 9
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-11-22T10:47:48Z",
+      "side": 0,
+      "message": "missing the `when` condition here?",
+      "revId": "5b1584851d25ab35287d2a0d6b16d2dc7468c3bd",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
