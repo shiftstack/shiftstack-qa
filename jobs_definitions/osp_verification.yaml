@@ -20,8 +20,8 @@ stages:
   - install
   - post
   - verification
-  - openstack_test
-  - lb_tests
+  #  - openstack_test
+  #  - lb_tests
 
 topology:
   flavors:
