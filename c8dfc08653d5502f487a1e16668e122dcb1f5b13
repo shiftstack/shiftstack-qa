@@ -37,6 +37,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "54f1a170_8c4f51f8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 9
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-11-24T10:59:21Z",
+      "side": 1,
+      "message": "@rlobillo@redhat.com thanks for your comments!\nplease let me know if this change is ok, or you think we need another approach here. 10x\nhttps://review.gerrithub.io/c/shiftstack/shiftstack-qa/+/1202031/9..10",
+      "parentUuid": "8e0165b7_725d840b",
+      "revId": "c8dfc08653d5502f487a1e16668e122dcb1f5b13",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "3151bd37_b5c768a8",
         "filename": "playbooks/ocp_testing.yaml",
         "patchSetId": 9
@@ -48,6 +66,24 @@
       "writtenOn": "2024-11-22T10:47:48Z",
       "side": 1,
       "message": "Would you mind to include a comment here mentioning that prepare playbook will add an entry on the inventory called \"installer\"?\n\nI\u0027m worried about the new ocp_testing.yml to be too obscure. Comments will help I think.",
+      "revId": "c8dfc08653d5502f487a1e16668e122dcb1f5b13",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cc8d4b49_29443b3b",
+        "filename": "playbooks/ocp_testing.yaml",
+        "patchSetId": 9
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-11-24T10:59:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3151bd37_b5c768a8",
       "revId": "c8dfc08653d5502f487a1e16668e122dcb1f5b13",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
