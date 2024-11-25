@@ -55,6 +55,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "ba9a4f8d_dbb7abd8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 9
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-11-25T14:30:18Z",
+      "side": 1,
+      "message": "how feasible do you think it\u0027s to move the tasks that runs always (not dependant on a stage that is selected) in the original ocp-testing.yml playbook?",
+      "parentUuid": "54f1a170_8c4f51f8",
+      "revId": "c8dfc08653d5502f487a1e16668e122dcb1f5b13",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "3151bd37_b5c768a8",
         "filename": "playbooks/ocp_testing.yaml",
         "patchSetId": 9
