@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c7cba551_11dd4ad8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-11-25T16:42:29Z",
+      "side": 1,
+      "message": "```\nimatza@imatza-mac:~/git/shiftstack-qa % git commit -m \"This is a test commit without a Jira ID\"\n\nValidate Jira Commit Message.............................................INFO: Starting commit message validation\nWARNING: Line 3 should contain a Jira task ID in the format PROJECT-123 or a valid URL.\nPassed\n[commit_test 694e8f0] This is a test commit without a Jira ID\n 1 file changed, 0 insertions(+), 0 deletions(-)\n create mode 100644 test\n```\n\n```\nimatza@imatza-mac:~/git/shiftstack-qa % git commit -m \"This is a test commit *with* a Jira ID\" -m \"PROJECT-123\"\n\nValidate Jira Commit Message.............................................INFO: Starting commit message validation\nINFO: Commit message validation passed. Jira ID replaced with full URL.\nPassed\n[commit_test 2adbc21] This is a test commit *with* a Jira ID\n 1 file changed, 0 insertions(+), 0 deletions(-)\n create mode 100644 test_1\n```",
+      "revId": "f2ded4b556f66bb2327f0350a14a1fd0275abfab",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
