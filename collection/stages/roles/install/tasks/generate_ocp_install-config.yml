@@ -33,3 +33,11 @@
     dest: "{{ ocp_installation_dir }}/install-config.yaml"
     remote_src: yes
     mode: u=rwx,g=rwx,o=rwx
+
+# Required for running cleanup afterwards
+- name: Copy openshift-install binary into the persistant folder
+  ansible.builtin.copy:
+    src: "{{ home_dir }}/{{ release_name }}/openshift-install"
+    dest: "{{ ocp_installation_dir }}/openshift-install"
+    mode: u=rwx,g=rwx,o=rwx
+    remote_src: yes
