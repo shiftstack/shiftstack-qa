@@ -20,6 +20,11 @@
 - name: Generate OpenShift install-config.yaml file
   ansible.builtin.include_tasks: generate_ocp_install-config.yml
 
+# Required for running cleanup afterwards
+- name: Copy openshift-install binary into the persistant folder
+  ansible.builtin.shell: "cp $(which openshift-install) {{ ocp_installation_dir }}"
+  changed_when: true
+
 - name: Install cluster with IPI on regular tenant network
   ansible.builtin.include_tasks: ipi_tenant.yml
   when: installation_type == 'ipi'
