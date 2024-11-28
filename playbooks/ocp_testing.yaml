@@ -20,11 +20,6 @@
         name: shiftstack.tools.tools_get_deploy_info
         tasks_from: discover_osp_version.yml
 
-    - name: Cleanup the setup
-      ansible.builtin.include_role:
-        name: shiftstack.stages.cleanup
-      when: "'cleanup' in stages"
-
     - name: Restore the OpenStack original config directory (includes the clouds.yaml and secure.yaml)
       ansible.builtin.copy:
         src: "{{ home_dir }}/.original-config/openstack/"
@@ -32,6 +27,11 @@
         remote_src: yes
         mode: u=rwx,g=rwx,o=rwx
       when: "'cleanup' in stages or 'prepare' in stages"
+
+    - name: Cleanup the setup
+      ansible.builtin.include_role:
+        name: shiftstack.stages.cleanup
+      when: "'cleanup' in stages"
 
 - name: Prepare the OpenShift environment for installation and testing new candidate
   hosts: localhost
