@@ -47,6 +47,14 @@
             state: link
           become: true
 
+        # Required for running cleanup afterwards
+        - name: Copy openshift-install binary into the persistant folder
+          ansible.builtin.copy:
+            src: "{{ home_dir }}/{{ release_name }}/openshift-install"
+            dest: "{{ ocp_installation_dir }}/openshift-install"
+            mode: u=rwx,g=rwx,o=rwx
+            remote_src: yes
+
     - name: Get the installer binary and create symlinks
       when: "'client' in binaries"
       block:

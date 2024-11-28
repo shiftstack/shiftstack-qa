@@ -1,4 +1,16 @@
 ---
+- name: Remove existing openstack creds directory
+  ansible.builtin.file:
+    path: "{{ home_dir }}/.config/openstack"
+    state: absent
+
+- name: Load default openstack creds directory so we can inspect if the "{{ user_cloud }}" is there
+  ansible.builtin.copy:
+    src: "{{ home_dir }}/.original-config/openstack/"
+    dest: "{{ home_dir }}/.config/openstack/"
+    remote_src: yes
+    mode: u=rwx,g=rwx,o=rwx
+
 - name: Check if OpenStack "{{ user_cloud }}" project exists
   openstack.cloud.project_info:
     cloud: "{{ admin_cloud }}"
@@ -17,15 +29,27 @@
   when: openstack_project_info is succeeded
   block:
     - name: Fail if more than one OpenStack "{{ user_cloud }}" project exist
+      when: openstack_project_info.projects | length > 1
       ansible.builtin.fail:
         msg: >-
           Cleanup failed.
           More than one OpenStack "{{ user_cloud }}" project: {{ openstack_project_info.projects | length }}
-      when: openstack_project_info.projects | length > 1
 
     - name: Cleanup the ShiftStack setup
       when: openstack_project_info.projects | length == 1
       block:
+        - name: Remove default openstack creds directory
+          ansible.builtin.file:
+            path: "{{ home_dir }}/.config/openstack"
+            state: absent
+
+        - name: Restore openstack creds directory with {{ user_cloud }} credentials
+          ansible.builtin.copy:
+            src: "{{ osp_config_dir }}/"
+            dest: "{{ home_dir }}/.config/openstack/"
+            remote_src: yes
+            mode: u=rwx,g=rwx,o=rwx
+
         - name: Discover the OpenShift installation type
           ansible.builtin.include_tasks: detect_ocp_installation.yml
 
