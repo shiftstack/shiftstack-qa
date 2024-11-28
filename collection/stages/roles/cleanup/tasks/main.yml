@@ -4,6 +4,8 @@
     cloud: "{{ admin_cloud }}"
     name: "{{ user_cloud }}"
     verify: "{{ admin_verify_cacert }}"
+  environment:
+    OS_CLIENT_CONFIG_FILE: "{{ osp_config_dir }}/clouds.yml"
   register: openstack_project_info
   ignore_errors: true # noqa: ignore-errors
 
@@ -17,15 +19,22 @@
   when: openstack_project_info is succeeded
   block:
     - name: Fail if more than one OpenStack "{{ user_cloud }}" project exist
+      when: openstack_project_info.projects | length > 1
       ansible.builtin.fail:
         msg: >-
           Cleanup failed.
           More than one OpenStack "{{ user_cloud }}" project: {{ openstack_project_info.projects | length }}
-      when: openstack_project_info.projects | length > 1
 
     - name: Cleanup the ShiftStack setup
       when: openstack_project_info.projects | length == 1
       block:
+        - name: Restore installation dir
+          ansible.builtin.copy:
+            src: "{{ osp_config_dir }}"
+            dest: "{{ home_dir }}/.config/openstack/"
+            mode: u=rwx,g=rwx,o=rwx
+            remote_src: yes
+
         - name: Discover the OpenShift installation type
           ansible.builtin.include_tasks: detect_ocp_installation.yml
 
