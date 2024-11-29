@@ -16,6 +16,23 @@
       "message": "https://prow.ci.openshift.org/view/gs/test-platform-results/pr-logs/pull/openshift_release/59184/rehearse-59184-periodic-ci-shiftstack-ci-release-4.16-e2e-openstack-rhoso/1862537103728971776",
       "revId": "7dd37d869c748f5726a75299ea5bbbbf54be61a3",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7e4619e5_574474d2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-11-29T18:21:27Z",
+      "side": 1,
+      "message": "As we are moving the openshift-install, which is a heavy file, this ci-framework PR https://github.com/openstack-k8s-operators/ci-framework/pull/2572/files is not gathering it through oc rsync to avoid storing the big binary.",
+      "revId": "7dd37d869c748f5726a75299ea5bbbbf54be61a3",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
