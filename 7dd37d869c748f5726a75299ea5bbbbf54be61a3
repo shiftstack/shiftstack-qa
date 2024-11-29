@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ca48bcf2_e912550a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-11-29T18:15:15Z",
+      "side": 1,
+      "message": "https://prow.ci.openshift.org/view/gs/test-platform-results/pr-logs/pull/openshift_release/59184/rehearse-59184-periodic-ci-shiftstack-ci-release-4.16-e2e-openstack-rhoso/1862537103728971776",
+      "revId": "7dd37d869c748f5726a75299ea5bbbbf54be61a3",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
