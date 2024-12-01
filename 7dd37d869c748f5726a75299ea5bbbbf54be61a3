@@ -33,6 +33,52 @@
       "message": "As we are moving the openshift-install, which is a heavy file, this ci-framework PR https://github.com/openstack-k8s-operators/ci-framework/pull/2572/files is not gathering it through oc rsync to avoid storing the big binary.",
       "revId": "7dd37d869c748f5726a75299ea5bbbbf54be61a3",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0c05c779_6af7362f",
+        "filename": "collection/stages/roles/cleanup/tasks/destroy_ipi.yml",
+        "patchSetId": 7
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-12-01T11:37:21Z",
+      "side": 1,
+      "message": "What do you think about -\n```suggestion\n- name: Destroy OCP Cluster and remove the OCP cluster directory (IPI)\n  when: ocp_cluster_directory.stat.exists\n  block:\n    - name: Run \u0027openshift-install destroy cluster\u0027\n      ansible.builtin.shell: |\n          {{ ocp_installation_dir }}/openshift-install destroy cluster --log-level debug --dir {{ ocp_installation_dir }}\n      environment:\n        OS_CLOUD: \"{{ user_cloud }}\"\n      register: destroy_result\n      changed_when: true\n  rescue:\n    - name: Log failure of OpenShift cleanup\n      ansible.builtin.debug:\n        msg: \u003e\n          Cluster destroy failed. Ignoring as force_cleanup is enabled.\n      when: force_cleanup\n\n    - name: Fail if force_cleanup is disabled\n      ansible.builtin.fail:\n        msg: \"Destroy OpenShift Cluster failed or timed out.\"\n      when: not force_cleanup\n  always:\n    - name: Remove the OCP cluster directory\n      ansible.builtin.file:\n        path: \"{{ ocp_installation_dir }}\"\n        state: absent\n      when: \u003e\n        destroy_result is succeeded or\n        force_cleanup\n```",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 30,
+        "endChar": 21
+      },
+      "revId": "7dd37d869c748f5726a75299ea5bbbbf54be61a3",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1a3f1ac9_09918300",
+        "filename": "jobs_definitions/4.16_ovnkubernetes_ipi.yaml",
+        "patchSetId": 7
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-12-01T11:37:21Z",
+      "side": 1,
+      "message": "why?",
+      "range": {
+        "startLine": 15,
+        "startChar": 0,
+        "endLine": 38,
+        "endChar": 0
+      },
+      "revId": "7dd37d869c748f5726a75299ea5bbbbf54be61a3",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
