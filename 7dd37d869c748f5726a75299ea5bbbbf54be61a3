@@ -60,6 +60,53 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "65461222_a7c7873b",
+        "filename": "collection/stages/roles/cleanup/tasks/destroy_ipi.yml",
+        "patchSetId": 7
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-12-01T13:14:27Z",
+      "side": 1,
+      "message": "What do you think about -\n\n```suggestion\n- name: Destroy OCP Cluster by running \u0027openshift-install destroy cluster\u0027\n  ansible.builtin.shell: |\n      {{ ocp_installation_dir }}/openshift-install destroy cluster --log-level debug --dir {{ ocp_installation_dir }}\n  environment:\n    OS_CLOUD: \"{{ user_cloud }}\"\n  changed_when: true\n  register: destroy_result\n  failed_when:\n    - destroy_result.rc !\u003d 0\n    - not force_cleanup\n\n- name: Mark as UNSTABLE if the cluster destroy failed and force_cleanup is enabled\n  ansible.builtin.include_role:\n    name: tools_stage_results\n    tasks_from: mark_stage_unstable.yml\n  vars:\n    unstable_msg: \u003e-\n      Cluster destroy failed. Ignoring as force_cleanup is enabled.\n  when:\n    - destroy_result.rc !\u003d 0\n    - force_cleanup\n\n- name: Remove the OCP cluster directory\n  ansible.builtin.file:\n    path: \"{{ ocp_installation_dir }}\"\n    state: absent```",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 30,
+        "endChar": 21
+      },
+      "revId": "7dd37d869c748f5726a75299ea5bbbbf54be61a3",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "99ce0c7a_0d3d52d3",
+        "filename": "collection/stages/roles/cleanup/tasks/destroy_ipi.yml",
+        "patchSetId": 7
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-12-01T13:14:27Z",
+      "side": 1,
+      "message": "Suggesting another way.",
+      "parentUuid": "0c05c779_6af7362f",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 30,
+        "endChar": 21
+      },
+      "revId": "7dd37d869c748f5726a75299ea5bbbbf54be61a3",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "1a3f1ac9_09918300",
         "filename": "jobs_definitions/4.16_ovnkubernetes_ipi.yaml",
         "patchSetId": 7
