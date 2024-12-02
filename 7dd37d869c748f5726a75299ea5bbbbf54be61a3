@@ -105,6 +105,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5557998b_210b1b1c",
+        "filename": "collection/stages/roles/cleanup/tasks/destroy_ipi.yml",
+        "patchSetId": 7
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-12-02T15:32:26Z",
+      "side": 1,
+      "message": "love it! I\u0027m taking it",
+      "parentUuid": "99ce0c7a_0d3d52d3",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 30,
+        "endChar": 21
+      },
+      "revId": "7dd37d869c748f5726a75299ea5bbbbf54be61a3",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1a3f1ac9_09918300",
@@ -118,6 +142,30 @@
       "writtenOn": "2024-12-01T11:37:21Z",
       "side": 1,
       "message": "why?",
+      "range": {
+        "startLine": 15,
+        "startChar": 0,
+        "endLine": 38,
+        "endChar": 0
+      },
+      "revId": "7dd37d869c748f5726a75299ea5bbbbf54be61a3",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a354f2ce_93c25bc4",
+        "filename": "jobs_definitions/4.16_ovnkubernetes_ipi.yaml",
+        "patchSetId": 7
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-12-02T15:32:26Z",
+      "side": 1,
+      "message": "just removed",
+      "parentUuid": "1a3f1ac9_09918300",
       "range": {
         "startLine": 15,
         "startChar": 0,
