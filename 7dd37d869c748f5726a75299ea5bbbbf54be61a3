@@ -129,6 +129,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "4b493f62_5180a2c5",
+        "filename": "collection/stages/roles/cleanup/tasks/destroy_ipi.yml",
+        "patchSetId": 7
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-12-02T15:37:23Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "65461222_a7c7873b",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 30,
+        "endChar": 21
+      },
+      "revId": "7dd37d869c748f5726a75299ea5bbbbf54be61a3",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1a3f1ac9_09918300",
