@@ -198,6 +198,30 @@
       },
       "revId": "7dd37d869c748f5726a75299ea5bbbbf54be61a3",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "19992564_49b2be5e",
+        "filename": "jobs_definitions/4.16_ovnkubernetes_ipi.yaml",
+        "patchSetId": 7
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2024-12-02T15:53:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a354f2ce_93c25bc4",
+      "range": {
+        "startLine": 15,
+        "startChar": 0,
+        "endLine": 38,
+        "endChar": 0
+      },
+      "revId": "7dd37d869c748f5726a75299ea5bbbbf54be61a3",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
