@@ -16,6 +16,24 @@
       "message": "What we have for compact right now in the plugin\n      compact:\n        name: \"compact\"\n        ram: 24576\n        vcpus: 6\n        disk: 100\nI suggest to replace master with those values",
       "revId": "ffbb55162571e374061704cf78383621edc0aeb4",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4617e2ee_2b942825",
+        "filename": "jobs_definitions/4.16_compact_ipi.yaml",
+        "patchSetId": 11
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-12-05T11:11:18Z",
+      "side": 1,
+      "message": "unfortunately, with current configuration we cannot do that because there is no resources to have 4 (3maters+bootstrap) on the virt setups. I created this because I want to test it prow integration with titan03 and I\u0027m struggling to get something stable there. That should be in a separated patch",
+      "parentUuid": "fa888193_9d957702",
+      "revId": "ffbb55162571e374061704cf78383621edc0aeb4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
