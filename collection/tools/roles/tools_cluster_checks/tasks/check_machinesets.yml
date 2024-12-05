@@ -15,7 +15,9 @@
           not corresponding with the MachineSet available replicas status.
       ansible.builtin.fail:
         msg: "{{ error_msg }}"
-      when: item.status.availableReplicas is not defined or
+      when:
+        - item.spec.replicas|int > 0
+        - item.status.availableReplicas is not defined or
             item.status.replicas != item.status.availableReplicas
       loop: "{{ oc_machines.resources }}"
   rescue:
