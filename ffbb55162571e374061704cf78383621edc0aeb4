@@ -52,6 +52,24 @@
       "parentUuid": "4617e2ee_2b942825",
       "revId": "ffbb55162571e374061704cf78383621edc0aeb4",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e2c12b78_6b1f67fe",
+        "filename": "jobs_definitions/4.16_compact_ipi.yaml",
+        "patchSetId": 11
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2024-12-05T12:19:16Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "876b5e03_e98db0c8",
+      "revId": "ffbb55162571e374061704cf78383621edc0aeb4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
