@@ -3,7 +3,7 @@
   hosts: installer
   gather_facts: no
   vars_files:
-    - "../../configs/global.yml"
+    - "{{ playbook_dir }}/../configs/main_config.yaml"
   pre_tasks:
     - name: Gather host environment variables
       ansible.builtin.setup:
@@ -23,5 +23,5 @@
       always:
         - name: Synchronize artifacts to the Ansible Controller
           ansible.builtin.include_role:
-            name: shiftstack.tools.tools_ansible_inventory
+            name: shiftstack.tools.tools_ansible
             tasks_from: sync_artifacts.yml

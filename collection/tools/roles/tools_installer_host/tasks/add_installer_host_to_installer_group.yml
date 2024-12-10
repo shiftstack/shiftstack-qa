@@ -1,7 +1,7 @@
 ---
 - name: Flush the inventory in a case the {{ installer_group }} group is present
   ansible.builtin.include_role:
-    name: tools_ansible_inventory
+    name: tools_ansible
     tasks_from: flush_inventory.yml
   when: "installer_group in groups"
 
@@ -16,7 +16,7 @@
 
 - name: Update the inventory '{{ inventory.dir }}/hosts'
   ansible.builtin.include_role:
-    name: tools_ansible_inventory
+    name: tools_ansible
     tasks_from: update_inventory.yml
   vars:
     inventory_config_dir: "{{ inventory.dir }}"
