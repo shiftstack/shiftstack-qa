@@ -32,7 +32,7 @@
 - name: Declare list of workers names and their nova zone
   ansible.builtin.set_fact:
     worker_names: "{{ worker_names | default([]) + [item.metadata.labels['kubernetes.io/hostname']] }}"
-    nova_az_for_sc: "{{ nova_az_for_sc | default([]) + [item.metadata.labels['topology.cinder.csi.openstack.org/zone']] }}"
+    nova_az_for_sc: "{{ nova_az_for_sc | default([]) + [item.metadata.labels['openshift_topology.cinder.csi.openstack.org/zone']] }}"
   loop: "{{ workers.resources | sort(attribute='metadata.name') | list }}"
   no_log: true
 
