@@ -1,0 +1,15 @@
+---
+openshift_release: 4.18
+openshift_build_name: "" # It can be an empty value "" (latest nightly), a given build
+installation_type: ipi
+
+stages:
+  - cleanup
+  - prepare
+  - install
+  - post
+  - verification
+
+openshift_topology_override:
+  network_primary: ipv6    # ssipv6
+  network_secondary: ""    # "" for single-stack

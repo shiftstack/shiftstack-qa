@@ -34,6 +34,11 @@
   vars_files:
     - "../configs/global.yml"
     - "../configs/secret.yaml"
+  pre_tasks:
+    - name: Update openshift_topology with overrides if defined
+      ansible.builtin.set_fact:
+        openshift_topology: "{{ openshift_topology | combine(openshift_topology_override, recursive=True) }}"
+      when: openshift_topology_override is defined
   tasks:
     - name: Prepare setup for OCP installation
       ansible.builtin.include_role:
