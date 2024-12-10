@@ -14,7 +14,7 @@
     dns_nameservers:
       - "{{ restricted_network.installer_ip }}"
     # OVNKubernetes requirement,further info in BZ1983951
-    gateway_ip: "{{ (openshift_network_type == 'OVNKubernetes') |
+    gateway_ip: "{{ (openshift_topology.network_type == 'OVNKubernetes') |
       ternary(restricted_network.installer_ip, restricted_network.default_gw) }}"
     allocation_pool_start: "{{ restricted_network.pool_start }}"
     allocation_pool_end: "{{ restricted_network.pool_end }}"

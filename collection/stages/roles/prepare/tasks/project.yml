@@ -61,4 +61,4 @@
     ephemeral: "{{ item.value.ephemeral | default(omit) }}"
     verify: "{{ admin_verify_cacert }}"
   register: flavors
-  loop: "{{ lookup('ansible.builtin.dict', topology.flavors) }}"
+  loop: "{{ lookup('ansible.builtin.dict', openshift_topology.flavors) }}"

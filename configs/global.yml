@@ -41,7 +41,9 @@ user_env_file: "{{ osp_config_dir }}/{{ user_cloud }}rc"
 clouds_yaml_file_path: "{{ home_dir }}/.config/openstack/clouds.yaml"
 secure_yaml_file_path: "{{ home_dir }}/.config/openstack/secure.yaml"
 
-topology:
+openshift_topology:
+  network_type: OVNKubernetes
+  network_secondary: ""    # ipv4, ipv6, or "" for single-stack
   flavors:
     master:
       name: "master"

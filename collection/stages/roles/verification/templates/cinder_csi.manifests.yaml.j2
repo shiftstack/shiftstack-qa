@@ -50,7 +50,7 @@ spec:
           - mountPath: /var/lib/www/data
             name: mydata
       nodeSelector:
-        topology.cinder.csi.openstack.org/zone: {{nova_az_for_sc[item]}}
+        openshift_topology.cinder.csi.openstack.org/zone: {{nova_az_for_sc[item]}}
       volumes:
         - name: mydata
           persistentVolumeClaim:
