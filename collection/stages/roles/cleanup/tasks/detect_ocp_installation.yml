@@ -23,7 +23,7 @@
   block:
     - name: Update the Ansible inventory in case there is installer host to destroy
       ansible.builtin.include_role:
-        name: shiftstack.tools.tools_ansible_inventory
+        name: shiftstack.tools.tools_ansible
         tasks_from: create_installer_group.yml
 
     - name: Discover if UPI installation was performed on the installer host VM to destroy

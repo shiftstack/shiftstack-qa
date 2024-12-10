@@ -1,0 +1,84 @@
+---
+# config_files_merger.yml
+# -----------------------------------------------------------------------------
+# Merges base and job-specific configurations into a final structure.
+#
+# Inputs:
+# - `config_files`: List of paths to base configuration files.
+# - `jobs_dir`: Directory containing job-specific configurations.
+# - `job_config_file` (optional): Name of the job-specific configuration file.
+# - `merged_config`: Final merged configuration.
+# - Writes the merged configuration to the specified `merged_config_file`.
+# -----------------------------------------------------------------------------
+- name: Load and Merge Configurations
+  delegate_to: localhost
+  block:
+    - name: Validate required variables
+      ansible.builtin.assert:
+        that:
+          - config_files is defined and config_files | length > 0
+          - jobs_dir is defined and jobs_dir | string | length > 0
+        fail_msg: |
+          Required variables are missing or invalid:
+          - config_files (list): Base configuration file paths
+          - jobs_dir (string): Directory containing job-specific configurations
+          Current values:
+          - config_files: {{ config_files | default('undefined') }}
+          - jobs_dir: {{ jobs_dir | default('undefined') }}
+
+    - name: Check base configuration files exist
+      ansible.builtin.stat:
+        path: "{{ item }}"
+      register: base_config_check
+      loop: "{{ config_files }}"
+      loop_control:
+        label: "{{ item }}"
+
+    - name: Ensure all base configuration files are present
+      ansible.builtin.fail:
+        msg: "Base configuration file '{{ item.item }}' does not exist."
+      when: not item.stat.exists
+      loop: "{{ base_config_check.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    - name: Load base configurations
+      ansible.builtin.set_fact:
+        loaded_configs: "{{ loaded_configs | default([]) + [lookup('file', item) | from_yaml] }}"
+      loop: "{{ config_files }}"
+      loop_control:
+        label: "{{ item }}"
+
+    - name: Check and load job-specific configuration (if defined)
+      when: job_config_file is defined
+      block:
+        - name: Set full job configuration path
+          ansible.builtin.set_fact:
+            job_config_path: "{{ jobs_dir }}/{{ job_config_file }}"
+
+        - name: Verify job configuration file exists
+          ansible.builtin.stat:
+            path: "{{ job_config_path }}"
+          register: job_config_check
+
+        - name: Fail if job configuration file is missing
+          ansible.builtin.fail:
+            msg: "Job configuration file '{{ job_config_path }}' does not exist."
+          when: not job_config_check.stat.exists
+
+        - name: Load job-specific configuration
+          ansible.builtin.set_fact:
+            job_config: "{{ lookup('file', job_config_path) | from_yaml }}"
+
+    - name: Merge base and job-specific configurations
+      vars:
+        base_merged: "{{ loaded_configs | combine(recursive=True) }}"
+      ansible.builtin.set_fact:
+        merged_config: "{{ base_merged | combine(job_config | default({}), recursive=True) }}"
+
+    - name: Write the merged configuration to a file
+      ansible.builtin.copy:
+        content: "{{ merged_config | to_nice_yaml(indent=2) }}"
+        dest: "{{ merged_config_file }}"
+        remote_src: yes
+        mode: u=rwx,g=rwx,o=rwx
