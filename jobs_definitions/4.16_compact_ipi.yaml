@@ -9,7 +9,6 @@
 ################################################################################
 openshift_release: "4.16"
 openshift_build_name: "candidate"
-openshift_network_type: OVNKubernetes
 installation_type: ipi
 force_cleanup: true
 stages:
@@ -20,7 +19,10 @@ stages:
   - verification
   - openstack_test
 
-topology:
+openshift_topology:
+  network_type: OVNKubernetes
+  network_primary: ipv4    # ipv4 or ipv6
+  network_secondary: ""    # ipv4, ipv6, or "" for single-stack
   flavors:
     master:
       name: "master"
