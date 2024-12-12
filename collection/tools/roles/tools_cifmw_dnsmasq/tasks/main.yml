@@ -1,0 +1,36 @@
+---
+- name: Assert that the required vars exist and are matching the expected length
+  ansible.builtin.assert:
+    that:
+      - tools_cifmw_dnsmasq_domains is defined
+      - tools_cifmw_dnsmasq_ips is defined
+      - tools_cifmw_dnsmasq_domains|length == tools_cifmw_dnsmasq_ips|length
+
+- name: Make sure there are no DNS entries for '{{ ocp_cluster_name }}.{{ ocp_base_domain }}'
+  ansible.builtin.lineinfile:
+    path: "{{ hypervisor_dnsmasq_addresses_file }}"
+    regexp: "{{ ocp_base_domain }}"
+    state: absent
+
+- name: Backup the original file '{{ hypervisor_dnsmasq_addresses_file }}'
+  ansible.builtin.copy:
+    src: "{{ hypervisor_dnsmasq_addresses_file }}"
+    dest: "{{ hypervisor_dnsmasq_addresses_original_file }}"
+    mode: u=rw,g=r,o=r
+    remote_src: yes
+
+- name: Add the DNS address entries to '{{ hypervisor_dnsmasq_addresses_file }}'
+  ansible.builtin.lineinfile:
+    path: "{{ hypervisor_dnsmasq_addresses_file }}"
+    line: "address=/{{ item.0 }}/{{ item.1 }}"
+    create: yes
+    state: present
+    mode: u=rw,g=r,o=r
+  with_together:
+    - "{{ tools_cifmw_dnsmasq_domains }}"
+    - "{{ tools_cifmw_dnsmasq_ips }}"
+
+- name: Restart service in the hypervisor '{{ hypervisor_dnsmasq_service }}' - '{{ hypervisor }}'
+  ansible.builtin.systemd:
+    name: "{{ hypervisor_dnsmasq_service }}"
+    state: restarted
