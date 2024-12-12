@@ -1,0 +1,5 @@
+---
+# defaults file for tools_cifmw_dnsmasq
+hypervisor_dnsmasq_addresses_file: "/etc/cifmw-dnsmasq.d/addresses.conf"
+hypervisor_dnsmasq_addresses_original_file: "{{ hypervisor_dnsmasq_addresses_file }}.orig"
+hypervisor_dnsmasq_service: "cifmw-dnsmasq.service"
