@@ -29,3 +29,22 @@
         name: cluster
       spec:
         disableRedirect: true
+
+- name: Add APPS DNS entry to hypervisor's dnsmasq service
+  ansible.builtin.debug:
+    msg: "{{ hypervisor }}"
+
+#- name: Execute as root on {{ hypervisor }}
+#  shell: whoami & hostname
+#  register: cmd
+#  delegate_to: "{{ hypervisor }}"
+#  remote_user: zuul
+#  become: true
+#
+#- debug:
+#    var: cmd.stdout
+#
+#
+# cat /etc/cifmw-dnsmasq.d/addresses.conf
+#address=/apps.ocp.openstack.lab/x.y.z.v
+#address=/apps.ostest.shiftstack.local/x.y.z.s      <<-----
