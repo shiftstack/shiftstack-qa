@@ -45,7 +45,7 @@
 - name: Create a file with an external nameserver
   become: yes
   vars:
-    external_ns: "{{ openstack_tlse | default(false) | ternary(freeipa_server, infra.dns_servers) }}"
+    external_ns: "{{ openstack_tlse | default(false) | ternary(freeipa_server, openshift_topology.openstack_infra[openshift_topology.network_primary].subnet.dns_serverss) }}"
   ansible.builtin.template:
     src: resolv.dnsmasq.j2
     dest: /etc/resolv.dnsmasq
@@ -91,5 +91,5 @@
       nameserver {{ item }}
     dest: /etc/resolv.conf
     mode: u=rwx,g=rwx,o=rwx
-  loop: "{{ infra.dns_servers }}"
+  loop: "{{ openshift_topology.openstack_infra[openshift_topology.network_primary].subnet.dns_serverss }}"
   when: not openshift_mirror | default(False)

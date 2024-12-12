@@ -110,7 +110,7 @@
 
         - name: Set the external DNS in '{{ upi_inventory_file }}'
           vars:
-            os_external_dns: "{{ infra.dns_servers }}"
+            os_external_dns: "{{ openshift_topology.openstack_infra[openshift_topology.network_primary].subnet.dns_serverss }}"
           ansible.builtin.lineinfile:
             path: "{{ upi_inventory_file }}"
             insertafter: "os_external_dns"

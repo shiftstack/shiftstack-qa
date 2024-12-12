@@ -1,0 +1,29 @@
+---
+- name: Prepare the OpenShift environment
+  hosts: localhost
+  gather_facts: no
+  vars_files:
+    - "../configs/global.yml"
+  pre_tasks:
+    - name: Update openshift_topology with overrides if defined
+      ansible.builtin.set_fact:
+        openshift_topology: "{{ openshift_topology | combine(openshift_topology_override, recursive=True) }}"
+      when: openshift_topology_override is defined
+  tasks:
+    - name: Print the external network
+      ansible.builtin.debug:
+        var: openshift_topology
+
+    - name: Print the external network
+      ansible.builtin.debug:
+        msg: "{{ openshift_topology.openstack_infra[openshift_topology.network_primary] }}"
+
+- name: Follow-up Tasks
+  hosts: localhost
+  gather_facts: no
+  vars_files:
+    - "../configs/global.yml"
+  tasks:
+    - name: Print the external network
+      ansible.builtin.debug:
+        msg: "{{ openshift_topology.openstack_infra[openshift_topology.network_primary] }}"

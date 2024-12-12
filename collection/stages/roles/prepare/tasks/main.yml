@@ -1,4 +1,31 @@
 ---
+- name: Validate openshift topology network configuration
+  vars:
+    network_primary: "{{ openshift_topology.network_primary | default('') }}"
+    network_secondary: "{{ openshift_topology.network_secondary | default('') }}"
+  ansible.builtin.assert:
+    that:
+      - network_primary in ['ipv4', 'ipv6']
+      - network_secondary in ['', 'ipv4', 'ipv6']
+      # For dual-stack, ensure primary and secondary are different
+      - network_primary != network_secondary
+    fail_msg: |
+      Invalid network configuration in openshift topology
+      Requirements:
+      - network_primary must be either 'ipv4' or 'ipv6'
+      - network_secondary must be empty string or different from primary ('ipv4' or 'ipv6')
+      - For single-stack, use empty string ('') as network_secondary
+
+      Current values:
+      - network_primary: '{{ network_primary }}'
+      - network_secondary: '{{ network_secondary }}'
+    success_msg: |
+      OpenShift topology network configuration is valid:
+      - Configuration type: >
+          {{ 'Single-stack (' + network_primary + ')'
+            if network_secondary == ''
+            else 'Dual-stack (' + network_primary + ' / ' + network_secondary + ')' }}
+
 - name: Create new Project
   ansible.builtin.include_tasks: project.yml
 

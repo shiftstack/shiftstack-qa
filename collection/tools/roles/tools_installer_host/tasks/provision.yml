@@ -80,7 +80,7 @@
         cloud: "{{ user_cloud }}"
         name: "{{ installer_vm.router.name }}"
         interfaces: "{{ installer_vm.subnet.name }}"
-        network: "{{ infra.external_network }}"
+        network: "{{ openshift_topology.openstack_infra.external_network }}"
         state: present
       when: custom_router == ''
 
@@ -186,7 +186,7 @@
 
     - name: Create the floating IP for the installer host VM
       ansible.builtin.command: |
-        openstack floating ip create --description 'Installer host' {{ infra.external_network }} -c name -f value
+        openstack floating ip create --description 'Installer host' {{ openshift_topology.openstack_infra.external_network }} -c name -f value
       register: installer_vm_fip
       changed_when: true
       environment:

@@ -1,0 +1,65 @@
+---
+- name: Create tenant network
+  openstack.cloud.network:
+    cloud: "{{ user_cloud }}"
+    name: "{{ network.network_name }}"
+    state: present
+
+# - name: Get the freeipa DNS server IPs in a case of TLS-E
+#   when: openstack_tlse | default(false)
+#   block:
+#     - name: Set freeipa_server variable with the freeipa DNS server IP (with tls-e only)
+#       ansible.builtin.include_role:
+#         name: shiftstack.tools.tools_get_deploy_info
+#         tasks_from: discover_freeipa_server.yml
+
+#     - name: Overwrite default osp dns_servers
+#       ansible.builtin.set_fact:
+#         infra:
+#           dns_servers: ["{{ freeipa_server }}"]
+
+- name: Create tenant subnet
+  openstack.cloud.subnet:
+    cloud: "{{ user_cloud }}"
+    name: "{{ network.subnet.name }}"
+    cidr: "{{ network.subnet.cidr }}"
+    network_name: "{{ network.network_name }}"
+    ip_version: "{{ network.ip_version }}"
+    ipv6_ra_mode: "{{ network.subnet.ra_mode | default(omit) }}"
+    ipv6_address_mode: "{{ network.subnet.addr_mode | default(omit) }}"
+    enable_dhcp: true
+    # To-Do: Should we set dns servers?
+    # dns_nameservers:
+    state: present
+
+- name: Create port for OCP API
+  openstack.cloud.port:
+    cloud: "{{ user_cloud }}"
+    name: "{{ network.ocp_api_port.name }}"
+    network: "{{ network.network_name }}"
+    fixed_ips:
+      - ip_address: "{{  network.ocp_api_port.ip_address }}"
+        subnet: "{{ network.subnet.name }}"
+    state: present
+
+- name: Create port for Ingress API
+  openstack.cloud.port:
+    cloud: "{{ user_cloud }}"
+    name: "{{ network.ingress_api_port.name }}"
+    network: "{{ network.network_name }}"
+    fixed_ips:
+      - ip_address: "{{  network.ingress_api_port.ip_address }}"
+        subnet: "{{ network.subnet.name }}"
+    state: present
+
+- name: Create router {{ openshift_ssipv6.router.name }}
+  openstack.cloud.router:
+    cloud: "{{ user_cloud }}"
+    name: "{{ network.router.name }}"
+    network: "{{ openshift_topology.openstack_infra.external_network }}"
+    interfaces:
+      - "{{ openshift_ssipv6.subnet.name }}"
+    state: "{{ item }}"
+  loop: # Failing if the router already exists. W/A:
+    - absent
+    - present

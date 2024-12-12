@@ -11,5 +11,8 @@ stages:
   - verification
 
 openshift_topology_override:
-  network_primary: ipv6    # ssipv6
-  network_secondary: ""    # "" for single-stack
+  # Single-stack IPv6 configuration
+  # network_primary: Required. Set to "ipv6" for IPv6-only networking
+  # network_secondary: Must be empty string for single-stack setup
+  network_primary: ipv6
+  network_secondary: ""

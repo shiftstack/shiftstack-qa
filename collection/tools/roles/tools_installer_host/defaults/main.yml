@@ -57,7 +57,7 @@ installer_vm:
   subnet:
     name: "{{ installer_subnet }}"
     cidr: 172.16.40.0/24
-    dns: "{{ infra.dns_servers }}"
+    dns: "{{ openshift_topology.openstack_infra[openshift_topology.network_primary].subnet.dns_serverss }}"
   router:
     name: "{{ installer_router }}"
   sec_group:

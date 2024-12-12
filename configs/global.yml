@@ -45,6 +45,35 @@ openshift_topology:
   network_type: OVNKubernetes
   network_primary: ipv4    # ipv4 or ipv6
   network_secondary: ""    # ipv4, ipv6, or "" for single-stack
+  openstack_infra: # Store required Openstack deployment info for deploying OCP
+    external_network: public
+    region: regionOne
+    ipv4:
+      subnet:
+        ip_version: 4
+        cidr: 10.196.0.0/16
+        dns_servers:
+          - '192.168.122.1'
+    ipv6:
+      network_name: network-ssipv6
+      ip_version: 6
+      subnet:
+        name: subnet-ssipv6
+        cidr: fd2e:6f44:5dd8:c956::/64
+        ra_mode: dhcpv6-stateful # Only mode supported in 4.18
+        addr_mode: dhcpv6-stateful # Only mode supported in 4.18
+      ocp_api_port:
+        name: api-ssipv6
+        ip_address: fd2e:6f44:5dd8:c956::5
+      ingress_api_port:
+        name: ingress-ssipv6
+        ip_address: fd2e:6f44:5dd8:c956::7
+      router:
+        name: router-ssipv6
+      gateway: 2620:cf:cf:aaaa:ffff:ffff:ffff:111
+  replicas:
+    master: 3
+    worker: 3
   flavors:
     master:
       name: "master"
@@ -61,10 +90,6 @@ openshift_topology:
       ram: 16384
       vcpus: 4
       disk: 100
-  replicas:
-    master: 3
-    worker: 3
-  machine_cidr: 10.196.0.0/16
 
 wait_retries: 30
 wait_delay: 30
@@ -112,12 +137,6 @@ inventory:
   backup_file: "{{ artifacts_dir }}/hosts-installer.bck"
 
 upi_playbooks_logs_dir: "{{ upi_playbooks_dir }}/playbooks_logs"
-
-infra: # Store required Openstack deployment info for deploying OCP
-  external_network: public
-  region: regionOne
-  dns_servers:
-    - '192.168.122.1'
 
 tests:
   default_go_version_target: '1.22.5'

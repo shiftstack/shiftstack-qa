@@ -27,7 +27,7 @@ networking:
   serviceNetwork:
     - 172.30.0.0/16
   machineNetwork:
-    - cidr: "{{ installcfg_machine_cidr }}"
+    - cidr: "{{ installcfg_cidr }}"
   networkType: "{{ installcfg_network_type }}"
 platform:
   openstack:

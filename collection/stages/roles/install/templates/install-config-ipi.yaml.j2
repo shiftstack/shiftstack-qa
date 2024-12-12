@@ -6,18 +6,18 @@ compute:
   platform:
     openstack:
       type: "{{ installcfg_worker_flavor }}"
-      serverGroupPolicy: "{{ installcfg_worker_servergrouppolicy }}"
-  replicas: {{ installcfg_worker_replicas }}
+      serverGroupPolicy: "{{ installcfg_worker_servergrouppolicy | default('soft-anti-affinity') }}"
+  replicas: "{{ installcfg_worker_replicas | default(0) }}"
 controlPlane:
   name: master
   platform:
     openstack:
       type: "{{ installcfg_master_flavor }}"
-      serverGroupPolicy: "{{ installcfg_master_servergrouppolicy }}"
-      {%- if installcfg_ctrl_rootvolume != {} +%}
+      serverGroupPolicy: "{{ installcfg_master_servergrouppolicy | default('hard-anti-affinity') }}"
+      {% if installcfg_ctrl_rootvolume | default({}) != {} -%}
       rootVolume: {{ installcfg_ctrl_rootvolume }}
-      {%- endif +%}
-  replicas: {{ installcfg_master_replicas }}
+      {% endif -%}
+  replicas: "{{ installcfg_master_replicas | default(3) }}"
 metadata:
   name: "{{ installcfg_cluster_name }}"
 networking:
@@ -27,16 +27,16 @@ networking:
   serviceNetwork:
     - 172.30.0.0/16
   machineNetwork:
-    - cidr: "{{ installcfg_machine_cidr }}"
-  networkType: "{{ installcfg_network_type }}"
+    - cidr: "{{ installcfg_cidr | default('192.168.0.0/24') }}"
+  networkType: "{{ installcfg_network_type | default('OVNKubernetes') }}"
 platform:
   openstack:
-    cloud:            "{{ user_cloud }}"
-    externalNetwork:  "{{ installcfg_external_network }}"
-    region:           "{{ installcfg_region }}"
-    apiFloatingIP:     "{{ installcfg_api_floating_ip }}"
-    ingressFloatingIP:     "{{ installcfg_ingress_floating_ip }}"
-    externalDNS:      {{ installcfg_dns_servers }}
+    cloud: "{{ user_cloud }}"
+    externalNetwork: "{{ installcfg_external_network | default('ext-net') }}"
+    region: "{{ installcfg_region }}"
+    apiFloatingIP: "{{ installcfg_api_floating_ip }}"
+    ingressFloatingIP: "{{ installcfg_ingress_floating_ip }}"
+    externalDNS: "{{ installcfg_dns_servers | default([]) }}"
 pullSecret: |
   {{ ocp_pull_secret }}
 sshKey: |
