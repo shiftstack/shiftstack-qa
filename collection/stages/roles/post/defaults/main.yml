@@ -1,2 +1,4 @@
 ---
 # defaults file for post
+hypervisor_dnsmasq_service: "cifmw-dnsmasq.service"
+hypervisor_dnsmasq_addresses_file: "/etc/cifmw-dnsmasq.d/addresses.conf"
