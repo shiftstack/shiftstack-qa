@@ -1,5 +1,5 @@
 ---
-- name: Create new Project
+- name: Create new
   ansible.builtin.include_tasks: project.yml
 
 - name: Update clouds.yml file with new Project

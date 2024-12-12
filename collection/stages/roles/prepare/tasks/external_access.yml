@@ -11,7 +11,7 @@
       ansible.builtin.set_fact:
         api_accessible_ip: "{{ fip_address }}"
 
-    - name: Create (if needed) APPS FIP and get the FIP info
+    - name: Create (if needed) APPS FIP and get the FIP
       ansible.builtin.include_tasks: create_fip.yml
       vars:
         description: "{{ ocp_apps_description }}"
