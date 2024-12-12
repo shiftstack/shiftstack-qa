@@ -1,0 +1,15 @@
+---
+- name: Remove the APPS DNS entry from the dnsmasq service in the hypervisor '{{ hypervisor }}'
+  ansible.builtin.lineinfile:
+    path: "{{ hypervisor_dnsmasq_addresses_file }}"
+    regexp: "{{ ocp_base_domain }}"
+    state: absent
+  delegate_to: "{{ hypervisor }}"
+  remote_user: root
+
+- name: Restart service in the hypervisor '{{ hypervisor_dnsmasq_service }}' - '{{ hypervisor }}'
+  ansible.builtin.systemd:
+    name: "{{ hypervisor_dnsmasq_service }}"
+    state: restarted
+  delegate_to: "{{ hypervisor }}"
+  remote_user: root
