@@ -29,3 +29,29 @@
         name: cluster
       spec:
         disableRedirect: true
+
+# DNS resolution management needed for RHOSO pods to be able to resolve
+# shift-on-stack cluster Apps endpoints (for telemetry tests the RHOSO
+# pods need to scrape metrics from shift-on-stack cluster prometheus
+# federation route).
+# https://issues.redhat.com/browse/SOSQE-2170
+- name: DNS management in the hypervisor
+  block:
+    - name: Include vars from registered resources
+      ansible.builtin.include_vars:
+        file: "{{ resources_file }}"
+        name: resources
+
+    - name: Add APPS DNS entry to the dnsmasq service in the hypervisor '{{ hypervisor }}'
+      ansible.builtin.lineinfile:
+        path: "{{ hypervisor_dnsmasq_addresses_file }}"
+        line: "address=/apps.{{ ocp_cluster_name }}.{{ ocp_base_domain }}/{{ resources.apps_accessible_ip }}"
+        insertafter: EOF  # Ensures the line is added at the end of the file
+      delegate_to: "{{ hypervisor }}"
+
+    - name: Restart service in the hypervisor '{{ hypervisor_dnsmasq_service }}' - '{{ hypervisor }}'
+      ansible.builtin.systemd:
+        name: "{{ hypervisor_dnsmasq_service }}"
+        state: restarted
+
+#TODO: remove entry in cleanup
