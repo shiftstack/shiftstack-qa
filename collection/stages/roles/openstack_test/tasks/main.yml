@@ -10,8 +10,18 @@
     go_version_target: "{{ openstack_tests_go_version }}"
     reset_result_dir: "{{ openstack_reset_result_dir | default(True) }}"
 
+- name: Setup hypervisor dnsmasq DNS entry
+  ansible.builtin.include_role:
+    name: tools_openshift_tests
+    tasks_from: setup_hypervisor_dnsmasq.yml
+
 - name: Include Openstack-Test tasks
   ansible.builtin.include_tasks: run_openstack_test.yml
+
+- name: Restore hypervisor dnsmasq DNS entry
+  ansible.builtin.include_role:
+    name: tools_openshift_tests
+    tasks_from: restore_hypervisor_dnsmasq.yml
 
 - name: Post openshift-test
   ansible.builtin.include_role:
