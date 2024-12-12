@@ -1,5 +1,5 @@
 ---
-- name: Create Floating IPs for API and APPS for a non-proxy installation
+- name: Create Floating IPs for API and APPS for a non-proxy
   when: not openshift_proxy_installation
   block:
     - name: Create (if needed) API FIP and get the FIP info
