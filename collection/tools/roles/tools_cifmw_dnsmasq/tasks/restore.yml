@@ -1,0 +1,17 @@
+---
+- name: Restore the original '{{ hypervisor_dnsmasq_addresses_file }}'
+  ansible.builtin.copy:
+    src: "{{ hypervisor_dnsmasq_addresses_original_file }}"
+    dest: "{{ hypervisor_dnsmasq_addresses_file }}"
+    mode: u=rw,g=r,o=r
+    remote_src: yes
+
+- name: Remove '{{ hypervisor_dnsmasq_addresses_original_file }}'
+  ansible.builtin.file:
+    path: "{{ hypervisor_dnsmasq_addresses_original_file }}"
+    state: absent
+
+- name: Restart service in the hypervisor '{{ hypervisor_dnsmasq_service }}' - '{{ hypervisor }}'
+  ansible.builtin.systemd:
+    name: "{{ hypervisor_dnsmasq_service }}"
+    state: restarted

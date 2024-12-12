@@ -10,15 +10,45 @@
     go_version_target: "{{ openstack_tests_go_version }}"
     reset_result_dir: "{{ openstack_reset_result_dir | default(True) }}"
 
-- name: Include Openstack-Test tasks
-  ansible.builtin.include_tasks: run_openstack_test.yml
+- name: Run openstack-test
+  block:
+    - name: Include vars from registered resources
+      ansible.builtin.include_vars:
+        file: "{{ resources_file }}"
+        name: resources
 
-- name: Post openshift-test
-  ansible.builtin.include_role:
-    name: tools_openshift_tests
-    tasks_from: post_openshift_tests.yml
-  vars:
-    testsuite_name: "{{ openstack_testsuite_name }}"
-    key_for_filtering_results: "openstack"
-    test_name: "{{ openstack_test_name }}"
-    results_dir: "{{ openstack_test_results_dir }}"
+    # DNS resolution management needed for RHOSO pods to be able to resolve
+    # shift-on-stack cluster Apps endpoints (for telemetry tests the RHOSO
+    # pods need to scrape metrics from shift-on-stack cluster prometheus
+    # federation route - https://issues.redhat.com/browse/SOSQE-2170)
+    - name: Add APPS DNS entry in hypervisor cifmw-dnsmasq
+      ansible.builtin.import_role:
+        name: tools_cifmw_dnsmasq
+      vars:
+        tools_cifmw_dnsmasq_domains:
+          - "apps.{{ ocp_cluster_name }}.{{ ocp_base_domain }}"
+        tools_cifmw_dnsmasq_ips:
+          - "{{ resources.apps_accessible_ip }}"
+      delegate_to: "{{ hypervisor }}"
+      remote_user: root
+
+    - name: Include Openstack-Test tasks
+      ansible.builtin.include_tasks: run_openstack_test.yml
+
+    - name: Post openshift-test
+      ansible.builtin.include_role:
+        name: tools_openshift_tests
+        tasks_from: post_openshift_tests.yml
+      vars:
+        testsuite_name: "{{ openstack_testsuite_name }}"
+        key_for_filtering_results: "openstack"
+        test_name: "{{ openstack_test_name }}"
+        results_dir: "{{ openstack_test_results_dir }}"
+
+  always:
+    - name: Restore hypervisor's cifmw-dnsmasq service
+      ansible.builtin.import_role:
+        name: tools_cifmw_dnsmasq
+        tasks_from: restore.yml
+      delegate_to: "{{ hypervisor }}"
+      remote_user: root
