@@ -14,19 +14,19 @@
 
 - name: Check we have at least one registry pod
   vars:
-    query: "items[?starts_with(metadata.name, 'image-registry')]"
+    registry_query: "items[?starts_with(metadata.name, 'image-registry')]"
   ansible.builtin.fail:
     msg: "There should be at least one image-registry pod"
   # the to_json | from_json w/a is to avoid a known issue of ansible:
   # https://github.com/ansible/ansible/issues/20379#issuecomment-284034650
-  when: oc_get_pods_result | to_json | from_json | json_query(query) | length == 0
+  when: oc_get_pods_result | to_json | from_json | json_query(registry_query) | length == 0
 
 - name: Check we have at least one router pod
   vars:
-    query: "items[?starts_with(metadata.name, 'router')]"
+    registry_query: "items[?starts_with(metadata.name, 'router')]"
   ansible.builtin.fail:
     msg: "There should be at least one router pod"
-  when: oc_get_pods_result | to_json | from_json | json_query(query) | length == 0
+  when: oc_get_pods_result | to_json | from_json | json_query(registry_query) | length == 0
 
 - name: Get the Image registry config
   kubernetes.core.k8s_info:
