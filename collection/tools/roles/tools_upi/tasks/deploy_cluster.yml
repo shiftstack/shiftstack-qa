@@ -85,7 +85,7 @@
 
 - name: Approve the pending CSRs (two CSRs are generated for each new machine added to the cluster)
   block:
-    - name: Wait until there are at least {{ topology.replicas.worker }} client CSRs (bootstrapper) in pending status
+    - name: Wait until there are at least {{ ocp_deployment_topology.replicas.worker }} client CSRs (bootstrapper) in pending status
       ansible.builtin.shell: |
         set -o pipefail &&
         oc get csr -o json | jq -r '.items[] | select(.status == {} and (.spec.username | contains("bootstrapper"))) | .metadata.name'
@@ -93,7 +93,7 @@
       environment:
         KUBECONFIG: "{{ kubeconfig }}"
       register: client_csrs
-      until: client_csrs.stdout_lines | length >= topology.replicas.worker | int
+      until: client_csrs.stdout_lines | length >= ocp_deployment_topology.replicas.worker | int
       retries: 60
       delay: 30
 
@@ -105,7 +105,7 @@
         KUBECONFIG: "{{ kubeconfig }}"
       with_items: "{{ client_csrs.stdout_lines }}"
 
-    - name: Wait until there are at least {{ topology.replicas.worker }} worker server CSRs (worker-x) in pending status
+    - name: Wait until there are at least {{ ocp_deployment_topology.replicas.worker }} worker server CSRs (worker-x) in pending status
       ansible.builtin.shell: |
         set -o pipefail &&
         oc get csr -o json | jq -r '.items[] | select(.status == {} and (.spec.username | contains("worker"))) | .metadata.name'
@@ -113,7 +113,7 @@
       environment:
         KUBECONFIG: "{{ kubeconfig }}"
       register: server_csrs
-      until: server_csrs.stdout_lines|length >= topology.replicas.worker | int
+      until: server_csrs.stdout_lines|length >= ocp_deployment_topology.replicas.worker | int
       retries: 30
       delay: 10
 
