@@ -18,7 +18,7 @@
     installcfg_master_replicas: "{{ ocp_deployment_topology.replicas.master }}"
     installcfg_machine_cidr: "{{ resources.restricted_cidr }}"
     installcfg_network_type: "{{ ocp_deployment_topology.network_type }}"
-    installcfg_region: "{{ infra.region }}"
+    installcfg_region: "{{ openstack_infra.region }}"
     installcfg_machines_subnet: "{{ resources.machines_subnet }}"
     installcfg_api_vip: "{{ precreated_api_fip }}"
     installcfg_ingress_vip: "{{ precreated_ingress_fip }}"

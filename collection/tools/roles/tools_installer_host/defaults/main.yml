@@ -57,7 +57,7 @@ installer_vm:
   subnet:
     name: "{{ installer_subnet }}"
     cidr: 172.16.40.0/24
-    dns: "{{ infra.dns_servers }}"
+    dns: "{{ openstack_infra.network_config[ocp_deployment_topology.primary_ip_protocol].dns_servers }}"
   router:
     name: "{{ installer_router }}"
   sec_group:
