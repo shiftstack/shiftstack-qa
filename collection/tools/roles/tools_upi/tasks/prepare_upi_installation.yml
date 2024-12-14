@@ -84,7 +84,7 @@
 
         - name: Overwrite default osp dns_servers
           ansible.builtin.set_fact:
-            infra:
+            openstack_infra:
               dns_servers: ["{{ freeipa_server }}"]
 
     - name: Check whether '{{ upi_inventory_file }}' contains DNS configuration
@@ -110,7 +110,7 @@
 
         - name: Set the external DNS in '{{ upi_inventory_file }}'
           vars:
-            os_external_dns: "{{ infra.dns_servers }}"
+            os_external_dns: "{{ openstack_infra.network_config[openshift_topology.network_primary].dns_servers }}"
           ansible.builtin.lineinfile:
             path: "{{ upi_inventory_file }}"
             insertafter: "os_external_dns"
