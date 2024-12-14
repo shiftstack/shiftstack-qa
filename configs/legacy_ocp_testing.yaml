@@ -3,7 +3,7 @@ admin_cloud: "overcloud"
 cacert: "/etc/pki/ca-trust/source/anchors/undercloud-cacert.pem"
 cacert_tlse: "/etc/pki/ca-trust/source/anchors/ca.crt"
 legacy_installation: true
-infra: # Store required Openstack deployment info for deploying OCP
+openstack_infra: # Store required Openstack deployment info for deploying OCP
   external_network: public
   region: regionOne
   dns_servers:
