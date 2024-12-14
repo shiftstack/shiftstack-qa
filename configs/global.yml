@@ -41,10 +41,44 @@ user_env_file: "{{ osp_config_dir }}/{{ user_cloud }}rc"
 clouds_yaml_file_path: "{{ home_dir }}/.config/openstack/clouds.yaml"
 secure_yaml_file_path: "{{ home_dir }}/.config/openstack/secure.yaml"
 
-ocp_deployment_topology:
+openstack_infra: # The required OpenStack deployment info for deploying OCP on the OSP infra
+  external_network: public
+  region: regionOne
+  network_config:
+    ipv4:
+      dns_servers:
+        - '192.168.122.1' # This is the gateway IP of the external network
+    ipv6:
+      dns_servers:
+        - '2620:cf:cf:aaaa::1' # This is the gateway IP of the external network
+
+ocp_deployment_topology: # The deployment info for deploying OCP on the OSP infra
   network_type: OVNKubernetes  # SDN type used for the deployment
   primary_ip_protocol: ipv4    # Primary IP version stack (ipv4 or ipv6)
   secondary_ip_protocol: ""    # Optional secondary IP stack for dual-stack (e.g., ipv4, ipv6, or "" for single-stack)
+  ipv4:
+    ip_version: 4
+    tenant_subnet:
+      cidr: 10.196.0.0/16     # CIDR for the machine network (tenant network)
+  ipv6:
+    ip_version: 6
+    tenant_network:
+      name: network-ssipv6
+    tenant_subnet:
+      name: subnet-ssipv6
+      # https://gitlab.cee.redhat.com/ci-framework/ci-framework-jobs/-/merge_requests/1200/diffs#4d73ff9305400214f604415957c2feea06cc2c65_0_164
+      cidr: fd2e:6f44:5dd8:c956::/64 # CIDR for the machine network (tenant network)
+      ra_mode: dhcpv6-stateful # Only mode supported in 4.18
+      addr_mode: dhcpv6-stateful # Only mode supported in 4.18
+    ocp_api_port:
+      name: api-ssipv6
+      ip_address: fd2e:6f44:5dd8:c956::5
+    ingress_api_port:
+      name: ingress-ssipv6
+      ip_address: fd2e:6f44:5dd8:c956::7
+    tenant_router:
+      name: router-ssipv6
+    gateway: 2620:cf:cf:aaaa:ffff:ffff:ffff:111 # https://gitlab.cee.redhat.com/ci-framework/ci-framework-jobs/-/merge_requests/1200/diffs#4d73ff9305400214f604415957c2feea06cc2c65_0_166
   replicas:
     master: 3
     worker: 3
@@ -64,7 +98,6 @@ ocp_deployment_topology:
       ram: 16384
       vcpus: 4
       disk: 100
-  machine_cidr: 10.196.0.0/16
 
 wait_retries: 30
 wait_delay: 30
@@ -112,12 +145,6 @@ inventory:
   backup_file: "{{ artifacts_dir }}/hosts-installer.bck"
 
 upi_playbooks_logs_dir: "{{ upi_playbooks_dir }}/playbooks_logs"
-
-infra: # Store required Openstack deployment info for deploying OCP
-  external_network: public
-  region: regionOne
-  dns_servers:
-    - '192.168.122.1'
 
 tests:
   default_go_version_target: '1.22.5'
