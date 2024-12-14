@@ -8,8 +8,8 @@
 
 - name: Declare variables - even distribution of OCP VMs on the available nova AZs.
   ansible.builtin.set_fact:
-    nova_az_for_workers: "{{ (existing_nova_azs.stdout_lines * topology.replicas.worker | int)[: topology.replicas.worker | int] }}"
-    nova_az_for_masters: "{{ (existing_nova_azs.stdout_lines * topology.replicas.master | int)[: topology.replicas.master | int] }}"
+    nova_az_for_workers: "{{ (existing_nova_azs.stdout_lines * ocp_deployment_topology.replicas.worker | int)[: ocp_deployment_topology.replicas.worker | int] }}"
+    nova_az_for_masters: "{{ (existing_nova_azs.stdout_lines * ocp_deployment_topology.replicas.master | int)[: ocp_deployment_topology.replicas.master | int] }}"
 
 # If --openshift-root-volumes is yes, discover the cinder AZs (different to default one 'nova') to create volumes for the OCP nodes there
 - name: Discover AZs when using root volumes
@@ -41,5 +41,5 @@
 
     - name: Declare variables - even distribution of root volumes for OCP VMs on the available cinder AZs.
       ansible.builtin.set_fact:
-        cinder_az_for_workers: "{{ (existing_cinder_azs.stdout_lines * topology.replicas.worker | int)[: topology.replicas.worker | int] }}"
-        cinder_az_for_masters: "{{ (existing_cinder_azs.stdout_lines * topology.replicas.master | int)[: topology.replicas.master | int] }}"
+        cinder_az_for_workers: "{{ (existing_cinder_azs.stdout_lines * ocp_deployment_topology.replicas.worker | int)[: ocp_deployment_topology.replicas.worker | int] }}"
+        cinder_az_for_masters: "{{ (existing_cinder_azs.stdout_lines * ocp_deployment_topology.replicas.master | int)[: ocp_deployment_topology.replicas.master | int] }}"

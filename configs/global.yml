@@ -41,7 +41,13 @@ user_env_file: "{{ osp_config_dir }}/{{ user_cloud }}rc"
 clouds_yaml_file_path: "{{ home_dir }}/.config/openstack/clouds.yaml"
 secure_yaml_file_path: "{{ home_dir }}/.config/openstack/secure.yaml"
 
-topology:
+ocp_deployment_topology:
+  network_type: OVNKubernetes  # SDN type used for the deployment
+  primary_ip_protocol: ipv4    # Primary IP version stack (ipv4 or ipv6)
+  secondary_ip_protocol: ""    # Optional secondary IP stack for dual-stack (e.g., ipv4, ipv6, or "" for single-stack)
+  replicas:
+    master: 3
+    worker: 3
   flavors:
     master:
       name: "master"
@@ -58,9 +64,6 @@ topology:
       ram: 16384
       vcpus: 4
       disk: 100
-  replicas:
-    master: 3
-    worker: 3
   machine_cidr: 10.196.0.0/16
 
 wait_retries: 30
