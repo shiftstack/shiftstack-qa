@@ -6,13 +6,13 @@
   openstack.cloud.floating_ip_info:
     cloud: "{{ user_cloud }}"
     description: "{{ description }}"
-    floating_network: "{{ infra.external_network }}"
+    floating_network: "{{ openstack_infra.external_network }}"
     status: "down" # Not considering the ones in active.
   register: res
 
 - name: Create Floating IP
   ansible.builtin.shell: |
-    openstack floating ip create --description '{{ description }}' {{ infra.external_network }} -c name -f value
+    openstack floating ip create --description '{{ description }}' {{ openstack_infra.external_network }} -c name -f value
   register: created_fip
   changed_when: true
   environment:
