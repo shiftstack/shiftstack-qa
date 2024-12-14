@@ -28,10 +28,10 @@
     regexp: "{{ item.regexp }}"
     replace: "{{ item.replace }}"
   with_items:
-    - {regexp: "os_flavor_master:.*", replace: "os_flavor_master: '{{ topology.flavors.master.name }}'"}
-    - {regexp: "os_flavor_worker:.*", replace: "os_flavor_worker: '{{ topology.flavors.worker.name }}'"}
-    - {regexp: "os_cp_nodes_number:.*", replace: "os_cp_nodes_number: {{ topology.replicas.master }}"}
-    - {regexp: "os_compute_nodes_number:.*", replace: "os_compute_nodes_number: {{ topology.replicas.worker }}"}
+    - {regexp: "os_flavor_master:.*", replace: "os_flavor_master: '{{ ocp_deployment_topology.flavors.master.name }}'"}
+    - {regexp: "os_flavor_worker:.*", replace: "os_flavor_worker: '{{ ocp_deployment_topology.flavors.worker.name }}'"}
+    - {regexp: "os_cp_nodes_number:.*", replace: "os_cp_nodes_number: {{ ocp_deployment_topology.replicas.master }}"}
+    - {regexp: "os_compute_nodes_number:.*", replace: "os_compute_nodes_number: {{ ocp_deployment_topology.replicas.worker }}"}
 
 - name: Replace the network and subnet values in common.yaml when we are using an existing network
   ansible.builtin.replace:
@@ -49,7 +49,7 @@
     path: "{{ upi_playbooks_dir }}/common.yaml"
     block: |
         # bootstrap flavor
-              os_bootstrap_flavor: "{{ topology.flavors.bootstrap.name }}"
+              os_bootstrap_flavor: "{{ ocp_deployment_topology.flavors.bootstrap.name }}"
         # workers flavors
               os_workers_flavors: {{ osp_workers_flavors | default([]) }}
 
