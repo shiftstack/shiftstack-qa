@@ -1,7 +1,6 @@
 ---
 openshift_release: 4.17 # It can be "4.10", "4.11", etc. or "4-stable"
 openshift_build_name: "candidate" # It can be an empty value "" (latest nightly), a given build
-openshift_network_type: OVNKubernetes
 installation_type: ipi
 deploy_installer_host: true
 openshift_proxy_installation: true
@@ -14,7 +13,10 @@ stages:
   - openstack_test
   - lb_tests
 
-topology:
+ocp_deployment_topology:
+  network_type: OVNKubernetes
+  network_primary: ipv4    # ipv4 or ipv6
+  network_secondary: ""    # ipv4, ipv6, or "" for single-stack
   flavors:
     master:
       name: "master"
