@@ -10,9 +10,11 @@
   environment:
     OS_CLOUD: "{{ user_cloud }}"
   changed_when: true
+  async: 3600 # 1hour
+  pool: 5
   register: destroy_result
   failed_when:
-    - destroy_result.rc != 0
+    - destroy_result.finished == 0 || (destroy_result.rc | default(1)) != 0
     - not force_cleanup
 
 - name: Mark as UNSTABLE if the cluster destroy failed and force_cleanup is enabled
@@ -23,7 +25,7 @@
     unstable_msg: >-
       Cluster destroy failed. Ignoring as force_cleanup is enabled.
   when:
-    - destroy_result.rc != 0
+    - destroy_result.finished == 0 || (destroy_result.rc | default(1)) != 0
     - force_cleanup
 
 - name: Remove the OCP cluster directory
