@@ -1,0 +1,3 @@
+---
+# defaults for tools_custom_catalog_source
+ocp_release_url: "https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/stable/release.txt"
