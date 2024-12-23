@@ -1,0 +1,14 @@
+---
+- name: Install custom cataloge source
+  ansible.builtin.include_role:
+    name: shiftstack.tools.tools_custom_catalog_source
+  when: use_custom_catalog_source
+
+- name: Install Servicemesh operator
+  ansible.builtin.include_tasks: servicemesh.yml
+
+- name: Install Serverless operator
+  ansible.builtin.include_tasks: serverless.yml
+
+- name: Install RHOAI operator
+  ansible.builtin.include_tasks: rhoai.yml
