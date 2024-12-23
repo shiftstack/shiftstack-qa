@@ -1,0 +1,22 @@
+---
+- name: Create Servicemesh operator subscription
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    definition:
+      apiVersion: operators.coreos.com/v1alpha1
+      kind: Subscription
+      metadata:
+        name: servicemeshoperator
+        namespace: openshift-operators
+      spec:
+        channel: stable
+        installPlanApproval: Automatic
+        name: servicemeshoperator
+        source: "{{ use_custom_catalog_source | ternary('redhat-operators-custom', 'redhat-operators') }}"
+        sourceNamespace: openshift-marketplace
+    wait: true
+    wait_timeout: 300
+    wait_condition:
+      type: CatalogSourcesUnhealthy
+      status: "False"

@@ -1,0 +1,30 @@
+---
+- name: Install custom cataloge source
+  ansible.builtin.include_role:
+    name: shiftstack.tools.tools_custom_catalog_source
+  when: use_custom_catalog_source
+
+- name: Install NFD operator
+  ansible.builtin.include_tasks: nfd.yml
+
+- name: Install NVIDIA GPU operator
+  ansible.builtin.include_tasks: gpu_operator.yml
+
+- name: Get the total number of worker nodes
+  kubernetes.core.k8s_info:
+    api_version: v1
+    kind: Node
+    kubeconfig: "{{ kubeconfig }}"
+    label_selectors:
+      - "node-role.kubernetes.io/worker"
+  register: worker_nodes_count
+  until: worker_nodes_count.resources | length > 0
+  retries: 3
+  delay: 10
+  changed_when: false
+
+- name: Scale up non-GPU worker node
+  ansible.builtin.include_tasks: scaleup_nongpu_worker.yaml
+  when:
+    - worker_nodes_count.resources | length < 2
+    - gpu_worker_node_count | int > 0
