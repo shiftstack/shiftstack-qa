@@ -60,5 +60,6 @@
     disk: "{{ item.value.disk }}"
     ephemeral: "{{ item.value.ephemeral | default(omit) }}"
     verify: "{{ admin_verify_cacert }}"
+    extra_specs: "{{ item.value.extra_specs | default(omit) }}"
   register: flavors
   loop: "{{ lookup('ansible.builtin.dict', topology.flavors) }}"
