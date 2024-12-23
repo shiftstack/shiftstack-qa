@@ -13,6 +13,13 @@
     wait: yes
     wait_timeout: 100
 
+- name: Get the number of prometheus/k8s replicas
+  ansible.builtin.shell: |
+    oc get prometheus/k8s -o json | jq .spec.replicas
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+  register: prometheus_pvc_num
+
 # Check that prometheus PVC is created on openstack
 - name: Get created PVCs on openshift-monitoring
   kubernetes.core.k8s_info:
@@ -23,7 +30,7 @@
   retries: 25
   delay: 15
   until:
-    - monitoring_pvcs.resources|length >= 2
+    - monitoring_pvcs.resources|length >= prometheus_pvc_num.stdout | int
     - monitoring_pvcs|json_query('resources[*].status') is defined
     - monitoring_pvcs|json_query('resources[*].status.phase') | unique == ["Bound"]
 

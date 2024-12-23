@@ -1,0 +1,80 @@
+---
+- name: Create RHOAI operator namespace
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: redhat-ods-operator
+
+- name: Create RHOAI operator group
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    definition:
+      apiVersion: operators.coreos.com/v1
+      kind: OperatorGroup
+      metadata:
+        name: redhat-operators
+        namespace: redhat-ods-operator
+
+- name: Create RHOAI operator subscription
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    definition:
+      apiVersion: operators.coreos.com/v1alpha1
+      kind: Subscription
+      metadata:
+        name: rhods-operator
+        namespace: redhat-ods-operator
+      spec:
+        channel: stable
+        installPlanApproval: Automatic
+        name: rhods-operator
+        source: "{{ use_custom_catalog_source | ternary('redhat-operators-custom', 'redhat-operators') }}"
+        sourceNamespace: openshift-marketplace
+    wait: true
+    wait_timeout: 300
+    wait_condition:
+      type: CatalogSourcesUnhealthy
+      status: "False"
+
+- name: Wait for RHOAI operator pods to be ready
+  ansible.builtin.shell: |
+    oc wait pod --all --for=condition=Ready -n redhat-ods-operator --timeout=2m
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+  retries: 3
+  delay: 10
+  register: rhoai_pods_result
+  until: rhoai_pods_result is not failed
+
+- name: Get DataScienceCluster default parameters
+  ansible.builtin.shell: |
+    oc get csv -n default -o json | jq -r '.items[] | select(.metadata.name | startswith("rhods-operator"))' | jq -r '.metadata.annotations."operatorframework.io/initialization-resource"' | jq -r | tee "/tmp/default-dsc.json"
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+  retries: 3
+  delay: 10
+  register: dsc_conf_result
+  until: gpu_install_plane.stdout_lines | length > 0 
+
+- name: Create DataScienceCluster
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    src: "/tmp/default-dsc.json"
+    apply: true
+
+- name: Wait for DataScienceCluster to be ready
+  ansible.builtin.shell: |
+    oc wait DataScienceCluster default-dsc --for jsonpath='{.status.phase}'=Ready --timeout=15m
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+  retries: 3
+  delay: 10
+  register: dsc_result
+  until: dsc_result is not failed
