@@ -65,6 +65,10 @@
         name: shiftstack.tools.tools_get_deploy_info
         tasks_from: discover_ocp_version.yml
 
+- name: GPU-Installation
+  ansible.builtin.import_playbook: plays/gpu.yaml
+  when: "'gpu' in stages"
+
 - name: Post-Installation
   ansible.builtin.import_playbook: plays/post_install.yaml
   when: "'post' in stages"

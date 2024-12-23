@@ -1,0 +1,47 @@
+---
+- name: Create custom catalog source
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    definition:
+      apiVersion: operators.coreos.com/v1alpha1
+      kind: CatalogSource
+      metadata:
+        name: redhat-operators-custom
+        namespace: openshift-marketplace
+      spec:
+        displayName: Redhat Operators Custom
+        image: "registry.redhat.io/redhat/redhat-operator-index:{{ ocp_ga_catalog }}"
+        publisher: Red Hat
+        sourceType: grpc
+
+- name: Create custom catalog source
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    definition:
+      apiVersion: operators.coreos.com/v1alpha1
+      kind: CatalogSource
+      metadata:
+        name: certified-operators-custom
+        namespace: openshift-marketplace
+      spec:
+        displayName: Custom Certified Operators
+        grpcPodConfig:
+          extractContent:
+            cacheDir: /tmp/cache
+            catalogDir: /configs
+          memoryTarget: 40Mi
+          nodeSelector:
+            kubernetes.io/os: linux
+            node-role.kubernetes.io/master: ""
+          priorityClassName: system-cluster-critical
+          securityContextConfig: restricted
+        image: "registry.redhat.io/redhat/certified-operator-index:{{ ocp_ga_catalog }}"
+        sourceType: grpc
+
+- name: Wait for the custom catalogs becomes available
+  ansible.builtin.shell: |
+      oc wait pod --all --for=condition=Ready -n openshift-marketplace --timeout=10m
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"

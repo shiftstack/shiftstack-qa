@@ -1,0 +1,10 @@
+---
+- name: Install custom cataloge source
+  ansible.builtin.include_tasks: custom_catalog.yml
+  when: ocp_pre_released_version
+
+- name: Install NFD operator
+  ansible.builtin.include_tasks: nfd.yml
+
+- name: Install NVIDIA GPU operator
+  ansible.builtin.include_tasks: gpu_operator.yml
