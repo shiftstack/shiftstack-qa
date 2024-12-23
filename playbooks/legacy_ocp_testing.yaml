@@ -89,6 +89,37 @@
         name: shiftstack.stages.install
       when: "'install' in stages"
 
+- name: The GPU installation stage
+  hosts: installer
+  gather_facts: no
+  vars_files:
+    - "../configs/global.yml"
+  tasks:
+    - name: Discover OCP version and networkType
+      ansible.builtin.include_role:
+        name: shiftstack.tools.tools_get_deploy_info
+        tasks_from: discover_ocp_version.yml
+
+    - name: GPU-Installation
+      ansible.builtin.include_role:
+        name: shiftstack.stages.gpu
+      when: "'gpu' in stages"
+
+- name: The RHOAI installation stage
+  hosts: installer
+  gather_facts: no
+  vars_files:
+    - "../configs/global.yml"
+  tasks:
+    - name: Discover OCP version and networkType
+      ansible.builtin.include_role:
+        name: shiftstack.tools.tools_get_deploy_info
+        tasks_from: discover_ocp_version.yml
+
+    - name: RHOAI-Installation
+      ansible.builtin.include_role:
+        name: shiftstack.stages.rhoai
+      when: "'rhoai' in stages"
 
 - name: Post OpenShift installation stage
   hosts: installer
@@ -105,7 +136,6 @@
       ansible.builtin.include_role:
         name: shiftstack.stages.post
       when: "'post' in stages"
-
 
 - name: Verify the OpenShift cluster
   hosts: installer

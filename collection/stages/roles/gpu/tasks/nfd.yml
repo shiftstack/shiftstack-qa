@@ -1,0 +1,78 @@
+---
+- name: Create NFD operator namespace
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: openshift-nfd
+        labels:
+          name: openshift-nfd
+          openshift.io/cluster-monitoring: "true"
+
+- name: Create NFD operator group
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    definition:
+      apiVersion: operators.coreos.com/v1
+      kind: OperatorGroup
+      metadata:
+        generateName: openshift-nfd-
+        name: openshift-nfd
+        namespace: openshift-nfd
+      spec:
+        targetNamespaces:
+          - openshift-nfd
+
+- name: Create NFD operator subscription
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    definition:
+      apiVersion: operators.coreos.com/v1alpha1
+      kind: Subscription
+      metadata:
+        name: nfd
+        namespace: openshift-nfd
+      spec:
+        channel: "stable"
+        installPlanApproval: Automatic
+        name: nfd
+        source: "{{ use_custom_catalog_source | ternary('redhat-operators-custom', 'redhat-operators') }}"
+        sourceNamespace: openshift-marketplace
+    wait: true
+    wait_timeout: 300
+    wait_condition:
+      type: CatalogSourcesUnhealthy
+      status: "False"
+
+- name: Render NFD configuration template
+  ansible.builtin.template:
+    src: "templates/nfd_config.yaml.j2"
+    dest: "/tmp/nfd_rules.yaml"
+    mode: u=rw,g=rw,o=r
+
+- name: Apply NFD confguration
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    src: "/tmp/nfd_rules.yaml"
+    apply: true
+  retries: 10
+  delay: 10
+  register: result
+  until: result is not failed
+
+- name: Wait for all NFD pods to be ready
+  ansible.builtin.shell: |
+      oc wait pod --all --for=condition=Ready -n openshift-nfd --timeout=3m
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+  retries: 10
+  delay: 10
+  register: result
+  until: result.rc == 0
+  changed_when: false
