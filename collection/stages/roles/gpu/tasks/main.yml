@@ -1,0 +1,28 @@
+---
+- name: Get OCP GA version from release.txt
+  block:
+    - name: Download the OCP GA version from openshift mirror
+      ansible.builtin.get_url:
+        url: https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/stable/release.txt
+        dest: /tmp/release.txt
+        mode: u=rw,g=rw,o=r
+
+    - name: Extract OpenShift version
+      ansible.builtin.shell: |
+        grep -oP "Version:\s*\K4\.\d+" /tmp/release.txt
+      changed_when: false
+      register: _openshift_ga_version
+
+    - name: Set ocp_latest_ga variable
+      ansible.builtin.set_fact:
+        _ocp_latest_ga: "{{ _openshift_ga_version.stdout }}"
+
+- name: Install custom cataloge source
+  ansible.builtin.include_tasks: custom_catalog.yml
+  when: use_custom_catalog_source
+
+- name: Install NFD operator
+  ansible.builtin.include_tasks: nfd.yml
+
+- name: Install NVIDIA GPU operator
+  ansible.builtin.include_tasks: gpu_operator.yml
