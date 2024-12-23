@@ -1,0 +1,15 @@
+---
+- name: Create custom cataloge source
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: operators.coreos.com/v1alpha1
+      kind: CatalogSource
+      metadata:
+        name: redhat-operators-custom
+        namespace: openshift-marketplace
+      spec:
+        displayName: Redhat Operators Custom
+        image: registry.redhat.io/redhat/redhat-operator-index:v4.17
+        publisher: Red Hat
+        sourceType: grpc

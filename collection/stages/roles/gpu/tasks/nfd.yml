@@ -1,0 +1,31 @@
+---
+- name: Create NFD operator namespace
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: openshift-nfd
+        labels:
+          name: openshift-nfd
+          openshift.io/cluster-monitoring: "true"
+
+- name: Create NFD operator group
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: operators.coreos.com/v1
+      kind: OperatorGroup
+      metadata:
+        generateName: openshift-nfd-
+        name: openshift-nfd
+        namespace: openshift-nfd
+      spec:
+        targetNamespaces:
+          - openshift-nfd
+
+- name: Wait while the NFD operator becomes available
+  ansible.builtin.command:
+    cmd: >-
+      oc wait pod --all --for=condition=Ready -n openshift-nfd --timeout=10m
