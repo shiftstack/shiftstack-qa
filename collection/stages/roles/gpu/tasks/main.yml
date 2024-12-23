@@ -1,0 +1,26 @@
+---
+- name: Install custom cataloge source
+  ansible.builtin.include_tasks: custom_catalog.yml
+  when: use_custom_catalog_source
+
+- name: Install NFD operator
+  ansible.builtin.include_tasks: nfd.yml
+
+- name: Install NVIDIA GPU operator
+  ansible.builtin.include_tasks: gpu_operator.yml
+
+- name: Get the total number of worker nodes
+  ansible.builtin.shell: |
+    oc get nodes -l node-role.kubernetes.io/worker -oname
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+  register: worker_nodes_count
+  until: worker_nodes_count.stdout_lines | length > 0
+  retries: 3
+  delay: 10
+
+- name: Scale up non-GPU worker node
+  ansible.builtin.include_tasks: scaleup_nongpu_worker.yaml
+  when: 
+    - worker_nodes_count.stdout_lines | length < 2
+    - gpu_worker_node_count > 0

@@ -1,0 +1,43 @@
+---
+- name: Create a new flavor for non-GPU worker node
+  vars:
+    worker_flavor: "{{ topology.flavors.worker }}"
+  openstack.cloud.compute_flavor:
+    cloud: "{{ admin_cloud | default(omit) }}"
+    state: present
+    name: "{{ worker_flavor.name }}_no_gpu"
+    ram: "{{ worker_flavor.ram }}"
+    vcpus: "{{ worker_flavor.vcpus }}"
+    disk: "{{ worker_flavor.disk }}"
+    ephemeral: "{{ worker_flavor.ephemeral | default(omit) }}"
+    verify: "{{ admin_verify_cacert }}"
+
+- name: Export the current MachineSet to the /tmp folder
+  ansible.builtin.shell: |
+    oc get MachineSet -n openshift-machine-api -o yaml > /tmp/machineset.yaml
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+
+- name: Replace the MachineSet with a new flavor parameters and name
+  copy:
+    content: |
+      {{ lookup('file', '/tmp/machineset.yaml') |
+      regex_replace('worker-0', 'worker-1') |
+      regex_replace('flavor:.*', 'flavor: worker_no_gpu') }}
+    dest: /tmp/no_gpu_machineset.yaml
+
+- name: Apply the new MachineSet
+  ansible.builtin.shell: |
+    oc apply -f /tmp/no_gpu_machineset.yaml
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+
+- name: Wait for the new worker node to be ready
+  ansible.builtin.shell: |
+    oc get nodes -l node-role.kubernetes.io/worker -oname
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+  register: _nodes_count
+  until: _nodes_count.stdout_lines | length > 0
+  retries: 3
+  delay: 10
