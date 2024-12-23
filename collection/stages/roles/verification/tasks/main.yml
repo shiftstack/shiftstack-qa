@@ -104,6 +104,11 @@
       when:
         - bm_workers|default(False) is false
 
+    - name: Run GPU checks
+      ansible.builtin.include_tasks: check_gpu.yml
+      when:
+        - gpu_enabled|default(False) is true
+
     - name: Check if manila is present on the OSP installation
       ansible.builtin.command: openstack catalog show manila -c name
       environment:
