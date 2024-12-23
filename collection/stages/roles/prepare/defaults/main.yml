@@ -8,8 +8,8 @@ project:
   domain_name: Default
   region: 'regionOne'
   os_quota:   # https://github.com/openshift/installer/tree/master/docs/user/openstack#openstack-requirements
-    ram: 147456
-    cores: 50
+    ram: 524288
+    cores: 200
     network: 250
     subnet: 250
     security_group: 250
