@@ -1,0 +1,70 @@
+---
+- name: Get OCP GA version from release.txt
+  block:
+    - name: Download the OCP GA version from openshift mirror
+      ansible.builtin.get_url:
+        url: "{{ ocp_release_url }}"
+        dest: /tmp/release.txt
+        mode: u=rw,g=rw,o=r
+
+    - name: Extract OpenShift version
+      ansible.builtin.shell: |
+        grep -oP "Version:\s*\K4\.\d+" /tmp/release.txt
+      changed_when: false
+      register: _openshift_ga_version
+
+    - name: Set ocp_latest_ga variable
+      ansible.builtin.set_fact:
+        _ocp_latest_ga: "{{ _openshift_ga_version.stdout }}"
+
+- name: Create custom catalog source
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    definition:
+      apiVersion: operators.coreos.com/v1alpha1
+      kind: CatalogSource
+      metadata:
+        name: redhat-operators-custom
+        namespace: openshift-marketplace
+      spec:
+        displayName: Redhat Operators Custom
+        image: "registry.redhat.io/redhat/redhat-operator-index:v{{ _ocp_latest_ga }}"
+        publisher: Red Hat
+        sourceType: grpc
+
+- name: Create custom catalog source
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    definition:
+      apiVersion: operators.coreos.com/v1alpha1
+      kind: CatalogSource
+      metadata:
+        name: certified-operators-custom
+        namespace: openshift-marketplace
+      spec:
+        displayName: Custom Certified Operators
+        image: "registry.redhat.io/redhat/certified-operator-index:v{{ _ocp_latest_ga }}"
+        publisher: Red Hat
+        sourceType: grpc
+
+- name: Wait for the Red Hat Operators catalog becomes available
+  ansible.builtin.shell: |
+    oc wait CatalogSource redhat-operators-custom --for jsonpath='{.status.connectionState.lastObservedState}'=READY -n openshift-marketplace --timeout=5m
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+  retries: 3
+  delay: 10
+  register: rh_cs_result
+  until: rh_cs_result is not failed
+
+- name: Wait for the Certified Operators catalog becomes available
+  ansible.builtin.shell: |
+    oc wait CatalogSource certified-operators-custom --for jsonpath='{.status.connectionState.lastObservedState}'=READY -n openshift-marketplace --timeout=5m
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+  retries: 3
+  delay: 10
+  register: cert_cs_result
+  until: cert_cs_result is not failed
