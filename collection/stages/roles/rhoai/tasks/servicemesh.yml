@@ -1,0 +1,21 @@
+---
+- name: Create Servicemesr operator subscription
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    definition:
+      kind: Subscription
+      metadata:
+        name: servicemeshoperator
+        namespace: openshift-operators
+      spec:
+        channel: stable
+        installPlanApproval: Automatic
+        name: servicemeshoperator
+        source: "{{ use_custom_catalog_source | ternary('redhat-operators-custom', 'redhat-operators') }}"
+        sourceNamespace: openshift-marketplace
+    wait: true
+    wait_timeout: 300
+    wait_condition:
+      type: CatalogSourcesUnhealthy
+      status: "False"
