@@ -1,0 +1,18 @@
+---
+openshift_release: 4.18
+openshift_build_name: "" # It can be an empty value "" (latest nightly), a given build
+installation_type: ipi
+
+stages:
+  - cleanup
+  - prepare
+  - install
+  - post
+  - verification
+
+ocp_deployment_topology_override:
+  # Single-stack IPv6 configuration
+  # primary_ip_protocol: Required. Set to "ipv6" for IPv6-only networking
+  # secondary_ip_protocol: Must be empty string for single-stack setup
+  primary_ip_protocol: ipv6
+  secondary_ip_protocol: ""
