@@ -9,6 +9,13 @@
       ansible.builtin.file:
         path: "{{ stage_unstable_flag }}"
         state: absent
+
+    - name: Update ocp_deployment_topology with overrides if defined
+      # Apply ocp_deployment_topology_override on top of the base topology
+      # The base configuration comes from `configs/global.yml`
+      ansible.builtin.set_fact:
+        ocp_deployment_topology: "{{ ocp_deployment_topology | combine(ocp_deployment_topology_override, recursive=True) }}"
+      when: ocp_deployment_topology_override is defined
   tasks:
     - name: Discover the OSP version
       ansible.builtin.include_role:
