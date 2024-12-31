@@ -33,9 +33,9 @@
             state: present
             key: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC11+qzT5Hs8I1ASFTm82fQLb0G5KgWXvqXBuq+5NIa3JStGDyowQV4GD1rDxsQqdMzVA2yf0uHCzcCbzEUprKwI8l4RJagvyc1Qna6lAlDOU41xpDBy9Ixia2IhYh/vC+x8wc1yysR2ZaTQcW0GtkH8BJeRSoAXPc5diadq39il4FPI6ItTdSiUX65kDeCMNYF+cPio37pppwsEYJGnf2NqdffgPgXBG7Rk4gcdtCNHhaVHdrvWrruCabmgRgITlE4IZC9CEGRRDi75cVRK8oxWh8nd9Xh7A1vmfC0fMl6XlkkSk5+3w8GfhRPJ1DyT0hyG+byTj54x8gUrJX6q0HRFU3nX5kKNNrGGtwFgdt9QpM46ZLTxJPIpvN3+5Rr/5hoL1zF4AA7yRrR9cGJHTfFnk49Wd7T+LGtdT0aNO4g36hbMZEa9MY+puco7Im6Zbr0jRUwgKGROob4AEgWPL02cA9nPcxOHiyhig+Snik+onGPRQpJPqsgQiMxtcCRuJ11uJ/hGO0GWhPwRGxbP7LHW79FEOMmAlSi0zE9FxUF91KwjC2v5oIcDH9dd+U19oeVlVAc4QpKA5yroShHZFpuQXmWkRSz37oo3cDgH7zN9C07Sm735LaxFFmy3Zkck0IbAitymKjv26c7r1KXTBvEQS5Q8xiwzMGoaLuJ3lR2Ww== shiftstack-qe@redhat.com  # noqa yaml[line-length]
 
-        - name: Copy incluster-kubeconfig from the shiftstackclient pod
+        - name: Copy RHOSO kubeconfig from the shiftstackclient pod
           ansible.builtin.copy:
-            src: ~/incluster-kubeconfig/kubeconfig
+            src: "{{ rhoso_kubeconfig }}"
             dest: /home/{{ proxy_user }}/
             owner: "{{ proxy_user }}"
             group: "{{ proxy_user }}"
