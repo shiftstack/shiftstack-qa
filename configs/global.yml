@@ -25,6 +25,8 @@ osp_config_dir: "{{ user_cloud_installation_dir }}/openstack"
 ocp_cluster_name: "ostest"
 ocp_installation_dir: "{{ user_cloud_installation_dir }}/{{ ocp_cluster_name }}"
 kubeconfig: "{{ ocp_installation_dir }}/auth/kubeconfig"
+kubeadmin-password: "{{ ocp_installation_dir }}/auth/kubeadmin-password"
+rhoso_kubeconfig: "{{ home_dir }}/incluster-kubeconfig/kubeconfig"
 upi_playbooks_dir: "{{ ocp_installation_dir }}"
 report_dir: "{{ artifacts_dir }}/test_results"
 
