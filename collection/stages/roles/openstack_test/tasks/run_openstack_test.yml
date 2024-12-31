@@ -64,8 +64,11 @@
         --output-file {{ openstack_test_results_dir }}/{{ openstack_test_name }}.log
         --junit-dir={{ openstack_test_results_dir }} > /dev/null
       environment:
+        # RHOSO_KUBECONFIG and SHIFTSTACK_PASS_FILE are required just for the observability test
         OS_CLOUD: "{{ user_cloud }}"
         KUBECONFIG: "{{ kubeconfig }}"
+        RHOSO_KUBECONFIG: "{{ rhoso_kubeconfig }}"
+        SHIFTSTACK_PASS_FILE: "{{ kubeadmin-password }}"
       changed_when: true
 
     - name: Check for any failed openshift tests
