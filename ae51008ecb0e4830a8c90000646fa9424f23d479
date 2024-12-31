@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2b0b1c35_09bcfad4",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 9
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2024-12-31T11:50:41Z",
+      "side": 1,
+      "message": "Can be reviewed, but needs to be merged after https://github.com/openstack-k8s-operators/ci-framework/pull/2626 is merged",
+      "revId": "ae51008ecb0e4830a8c90000646fa9424f23d479",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
