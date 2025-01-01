@@ -5,7 +5,7 @@ blocklist: &all_block_tests
 
 # OpenShift 4.15
 "4.15":
-  "OVNKubernetes":
+  "OVNKubernetes": &ocp415_block_tests
     <<: *all_block_tests
     ".*Feature:IPv6DualStack.*should function for service endpoints using hostNetwork.*":
       note: "Failing persistently in openshift CI"
@@ -13,13 +13,20 @@ blocklist: &all_block_tests
 # OpenShift 4.16
 "4.16":
   "OVNKubernetes":
-    <<: *all_block_tests
+    <<: *ocp415_block_tests
     ".*Feature:IPv6DualStack.*should function for service endpoints using hostNetwork.*":
       note: "Failing persistently in openshift CI"
 
 # OpenShift 4.17
 "4.17":
   "OVNKubernetes":
-    <<: *all_block_tests
+    <<: *ocp415_block_tests
+    ".*Feature:IPv6DualStack.*should function for service endpoints using hostNetwork.*":
+      note: "Failing persistently in openshift CI"
+
+# OpenShift 4.18
+"4.18":
+  "OVNKubernetes":
+    <<: *ocp415_block_tests
     ".*Feature:IPv6DualStack.*should function for service endpoints using hostNetwork.*":
       note: "Failing persistently in openshift CI"
