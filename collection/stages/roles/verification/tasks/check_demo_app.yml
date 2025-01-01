@@ -65,8 +65,13 @@
   ansible.builtin.set_fact:
     demo_svc_ip: "{{ demo_svc | json_query('resources[0].spec.clusterIP') }}"
 
+- name: Format service IP based on type (IPv4 or IPv6)
+  ansible.builtin.set_fact:
+    formatted_svc_ip: "{{ '[' + demo_svc_ip + ']' if (demo_svc_ip | regex_search(ipv6_regex)) else demo_svc_ip }}"
+
 - name: Check connectivity to the service
-  ansible.builtin.command: "oc exec -t {{ first_pod_name }} -n {{ demo_project_name }} -- curl {{ demo_svc_ip }}"
+  ansible.builtin.command: >
+    oc exec -t {{ first_pod_name }} -n {{ demo_project_name }} -- curl {{ formatted_svc_ip }}
   environment:
     KUBECONFIG: "{{ kubeconfig }}"
   register: pod_result
