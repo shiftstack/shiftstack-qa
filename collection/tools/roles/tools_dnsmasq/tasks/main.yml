@@ -47,17 +47,26 @@
   ansible.builtin.copy:
     content: |
       nameserver 127.0.0.1
+      nameserver ::1
     dest: /etc/resolv.conf
     mode: u=rw,g=rw,o=r
     unsafe_writes: true
 
-- name: Verify the resolved IP
+- name: Resolve DNS (IPv4 & IPv6)
+  ansible.builtin.shell: |
+    dig +short A example.{{ tools_dnsmasq_domains[0] }}
+    dig +short AAAA example.{{ tools_dnsmasq_domains[0] }}
+  register: resolved_ips_shell
+  changed_when: false
+  ignore_errors: true
+
+- name: Verify the resolved IP (Supports both IPv4 and IPv6)
   ansible.builtin.assert:
     that:
-      - tools_dnsmasq_ips[0] == lookup('community.general.dig', ['example', tools_dnsmasq_domains[0]] | join('.'))
+      - tools_dnsmasq_ips[0] in resolved_ips_shell.stdout_lines
     fail_msg: |
-      example.{{ tools_dnsmasq_domains[0] }} DNS resolution did not
-      return the expected IP {{ tools_dnsmasq_ips[0] }}
+      DNS resolution for example.{{ tools_dnsmasq_domains[0] }} did not return the expected IP.
+      Expected: {{ tools_dnsmasq_ips[0] }}
+      Resolved: {{ resolved_ips_shell.stdout_lines }}
     success_msg: |
-      example.{{ tools_dnsmasq_domains[0] }} DNS resolution returned
-      the expected IP {{ tools_dnsmasq_ips[0] }}
+      DNS resolution for example.{{ tools_dnsmasq_domains[0] }} returned the expected IP {{ tools_dnsmasq_ips[0] }}.
