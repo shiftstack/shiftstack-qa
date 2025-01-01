@@ -1,6 +1,8 @@
 ---
 - name: Create Floating IPs for API and APPS for a non-proxy installation
-  when: not openshift_proxy_installation
+  when:
+    - ocp_deployment_topology.primary_ip_protocol == 'ipv4'
+    - not openshift_proxy_installation
   block:
     - name: Create (if needed) API FIP and get the FIP info
       ansible.builtin.include_tasks: create_fip.yml
@@ -19,6 +21,22 @@
     - name: Store APPS FIP
       ansible.builtin.set_fact:
         apps_accessible_ip: "{{ fip_address }}"
+
+- name: Create resources for ssipv6
+  when:
+    - ocp_deployment_topology.primary_ip_protocol == 'ipv6'
+    - not openshift_proxy_installation
+  block:
+    - name: Create network resources for ssipv6 non-proxy installation
+      ansible.builtin.include_tasks: create_network_resources.yml
+      vars:
+        network: "{{ ocp_deployment_topology.primary_ip_protocol }}"
+        openstack_infra_config: "{{ openstack_infra.network_config[ocp_deployment_topology.primary_ip_protocol] }}"
+
+    - name: Store restricted network IPs for API and APPS
+      ansible.builtin.set_fact:
+        api_accessible_ip: "{{ ocp_deployment_topology.ipv6.ocp_api_port.ip_address }}"
+        apps_accessible_ip: "{{ ocp_deployment_topology.ipv6.ingress_api_port.ip_address }}"
 
 - name: Store restricted network IPs for API and APPS for a openshift-proxy installation
   ansible.builtin.set_fact:
