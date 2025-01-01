@@ -47,37 +47,41 @@
       ansible.builtin.set_fact:
         lb_ingress_ip: "{{ test_svc.resources[0].status.loadBalancer.ingress[0].ip }}"
 
-    - name: Get the LB internal IP on openstack when the lb is using a FIP
-      ansible.builtin.shell: |
-        openstack floating ip show {{ lb_ingress_ip }} -c fixed_ip_address -f value
-      environment:
-        OS_CLOUD: "{{ user_cloud }}"
-      register: lb_internal_ip_output
-      changed_when: false
-      when: not internal_lb
+    - name: Verify IPv4 External Load Balancer FIP on Openstack
+      when:
+        - not internal_lb
+        - lb_ingress_ip is match(ipv4_regex)
+      block:
+        - name: Get the LB internal IP on openstack when the lb is using a FIP
+          ansible.builtin.shell: |
+            openstack floating ip show {{ lb_ingress_ip }} -c fixed_ip_address -f value
+          environment:
+            OS_CLOUD: "{{ user_cloud }}"
+          register: lb_internal_ip_output
+          changed_when: false
 
-    - name: Define the internal IP
-      ansible.builtin.set_fact:
-        lb_internal_ip: "{{ internal_lb | ternary(lb_ingress_ip, lb_internal_ip_output.stdout) }}"
+        - name: Define the internal IP
+          ansible.builtin.set_fact:
+            lb_internal_ip: "{{ internal_lb | ternary(lb_ingress_ip, lb_internal_ip_output.stdout) }}"
 
-    - name: Get the Octavia provider type for the LB
-      ansible.builtin.shell: |
-        set -o pipefail
-        openstack loadbalancer list -c vip_address -c provider -f value | grep {{ lb_internal_ip }} | awk '{print $2}'
-      environment:
-        OS_CLOUD: "{{ user_cloud }}"
-      register: svc_lb_type
-      changed_when: false
+        - name: Get the Octavia provider type for the LB
+          ansible.builtin.shell: |
+            set -o pipefail
+            openstack loadbalancer list -c vip_address -c provider -f value | grep {{ lb_internal_ip }} | awk '{print $2}'
+          environment:
+            OS_CLOUD: "{{ user_cloud }}"
+          register: svc_lb_type
+          changed_when: false
 
-    - name: Check the LB exists with the internal IP (VIP address) "{{ lb_internal_ip }}"
-      ansible.builtin.assert:
-        that: svc_lb_type.stdout | length > 0
-        fail_msg: Could not find a LB in OSP with the vip_address "{{ lb_internal_ip }}"
-        success_msg: A LB with the vip_address "{{ lb_internal_ip }}" has been found in OSP
+        - name: Check the LB exists with the internal IP (VIP address) "{{ lb_internal_ip }}"
+          ansible.builtin.assert:
+            that: svc_lb_type.stdout | length > 0
+            fail_msg: Could not find a LB in OSP with the vip_address "{{ lb_internal_ip }}"
+            success_msg: A LB with the vip_address "{{ lb_internal_ip }}" has been found in OSP
 
-    - name: Detecte LB Octavia provider
-      ansible.builtin.debug:
-        msg: "Detected LB Octavia provider: {{ svc_lb_type.stdout }}"
+        - name: Detecte LB Octavia provider
+          ansible.builtin.debug:
+            msg: "Detected LB Octavia provider: {{ svc_lb_type.stdout }}"
 
     - name: Get pod names
       kubernetes.core.k8s_info:
@@ -91,9 +95,14 @@
       ansible.builtin.set_fact:
         pod_names: "{{ pods | json_query('resources[*].metadata.name') | list }}"
 
+    - name: Format the LB ingress IP based on whether it is IPv4 or IPv6
+      ansible.builtin.set_fact:
+        formatted_lb_ingress_ip: "{{ '[' + lb_ingress_ip + ']' if (lb_ingress_ip | regex_search(ipv6_regex)) else lb_ingress_ip }}"
+      changed_when: false
+
     - name: Check connectivity to the svc, and balancing between endpoints
       ansible.builtin.uri:
-        url: "http://{{ lb_ingress_ip }}:80"
+        url: "http://{{ formatted_lb_ingress_ip }}:80"
         return_content: yes
       register: uri_return
       retries: 10
@@ -107,7 +116,7 @@
 
     - name: Check the connectivity to the svc is consistent
       ansible.builtin.uri:
-        url: "http://{{ lb_ingress_ip }}:80"
+        url: "http://{{ formatted_lb_ingress_ip }}:80"
         return_content: yes
         status_code: 200
       loop: "{{ range(10) | list }}"
@@ -142,7 +151,9 @@
       register: svc_lb
       failed_when: svc_lb.rc == 0
       changed_when: false
-      when: lb_internal_ip | length > 0
+      when:
+        - lb_internal_ip is defined
+        - lb_internal_ip | length > 0
 
     - name: Check the fip "{{ lb_ingress_ip }}" has been removed from OSP
       ansible.builtin.shell: |
@@ -152,4 +163,6 @@
       register: fip
       failed_when: fip.rc == 0
       changed_when: false
-      when: not internal_lb
+      when:
+        - lb_internal_ip is defined
+        - lb_internal_ip | length > 0
