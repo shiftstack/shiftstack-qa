@@ -16,3 +16,10 @@ ocp_deployment_topology_override:
   # secondary_ip_protocol: Must be empty string for single-stack setup
   primary_ip_protocol: ipv6
   secondary_ip_protocol: ""
+  flavors:
+    master:
+      disk: 30
+    worker:
+      disk: 30
+    bootstrap:
+      disk: 30
