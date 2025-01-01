@@ -1,0 +1,83 @@
+---
+- name: Create tenant network
+  openstack.cloud.network:
+    cloud: "{{ user_cloud }}"
+    name: "{{ network.tenant_network.name }}"
+    state: present
+
+- name: Get the freeipa DNS server IPs in a case of TLS-E
+  when: openstack_tlse | default(false)
+  block:
+    - name: Set freeipa_server variable with the freeipa DNS server IP (with tls-e only)
+      ansible.builtin.include_role:
+        name: shiftstack.tools.tools_get_deploy_info
+        tasks_from: discover_freeipa_server.yml
+
+    - name: Overwrite default osp dns_servers
+      ansible.builtin.set_fact:
+        openstack_infra_config:
+          dns_servers: ["{{ freeipa_server }}"]
+
+- name: Create tenant subnet
+  openstack.cloud.subnet:
+    cloud: "{{ user_cloud }}"
+    name: "{{ network.tenant_subnet.name }}"
+    cidr: "{{ network.tenant_subnet.cidr }}"
+    network_name: "{{ network.tenant_network.name }}"
+    ip_version: "{{ network.ip_version }}"
+    ipv6_ra_mode: "{{ network.tenant_subnet.ra_mode | default(omit) }}"
+    ipv6_address_mode: "{{ network.tenant_subnet.addr_mode | default(omit) }}"
+    enable_dhcp: true
+    dns_nameservers: "{{ openstack_infra_config.dns_servers }}"
+    state: present
+
+- name: Create port for OCP API
+  openstack.cloud.port:
+    cloud: "{{ user_cloud }}"
+    name: "{{ network.ocp_api_port.name }}"
+    network: "{{ network.tenant_network.name }}"
+    fixed_ips:
+      - ip_address: "{{  network.ocp_api_port.ip_address }}"
+        subnet: "{{ network.tenant_subnet.name }}"
+    state: present
+
+- name: Create port for Ingress API
+  openstack.cloud.port:
+    cloud: "{{ user_cloud }}"
+    name: "{{ network.ingress_api_port.name }}"
+    network: "{{ network.tenant_network.name }}"
+    fixed_ips:
+      - ip_address: "{{  network.ingress_api_port.ip_address }}"
+        subnet: "{{ network.tenant_subnet.name }}"
+    state: present
+
+- name: Discover network ID for external network
+  openstack.cloud.network_info:
+    cloud: "{{ admin_cloud }}"
+    network: "{{ openstack_infra.external_network }}"
+  register: public_network
+
+- name: Discover subnet ID for external network
+  openstack.cloud.subnet_info:
+    cloud: "{{ admin_cloud }}"
+    filters:
+      network_id: "{{ public_network.openstack_cloud_networks[0].id }}"
+  register: public_subnet
+
+- name: Create ssipv6 router
+  vars:
+    external_network_id: "{{ public_network.openstack_cloud_networks[0].id }}"
+    external_subnet_id: "{{ public_subnet.openstack_cloud_subnets[0].id }}"
+  openstack.cloud.router:
+    cloud: "{{ admin_cloud }}"
+    name: "{{ network.tenant_router.name }}"
+    project: "{{ user_cloud }}"
+    interfaces:
+      - "{{ network.tenant_subnet.name }}"
+    state: present
+    external_gateway_info:
+      network: "{{ external_network_id }}"
+      external_fixed_ips:
+        - ip_address: "{{ network.tenant_subnet.external_fixed_ip_address }}"
+          subnet_id: "{{ external_subnet_id }}"
+    verify: "{{ admin_verify_cacert }}"
