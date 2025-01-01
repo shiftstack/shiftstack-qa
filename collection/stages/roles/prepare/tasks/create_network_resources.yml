@@ -1,0 +1,64 @@
+---
+- name: Create tenant network
+  openstack.cloud.network:
+    cloud: "{{ user_cloud }}"
+    name: "{{ network.tenant_network.name }}"
+    state: present
+
+- name: Get the freeipa DNS server IPs in a case of TLS-E
+  when: openstack_tlse | default(false)
+  block:
+    - name: Set freeipa_server variable with the freeipa DNS server IP (with tls-e only)
+      ansible.builtin.include_role:
+        name: shiftstack.tools.tools_get_deploy_info
+        tasks_from: discover_freeipa_server.yml
+
+    - name: Overwrite default osp dns_servers
+      ansible.builtin.set_fact:
+        openstack_infra_config:
+          dns_servers: ["{{ freeipa_server }}"]
+
+- name: Create tenant subnet
+  openstack.cloud.subnet:
+    cloud: "{{ user_cloud }}"
+    name: "{{ network.tenant_subnet.name }}"
+    cidr: "{{ network.tenant_subnet.cidr }}"
+    network_name: "{{ network.tenant_network.name }}"
+    ip_version: "{{ network.ip_version }}"
+    ipv6_ra_mode: "{{ network.tenant_subnet.ra_mode | default(omit) }}"
+    ipv6_address_mode: "{{ network.tenant_subnet.addr_mode | default(omit) }}"
+    enable_dhcp: true
+    dns_nameservers: "{{ openstack_infra_config.dns_servers }}"
+    state: present
+
+- name: Create port for OCP API
+  openstack.cloud.port:
+    cloud: "{{ user_cloud }}"
+    name: "{{ network.ocp_api_port.name }}"
+    network: "{{ network.tenant_network.name }}"
+    fixed_ips:
+      - ip_address: "{{  network.ocp_api_port.ip_address }}"
+        subnet: "{{ network.tenant_subnet.name }}"
+    state: present
+
+- name: Create port for Ingress API
+  openstack.cloud.port:
+    cloud: "{{ user_cloud }}"
+    name: "{{ network.ingress_api_port.name }}"
+    network: "{{ network.tenant_network.name }}"
+    fixed_ips:
+      - ip_address: "{{  network.ingress_api_port.ip_address }}"
+        subnet: "{{ network.tenant_subnet.name }}"
+    state: present
+
+- name: Ensure router {{ network.tenant_router.name }} is created (handles existing routers)
+  openstack.cloud.router:
+    cloud: "{{ user_cloud }}"
+    name: "{{ network.tenant_router.name }}"
+    network: "{{ openstack_infra.external_network }}"
+    interfaces:
+      - "{{ network.tenant_subnet.name }}"
+    state: "{{ item }}"
+  loop:
+    - absent
+    - present
