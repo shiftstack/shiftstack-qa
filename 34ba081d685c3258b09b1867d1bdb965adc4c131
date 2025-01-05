@@ -16,6 +16,23 @@
       "message": "Can be reviewed, but needs to be merged after https://github.com/openstack-k8s-operators/ci-framework/pull/2626 is merged",
       "revId": "34ba081d685c3258b09b1867d1bdb965adc4c131",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "71f73ca3_6731fc29",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2025-01-05T09:39:50Z",
+      "side": 1,
+      "message": "@Jon, I think we need to wait for my poc in openstack-test to check how we can use this var",
+      "revId": "34ba081d685c3258b09b1867d1bdb965adc4c131",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
