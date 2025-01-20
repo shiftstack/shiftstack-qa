@@ -1,0 +1,85 @@
+---
+- name: Configure hypervisor for making it available for Prow
+  hosts: localhost
+  gather_facts: yes
+  vars_files:
+    - "../configs/secret.yaml"
+
+  tasks:
+    - name: Install squid on the hypervisor
+      vars:
+        delegated_host: "{{ hypervisor }}"
+        delegated_user: "root"
+        squid_user: "{{ proxy_user }}"
+        squid_password: "{{ proxy_password }}"
+      ansible.builtin.include_role:
+        name: shiftstack.tools.tools_install_squid
+
+    - name: Create user and store the proxied kubeconfig in its home folder
+      delegate_to: "{{ hypervisor }}"
+      remote_user: "root"
+      block:
+        - name: Create a user with a home directory
+          ansible.builtin.user:
+            name: "{{ proxy_user }}"
+            home: /home/{{ proxy_user }}
+            shell: /bin/bash
+            createhome: yes
+            state: present
+
+        - name: Add SSH to authorized_key for the new user
+          ansible.posix.authorized_key:
+            user: "{{ proxy_user }}"
+            state: present
+            key: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC11+qzT5Hs8I1ASFTm82fQLb0G5KgWXvqXBuq+5NIa3JStGDyowQV4GD1rDxsQqdMzVA2yf0uHCzcCbzEUprKwI8l4RJagvyc1Qna6lAlDOU41xpDBy9Ixia2IhYh/vC+x8wc1yysR2ZaTQcW0GtkH8BJeRSoAXPc5diadq39il4FPI6ItTdSiUX65kDeCMNYF+cPio37pppwsEYJGnf2NqdffgPgXBG7Rk4gcdtCNHhaVHdrvWrruCabmgRgITlE4IZC9CEGRRDi75cVRK8oxWh8nd9Xh7A1vmfC0fMl6XlkkSk5+3w8GfhRPJ1DyT0hyG+byTj54x8gUrJX6q0HRFU3nX5kKNNrGGtwFgdt9QpM46ZLTxJPIpvN3+5Rr/5hoL1zF4AA7yRrR9cGJHTfFnk49Wd7T+LGtdT0aNO4g36hbMZEa9MY+puco7Im6Zbr0jRUwgKGROob4AEgWPL02cA9nPcxOHiyhig+Snik+onGPRQpJPqsgQiMxtcCRuJ11uJ/hGO0GWhPwRGxbP7LHW79FEOMmAlSi0zE9FxUF91KwjC2v5oIcDH9dd+U19oeVlVAc4QpKA5yroShHZFpuQXmWkRSz37oo3cDgH7zN9C07Sm735LaxFFmy3Zkck0IbAitymKjv26c7r1KXTBvEQS5Q8xiwzMGoaLuJ3lR2Ww== shiftstack-qe@redhat.com
+
+        - name: Copy incluster-kubeconfig from the shiftstackclient pod
+          ansible.builtin.copy:
+            src: ~/incluster-kubeconfig/kubeconfig
+            dest: /home/{{ proxy_user }}/
+            owner: "{{ proxy_user }}"
+            group: "{{ proxy_user }}"
+            mode: '0600'
+
+        - name: Get the IP address of an FQDN using dig
+          ansible.builtin.shell: 'dig +short $(hostname)'
+          register: fqdn_ip_result
+          changed_when: false
+
+        - name: Set IP address fact
+          ansible.builtin.set_fact:
+            hypervisor_ip_address: "{{ fqdn_ip_result.stdout.splitlines()[0] }}"
+
+        - name: Add proxy-url after "server:" line in the kubeconfig
+          ansible.builtin.replace:
+            path: /home/{{ proxy_user }}/kubeconfig
+            regexp: '^( *)(server:.*)$'
+            replace: '\1\2\n\1proxy-url: http://{{ proxy_user }}:{{ proxy_password }}@{{ hypervisor_ip_address }}:3128'
+            backup: yes
+
+        - name: Switch to admin context inside the kubeconfig
+          ansible.builtin.command: oc config use-context admin --kubeconfig=/home/{{ proxy_user }}/kubeconfig
+          changed_when: true
+
+        - name: Confirm that underlying OCP cluster is healthy
+          vars:
+            kubeconfig: "/home/{{ proxy_user }}/kubeconfig"
+            wait_retries: 5
+            wait_delay: 1
+          ansible.builtin.include_role:
+            name: shiftstack.tools.tools_cluster_checks
+            tasks_from: wait_until_cluster_is_healthy.yml
+
+        - name: Get openstack version
+          environment:
+            KUBECONFIG: "/home/{{ proxy_user }}/kubeconfig"
+          ansible.builtin.shell: |
+            set -o pipefail && \
+            oc get -n openstack openstackversions.core.openstack.org controlplane -o json | \
+            jq -r .status.availableVersion
+          changed_when: false
+          register: openstack_version
+
+        - name: Show openstack version
+          ansible.builtin.debug:
+            msg: "The RHOSO version deployed is {{ openstack_version.stdout }}"
