@@ -1,0 +1,89 @@
+---
+- name: Run tasks in the hypervisor to install and configure squid
+  delegate_to: "{{ delegated_host }}"
+  remote_user: "{{ delegated_user }}"
+  block:
+    - name: Get the IP address of an FQDN using dig
+      ansible.builtin.shell: 'dig +short $(hostname)'
+      register: fqdn_ip_result
+      changed_when: false
+
+    - name: Set IP address fact
+      ansible.builtin.set_fact:
+        ip_address: "{{ fqdn_ip_result.stdout.splitlines()[0] }}"
+
+    - name: Install squid package
+      ansible.builtin.package:
+        name: squid
+        state: present
+
+    - name: Backup original Squid configuration
+      ansible.builtin.copy:
+        src: /etc/squid/squid.conf
+        dest: /etc/squid/squid.conf.bak
+        remote_src: true
+        backup: true
+        mode: u=rwx,g=rw,o=r
+
+    - name: Store password
+      ansible.builtin.shell: |
+        htpasswd -bBc /etc/squid/htpasswd {{ proxy_user }} {{ proxy_password }}
+      changed_when: true
+      become: yes
+
+    - name: Set permissions on htpasswd file
+      ansible.builtin.file:
+        path: /etc/squid/passwd
+        mode: '0600'
+
+    - name: Create Squid configuration
+      ansible.builtin.copy:
+        dest: /etc/squid/squid.conf
+        mode: u=rwx,g=rw,o=r
+        content: |
+          acl localnet src 10.0.0.0/8
+          acl CONNECT method CONNECT
+          acl SSL_ports port 6443
+          http_access deny CONNECT !SSL_ports
+          auth_param basic program /usr/lib64/squid/basic_ncsa_auth /etc/squid/passwd
+          auth_param basic children 5
+          auth_param basic realm Squid Basic Authentication
+          auth_param basic credentialsttl 2 hours
+          acl auth_users proxy_auth REQUIRED
+          http_access allow auth_users
+          http_access deny all
+          http_port 3128
+          coredump_dir /var/spool/squid
+
+    - name: Ensure squid service is up
+      ansible.builtin.systemd:
+        name: squid
+        state: started
+        enabled: true
+
+    - name: Add Squid service to firewall
+      ansible.posix.firewalld:
+        service: squid
+        immediate: true
+        permanent: true
+        state: enabled
+
+- name: "Wait for OCP API to come up before cluster redeployment"
+  environment:
+    http_proxy: "http://{{ proxy_user }}:{{ proxy_password }}@{{ hypervisor }}:3128"
+  ansible.builtin.uri:
+    url: "https://api.ocp.openstack.lab:6443"
+    method: GET
+    return_content: yes
+    status_code: 200
+    body_format: json
+    validate_certs: no
+  until: result.status == 200
+  retries: 10
+  delay: 5
+  register: result
+
+# TBD:
+# - Add some test to confirm that can reach the underlying OCP from localhost
+# - Create the kubeconfig with the proxy-url and put it in a place that prow can take it.
+# For example can create an account in the hypervisor just to share the kubeconfig :)
