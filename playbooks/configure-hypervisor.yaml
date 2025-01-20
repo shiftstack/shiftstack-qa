@@ -1,0 +1,14 @@
+---
+- name: Configure hypervisor for making it available for Prow
+  hosts: localhost
+  gather_facts: yes
+  vars_files:
+    - "../configs/secret.yaml"
+
+  tasks:
+    - name: Install squid on the hypervisor
+      vars:
+        delegated_host: "{{ hypervisor }}"
+        delegated_user: "root"
+      ansible.builtin.include_role:
+        name: shiftstack.tools.tools_install_squid
