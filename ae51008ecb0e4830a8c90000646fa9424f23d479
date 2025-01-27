@@ -50,6 +50,23 @@
       "message": "https://github.com/openstack-k8s-operators/ci-framework/pull/2626 has been merged",
       "revId": "ae51008ecb0e4830a8c90000646fa9424f23d479",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ded1318d_230ba83c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 9
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2025-01-27T09:40:12Z",
+      "side": 1,
+      "message": "Hello Jon.\n\nWe have foundother scenario where an update on the cifmw-dnsmasq is required:\n\n  $ cat /etc/cifmw-dnsmasq.d/addresses.conf\n  address\u003d/apps.ocp.openstack.lab/2620:cf:cf:cf02::3\n  address\u003d/rgw-external.ceph.local/2620:cf:cf:aaaa::2\n  \nTherefore, I wonder if we can update the tools role so we can pass the list of addresses and IPs that we want to add them. I did something pretty similar on https://review.gerrithub.io/c/shiftstack/shiftstack-qa/+/1197614/22/collection/tools/roles/tools_dnsmasq/README.md (Not sure if that helps, it\u0027s just an idea. I don\u0027t think a j2 is needed, but the zip is helpful to keep the mapping).\n\nWhat do you think?",
+      "revId": "ae51008ecb0e4830a8c90000646fa9424f23d479",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
