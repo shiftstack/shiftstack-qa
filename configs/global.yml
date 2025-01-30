@@ -110,6 +110,9 @@ ocp_deployment_topology: # The deployment info for deploying OCP on the OSP infr
       vcpus: 4
       disk: 100
 
+ipv4_regex: '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$'
+ipv6_regex: '^[0-9a-fA-F:]+$'
+
 wait_retries: 30
 wait_delay: 30
 manifests_wait_timeout: 300
