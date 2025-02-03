@@ -33,6 +33,24 @@
       "message": "I\u0027m leaned towards explicit, I\u0027m ok with duplication.",
       "revId": "d3f7f623fe561df04b154c25a07cce7952c9215f",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "904cf4dd_226c1f91",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2025-02-03T08:01:36Z",
+      "side": 1,
+      "message": "@rlobillo@redhat.com , @juriarte@redhat.com\nwill be happy to hear more opinions here. thanks",
+      "parentUuid": "3d0ec41f_83e7fd6f",
+      "revId": "d3f7f623fe561df04b154c25a07cce7952c9215f",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
