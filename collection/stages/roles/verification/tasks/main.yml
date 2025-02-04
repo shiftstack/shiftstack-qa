@@ -1,5 +1,12 @@
 ---
 # tasks file for OCP cluster verification
+- name: Make sure we are in the default project
+  ansible.builtin.shell: |
+    oc project default
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+  changed_when: true
+
 - name: Run verification steps
   block:
     - name: Check cluster health before the verification actions
