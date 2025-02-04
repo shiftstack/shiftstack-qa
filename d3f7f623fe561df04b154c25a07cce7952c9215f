@@ -69,6 +69,24 @@
       "parentUuid": "904cf4dd_226c1f91",
       "revId": "d3f7f623fe561df04b154c25a07cce7952c9215f",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d5799b5d_cc5d69ba",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2025-02-04T09:34:24Z",
+      "side": 1,
+      "message": "The difference is that with ocp_deployment_topology_override you don\u0027t need to set all the params and with ocp_deployment_topology you need?\nIn case of going with override, is it going to be used only in the SSIPv6 job definition and not in the rest?",
+      "parentUuid": "a9af19d2_767643d0",
+      "revId": "d3f7f623fe561df04b154c25a07cce7952c9215f",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
