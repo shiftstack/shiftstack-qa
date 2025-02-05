@@ -105,6 +105,24 @@
       "parentUuid": "d5799b5d_cc5d69ba",
       "revId": "d3f7f623fe561df04b154c25a07cce7952c9215f",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5b376fb7_eff802c0",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2025-02-05T07:28:27Z",
+      "side": 1,
+      "message": "@Itay maybe add a comment to specify what\u0027s the base",
+      "parentUuid": "b27b8b24_fb735092",
+      "revId": "d3f7f623fe561df04b154c25a07cce7952c9215f",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
