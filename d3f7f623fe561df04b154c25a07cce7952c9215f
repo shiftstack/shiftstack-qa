@@ -123,6 +123,24 @@
       "parentUuid": "b27b8b24_fb735092",
       "revId": "d3f7f623fe561df04b154c25a07cce7952c9215f",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a1dee4dc_0e6a82c4",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2025-02-05T10:53:52Z",
+      "side": 1,
+      "message": "@itzikb@redhat.com I’ve added a comment in ocp_testing.yaml specifying that the base topology is in configs/global.yml. Let me know if this addresses your concern",
+      "parentUuid": "5b376fb7_eff802c0",
+      "revId": "d3f7f623fe561df04b154c25a07cce7952c9215f",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
