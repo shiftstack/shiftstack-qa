@@ -3,8 +3,13 @@ admin_cloud: "overcloud"
 cacert: "/etc/pki/ca-trust/source/anchors/undercloud-cacert.pem"
 cacert_tlse: "/etc/pki/ca-trust/source/anchors/ca.crt"
 legacy_installation: true
-openstack_infra: # Store required Openstack deployment info for deploying OCP
+openstack_infra: # The required OpenStack deployment info for deploying OCP on the OSP infra
   external_network: public
   region: regionOne
-  dns_servers:
-    - '10.47.242.10'
+  network_config:
+    ipv4:
+      dns_servers:
+        - '10.47.242.10' # This is the gateway IP of the external network
+    ipv6:
+      dns_servers:
+        - '2620:cf:cf:aaaa::1' # This is the gateway IP of the external network
