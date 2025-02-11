@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "855b72bf_ebff45ed",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2025-02-11T14:09:20Z",
+      "side": 1,
+      "message": "I haven\u0027t verified the patch yet, but this change was done according to what we have in the plugin.",
+      "revId": "73e91dfdafe3417fa65dbb2cf98b48da09cd423a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
