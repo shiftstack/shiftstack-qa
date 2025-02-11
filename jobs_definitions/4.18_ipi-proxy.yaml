@@ -1,0 +1,15 @@
+---
+openshift_release: 4.18
+openshift_build_name: "" # It can be an empty value "" (latest nightly), a given build
+installation_type: ipi
+deploy_installer_host: true
+openshift_proxy_installation: true
+
+stages:
+  - cleanup
+  - prepare
+  - install
+  - post
+  - verification
+
+# The ocp_deployment_topology described in `configs/global.yml`
