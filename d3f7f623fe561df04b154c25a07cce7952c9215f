@@ -159,6 +159,24 @@
       "parentUuid": "a1dee4dc_0e6a82c4",
       "revId": "d3f7f623fe561df04b154c25a07cce7952c9215f",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7c8b17ef_6131f75b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2025-02-11T09:44:34Z",
+      "side": 1,
+      "message": "I am also in favour of explicit. Overrides is something used in ci-framework and has become a complete mess. I am ok with this but we should be careful 😊",
+      "parentUuid": "68431b02_ef555a55",
+      "revId": "d3f7f623fe561df04b154c25a07cce7952c9215f",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
