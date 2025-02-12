@@ -33,6 +33,24 @@
       "message": "Should we update the documentation?",
       "revId": "3ce4b1a695c837df2fa55d0642daa40464f805aa",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "da7a0607_538a0d21",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2025-02-12T09:34:37Z",
+      "side": 1,
+      "message": "I\u0027m looking at https://gitlab.cee.redhat.com/imatza/shiftstack-tools/-/tree/main/osp18?ref_type\u003dheads and I don\u0027t see a place we should update.\n@itzikb@redhat.com feel free to update if you think we should document it.",
+      "parentUuid": "a7c34276_52bd54a1",
+      "revId": "3ce4b1a695c837df2fa55d0642daa40464f805aa",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
