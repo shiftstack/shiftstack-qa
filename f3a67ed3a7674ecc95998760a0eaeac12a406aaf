@@ -37,6 +37,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "285d86fe_daa300a9",
+        "filename": "collection/tools/roles/tools_install_squid/tasks/main.yaml",
+        "patchSetId": 19
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2025-02-12T10:49:33Z",
+      "side": 1,
+      "message": "I also thought about that and I tried but it\u0027s not working. There should be some kind of rule in iptables blocking the 3128 traffic :/",
+      "parentUuid": "08928f1c_8a87e613",
+      "revId": "f3a67ed3a7674ecc95998760a0eaeac12a406aaf",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "a660b433_c39ac1c5",
         "filename": "playbooks/configure-hypervisor.yaml",
         "patchSetId": 19
@@ -48,6 +66,30 @@
       "writtenOn": "2025-02-12T08:58:49Z",
       "side": 1,
       "message": "Let\u0027s see if we are able to merge https://github.com/openstack-k8s-operators/ci-framework/pull/2716 . In any case the task won\u0027t fail if the current context is admin.",
+      "range": {
+        "startLine": 55,
+        "startChar": 0,
+        "endLine": 57,
+        "endChar": 28
+      },
+      "revId": "f3a67ed3a7674ecc95998760a0eaeac12a406aaf",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6c3dd63e_b93601fa",
+        "filename": "playbooks/configure-hypervisor.yaml",
+        "patchSetId": 19
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2025-02-12T10:49:33Z",
+      "side": 1,
+      "message": "right!",
+      "parentUuid": "a660b433_c39ac1c5",
       "range": {
         "startLine": 55,
         "startChar": 0,
