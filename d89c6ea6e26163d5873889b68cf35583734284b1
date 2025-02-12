@@ -34,6 +34,24 @@
       "parentUuid": "e376de92_286189b3",
       "revId": "d89c6ea6e26163d5873889b68cf35583734284b1",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ad2fbdfc_013c6f54",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2025-02-12T10:45:40Z",
+      "side": 1,
+      "message": "I don\u0027t think so for now. We´ll do eventually and hopefully soon.\n\nBTW, itay. The integration pipeline is already testing 4.18 because it\u0027s taking the latest stable.",
+      "parentUuid": "1409f09e_5d65d457",
+      "revId": "d89c6ea6e26163d5873889b68cf35583734284b1",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
