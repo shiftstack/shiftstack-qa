@@ -53,6 +53,24 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "91705760_c6cc59f8",
+        "filename": "collection/tools/roles/tools_install_squid/tasks/main.yaml",
+        "patchSetId": 19
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2025-02-12T10:51:27Z",
+      "side": 1,
+      "message": "Acknowledged",
+      "parentUuid": "285d86fe_daa300a9",
+      "revId": "f3a67ed3a7674ecc95998760a0eaeac12a406aaf",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a660b433_c39ac1c5",
@@ -90,6 +108,30 @@
       "side": 1,
       "message": "right!",
       "parentUuid": "a660b433_c39ac1c5",
+      "range": {
+        "startLine": 55,
+        "startChar": 0,
+        "endLine": 57,
+        "endChar": 28
+      },
+      "revId": "f3a67ed3a7674ecc95998760a0eaeac12a406aaf",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ceb9a63b_74bf2758",
+        "filename": "playbooks/configure-hypervisor.yaml",
+        "patchSetId": 19
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2025-02-12T10:51:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6c3dd63e_b93601fa",
       "range": {
         "startLine": 55,
         "startChar": 0,
