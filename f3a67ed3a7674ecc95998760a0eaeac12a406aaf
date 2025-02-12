@@ -16,6 +16,46 @@
       "message": "verified locally in titan03",
       "revId": "f3a67ed3a7674ecc95998760a0eaeac12a406aaf",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "08928f1c_8a87e613",
+        "filename": "collection/tools/roles/tools_install_squid/tasks/main.yaml",
+        "patchSetId": 19
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2025-02-12T08:58:49Z",
+      "side": 1,
+      "message": "The GET request to {{ ip_address }} is being done from the hypervisor, \nright? would it make sense to run the request from the shiftstackclient \npod for example or is it almost the same?",
+      "revId": "f3a67ed3a7674ecc95998760a0eaeac12a406aaf",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a660b433_c39ac1c5",
+        "filename": "playbooks/configure-hypervisor.yaml",
+        "patchSetId": 19
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2025-02-12T08:58:49Z",
+      "side": 1,
+      "message": "Let\u0027s see if we are able to merge https://github.com/openstack-k8s-operators/ci-framework/pull/2716 . In any case the task won\u0027t fail if the current context is admin.",
+      "range": {
+        "startLine": 55,
+        "startChar": 0,
+        "endLine": 57,
+        "endChar": 28
+      },
+      "revId": "f3a67ed3a7674ecc95998760a0eaeac12a406aaf",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
