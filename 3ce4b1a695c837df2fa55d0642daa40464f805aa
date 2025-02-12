@@ -16,6 +16,23 @@
       "message": "Verified on openshift-qe-010",
       "revId": "3ce4b1a695c837df2fa55d0642daa40464f805aa",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a7c34276_52bd54a1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2025-02-12T08:18:27Z",
+      "side": 1,
+      "message": "Should we update the documentation?",
+      "revId": "3ce4b1a695c837df2fa55d0642daa40464f805aa",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
