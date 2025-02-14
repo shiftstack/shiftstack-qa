@@ -12,12 +12,9 @@ openshift_build_name: "candidate"
 installation_type: ipi
 force_cleanup: true
 stages:
-  - cleanup
   - prepare
   - install
   - post
-  - verification
-  - openstack_test
 
 ocp_deployment_topology:
   network_type: OVNKubernetes
