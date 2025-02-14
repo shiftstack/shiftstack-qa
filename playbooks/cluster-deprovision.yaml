@@ -1,0 +1,24 @@
+---
+- name: |
+    Deprovisiong the existing OCP cluster if any
+    and prepare the environment for testing fresh
+    OCP on OpenStack 18.
+  hosts: localhost
+  gather_facts: yes
+  vars_files:
+    - "../configs/global.yml"
+  tasks:
+    - name: Run cleanup role
+      vars:
+        force_cleanup: true
+      ansible.builtin.include_role:
+        name: shiftstack.stages.cleanup
+
+    - name: |
+        Restore the OpenStack original config directory
+        (includes the clouds.yaml and secure.yaml)
+      ansible.builtin.copy:
+        src: "{{ home_dir }}/.original-config/openstack/"
+        dest: "{{ home_dir }}/.config/openstack/"
+        remote_src: yes
+        mode: u=rwx,g=rwx,o=rwx
