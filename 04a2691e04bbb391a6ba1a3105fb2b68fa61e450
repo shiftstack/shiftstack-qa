@@ -1,0 +1,90 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f0beb5c4_7b33ca67",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 24
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2025-02-16T12:16:41Z",
+      "side": 1,
+      "message": "@Ramon IIUC it\u0027s going to be used in the future, right? Can you run it as part of a job?",
+      "revId": "04a2691e04bbb391a6ba1a3105fb2b68fa61e450",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "234ea5e8_b6eb10e1",
+        "filename": "playbooks/configure-hypervisor.yaml",
+        "patchSetId": 24
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2025-02-16T12:16:41Z",
+      "side": 1,
+      "message": "Can the dig module be used?",
+      "range": {
+        "startLine": 45,
+        "startChar": 10,
+        "endLine": 45,
+        "endChar": 31
+      },
+      "revId": "04a2691e04bbb391a6ba1a3105fb2b68fa61e450",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "605cb7ab_97e3523a",
+        "filename": "playbooks/configure-hypervisor.yaml",
+        "patchSetId": 24
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2025-02-16T12:16:41Z",
+      "side": 1,
+      "message": "Please add a comment why it\u0027s needed",
+      "range": {
+        "startLine": 60,
+        "startChar": 16,
+        "endLine": 60,
+        "endChar": 61
+      },
+      "revId": "04a2691e04bbb391a6ba1a3105fb2b68fa61e450",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "89bfa734_f23c1177",
+        "filename": "playbooks/configure-hypervisor.yaml",
+        "patchSetId": 24
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2025-02-16T12:16:41Z",
+      "side": 1,
+      "message": "I would increase the delay a bit",
+      "range": {
+        "startLine": 68,
+        "startChar": 12,
+        "endLine": 68,
+        "endChar": 22
+      },
+      "revId": "04a2691e04bbb391a6ba1a3105fb2b68fa61e450",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
