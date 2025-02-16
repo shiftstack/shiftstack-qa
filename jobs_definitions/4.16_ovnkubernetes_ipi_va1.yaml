@@ -15,6 +15,15 @@ ocp_deployment_topology:
   network_type: OVNKubernetes
   primary_ip_protocol: ipv4    # ipv4 or ipv6
   secondary_ip_protocol: ""    # ipv4, ipv6, or "" for single-stack
+  ipv4:
+    ip_version: 4
+    tenant_subnet:
+      cidr: 10.196.0.0/16     # CIDR for the machine network (tenant network)
+    cluster_network:
+      cidr: 10.128.0.0/14
+      host_prefix: 23
+    service_network:
+      - 172.30.0.0/16
   flavors:
     master:
       name: "master"
@@ -29,7 +38,6 @@ ocp_deployment_topology:
   replicas:
     master: 3
     worker: 2
-  machine_cidr: 10.196.0.0/16
 
 octavia_blocker_bugs_fixed: false # Amphora-Octavia is not working in RHOSP18 until OSPRH-387 and OSPRH-399 are done
 ceph_nfs_ready: false # manila-ganesha is not configured on VA-HCI for now (OSASINFRA-3413)
