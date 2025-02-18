@@ -109,6 +109,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "ece9e00f_af3604a3",
+        "filename": "playbooks/configure-hypervisor.yaml",
+        "patchSetId": 24
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2025-02-18T15:14:04Z",
+      "side": 1,
+      "message": "Ey Itzik, that is a lookup not a module. It can be done but I prefer this dig command, it\u0027s easy for the reader IMHO :)",
+      "parentUuid": "f8dffef6_41d18ac2",
+      "range": {
+        "startLine": 45,
+        "startChar": 10,
+        "endLine": 45,
+        "endChar": 31
+      },
+      "revId": "04a2691e04bbb391a6ba1a3105fb2b68fa61e450",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "605cb7ab_97e3523a",
         "filename": "playbooks/configure-hypervisor.yaml",
         "patchSetId": 24
