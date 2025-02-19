@@ -1,0 +1,47 @@
+---
+################################################################################
+# WARNING! This job exists only for infra testing purposes!
+#
+# It only intended to run in setups that lack resources, just to confirm
+# the correct integration with the surrounding tools on the CI (like Prow).
+# Compact is not officially supported in 4.16, but since 4.17.
+#
+################################################################################
+openshift_release: "4.18"
+openshift_build_name: "candidate"
+installation_type: ipi
+stages:
+  - cleanup
+  - prepare
+  - install
+  - post
+  - verification
+  - lb_tests
+
+ocp_deployment_topology:
+  network_type: OVNKubernetes
+  primary_ip_protocol: ipv4    # ipv4 or ipv6
+  secondary_ip_protocol: ""    # ipv4, ipv6, or "" for single-stack
+  ipv4:
+    ip_version: 4
+    tenant_subnet:
+      cidr: 10.196.0.0/16     # CIDR for the machine network (tenant network)
+    cluster_network:
+      cidr: 10.128.0.0/14
+      host_prefix: 23
+    service_network:
+      - 172.30.0.0/16
+  flavors:
+    master:
+      name: "master"
+      ram: 16384
+      vcpus: 4
+      disk: 30
+    worker:
+      name: "worker"
+      ram: 8192
+      vcpus: 2
+      disk: 30
+  replicas:
+    master: 3
+    worker: 0
