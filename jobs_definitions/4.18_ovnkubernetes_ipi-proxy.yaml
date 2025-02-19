@@ -1,0 +1,33 @@
+---
+openshift_release: 4.18 # It can be "4.10", "4.11", etc. or "4-stable"
+openshift_build_name: "candidate" # It can be an empty value "" (latest nightly), a given build
+installation_type: ipi
+deploy_installer_host: true
+openshift_proxy_installation: true
+stages:
+  - cleanup
+  - prepare
+  - install
+  - post
+  - verification
+  - openstack_test
+  - lb_tests
+
+ocp_deployment_topology:
+  network_type: OVNKubernetes
+  primary_ip_protocol: ipv4    # ipv4 or ipv6
+  secondary_ip_protocol: ""    # ipv4, ipv6, or "" for single-stack
+  flavors:
+    master:
+      name: "master"
+      ram: 16384
+      vcpus: 4
+      disk: 40
+    worker:
+      name: "worker"
+      ram: 8192
+      vcpus: 2
+      disk: 25
+  replicas:
+    master: 3
+    worker: 2
