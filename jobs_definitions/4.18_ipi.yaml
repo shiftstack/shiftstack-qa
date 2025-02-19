@@ -1,0 +1,31 @@
+---
+openshift_release: 4.18
+openshift_build_name: "candidate" # It can be an empty value "" (latest nightly), a given build
+installation_type: ipi
+
+stages:
+  - cleanup
+  - prepare
+  - install
+  - post
+  - verification
+
+# The ocp_deployment_topology described in `configs/global.yml`
+ocp_deployment_topology_override:
+  flavors:
+    master:
+      name: "master"
+      ram: 16384
+      vcpus: 4
+      disk: 30
+    worker:
+      name: "worker"
+      ram: 8192
+      vcpus: 2
+      disk: 30
+  replicas:
+    master: 3
+    worker: 2
+  servergroups:
+    master: "anti-affinity"
+    worker: "anti-affinity"

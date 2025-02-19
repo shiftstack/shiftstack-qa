@@ -1,9 +1,4 @@
 ---
-- name: Check if OCP cluster directory exists
-  ansible.builtin.stat:
-    path: "{{ ocp_installation_dir }}"
-  register: ocp_cluster_directory
-
 - name: Destroy OCP Cluster by running 'openshift-install destroy cluster'
   ansible.builtin.shell: |
       {{ ocp_installation_dir }}/openshift-install destroy cluster --log-level debug --dir {{ ocp_installation_dir }}

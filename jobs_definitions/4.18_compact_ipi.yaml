@@ -1,0 +1,17 @@
+---
+openshift_release: 4.18
+openshift_build_name: "candidate" # It can be an empty value "" (latest nightly), a given build
+installation_type: ipi
+
+stages:
+  - cleanup
+  - prepare
+  - install
+  - post
+  - verification
+
+# The ocp_deployment_topology described in `configs/global.yml`
+ocp_deployment_topology_override:
+  replicas:
+    master: 3
+    worker: 0
