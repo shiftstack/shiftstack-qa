@@ -8,15 +8,15 @@
 - name: Detect the OpenShift installation type in case there is no installer VM
   when: installer_vm_info.servers | length == 0
   block:
-    - name: Check if the target cluster directory exists
+    - name: Check if the target cluster is installed
       ansible.builtin.stat:
-        path: "{{ ocp_installation_dir }}"
-      register: cluster_directory_check
+        path: "{{ ocp_installation_dir }}/metadata.json"
+      register: cluster_metadata_check
 
     - name: Set OpenShift IPI installation type in case the target cluster directory exists
       ansible.builtin.set_fact:
         existing_ocp_installation_type: "ipi"
-      when: cluster_directory_check.stat.exists
+      when: cluster_metadata_check.stat.exists
 
 - name: Detect the OpenShift installation type in case there is an installer VM
   when: installer_vm_info.servers | length == 1
