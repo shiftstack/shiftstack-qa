@@ -18,6 +18,23 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "972cf63a_6cda2546",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 25
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2025-02-20T11:08:02Z",
+      "side": 1,
+      "message": "Impressive work @sbekkerm@redhat.com!\n\nPlease, would you mind to add a README.md file into the two roles you created inside the stages collection?\n\nAs an example I created one on https://github.com/shiftstack/shiftstack-qa/blob/main/collection/tools/roles/tools_dnsmasq/README.md\n\nI think you can also add links to the files you already created. That will be very useful for maintenance in the future.\n\nThank you!",
+      "revId": "cf736435dfceca8c9a791b3422625fa2250839e6",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a3e2887f_df5d7d44",
