@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0903d4ec_65cf4858",
+        "filename": "collection/stages/roles/openstack_test/tasks/run_openstack_test.yml",
+        "patchSetId": 2
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2025-02-20T11:13:53Z",
+      "side": 1,
+      "message": "I don\u0027t see this variable defined in global.yaml... I know it\u0027s passed by ci-framework, but I think we should set some kind of default in the shiftstack-qa, becuase it may happen we want to run it without ci-framework...\n\nI\u0027m ok adding a | default(\"\") or setting it in global.yaml.",
+      "range": {
+        "startLine": 70,
+        "startChar": 30,
+        "endLine": 70,
+        "endChar": 46
+      },
+      "revId": "bdb54d24ece61857af2263415856e8f07c2bd158",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
