@@ -22,6 +22,30 @@
       },
       "revId": "bdb54d24ece61857af2263415856e8f07c2bd158",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ea22edc8_a92ab5fb",
+        "filename": "collection/stages/roles/openstack_test/tasks/run_openstack_test.yml",
+        "patchSetId": 2
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2025-02-20T12:01:25Z",
+      "side": 1,
+      "message": "Good point! please check the change in `playbooks/configure-hypervisor.yaml` in this patchset",
+      "parentUuid": "0903d4ec_65cf4858",
+      "range": {
+        "startLine": 70,
+        "startChar": 30,
+        "endLine": 70,
+        "endChar": 46
+      },
+      "revId": "bdb54d24ece61857af2263415856e8f07c2bd158",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
