@@ -1,0 +1,124 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c096d3da_a5c7839d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 25
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2025-02-20T09:27:24Z",
+      "side": 1,
+      "message": "Hey Sergey, can you please add the jira task or epic in the comment?",
+      "revId": "cf736435dfceca8c9a791b3422625fa2250839e6",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a3e2887f_df5d7d44",
+        "filename": "collection/stages/roles/verification/tasks/check_gpu.yml",
+        "patchSetId": 25
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2025-02-20T09:27:24Z",
+      "side": 1,
+      "message": "```suggestion\n- name: Get GPU verification Job logs\n```",
+      "revId": "cf736435dfceca8c9a791b3422625fa2250839e6",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9f9cbd11_90578d13",
+        "filename": "jobs_definitions/4.18_ovnkubernetes_ipi_gpu.yaml",
+        "patchSetId": 25
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2025-02-20T09:27:24Z",
+      "side": 1,
+      "message": "@imatza@redhat.com should we be applying the overrides here?\nand about the file name, should it be `4.18_ipi_gpu.yaml` and `4.19_ipi_gpu.yaml` as per https://review.gerrithub.io/c/shiftstack/shiftstack-qa/+/1208649?",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 3
+      },
+      "revId": "cf736435dfceca8c9a791b3422625fa2250839e6",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "01462dd5_d373cc11",
+        "filename": "playbooks/legacy_ocp_testing.yaml",
+        "patchSetId": 25
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2025-02-20T09:27:24Z",
+      "side": 1,
+      "message": "The change https://review.gerrithub.io/c/shiftstack/shiftstack-qa/+/1208648 \n\nis planning to remove this file, is it required for testing on 17.1?\ncc: @imatza@redhat.com",
+      "revId": "cf736435dfceca8c9a791b3422625fa2250839e6",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f4bd670d_47d56b57",
+        "filename": "playbooks/plays/gpu.yaml",
+        "patchSetId": 25
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2025-02-20T09:27:24Z",
+      "side": 1,
+      "message": "```suggestion\n        - name: Run GPU installation\n```",
+      "range": {
+        "startLine": 10,
+        "startChar": 24,
+        "endLine": 10,
+        "endChar": 34
+      },
+      "revId": "cf736435dfceca8c9a791b3422625fa2250839e6",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0303eff1_66ba6ec6",
+        "filename": "playbooks/plays/rhoai.yaml",
+        "patchSetId": 25
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2025-02-20T09:27:24Z",
+      "side": 1,
+      "message": "```suggestion\n        - name: Run RHOAI installation\n```",
+      "range": {
+        "startLine": 10,
+        "startChar": 26,
+        "endLine": 10,
+        "endChar": 36
+      },
+      "revId": "cf736435dfceca8c9a791b3422625fa2250839e6",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
