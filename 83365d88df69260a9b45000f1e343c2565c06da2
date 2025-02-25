@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4200f1d9_7c0ab40d",
+        "filename": "collection/tools/roles/tools_cifmw_dnsmasq/tasks/restore.yml",
+        "patchSetId": 12
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2025-02-25T15:50:56Z",
+      "side": 1,
+      "message": "Don\u0027t you need to restart the service?",
+      "revId": "83365d88df69260a9b45000f1e343c2565c06da2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
