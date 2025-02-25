@@ -16,6 +16,24 @@
       "message": "Don\u0027t you need to restart the service?",
       "revId": "83365d88df69260a9b45000f1e343c2565c06da2",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1c4792f4_85222479",
+        "filename": "collection/tools/roles/tools_cifmw_dnsmasq/tasks/restore.yml",
+        "patchSetId": 12
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2025-02-25T16:01:04Z",
+      "side": 1,
+      "message": "Right, thx!",
+      "parentUuid": "4200f1d9_7c0ab40d",
+      "revId": "83365d88df69260a9b45000f1e343c2565c06da2",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
