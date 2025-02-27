@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b7c9b71a_0dc96e82",
+        "filename": "collection/tools/roles/tools_cifmw_dnsmasq/README.md",
+        "patchSetId": 14
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2025-02-27T08:48:04Z",
+      "side": 1,
+      "message": "nice!",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 9
+      },
+      "revId": "43ff8c59290ff5119c0ddd40918ad90b1c6d80d4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2f0c6544_477437c7",
+        "filename": "collection/tools/roles/tools_cifmw_dnsmasq/tasks/main.yml",
+        "patchSetId": 14
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2025-02-27T08:48:04Z",
+      "side": 1,
+      "message": "like it",
+      "range": {
+        "startLine": 2,
+        "startChar": 0,
+        "endLine": 2,
+        "endChar": 80
+      },
+      "revId": "43ff8c59290ff5119c0ddd40918ad90b1c6d80d4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
