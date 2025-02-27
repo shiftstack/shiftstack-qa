@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "17fe74a3_80e9f0a3",
+        "filename": "jobs_definitions/4.18_ipi.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2025-02-27T07:30:26Z",
+      "side": 1,
+      "message": "What about testing?",
+      "revId": "93c5885d1778c709d0674680969c2fab86e89bb0",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
