@@ -112,10 +112,12 @@ RESOURCE_HANDLERS = {
         'list': lambda conn, filters: conn.object_store.containers(details=True, **filters),
         'delete': lambda conn, resource_id: conn.object_store.delete_container(resource_id)
     },
-    'flavor': {
-        'list': lambda conn, filters: conn.compute.flavors(**filters),
-        'delete': lambda conn, resource_id: conn.compute.delete_flavor(resource_id)
-    },
+    # Commented out the flavor cleanup as we are creating them as public and they don't
+    # belong to any project.
+    # 'flavor': {
+    #     'list': lambda conn, filters: conn.compute.flavors(**filters),
+    #     'delete': lambda conn, resource_id: conn.compute.delete_flavor(resource_id)
+    # },
 }
 
 
