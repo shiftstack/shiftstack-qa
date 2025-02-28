@@ -208,6 +208,10 @@ class ProjectPurge(OpenStackModule):
             if resource in ['image', 'swift_container']:
                 resources = [res for res in resources if res.owner == project_id]
 
+            # Additional filtering to skip Octavia flavors
+            if resource == 'flavor':
+                resources = [res for res in resources if "octavia" not in res.name]
+
             return resources
         else:
             raise Exception(f"Unsupported resource type: {resource}")
