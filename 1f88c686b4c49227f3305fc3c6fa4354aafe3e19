@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0a6bb92c_1b419a5b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2025-02-28T16:42:51Z",
+      "side": 1,
+      "message": "@imatza@redhat.com I\u0027m testing the 4.18 job definitions defined at https://review.gerrithub.io/c/shiftstack/shiftstack-qa/+/1209036, I started with your patch but they need to be adjusted, like number of workers, flavors disk, affinity and so on, otherwise they won\u0027t work (at least in the setups we have)",
+      "revId": "1f88c686b4c49227f3305fc3c6fa4354aafe3e19",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
