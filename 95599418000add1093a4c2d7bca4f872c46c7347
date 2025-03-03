@@ -16,6 +16,23 @@
       "message": "nice! ++",
       "revId": "95599418000add1093a4c2d7bca4f872c46c7347",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5eba2d12_482f1f0e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2025-03-03T09:45:00Z",
+      "side": 1,
+      "message": "This is odd to me Jon. The octavia flavor should be only visible for the admin, and we are purgin only the tenant project, right?",
+      "revId": "95599418000add1093a4c2d7bca4f872c46c7347",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
