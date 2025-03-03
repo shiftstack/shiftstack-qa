@@ -52,6 +52,24 @@
       "parentUuid": "7728aa8f_8bb72424",
       "revId": "1f88c686b4c49227f3305fc3c6fa4354aafe3e19",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "edb6da81_d295c9cc",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2025-03-03T09:00:20Z",
+      "side": 1,
+      "message": "cool. thanks! closing this patch in favor of https://review.gerrithub.io/c/shiftstack/shiftstack-qa/+/1209036",
+      "parentUuid": "17379315_dbbebced",
+      "revId": "1f88c686b4c49227f3305fc3c6fa4354aafe3e19",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
