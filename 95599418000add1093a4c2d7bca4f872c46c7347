@@ -92,6 +92,30 @@
       },
       "revId": "95599418000add1093a4c2d7bca4f872c46c7347",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a3cc8705_4506e010",
+        "filename": "collection/stages/plugins/modules/project_purge.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2025-03-03T11:29:49Z",
+      "side": 1,
+      "message": "Finally removed the flavor cleanup :), thanks!",
+      "parentUuid": "077ad2d0_e4e15351",
+      "range": {
+        "startLine": 115,
+        "startChar": 0,
+        "endLine": 118,
+        "endChar": 6
+      },
+      "revId": "95599418000add1093a4c2d7bca4f872c46c7347",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
