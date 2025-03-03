@@ -34,6 +34,24 @@
       "parentUuid": "0a6bb92c_1b419a5b",
       "revId": "1f88c686b4c49227f3305fc3c6fa4354aafe3e19",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "17379315_dbbebced",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2025-03-03T08:57:19Z",
+      "side": 1,
+      "message": "I think anti-affinity is needed as well, otherwise most of the times it will fail. The job definition for the integration pipeline (most powerful setup) we have at this moment is https://github.com/shiftstack/shiftstack-qa/blob/main/jobs_definitions/osp_verification.yaml, so other job definitions should follow the same config. I\u0027m testing the other patch, so I\u0027m ok closing this one and I\u0027ll send it for review once it\u0027s ready.",
+      "parentUuid": "7728aa8f_8bb72424",
+      "revId": "1f88c686b4c49227f3305fc3c6fa4354aafe3e19",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
