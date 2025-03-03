@@ -33,6 +33,24 @@
       "message": "This is odd to me Jon. The octavia flavor should be only visible for the admin, and we are purgin only the tenant project, right?",
       "revId": "95599418000add1093a4c2d7bca4f872c46c7347",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f05ed6ce_07d48556",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2025-03-03T10:04:08Z",
+      "side": 1,
+      "message": "On giant27, the tenant project can see only the flavors we want to delete:\n`[cloud-admin@shiftstackclient-shiftstack ~]$ OS_CLOUD\u003dshiftstack openstack flavor list --all\n+--------------------------------------+--------+-------+------+-----------+-------+-----------+\n| ID                                   | Name   |   RAM | Disk | Ephemeral | VCPUs | Is Public |\n+--------------------------------------+--------+-------+------+-----------+-------+-----------+\n| 1abedf0a-abab-4836-ae3c-6e71648a5aa5 | master | 16384 |   30 |         0 |     4 | True      |\n| 23f2b476-e964-4283-9f28-a987e6bbce87 | worker |  8192 |   30 |         0 |     2 | True      |\n+--------------------------------------+--------+-------+------+-----------+-------+-----------+`\n\nBut the admin can see all of them:\n`[cloud-admin@shiftstackclient-shiftstack ~]$ OS_CLOUD\u003ddefault openstack flavor list --all\n+--------------------------------------+------------------------+-------+------+-----------+-------+-----------+\n| ID                                   | Name                   |   RAM | Disk | Ephemeral | VCPUs | Is Public |\n+--------------------------------------+------------------------+-------+------+-----------+-------+-----------+\n| 0744dfc7-a3f1-4c10-8a99-de68ed798005 | octavia-amphora        |  1024 |    3 |         0 |     1 | False     |\n| 1abedf0a-abab-4836-ae3c-6e71648a5aa5 | master                 | 16384 |   30 |         0 |     4 | True      |\n| 23f2b476-e964-4283-9f28-a987e6bbce87 | worker                 |  8192 |   30 |         0 |     2 | True      |\n| e9132e1f-22de-44a1-aa71-5f2911088dc0 | octavia-amphora-4vcpus |  4096 |    3 |         0 |     4 | False     |\n+--------------------------------------+------------------------+-------+------+-----------+-------+-----------+`\n\nIs there an option to get the flavor list using the tenant project creds?",
+      "parentUuid": "5eba2d12_482f1f0e",
+      "revId": "95599418000add1093a4c2d7bca4f872c46c7347",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
