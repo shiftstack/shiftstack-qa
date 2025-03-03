@@ -69,6 +69,29 @@
       "parentUuid": "f05ed6ce_07d48556",
       "revId": "95599418000add1093a4c2d7bca4f872c46c7347",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "077ad2d0_e4e15351",
+        "filename": "collection/stages/plugins/modules/project_purge.py",
+        "patchSetId": 2
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2025-03-03T10:19:32Z",
+      "side": 1,
+      "message": "We can comment this 4 lines. With that we don\u0027t remove any flavor.",
+      "range": {
+        "startLine": 115,
+        "startChar": 0,
+        "endLine": 118,
+        "endChar": 6
+      },
+      "revId": "95599418000add1093a4c2d7bca4f872c46c7347",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
