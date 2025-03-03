@@ -51,6 +51,24 @@
       "parentUuid": "5eba2d12_482f1f0e",
       "revId": "95599418000add1093a4c2d7bca4f872c46c7347",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bb69a2c7_b3cf5901",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2025-03-03T10:17:18Z",
+      "side": 1,
+      "message": "I think we can simply don\u0027t remove them. They can stay, they are not consuming any resources and thanks to ansible idempotency, they will be modified if needed.\n\n@juriarte@redhat.com WDYT?",
+      "parentUuid": "f05ed6ce_07d48556",
+      "revId": "95599418000add1093a4c2d7bca4f872c46c7347",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
