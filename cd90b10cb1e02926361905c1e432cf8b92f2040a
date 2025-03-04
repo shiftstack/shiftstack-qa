@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "972b4fd2_21ab77b2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2025-03-04T10:41:11Z",
+      "side": 1,
+      "message": "The gate failure indicates that the change worked as expected. It will pass as soon as the fix for the introduced bug is merged.",
+      "revId": "cd90b10cb1e02926361905c1e432cf8b92f2040a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
