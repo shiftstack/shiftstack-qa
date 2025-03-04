@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "aae54640_e902601f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 9
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2025-03-04T16:35:00Z",
+      "side": 1,
+      "message": "@juriarte@redhat.com Are you planning to add tests on compact one? If not I can use it for Poc (it will run tests but that will happen on a different step). Thank you!",
+      "revId": "f3562959667cd51134476ab49171c545777618d7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
