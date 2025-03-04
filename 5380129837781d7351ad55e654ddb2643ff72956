@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7b3ba7a1_e59c7fc8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2025-03-04T14:18:24Z",
+      "side": 1,
+      "message": "Verified in a RHOSO deployment:\n* With a successful openstack-test run where all tests pass, the rescue block is not executed\n* With a successful openstack-test run where some tests fail, the rescue block is executed and the playbook doesn\u0027t fail and must-gather is retrieved\n* With a not successful openstack-test run, the rescue block is executed and the playbook fails in the fail task",
+      "revId": "5380129837781d7351ad55e654ddb2643ff72956",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
