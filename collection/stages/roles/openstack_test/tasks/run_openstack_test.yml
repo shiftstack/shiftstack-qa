@@ -68,22 +68,9 @@
         OS_CLOUD: "{{ user_cloud }}"
         KUBECONFIG: "{{ kubeconfig }}"
         RHOSO_KUBECONFIG: "{{ rhoso_kubeconfig }}"
-        SHIFTSTACK_PASS_FILE: "{{ kubeadmin-password }}"
+        SHIFTSTACK_PASS_FILE: "{{ kubeadmin_password }}"
       changed_when: true
 
-    - name: Check for any failed openshift tests
-      ansible.builtin.shell: >
-        set -o pipefail &&
-        grep -e "^failed:" {{ openstack_test_results_dir }}/{{ openstack_test_name }}.log | wc -l
-        || true
-      register: number_of_failed_tests
-      changed_when: false
-
-    - name: Assert that there are no failed tests
-      ansible.builtin.assert:
-        that: number_of_failed_tests.stdout | int == 0
-        fail_msg: "There are failed openshift tests"
-        success_msg: "There are no openshift tests"
   rescue:
     - name: Mark the openshift tests as UNSTABLE
       ansible.builtin.include_role:
@@ -92,6 +79,31 @@
       vars:
         unstable_msg: >-
           The openshift test Suite failed.
+
+    - name: Get the number of failed openstack tests
+      ansible.builtin.shell: >
+        set -o pipefail &&
+        grep -e "^failed:" {{ openstack_test_results_dir }}/{{ openstack_test_name }}.log | wc -l
+        || true
+      register: number_of_failed_tests
+      changed_when: false
+
+    - name: Get the number of passed openstack tests
+      ansible.builtin.shell: >
+        set -o pipefail &&
+        grep -e "^passed:" {{ openstack_test_results_dir }}/{{ openstack_test_name }}.log | wc -l
+        || true
+      register: number_of_passed_tests
+      changed_when: false
+
+    # This fail task is added to detect failures in openstack-test execution
+    - name: Fail the playbook in case there are no failed and passed tests
+      ansible.builtin.fail:
+        msg: >
+          openstack-test execution failed or no tests where run!
+      when:
+        - (number_of_failed_tests.stdout | default("0")) | int == 0
+        - (number_of_passed_tests.stdout | default("0")) | int == 0
 
     - name: Run must-gather
       ansible.builtin.include_role:
