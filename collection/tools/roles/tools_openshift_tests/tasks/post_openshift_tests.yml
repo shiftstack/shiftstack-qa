@@ -29,10 +29,16 @@
     mode: u=rwx,g=rw,o=r
     state: directory
 
-- name: Copy XML to {{ report_dir }} so it can be gathered by polarion jump.
+- name: Create {{ report_dir }}/{{ testsuite_name | replace('/', '-') }} if it does not exist
+  ansible.builtin.file:
+    path: "{{ report_dir }}/{{ testsuite_name | replace('/', '-') }}"
+    mode: u=rwx,g=rw,o=r
+    state: directory
+
+- name: Copy XML to {{ report_dir }} so it can be gathered by polarion jump and report portal.
   ansible.builtin.copy:
     src: "{{ results_dir }}/{{ test_name }}.xml"
-    dest: "{{ report_dir }}/{{ testsuite_name | replace('/', '-') }}.xml"
+    dest: "{{ report_dir }}/{{ testsuite_name | replace('/', '-') }}/{{ test_name }}.xml"
     remote_src: yes
     mode: u=rwx,g=rwx,o=rwx
 
