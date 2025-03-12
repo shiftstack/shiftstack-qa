@@ -16,6 +16,24 @@
       "message": "@juriarte@redhat.com Are you planning to add tests on compact one? If not I can use it for Poc (it will run tests but that will happen on a different step). Thank you!",
       "revId": "f3562959667cd51134476ab49171c545777618d7",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d3856cfe_65f897c4",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 9
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2025-03-12T15:12:38Z",
+      "side": 1,
+      "message": "I don\u0027t think I will be able to keep testing the multijob in the near future, so please fell free to submit the changes you need",
+      "parentUuid": "aae54640_e902601f",
+      "revId": "f3562959667cd51134476ab49171c545777618d7",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
