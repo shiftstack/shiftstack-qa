@@ -1,0 +1,215 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "48d96664_b9a084f3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 29
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2025-03-16T08:32:34Z",
+      "side": 1,
+      "message": "Thanks a lot. Some comments",
+      "revId": "f4f0d59a263a00e7d4fd5c1c7250068f9548f09b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "eb78458e_ab4692de",
+        "filename": "collection/stages/roles/gpu/README.md",
+        "patchSetId": 29
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2025-03-16T08:32:34Z",
+      "side": 1,
+      "message": "Thanks!",
+      "revId": "f4f0d59a263a00e7d4fd5c1c7250068f9548f09b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "07eab2f6_e6775a3f",
+        "filename": "collection/stages/roles/gpu/README.md",
+        "patchSetId": 29
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2025-03-16T08:32:34Z",
+      "side": 1,
+      "message": "Do we need to make sure OpenShift Driver toolkit is available?",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 31
+      },
+      "revId": "f4f0d59a263a00e7d4fd5c1c7250068f9548f09b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7f63df74_11a6fd66",
+        "filename": "collection/stages/roles/gpu/README.md",
+        "patchSetId": 29
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2025-03-16T08:32:34Z",
+      "side": 1,
+      "message": "Scale up or scale out?",
+      "range": {
+        "startLine": 23,
+        "startChar": 5,
+        "endLine": 23,
+        "endChar": 13
+      },
+      "revId": "f4f0d59a263a00e7d4fd5c1c7250068f9548f09b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d1c2edf4_f0310c3d",
+        "filename": "collection/stages/roles/gpu/tasks/gpu_operator.yml",
+        "patchSetId": 29
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2025-03-16T08:32:34Z",
+      "side": 1,
+      "message": "Use k8s_info please",
+      "revId": "f4f0d59a263a00e7d4fd5c1c7250068f9548f09b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "60a93b16_01421e28",
+        "filename": "collection/stages/roles/gpu/tasks/gpu_operator.yml",
+        "patchSetId": 29
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2025-03-16T08:32:34Z",
+      "side": 1,
+      "message": "nit: s/lable/label/",
+      "range": {
+        "startLine": 114,
+        "startChar": 12,
+        "endLine": 114,
+        "endChar": 26
+      },
+      "revId": "f4f0d59a263a00e7d4fd5c1c7250068f9548f09b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e4bc104e_17870414",
+        "filename": "collection/stages/roles/gpu/tasks/main.yml",
+        "patchSetId": 29
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2025-03-16T08:32:34Z",
+      "side": 1,
+      "message": "There is a way to do it using k8s_info. We have it in our plugin. It may worth to have the code in the utils to make sure it\u0027s reusable",
+      "revId": "f4f0d59a263a00e7d4fd5c1c7250068f9548f09b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d0f19507_b5aaedfb",
+        "filename": "collection/stages/roles/gpu/tasks/nfd.yml",
+        "patchSetId": 29
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2025-03-16T08:32:34Z",
+      "side": 1,
+      "message": "Please use k8s_info",
+      "revId": "f4f0d59a263a00e7d4fd5c1c7250068f9548f09b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "57827452_da35a4c4",
+        "filename": "collection/stages/roles/prepare/defaults/main.yml",
+        "patchSetId": 29
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2025-03-16T08:32:34Z",
+      "side": 1,
+      "message": "I suppose this is not needed for every installation so it\u0027s better to set it as a seperate case (@Jon\u0027s opinion on that please)",
+      "range": {
+        "startLine": 11,
+        "startChar": 9,
+        "endLine": 11,
+        "endChar": 15
+      },
+      "revId": "f4f0d59a263a00e7d4fd5c1c7250068f9548f09b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4a8478b4_abdbab90",
+        "filename": "collection/stages/roles/rhoai/README.md",
+        "patchSetId": 29
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2025-03-16T08:32:34Z",
+      "side": 1,
+      "message": "Can you please add a link to a documentation? 10x!",
+      "revId": "f4f0d59a263a00e7d4fd5c1c7250068f9548f09b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0d47ec30_263053c5",
+        "filename": "jobs_definitions/4.16_ipi_gpu.yaml",
+        "patchSetId": 29
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2025-03-16T08:32:34Z",
+      "side": 1,
+      "message": "Can you explain please why are you starting with 1 worker? (And about the scale of the workers)",
+      "revId": "f4f0d59a263a00e7d4fd5c1c7250068f9548f09b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
