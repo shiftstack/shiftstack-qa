@@ -43,6 +43,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "81285781_60e5fec9",
+        "filename": "jobs_definitions/4.18_ipi.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2025-03-17T16:51:55Z",
+      "side": 1,
+      "message": "For the moment the prow job will be triggered every 3 days, so I think to target first nightlies. We\u0027ll go for something more smart later.",
+      "parentUuid": "777eeaa3_256eed1f",
+      "range": {
+        "startLine": 3,
+        "startChar": 22,
+        "endLine": 3,
+        "endChar": 24
+      },
+      "revId": "9ff96cbed5b24bc4ac55de602f816ed3401f9bc4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "a8b270ba_32bcc22e",
         "filename": "jobs_definitions/4.18_ipi.yaml",
         "patchSetId": 1
