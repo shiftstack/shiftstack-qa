@@ -1,0 +1,21 @@
+---
+openshift_release: 4.18
+openshift_build_name: "" # latest nightly
+installation_type: ipi
+stages:
+  - prepare
+  - install
+  - post
+  - verification
+
+ocp_deployment_topology_override:
+  flavors:
+    master:
+      disk: 30
+    worker:
+      disk: 30
+    bootstrap:
+      disk: 30
+  replicas:
+    master: 3
+    worker: 2
