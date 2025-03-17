@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a121d3eb_8b99de0d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2025-03-17T10:50:22Z",
+      "side": 1,
+      "message": "https://reportportal-osp.apps.dno.ocp-hub.prod.psi.redhat.com/ui/#rhel_osp_18/launches/all/134518\n\nhttps://sf.apps.int.gpc.ocp-hub.prod.psi.redhat.com/zuul/t/components-integration/build/b212754bd04a43ab9d6e507b2df4dec1",
+      "revId": "5bfa41aad205bf44875c45a6d5128ce04aa84dfd",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
