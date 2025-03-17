@@ -68,6 +68,23 @@
       "message": "Once this path merges I rebase the GPU patch",
       "revId": "3ce4b1a695c837df2fa55d0642daa40464f805aa",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7944b0ca_ac355dcf",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2025-03-17T16:24:04Z",
+      "side": 1,
+      "message": "@imatza@redhat.com Please have a followup patch documenting in https://github.com/shiftstack/shiftstack-qa#readme. Thanks",
+      "revId": "3ce4b1a695c837df2fa55d0642daa40464f805aa",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }
