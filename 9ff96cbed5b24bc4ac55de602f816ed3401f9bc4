@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "59a3f4e0_8911029f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2025-03-17T16:50:21Z",
+      "side": 1,
+      "message": "Added small comments, otherwise looks good to me.\nIs the job definition specific for prow?",
+      "revId": "9ff96cbed5b24bc4ac55de602f816ed3401f9bc4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "777eeaa3_256eed1f",
+        "filename": "jobs_definitions/4.18_ipi.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2025-03-17T16:50:21Z",
+      "side": 1,
+      "message": "Don\u0027t we want to test candidates? maybe it doesn\u0027t matter at this point...",
+      "range": {
+        "startLine": 3,
+        "startChar": 22,
+        "endLine": 3,
+        "endChar": 24
+      },
+      "revId": "9ff96cbed5b24bc4ac55de602f816ed3401f9bc4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a8b270ba_32bcc22e",
+        "filename": "jobs_definitions/4.18_ipi.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1017617
+      },
+      "writtenOn": "2025-03-17T16:50:21Z",
+      "side": 1,
+      "message": "Not sure if we should use `ocp_deployment_topology_override` here, with just the difference, @imatza@redhat.com?",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 23
+      },
+      "revId": "9ff96cbed5b24bc4ac55de602f816ed3401f9bc4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
