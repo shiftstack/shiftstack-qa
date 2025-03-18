@@ -65,6 +65,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "adaad796_ce478317",
+        "filename": "jobs_definitions/4.18_ipi.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2025-03-18T12:52:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "81285781_60e5fec9",
+      "range": {
+        "startLine": 3,
+        "startChar": 22,
+        "endLine": 3,
+        "endChar": 24
+      },
+      "revId": "9ff96cbed5b24bc4ac55de602f816ed3401f9bc4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a8b270ba_32bcc22e",
@@ -102,6 +126,30 @@
       "side": 1,
       "message": "I\u0027m +1 for using `ocp_deployment_topology_override` if any change is needed",
       "parentUuid": "a8b270ba_32bcc22e",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 23
+      },
+      "revId": "9ff96cbed5b24bc4ac55de602f816ed3401f9bc4",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c8e82ee5_c10603f9",
+        "filename": "jobs_definitions/4.18_ipi.yaml",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1019630
+      },
+      "writtenOn": "2025-03-18T12:52:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ac25aca8_acbbce3d",
       "range": {
         "startLine": 11,
         "startChar": 0,
