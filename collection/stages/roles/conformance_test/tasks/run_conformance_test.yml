@@ -25,6 +25,11 @@
     mode: u=rwx,g=rwx,o=rwx
     remote_src: yes
 
+- name: Remove source directory once compilation succeeded
+  ansible.builtin.file:
+    path: "{{ artifacts_dir }}/{{ conformance_test_repo_name }}"
+    state: absent
+
 - name: Prepare {{ all_tests_path }} file with all the tests that can be run
   ansible.builtin.shell: >
     {{ conformance_test_executable }} run \

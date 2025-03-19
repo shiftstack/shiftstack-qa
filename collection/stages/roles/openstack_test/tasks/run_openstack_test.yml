@@ -18,9 +18,21 @@
     chdir: "{{ openstack_test_dir }}"
   changed_when: true
 
+- name: Copy openstack-test executable
+  ansible.builtin.copy:
+    src: "{{ openstack_test_dir }}/openstack-tests"
+    dest: "{{ openstack_test_executable }}"
+    mode: u=rwx,g=rwx,o=rwx
+    remote_src: yes
+
+- name: Remove source directory once compilation succeeded
+  ansible.builtin.file:
+    path: "{{ openstack_test_dir }}"
+    state: absent
+
 - name: Prepare {{ all_tests_path }} file with all the tests that can be run
   ansible.builtin.shell: >
-    {{ openstack_test_dir }}/openstack-tests run openshift/openstack
+    {{ openstack_test_executable }} run openshift/openstack
     --dry-run > {{ all_tests_path }}
   environment:
     OS_CLOUD: "{{ user_cloud }}"
@@ -59,7 +71,7 @@
   block:
     - name: Run openstack tests
       ansible.builtin.shell: >
-        {{ openstack_test_dir }}/openstack-tests run openshift/openstack
+        {{ openstack_test_executable }} run openshift/openstack
         -f {{ tests_to_run_path }}
         --output-file {{ openstack_test_results_dir }}/{{ openstack_test_name }}.log
         --junit-dir={{ openstack_test_results_dir }} > /dev/null

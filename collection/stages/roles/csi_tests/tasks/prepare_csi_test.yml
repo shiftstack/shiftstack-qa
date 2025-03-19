@@ -23,3 +23,8 @@
     dest: "{{ csi_test_executable }}"
     mode: u=rwx,g=rwx,o=rwx
     remote_src: yes
+
+- name: Remove source directory once compilation succeeded
+  ansible.builtin.file:
+    path: "{{ artifacts_dir }}/{{ conformance_test_repo_name }}"
+    state: absent
