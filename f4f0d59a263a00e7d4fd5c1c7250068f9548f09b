@@ -58,6 +58,30 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "32f8fcda_fe2af057",
+        "filename": "collection/stages/roles/gpu/README.md",
+        "patchSetId": 29
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 1018732
+      },
+      "writtenOn": "2025-03-19T18:34:14Z",
+      "side": 1,
+      "message": "No, the NFD is a standalone operator. It is a prerequisite for the NVIDIA GPU operator. The NFD labels the host based on specified rules [1]. The GPU operator uses node labels to determine if there is NVIDIA hardware on nodes.\n\n[1] - https://review.gerrithub.io/c/shiftstack/shiftstack-qa/+/1206302/29/collection/stages/roles/gpu/templates/nfd_config.yaml.j2",
+      "parentUuid": "07eab2f6_e6775a3f",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 31
+      },
+      "revId": "f4f0d59a263a00e7d4fd5c1c7250068f9548f09b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7f63df74_11a6fd66",
@@ -71,6 +95,30 @@
       "writtenOn": "2025-03-16T08:32:34Z",
       "side": 1,
       "message": "Scale up or scale out?",
+      "range": {
+        "startLine": 23,
+        "startChar": 5,
+        "endLine": 23,
+        "endChar": 13
+      },
+      "revId": "f4f0d59a263a00e7d4fd5c1c7250068f9548f09b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7087e966_ae97642e",
+        "filename": "collection/stages/roles/gpu/README.md",
+        "patchSetId": 29
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 1018732
+      },
+      "writtenOn": "2025-03-19T18:34:14Z",
+      "side": 1,
+      "message": "Scale up. Add an additional worker host.",
+      "parentUuid": "7f63df74_11a6fd66",
       "range": {
         "startLine": 23,
         "startChar": 5,
@@ -98,6 +146,24 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f6901c6d_5e243806",
+        "filename": "collection/stages/roles/gpu/tasks/gpu_operator.yml",
+        "patchSetId": 29
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 1018732
+      },
+      "writtenOn": "2025-03-19T18:34:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d1c2edf4_f0310c3d",
+      "revId": "f4f0d59a263a00e7d4fd5c1c7250068f9548f09b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "60a93b16_01421e28",
@@ -111,6 +177,30 @@
       "writtenOn": "2025-03-16T08:32:34Z",
       "side": 1,
       "message": "nit: s/lable/label/",
+      "range": {
+        "startLine": 114,
+        "startChar": 12,
+        "endLine": 114,
+        "endChar": 26
+      },
+      "revId": "f4f0d59a263a00e7d4fd5c1c7250068f9548f09b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "36cf77e2_3180ba4c",
+        "filename": "collection/stages/roles/gpu/tasks/gpu_operator.yml",
+        "patchSetId": 29
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 1018732
+      },
+      "writtenOn": "2025-03-19T18:34:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "60a93b16_01421e28",
       "range": {
         "startLine": 114,
         "startChar": 12,
@@ -157,6 +247,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "2b25b360_a1863953",
+        "filename": "collection/stages/roles/gpu/tasks/nfd.yml",
+        "patchSetId": 29
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 1018732
+      },
+      "writtenOn": "2025-03-19T18:34:14Z",
+      "side": 1,
+      "message": "In this task, we need to wait until all pods in the openshift-nfd namespace are ready. Using k8s_info would add unnecessary complexity because, instead of leveraging ocp internal mechanisms, we would need to filter the output manually.\n\nThe task would look like this:\n\n```yaml\n- name: Wait for all NFD pods to be ready\n  retries: 10\n  delay: 10\n  until: \u003e\n    result.resources | selectattr(\u0027status.conditions\u0027, \u0027defined\u0027) |\n    selectattr(\u0027status.conditions\u0027, \u0027contains\u0027, {\u0027type\u0027: \u0027Ready\u0027, \u0027status\u0027: \u0027True\u0027}) |\n    list | length \u003d\u003d result.resources | length\n  block:\n    - name: Get all NFD pods\n      kubernetes.core.k8s_info:\n        api_version: v1\n        kind: Pod\n        namespace: openshift-nfd\n        kubeconfig: \"{{ kubeconfig }}\"\n      register: result\n```",
+      "parentUuid": "d0f19507_b5aaedfb",
+      "revId": "f4f0d59a263a00e7d4fd5c1c7250068f9548f09b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "57827452_da35a4c4",
         "filename": "collection/stages/roles/prepare/defaults/main.yml",
         "patchSetId": 29
@@ -168,6 +276,30 @@
       "writtenOn": "2025-03-16T08:32:34Z",
       "side": 1,
       "message": "I suppose this is not needed for every installation so it\u0027s better to set it as a seperate case (@Jon\u0027s opinion on that please)",
+      "range": {
+        "startLine": 11,
+        "startChar": 9,
+        "endLine": 11,
+        "endChar": 15
+      },
+      "revId": "f4f0d59a263a00e7d4fd5c1c7250068f9548f09b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c921e454_98558fa8",
+        "filename": "collection/stages/roles/prepare/defaults/main.yml",
+        "patchSetId": 29
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1018732
+      },
+      "writtenOn": "2025-03-19T18:34:14Z",
+      "side": 1,
+      "message": "@itzikb@redhat.com Why do we need to limit the quota in the OpenStack?",
+      "parentUuid": "57827452_da35a4c4",
       "range": {
         "startLine": 11,
         "startChar": 9,
@@ -195,6 +327,24 @@
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0cfa59b4_3f6c91af",
+        "filename": "collection/stages/roles/rhoai/README.md",
+        "patchSetId": 29
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 1018732
+      },
+      "writtenOn": "2025-03-19T18:34:14Z",
+      "side": 1,
+      "message": "The RHOAI role was built from RH official documentation and downstream RHOAI QE repositories. Added link to the official documentation",
+      "parentUuid": "4a8478b4_abdbab90",
+      "revId": "f4f0d59a263a00e7d4fd5c1c7250068f9548f09b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0d47ec30_263053c5",
@@ -208,6 +358,24 @@
       "writtenOn": "2025-03-16T08:32:34Z",
       "side": 1,
       "message": "Can you explain please why are you starting with 1 worker? (And about the scale of the workers)",
+      "revId": "f4f0d59a263a00e7d4fd5c1c7250068f9548f09b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bbe69be3_fabfe60a",
+        "filename": "jobs_definitions/4.16_ipi_gpu.yaml",
+        "patchSetId": 29
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1018732
+      },
+      "writtenOn": "2025-03-19T18:34:14Z",
+      "side": 1,
+      "message": "In the OCP installation, we are not able to specify multiple flavors for worker nodes. When using a GPU card, we define the GPU flavor in install-config.yaml thereby ensures that the worker node with a GPU is provisioned first, taking resources before other worker nodes.",
+      "parentUuid": "0d47ec30_263053c5",
       "revId": "f4f0d59a263a00e7d4fd5c1c7250068f9548f09b",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
