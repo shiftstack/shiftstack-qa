@@ -3,6 +3,7 @@
 openstack_test_name: openstack-test
 openstack_testsuite_name: openstack
 openstack_test_dir: "{{ artifacts_dir }}/{{ openstack_test_name }}"
+openstack_test_executable: "{{ home_dir }}/openstack-tests"
 openstack_test_results_dir: "{{ artifacts_dir }}/{{ openstack_test_name }}-results"
 openstack_tests_allowlist_file: ""
 openstack_tests_blocklist_file: ""
