@@ -31,7 +31,7 @@
     tasks_from: post_openshift_tests.yml
   vars:
     csi_test_type: manilacsi
-    testsuite_name: "{{ csi_test_testsuite_name }}"
-    key_for_filtering_results: "{{ csi_test_testsuite_name }}"
+    testsuite_name: "manila.csi.openstack.org"
+    key_for_filtering_results: "manila.csi.openstack.org"
     test_name: "{{ csi_test_name }}"
     results_dir: "{{ csi_test_results_dir }}"
