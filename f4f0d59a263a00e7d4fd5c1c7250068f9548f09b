@@ -312,6 +312,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "e75c41b0_b097b58d",
+        "filename": "collection/stages/roles/prepare/defaults/main.yml",
+        "patchSetId": 29
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2025-03-20T13:04:02Z",
+      "side": 1,
+      "message": "I think we want to know if the quota usage exceeds what\u0027s reasonable. Instead of changing the quota here, you can replicate the variable in your job config. It will take precedence over the default values.",
+      "parentUuid": "c921e454_98558fa8",
+      "range": {
+        "startLine": 11,
+        "startChar": 9,
+        "endLine": 11,
+        "endChar": 15
+      },
+      "revId": "f4f0d59a263a00e7d4fd5c1c7250068f9548f09b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "4a8478b4_abdbab90",
         "filename": "collection/stages/roles/rhoai/README.md",
         "patchSetId": 29
