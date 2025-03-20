@@ -45,6 +45,6 @@
 - name: Copy HTML to {{ report_dir }} so it can be gathered by eodweb.
   ansible.builtin.copy:
     src: "{{ results_dir }}/{{ test_name }}.html"
-    dest: "{{ report_dir }}/{{ testsuite_name | replace('/', '-') }}.html"
+    dest: "{{ report_dir }}/{{ testsuite_name | replace('/', '-') }}/{{ test_name }}.html"
     remote_src: yes
     mode: u=rwx,g=rwx,o=rwx
