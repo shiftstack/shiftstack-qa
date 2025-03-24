@@ -426,6 +426,24 @@
       "parentUuid": "0d47ec30_263053c5",
       "revId": "f4f0d59a263a00e7d4fd5c1c7250068f9548f09b",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "501b7795_7900a22a",
+        "filename": "jobs_definitions/4.16_ipi_gpu.yaml",
+        "patchSetId": 29
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2025-03-24T13:33:31Z",
+      "side": 1,
+      "message": "Suggest to add it as a comment",
+      "parentUuid": "bbe69be3_fabfe60a",
+      "revId": "f4f0d59a263a00e7d4fd5c1c7250068f9548f09b",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
     }
   ]
 }

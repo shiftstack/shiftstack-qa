@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2611a3ed_fa2a55b1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 37
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1005532
+      },
+      "writtenOn": "2025-03-24T13:33:31Z",
+      "side": 1,
+      "message": "nit and scale out",
+      "revId": "53d68e9f798cced7e34adda8d065f668c4c028e5",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
