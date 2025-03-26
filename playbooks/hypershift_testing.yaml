@@ -1,0 +1,21 @@
+---
+- name: TBD
+  hosts: localhost
+  gather_facts: yes
+  vars_files:
+    - "../configs/global.yml"
+  tasks:
+    - name: Install multicluster-engine operator and deploy the default MultiClusterEngine
+      vars:
+        install_openshift_operator_namespace: multicluster-engine
+        install_openshift_operator_catalogsource: redhat-operators
+        install_openshift_operator_package: multicluster-engine
+        install_openshift_operator_name: multicluster-engine
+        install_openshift_operator_provided_api: MultiClusterEngine
+      ansible.builtin.include_role:
+        name: shiftstack.tools.tools_install_openshift_operator
+
+# TBD:
+# - name: Patch the hypershift config for enabling the tech-preview flag
+# - name: Wait until the change is appled
+# - name: Download and install hcp binary locally
