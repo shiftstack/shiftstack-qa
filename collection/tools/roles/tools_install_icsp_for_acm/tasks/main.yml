@@ -1,0 +1,32 @@
+---
+- name: Register the OCP cluster version
+  ansible.builtin.shell:
+    set -o pipefail && \
+    oc version -o json | jq -r '.openshiftVersion' | cut -d '.' -f1,2
+  register: ocp_ver
+  changed_when: false
+
+- name: Inject quay secret in the pull-secret to se the ICSP
+  ansible.builtin.shell: |
+    oc get secret pull-secret -n openshift-config -o json \
+    | jq '.data[".dockerconfigjson"] | @base64d | fromjson
+      | .auths["quay.io"] = {"auth": "{{ tools_install_openshift_operator_quay_acmd_secret }}"}
+      | @json | @base64' \
+    | xargs -I {} oc patch secret pull-secret -n openshift-config \
+    --type=json -p='[{"op": "replace", "path": "/data/.dockerconfigjson", "value":"{}"}]'
+  changed_when: true
+  no_log: true
+
+- name: Apply new image content source policy file
+  kubernetes.core.k8s:
+    state: present
+    definition: "{{ lookup('file', '../templates/icsp.yaml') }}"
+
+- name: Wait until the qe optional marketplace has been deployed
+  ansible.builtin.shell: |
+    oc get all -n openshift-marketplace -o json
+  register: pods
+  until: pods.stdout|from_json|json_query('items[*].status.phase')|unique == ["Running"]
+  retries: 5
+  delay: 120
+  changed_when: false
