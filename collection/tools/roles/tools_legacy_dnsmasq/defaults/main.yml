@@ -1,0 +1,3 @@
+---
+tools_legacy_dnsmasq_custom_conf: "/root/dnsmasq.custom/dnsmasq.conf"
+tools_legacy_dnsmasq_custom_logs_dir: "/root/dnsmasq.custom/logs/"
