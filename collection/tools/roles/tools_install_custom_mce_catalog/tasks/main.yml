@@ -1,0 +1,64 @@
+---
+- name: Inject quay auth key in the pull-secret
+  ansible.builtin.shell: |
+    set -o pipefail &&
+    oc get secret pull-secret -n openshift-config -o json \
+    | jq '.data[".dockerconfigjson"] | @base64d | fromjson
+      | .auths["quay.io:443"] = {"auth": "{{ tools_install_custom_mce_catalog_secret }}"}
+      | @json | @base64' \
+    | xargs -I {} oc patch secret pull-secret -n openshift-config \
+    --type=json -p='[{"op": "replace", "path": "/data/.dockerconfigjson", "value":"{}"}]'
+  changed_when: true
+  no_log: true
+
+- name: Wait for the MCP to finish the cluster updates
+  ansible.builtin.include_role:
+    name: tools_cluster_checks
+    tasks_from: wait_mcp_updated.yml
+  vars:
+    wait_retries: 60
+    wait_delay: 60
+
+- name: Discover OCP version
+  ansible.builtin.include_role:
+    name: shiftstack.tools.tools_get_deploy_info
+    tasks_from: discover_ocp_version.yml
+
+- name: Build the marketplace catalog source manifest for MCE
+  vars:
+    tools_install_custom_mce_catalog_img:
+      "quay.io:443/acm-d/mce-custom-registry:{{ tools_install_custom_mce_catalog_channel[discovered_openshift_release] }}"
+  ansible.builtin.template:
+    src: mce-catalog.yml.j2
+    dest: mce-catalog.yml
+    mode: u=rw,g=rw,o=r
+
+- name: Apply the marketplace catalog source manifest for MCE
+  kubernetes.core.k8s:
+    state: present
+    src: mce-catalog.yml
+
+- name: Get catalog pod running in openshift-marketplace namespace
+  kubernetes.core.k8s_info:
+    api_version: v1
+    kind: Pod
+    label_selectors:
+      - "olm.catalogSource={{ custom_catalog_name }}"
+    namespace: "openshift-marketplace"
+  register: pod_info
+  until: pod_info.resources[0].status.phase == "Running"
+  retries: 20
+  delay: 5
+
+- name: Inject mirroring to the cluster so custom images can be downloaded
+  kubernetes.core.k8s:
+    src: "{{ lookup('file', 'icsp.yaml') }}"
+    state: present
+
+- name: Wait for the MCP to finish the cluster updates
+  ansible.builtin.include_role:
+    name: tools_cluster_checks
+    tasks_from: wait_mcp_updated.yml
+  vars:
+    wait_retries: 60
+    wait_delay: 60
