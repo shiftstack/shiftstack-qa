@@ -1,0 +1,5 @@
+---
+install_openshift_operator_namespace: default
+install_openshift_operator_catalogsource: redhat-operators
+single_namespace_installation: false
+
