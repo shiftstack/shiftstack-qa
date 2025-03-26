@@ -6,7 +6,6 @@
     src: /etc/resolv.conf.orig
     dest: /etc/resolv.conf
     mode: u=rw,g=r,o=r
-    force: yes
     unsafe_writes: true
 
 - name: Remove /etc/resolv.conf.orig
