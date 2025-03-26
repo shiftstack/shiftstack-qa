@@ -1,0 +1,98 @@
+---
+- name: Prepare cluster to become hosting hypershift cluster
+  hosts: localhost
+  gather_facts: yes
+  vars_files:
+    - "../configs/global.yml"
+    - "../configs/secret.yaml"
+  tasks:
+
+    - name: Install custom catalog source for installing MCE with release candidate versions
+      ansible.builtin.include_role:
+        name: shiftstack.tools.tools_install_custom_mce_catalog
+
+    - name: Install multicluster-engine operator and deploy the default MultiClusterEngine
+      vars:
+        install_openshift_operator_namespace: multicluster-engine
+        # Custom catalog previous created on 'tools_install_custom_mce_catalog' role:
+        install_openshift_operator_catalogsource: custom-mce-catalog
+        install_openshift_operator_package: multicluster-engine
+        install_openshift_operator_name: multicluster-engine
+        install_openshift_operator_provided_api: MultiClusterEngine
+        single_namespace_installation: true
+      ansible.builtin.include_role:
+        name: shiftstack.tools.tools_install_openshift_operator
+
+    - name: Discover OCP version and networkType
+      ansible.builtin.include_role:
+        name: shiftstack.tools.tools_get_deploy_info
+        tasks_from: discover_ocp_version.yml
+
+    - name: Set TP flag if needed
+      when: discovered_openshift_release is version('4.19', '<=')
+      block:
+        - name: Ensure project local-cluster exists
+          ansible.builtin.include_role:
+            name: shiftstack.tools.tools_ocp_project
+            tasks_from: recreate_ocp_project.yml
+          vars:
+            project_name: local-cluster
+            force_delete: false
+
+        # Reference: https://github.com/stolostron/hypershift-addon-operator/blob/main/docs/hypershift_operator_configuration.md#customizing-the-hypershift-operator-installation-flags
+        - name: Set tech-preview-no-upgrade flag for hypershift operator
+          kubernetes.core.k8s:
+            state: present
+            kubeconfig: "{{ kubeconfig }}"
+            definition:
+              apiVersion: v1
+              kind: ConfigMap
+              metadata:
+                name: hypershift-operator-install-flags
+                namespace: local-cluster
+              data:
+                installFlagsToAdd: "--tech-preview-no-upgrade"
+                installFlagsToRemove: ""
+
+    - name: Discover APPS IP and domain suffix stored on /etc/hosts
+      vars:
+        ingress_filter: "apps."
+      ansible.builtin.set_fact:
+        apps_info: >-
+          {{
+            lookup('file', '/etc/hosts').splitlines() | select('search', 'apps.') |  first
+          }}
+
+    - name: Set apps_ip var # noqa: no-tabs
+      ansible.builtin.set_fact:
+        apps_ip: "{{ apps_info.split('\t')[0] }}"
+
+    - name: Set apps_domain_suffix var # noqa: no-tabs
+      ansible.builtin.set_fact:
+        apps_domain_suffix: "{{ apps_info.split('\t')[1].split('.')[1:] | join('.') }}"
+
+    # TBD: For populating dnsmasq in RHOSO, we can make use of tools_cimw_dnsmasq role in tools collection.
+    - name: Configure dnsmasq on hypervisor for OSP17.1
+      when: legacy_installation
+      delegate_to: "{{ hypervisor }}"
+      remote_user: root
+      vars:
+        tools_legacy_dnsmasq_domains:
+          - "{{ apps_domain_suffix }}"
+        tools_legacy_dnsmasq_ips:
+          - "{{ apps_ip }}"
+      ansible.builtin.import_role:
+        name: shiftstack.tools.tools_legacy_dnsmasq
+
+    - name: Set custom DNS nameserver
+      become: true
+      ansible.builtin.lineinfile:
+        path: /etc/resolv.conf
+        line: "nameserver {{ tools_legacy_dnsmasq_host_ip }}"
+        state: present
+        insertbefore: BOF
+        unsafe_writes: true
+
+    - name: Install HCP binary
+      ansible.builtin.include_role:
+        name: shiftstack.tools.tools_get_hcp_binary
