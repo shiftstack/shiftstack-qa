@@ -1,0 +1,2 @@
+---
+tools_legacy_dnsmasq_custom_conf: "/etc/dnsmasq.custom/dnsmasq.conf"
