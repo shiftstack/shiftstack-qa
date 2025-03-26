@@ -1,0 +1,57 @@
+---
+- name: Get ConsoleCLIDownload resource
+  ansible.builtin.command: oc get ConsoleCLIDownload hcp-cli-download -o json
+  register: hcp_cli_json
+  changed_when: false
+
+- name: Extract HCP CLI download link for Linux x86_64
+  ansible.builtin.set_fact:
+    hcp_cli_download_url: >-
+      {{
+        hcp_cli_json.stdout
+        | from_json
+        | json_query("spec.links[?text=='Download hcp CLI for Linux for x86_64'].href")
+        | first
+      }}
+
+- name: Create a temporary directory for HCP CLI
+  ansible.builtin.tempfile:
+    state: directory
+    suffix: hcp
+  register: hcp_tmpdir
+
+- name: Download HCP CLI tarball
+  ansible.builtin.get_url:
+    url: "{{ hcp_cli_download_url }}"
+    dest: "{{ hcp_tmpdir.path }}/hcp-cli.tgz"
+    validate_certs: false
+    mode: u=rw,g=rw,o=r
+  register: hcp_cli_download_result
+  until: hcp_cli_download_result is success
+  retries: 10
+  delay: 30
+
+- name: Extract HCP CLI tarball
+  ansible.builtin.unarchive:
+    src: "{{ hcp_tmpdir.path }}/hcp-cli.tgz"
+    dest: "{{ hcp_tmpdir.path }}"
+    remote_src: true
+
+- name: Make the hcp binary executable
+  ansible.builtin.file:
+    path: "{{ hcp_tmpdir.path }}/hcp"
+    mode: '0755'
+    state: file
+
+- name: Move hcp binary to /usr/local/bin
+  ansible.builtin.copy:
+    src: "{{ hcp_tmpdir.path }}/hcp"
+    dest: /usr/local/bin/hcp
+    remote_src: true
+    mode: '0755'
+  become: true
+
+- name: Insert in .bashrc hypershift completion
+  ansible.builtin.lineinfile:
+    dest: "{{ home_dir }}/.bashrc"
+    line: "source <(hcp completion bash)"
