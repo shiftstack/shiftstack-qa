@@ -1,0 +1,88 @@
+---
+- name: Assert that the required vars exist and are matching the expected length
+  ansible.builtin.assert:
+    that:
+      - tools_legacy_dnsmasq_domains is defined
+      - tools_legacy_dnsmasq_ips is defined
+      - tools_legacy_dnsmasq_domains|length == tools_legacy_dnsmasq_ips|length
+
+- name: Install bind-utils
+  ansible.builtin.yum:
+    name: bind-utils
+    state: present
+
+- name: Get the IP address of an FQDN using dig
+  ansible.builtin.shell: 'dig +short $(hostname)'
+  register: fqdn_ip_result
+  changed_when: false
+
+- name: Get IP address using DNS lookup
+  ansible.builtin.set_fact:
+    tools_legacy_dnsmasq_host_ip: "{{ fqdn_ip_result.stdout.splitlines()[0] }}"
+  delegate_to: localhost
+
+- name: Ensure custom config directory exists
+  ansible.builtin.file:
+    path: "{{ tools_legacy_dnsmasq_custom_conf | dirname }}"
+    state: directory
+    mode: '0755'
+
+- name: Ensure log directory exists
+  ansible.builtin.file:
+    path: "{{ tools_legacy_dnsmasq_custom_logs_dir }}"
+    state: directory
+    mode: '0755'
+
+- name: Deploy custom '{{ tools_legacy_dnsmasq_custom_conf }}'
+  ansible.builtin.copy:
+    dest: "{{ tools_legacy_dnsmasq_custom_conf }}"
+    content: |
+      port=53
+      listen-address={{ tools_legacy_dnsmasq_host_ip }},127.0.0.1
+      bind-interfaces
+      resolv-file=/etc/resolv.conf
+    mode: '0644'
+
+- name: Add the DNS address entries to '{{ tools_legacy_dnsmasq_custom_conf }}'
+  ansible.builtin.lineinfile:
+    path: "{{ tools_legacy_dnsmasq_custom_conf }}"
+    line: "address=/{{ item.0 }}/{{ item.1 }}"
+    create: yes
+    state: present
+    mode: u=rw,g=r,o=r
+  with_together:
+    - "{{ tools_legacy_dnsmasq_domains }}"
+    - "{{ tools_legacy_dnsmasq_ips }}"
+
+- name: Create custom systemd service for dnsmasq
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/custom-dnsmasq.service
+    mode: '0644'
+    content: |
+      [Unit]
+      Description=Custom dnsmasq in Podman
+      After=network.target
+
+      [Service]
+      Restart=always
+      ExecStart=/usr/bin/podman run --rm --name=dnsmasq \
+        --network=host \
+        --cap-add=NET_ADMIN \
+        -v {{ tools_legacy_dnsmasq_custom_conf }}:/etc/dnsmasq.conf:Z \
+        -v {{ tools_legacy_dnsmasq_custom_logs_dir }}:/var/log/dnsmasq:Z \
+        docker.io/alpine \
+        sh -c "apk add --no-cache dnsmasq && dnsmasq -k"
+      ExecStop=/usr/bin/podman stop dnsmasq && /usr/bin/podman rm dnsmasq
+
+      [Install]
+      WantedBy=multi-user.target
+
+- name: Reload systemd
+  ansible.builtin.systemd:
+    daemon_reload: yes
+
+- name: Restart dnsmasq service
+  ansible.builtin.service:
+    name: custom-dnsmasq.service
+    enabled: true
+    state: restarted
