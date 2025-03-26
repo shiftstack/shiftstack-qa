@@ -1,0 +1,50 @@
+---
+- name: Register the OCP cluster version
+  ansible.builtin.shell:
+    set -o pipefail && \
+    oc version -o json | jq -r '.openshiftVersion' | cut -d '.' -f1,2
+  register: ocp_ver
+  changed_when: false
+
+- name: Inject the brew and the quay keys in the pull-secret
+  ansible.builtin.shell: |
+    oc get secret pull-secret -n openshift-config -o json \
+    | jq '.data[".dockerconfigjson"] | @base64d | fromjson
+      | .auths["brew.registry.redhat.io"] = {auth: "{{ tools_install_qe_marketplace_brew_secret }}"}
+      | .auths["quay.io"] = {auth: "{{ tools_install_qe_marketplace_quay_secret }}"}
+      | @json | @base64' \
+    | xargs -I {} oc patch secret pull-secret -n openshift-config \
+    --type='json' -p='[{"op": "replace", "path": "/data/.dockerconfigjson", "value":"{}"}]'
+  changed_when: true
+  no_log: true
+
+- name: Apply new image content source policy file
+  kubernetes.core.k8s:
+    state: present
+    definition: "{{ lookup('file', '../templates/icsp.yaml') }}"
+
+- name: Apply new catalog source file
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: operators.coreos.com/v1alpha1
+      kind: CatalogSource
+      metadata:
+        name: qe-app-registry
+        namespace: openshift-marketplace
+      spec:
+        sourceType: grpc
+        image: "quay.io/openshift-qe-optional-operators/aosqe-index:v{{ ocp_ver.stdout }}"
+
+- name: Pause for 120 sec to allow the machine config pools to start the update
+  ansible.builtin.pause:
+    seconds: 120
+
+- name: Wait until the qe optional marketplace has been deployed
+  ansible.builtin.shell: |
+    oc get all -n openshift-marketplace -o json
+  register: pods
+  until: pods.stdout|from_json|json_query('items[*].status.phase')|unique == ["Running"]
+  retries: 5
+  delay: 120
+  changed_when: false
