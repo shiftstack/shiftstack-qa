@@ -1,0 +1,47 @@
+---
+- name: TBD
+  hosts: localhost
+  gather_facts: yes
+  vars_files:
+    - "../configs/global.yml"
+  tasks:
+    - name: Install multicluster-engine operator and deploy the default MultiClusterEngine
+      vars:
+        install_openshift_operator_namespace: multicluster-engine
+        install_openshift_operator_catalogsource: redhat-operators
+        install_openshift_operator_package: multicluster-engine
+        install_openshift_operator_name: multicluster-engine
+        install_openshift_operator_provided_api: MultiClusterEngine
+        single_namespace_installation: true
+      ansible.builtin.include_role:
+        name: shiftstack.tools.tools_install_openshift_operator
+
+    # Should be removed once hypershift shiftstack is GA: # noqa: yaml
+    - name: Set tech-preview-no-upgrade flag for hypershift operator
+      kubernetes.core.k8s:
+        state: present
+        kubeconfig: "{{ kubeconfig }}"
+        definition:
+          apiVersion: config.openshift.io/v1
+          kind: ConfigMap
+          metadata:
+            name: version
+            namespace: local-cluster
+          data:
+            installFlagsToAdd: "--tech-preview-no-upgrade"
+            installFlagsToRemove: ""
+
+#
+# TBD:
+# - name: Wait until the change is appled
+# - name: Download and install hcp binary locally
+#   ansible.builtin.shell: |
+#     wget --no-check-certificate \
+#       $(oc get ConsoleCLIDownload hcp-cli-download -o json | jq -r '.spec.links[] | select(.text == "Download hcp CLI for Linux for x86_64") | .href')
+#     tar xvzf hcp.tar.gz
+#     chmod +x hcp
+#     sudo mv hcp /usr/local/bin/.
+#   changed_when: true
+# TBD:
+# source <(hcp completion bash)
+#
