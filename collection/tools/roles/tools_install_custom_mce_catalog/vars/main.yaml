@@ -1,0 +1,6 @@
+---
+# Every new release need to find out what is the new MCE version:
+# Can be found out on https://quay.io/repository/acm-d/mce-custom-registry?tab=history
+tools_install_custom_mce_catalog_channel:
+  '4.18': '2.8-latest'
+  '4.19': '2.9-latest'
