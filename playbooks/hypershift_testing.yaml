@@ -1,0 +1,215 @@
+---
+- name: TBD
+  hosts: localhost
+  gather_facts: yes
+  vars_files:
+    - "../configs/global.yml"
+  tasks:
+
+    - name: Install multicluster-engine operator and deploy the default MultiClusterEngine
+      vars:
+        install_openshift_operator_namespace: multicluster-engine
+        install_openshift_operator_catalogsource: redhat-operators
+        install_openshift_operator_package: multicluster-engine
+        install_openshift_operator_name: multicluster-engine
+        install_openshift_operator_provided_api: MultiClusterEngine
+        single_namespace_installation: true
+      ansible.builtin.include_role:
+        name: shiftstack.tools.tools_install_openshift_operator
+
+    - name: Discover OCP version and networkType
+      ansible.builtin.include_role:
+        name: shiftstack.tools.tools_get_deploy_info
+        tasks_from: discover_ocp_version.yml
+
+    - name: Set TP flag if needed
+      when: discovered_openshift_release is version('4.19', '<=')
+      block:
+        - name: Ensure project local-cluster exists
+          ansible.builtin.include_role:
+            name: shiftstack.tools.tools_ocp_project
+            tasks_from: recreate_ocp_project.yml
+          vars:
+            project_name: local-cluster
+            force_delete: false
+
+        # Reference: https://github.com/stolostron/hypershift-addon-operator/blob/main/docs/hypershift_operator_configuration.md#customizing-the-hypershift-operator-installation-flags
+        - name: Set tech-preview-no-upgrade flag for hypershift operator
+          kubernetes.core.k8s:
+            state: present
+            kubeconfig: "{{ kubeconfig }}"
+            definition:
+              apiVersion: v1
+              kind: ConfigMap
+              metadata:
+                name: hypershift-operator-install-flags
+                namespace: local-cluster
+              data:
+                installFlagsToAdd: "--tech-preview-no-upgrade"
+                installFlagsToRemove: ""
+
+    # - name: Discover APPS IP stored on /etc/hosts
+    #   vars:
+    #     ingress_filter: "oauth-openshift.apps."
+    #   ansible.builtin.set_fact:
+    #     apps_ip: "{{ lookup('file', '/etc/hosts').splitlines() |
+    #                       select('search', ingress_filter) |
+    #                       first | split() | first }}"
+    # - name: Add resulting entry on /etc/hosts to resolve hcp-cli download url
+    #   become: true
+    #   ansible.builtin.lineinfile:
+    #     path: /etc/hosts
+    #     regexp: "{{ hcp_cli_download_url | regex_replace('^https?://([^/]+)/.*', '\\1') }}"
+    #     line: "{{ apps_ip }} {{ hcp_cli_download_url | regex_replace('^https?://([^/]+)/.*', '\\1') }}"
+    #     unsafe_writes: true
+
+    - name: Discover APPS IP and domain suffix stored on /etc/hosts
+      vars:
+        ingress_filter: "apps."
+      ansible.builtin.set_fact:
+        apps_info: >-
+          {{
+            lookup('file', '/etc/hosts')
+            | split("\n")
+            | select('search', ingress_filter)
+            | map('regex_replace', '^(\d+\.\d+\.\d+\.\d+)\s+([^\s]+)\s*$', '\\1 \\2')
+            | first
+            | split()
+          }}
+
+    - name: Set apps_ip var
+      ansible.builtin.set_fact:
+        apps_ip: "{{ apps_info[0] }}"
+
+    - name: Set apps_domain_suffix var
+      ansible.builtin.set_fact:
+        apps_domain_suffix: "{{ apps_info[1] }}"
+
+    - name: Configure dnsmasq on hypervisor for OSP17.1
+      when: legacy_installation
+      delegate_to: "{{ hypervisor }}"
+      remote_user: root
+      vars:
+        custom_dnsmasq_conf: "/etc/dnsmasq.custom/dnsmasq.conf"
+      block:
+        - name: Install bind-utils
+          ansible.builtin.yum:
+            name: bind-utils
+            state: present
+
+        - name: Get the IP address of an FQDN using dig
+          ansible.builtin.shell: 'dig +short $(hostname)'
+          register: fqdn_ip_result
+          changed_when: false
+
+        - name: Get hypervisor IP address using DNS lookup
+          ansible.builtin.set_fact:
+            hypervisor_ip: "{{ fqdn_ip_result.stdout.splitlines()[0] }}"
+
+        - name: Ensure custom config directory exists
+          file:
+            path: "{{ custom_dnsmasq_conf | dirname }}"
+            state: directory
+            mode: '0755'
+
+        - name: Deploy custom dnsmasq.conf
+          copy:
+            dest: "{{ custom_dnsmasq_conf }}"
+            content: |
+              port=53
+              listen-address={{ hypervisor_ip }},127.0.0.1
+              bind-interfaces
+              address=/{{ apps_domain_suffix }}/{{ apps_ip }}
+              resolv-file=/etc/resolv.conf
+            mode: '0644'
+
+        - name: Ensure drop-in directory exists for dnsmasq
+          file:
+            path: /etc/systemd/system/dnsmasq.service.d
+            state: directory
+            mode: '0755'
+
+        - name: Create systemd override for dnsmasq
+          copy:
+            dest: /etc/systemd/system/dnsmasq.service.d/override.conf
+            content: |
+              [Service]
+              ExecStart=
+              ExecStart=/usr/sbin/dnsmasq --conf-file={{ custom_dnsmasq_conf }}
+            mode: '0644'
+
+        - name: Reload systemd
+          command: systemctl daemon-reload
+
+        - name: Restart dnsmasq service
+          service:
+            name: dnsmasq
+            state: restarted
+
+        - name: Enable dnsmasq service at boot
+          service:
+            name: dnsmasq
+            enabled: yes
+
+    - name: Configure dnsmasq on hypervisor for RHOSO
+      when: not legacy_installation
+      ansible.builtin.include_role:
+        name: shiftstack.tools.tools_cifmw_dnsmasq
+      vars:
+        tools_cifmw_dnsmasq_domains:
+          - "{{ apps_domain_suffix }}"
+        tools_cifmw_dnsmasq_ips:
+          - "{{ apps_ip }}"
+      delegate_to: "{{ hypervisor }}"
+      remote_user: root
+
+    - name: Get ConsoleCLIDownload resource
+      ansible.builtin.command: oc get ConsoleCLIDownload hcp-cli-download -o json
+      register: hcp_cli_json
+
+    - name: Extract HCP CLI download link for Linux x86_64
+      set_fact:
+        hcp_cli_download_url: >-
+          {{
+            hcp_cli_json.stdout
+            | from_json
+            | json_query("spec.links[?text=='Download hcp CLI for Linux for x86_64'].href")
+            | first
+          }}
+
+    - name: Create a temporary directory for HCP CLI
+      ansible.builtin.tempfile:
+        state: directory
+        suffix: hcp
+      register: hcp_tmpdir
+
+    - name: Download HCP CLI tarball
+      ansible.builtin.get_url:
+        url: "{{ hcp_cli_download_url }}"
+        dest: "{{ hcp_tmpdir.path }}/hcp-cli.tgz"
+        validate_certs: false
+
+    - name: Extract HCP CLI tarball
+      ansible.builtin.unarchive:
+        src: "{{ hcp_tmpdir.path }}/hcp-cli.tgz"
+        dest: "{{ hcp_tmpdir.path }}"
+        remote_src: true
+
+    - name: Make the hcp binary executable
+      ansible.builtin.file:
+        path: "{{ hcp_tmpdir.path }}/hcp"
+        mode: '0755'
+        state: file
+
+    - name: Move hcp binary to /usr/local/bin
+      ansible.builtin.copy:
+        src: "{{ hcp_tmpdir.path }}/hcp"
+        dest: /usr/local/bin/hcp
+        remote_src: true
+        mode: '0755'
+      become: true
+
+    - name: Insert in .bashrc hypershift completion
+      ansible.builtin.lineinfile:
+        dest: "{{ home_dir }}/.bashrc"
+        line: "source <(hcp completion bash)"
