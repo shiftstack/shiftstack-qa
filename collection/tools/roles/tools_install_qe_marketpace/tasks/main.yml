@@ -1,0 +1,70 @@
+---
+- name: Register the OCP cluster version
+  ansible.builtin.shell:
+    set -o pipefail && \
+    oc version -o json | jq -r '.openshiftVersion' | cut -d '.' -f1,2
+  register: ocp_ver
+  changed_when: false
+
+- name: Export the running cluster secret
+  kubernetes.core.k8s_info:
+    api: v1
+    kind: Secret
+    name: pull-secret
+    namespace: openshift-config
+  register: pull_secret
+
+- name: Get the original secret resources
+  ansible.builtin.set_fact:
+    secret_stdout: "{{ item.data }}"
+  with_items: "{{ pull_secret.resources }}"
+
+- name: Decode the dockerconfigjson info
+  ansible.builtin.set_fact:
+    secret_string: '{{ secret_stdout[".dockerconfigjson"] | b64decode | from_json }}'
+
+- name: Create the key token variable
+  ansible.builtin.set_fact:
+    key_token: "{{ secret_string['auths']['registry.ci.openshift.org']['auth'] }}"
+
+- name: Copy the new pull-secret file to the installer_host vm
+  ansible.builtin.template:
+    src: ../ocp_tuning/manifests/new_pull_secret.j2
+    dest: /home/cloud-user/new_pull_secret.json
+    mode: u=rw,g=rw,o=r
+
+- name: Inject the new pull-secret file
+  ansible.builtin.shell: |
+    oc set data secret/pull-secret --from-file=.dockerconfigjson=new_pull_secret.json -n openshift-config
+  changed_when: true
+
+- name: Apply new image content source policy file
+  kubernetes.core.k8s:
+    state: present
+    definition: "{{ lookup('file', '../templates/icsp.yaml') }}"
+
+- name: Apply new catalog source file
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: operators.coreos.com/v1alpha1
+      kind: CatalogSource
+      metadata:
+        name: qe-app-registry
+        namespace: openshift-marketplace
+      spec:
+        sourceType: grpc
+        image: "quay.io/openshift-qe-optional-operators/aosqe-index:v{{ ocp_ver.stdout }}"
+
+- name: Pause for 120 sec to allow the machine config pools to start the update
+  ansible.builtin.pause:
+    seconds: 120
+
+- name: Wait until the qe optional marketplace has been deployed
+  ansible.builtin.shell: |
+    oc get all -n openshift-marketplace -o json
+  register: pods
+  until: pods.stdout|from_json|json_query('items[*].status.phase')|unique == ["Running"]
+  retries: 5
+  delay: 120
+  changed_when: false
