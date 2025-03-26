@@ -1,0 +1,14 @@
+---
+apiVersion: operators.coreos.com/v1alpha1
+kind: CatalogSource
+metadata:
+  name: multiclusterengine-catalog
+  namespace: openshift-marketplace
+spec:
+  displayName: MultiCluster Engine
+  publisher: Red Hat
+  sourceType: grpc
+  image: "{{ tools_install_custom_mce_catalog_img }}"
+  updateStrategy:
+    registryPoll:
+      interval: 10m
