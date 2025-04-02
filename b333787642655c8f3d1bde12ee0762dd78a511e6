@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f44f21cf_79543050",
+        "filename": "playbooks/hypershift_testing.yaml",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2025-04-02T11:41:54Z",
+      "side": 1,
+      "message": "when: openshift_release is 4.19",
+      "revId": "b333787642655c8f3d1bde12ee0762dd78a511e6",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
