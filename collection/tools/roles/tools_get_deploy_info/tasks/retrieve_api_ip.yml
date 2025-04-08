@@ -1,0 +1,24 @@
+---
+# Retrieve OpenShift API IP
+
+- name: Get OpenShift API hostname (strip port)
+  ansible.builtin.shell: >-
+    set -o pipefail &&
+    oc get infrastructure cluster -o jsonpath='{.status.apiServerURL}' |
+    sed -E 's|https?://||' | cut -d: -f1
+  register: api_host
+  changed_when: false
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+
+- name: Resolve API IP
+  ansible.builtin.shell: >-
+    set -o pipefail &&
+    getent ahosts {{ api_host.stdout }} | awk '{print $1}' | head -n1
+  register: api_ip
+  changed_when: false
+  failed_when: api_ip.stdout == ""
+
+- name: Set API IP fact
+  ansible.builtin.set_fact:
+    api_accessible_ip: "{{ api_ip.stdout }}"

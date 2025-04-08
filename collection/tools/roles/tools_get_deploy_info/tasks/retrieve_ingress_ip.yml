@@ -1,0 +1,53 @@
+---
+# Retrieve OpenShift Ingress IP
+
+- name: Get Ingress domain from default ingresscontroller
+  ansible.builtin.shell: >-
+    oc get -n openshift-ingress-operator ingresscontroller default -o jsonpath='{.status.domain}'
+  register: ingress_domain
+  changed_when: false
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+
+- name: Try to resolve Ingress IP from DNS
+  ansible.builtin.shell: >-
+    set -o pipefail &&
+    getent ahosts {{ ingress_domain.stdout }} | awk '{print $1}' | head -n1
+  register: ingress_ip_dns
+  changed_when: false
+  failed_when: false
+
+- name: Fallback - Get Ingress IP from router-default service
+  ansible.builtin.shell: >-
+    oc get -n openshift-ingress svc router-default -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
+  register: ingress_ip_lb
+  when: ingress_ip_dns.stdout == ""
+  changed_when: false
+  failed_when: false
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+
+- name: Fallback - Get Ingress IP from install-config in ConfigMap
+  ansible.builtin.shell: |
+    set -o pipefail &&
+    oc get cm cluster-config-v1 -n kube-system -o jsonpath="{.data['install-config']}" | \
+    awk '
+      /ingressVIPs:/ {getline; print $2; exit}
+      /ingressVIP:/ {print $2; exit}
+      /ingressFloatingIP:/ {print $2; exit}
+    ' | tr -d '"'
+  register: ingress_ip_cm
+  when:
+    - ingress_ip_dns.stdout == ""
+    - ingress_ip_lb.stdout == ""
+  changed_when: false
+  failed_when: ingress_ip_cm.stdout == ""
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+
+- name: Set Ingress IP fact
+  ansible.builtin.set_fact:
+    apps_accessible_ip: >-
+      {{ ingress_ip_dns.stdout if ingress_ip_dns.stdout else
+         ingress_ip_lb.stdout if ingress_ip_lb.stdout else
+         ingress_ip_cm.stdout }}
