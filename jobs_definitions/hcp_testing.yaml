@@ -1,0 +1,10 @@
+---
+user_cloud: "shiftstack-hosted_cluster"
+ocp_cluster_name: "shiftstack-hcp"
+ocp_base_domain: "hypershift.lab"
+kubeconfig: "{{ ansible_facts.env['HOME'] }}/{{ ocp_cluster_name }}-kubeconfig"
+
+stages:
+  - openstack_test
+
+skip_mustgather_generation: true
