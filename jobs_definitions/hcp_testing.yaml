@@ -1,0 +1,9 @@
+---
+user_cloud: "shiftstack-hosted_cluster"
+ocp_cluster_name: "shiftstack-hcp"
+ocp_base_domain: "hypershift.lab"
+kubeconfig: "~/{{ ocp_cluster_name }}-kubeconfig"
+
+stages:
+  - verification
+  - cinder_csi_tests
