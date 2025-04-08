@@ -12,10 +12,10 @@
 
 - name: Run openstack-test
   block:
-    - name: Include vars from registered resources
-      ansible.builtin.include_vars:
-        file: "{{ resources_file }}"
-        name: resources
+    - name: Retrieve OpenShift API and Ingress IPs
+      ansible.builtin.include_role:
+        name: shiftstack.tools.tools_get_deploy_info
+        tasks_from: retrieve_openshift_ips.yml
 
     # DNS resolution management needed for RHOSO pods to be able to resolve
     # shift-on-stack cluster Apps endpoints (for telemetry tests the RHOSO
