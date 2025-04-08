@@ -3,6 +3,8 @@ admin_cloud: "overcloud"
 cacert: "/etc/pki/ca-trust/source/anchors/undercloud-cacert.pem"
 cacert_tlse: "/etc/pki/ca-trust/source/anchors/ca.crt"
 legacy_installation: true
+kubeadmin_password: ""
+rhoso_kubeconfig: ""
 openstack_infra: # The required OpenStack deployment info for deploying OCP on the OSP infra
   external_network: public
   region: regionOne

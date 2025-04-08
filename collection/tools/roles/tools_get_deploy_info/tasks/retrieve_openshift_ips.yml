@@ -1,0 +1,14 @@
+---
+# Main task: retrieve both API and Ingress IPs
+
+- name: Retrieve OpenShift API IP
+  ansible.builtin.include_tasks: retrieve_api_ip.yml
+
+- name: Retrieve OpenShift Ingress IP
+  ansible.builtin.include_tasks: retrieve_ingress_ip.yml
+
+- name: Show retrieved IPs
+  ansible.builtin.debug:
+    msg:
+      - "API IP: {{ api_accessible_ip }}"
+      - "Ingress IP: {{ apps_accessible_ip }}"
