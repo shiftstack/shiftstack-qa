@@ -124,3 +124,5 @@
         name: tools_must-gather
       vars:
         must_gather_suffix: "openstack-tests"
+      when:
+        - skip_mustgather_generation | default(False) is false
