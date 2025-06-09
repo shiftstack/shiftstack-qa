@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ea3829e0_55229745",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 69
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1017837
+      },
+      "writtenOn": "2025-06-09T09:52:09Z",
+      "side": 1,
+      "message": "https://rhos-ci-staging-jenkins.lab.eng.tlv2.redhat.com/job/DFG-osasinfra-shiftstack_ci-hypershift_testing/45/",
+      "revId": "8a321ad8914822e365d2a71ca7a37c9aec9d5400",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735"
+    }
+  ]
+}
