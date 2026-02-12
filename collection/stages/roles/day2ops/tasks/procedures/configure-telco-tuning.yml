@@ -1,0 +1,324 @@
+---
+# Day2ops procedure to configure OCP telco tuning for SRIOV/DPDK workloads
+# This procedure configures MachineConfigPools, PerformanceProfiles, and SRIOV Network Operator
+
+- name: Discover OCP version
+  ansible.builtin.include_role:
+    name: tools_get_deploy_info
+    tasks_from: discover_ocp_version.yml
+
+- name: Get the OCP Cluster infrastructure ID
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
+    api_version: config.openshift.io/v1
+    kind: Infrastructure
+    name: cluster
+  register: cluster_infrastructure
+
+- name: Set infrastructure_id fact
+  ansible.builtin.set_fact:
+    infrastructure_id: "{{ cluster_infrastructure.resources[0].status.infrastructureName }}"
+
+# Step 1: Create MachineConfigPools for SRIOV and DPDK nodes
+- name: Create MachineConfigPools for SRIOV and DPDK worker nodes
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    src: "{{ role_path }}/files/sriov-dpdk-machine-config-pools.yaml"
+
+- name: Pause to allow MachineConfigPools to synchronize
+  ansible.builtin.pause:
+    seconds: 15
+
+# Step 2: Apply PerformanceProfiles for SRIOV nodes
+- name: Generate SRIOV PerformanceProfile manifest
+  ansible.builtin.template:
+    src: performance-profile.yaml.j2
+    dest: "{{ ocp_installation_dir }}/sriov-performance-profile.yaml"
+    mode: u=rw,g=rw,o=r
+  vars:
+    _profile_type: sriov
+    _cpu_isolated: "{{ telco_tuning.sriov.performance_profile.cpu_isolated }}"
+    _cpu_reserved: "{{ telco_tuning.sriov.performance_profile.cpu_reserved }}"
+    _hugepages_size: "{{ telco_tuning.sriov.performance_profile.hugepages_size | default('1G') }}"
+    _hugepages_count: "{{ telco_tuning.sriov.performance_profile.hugepages_count | default(7) }}"
+    _numa_node: "{{ telco_tuning.sriov.performance_profile.numa_node | default(0) }}"
+    _numa_topology_policy: "{{ telco_tuning.sriov.performance_profile.numa_topology_policy | default('best-effort') }}"
+    _realtime_kernel: "{{ telco_tuning.sriov.performance_profile.realtime_kernel | default(false) }}"
+    _additional_kernel_args: "{{ telco_tuning.sriov.performance_profile.additional_kernel_args | default(['nosmt', 'tsc=reliable']) }}"
+
+- name: Apply SRIOV PerformanceProfile
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    src: "{{ ocp_installation_dir }}/sriov-performance-profile.yaml"
+
+- name: Pause to allow MachineConfigPools to start update
+  ansible.builtin.pause:
+    seconds: 15
+
+- name: Wait for MCP updates after SRIOV PerformanceProfile
+  ansible.builtin.include_role:
+    name: tools_cluster_checks
+    tasks_from: wait_mcp_updated.yml
+  vars:
+    wait_retries: 60
+    wait_delay: 60
+
+# Step 3: Apply PerformanceProfiles for DPDK nodes
+- name: Generate DPDK PerformanceProfile manifest
+  ansible.builtin.template:
+    src: performance-profile.yaml.j2
+    dest: "{{ ocp_installation_dir }}/dpdk-performance-profile.yaml"
+    mode: u=rw,g=rw,o=r
+  vars:
+    _profile_type: dpdk
+    _cpu_isolated: "{{ telco_tuning.dpdk.performance_profile.cpu_isolated }}"
+    _cpu_reserved: "{{ telco_tuning.dpdk.performance_profile.cpu_reserved }}"
+    _hugepages_size: "{{ telco_tuning.dpdk.performance_profile.hugepages_size | default('1G') }}"
+    _hugepages_count: "{{ telco_tuning.dpdk.performance_profile.hugepages_count | default(7) }}"
+    _numa_node: "{{ telco_tuning.dpdk.performance_profile.numa_node | default(0) }}"
+    _numa_topology_policy: "{{ telco_tuning.dpdk.performance_profile.numa_topology_policy | default('best-effort') }}"
+    _realtime_kernel: "{{ telco_tuning.dpdk.performance_profile.realtime_kernel | default(false) }}"
+    _additional_kernel_args: "{{ telco_tuning.dpdk.performance_profile.additional_kernel_args | default(['nosmt', 'tsc=reliable']) }}"
+
+- name: Apply DPDK PerformanceProfile
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    src: "{{ ocp_installation_dir }}/dpdk-performance-profile.yaml"
+
+- name: Pause to allow MachineConfigPools to start update
+  ansible.builtin.pause:
+    seconds: 15
+
+- name: Wait for MCP updates after DPDK PerformanceProfile
+  ansible.builtin.include_role:
+    name: tools_cluster_checks
+    tasks_from: wait_mcp_updated.yml
+  vars:
+    wait_retries: 60
+    wait_delay: 60
+
+# Step 4: Install SRIOV Network Operator
+- name: Create namespace and OperatorGroup for SRIOV Network Operator
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    src: "{{ role_path }}/files/sriov-network-operator-namespace.yaml"
+
+- name: Get SRIOV Network Operator subscription channel version
+  ansible.builtin.command:
+    cmd: >
+      oc get packagemanifest sriov-network-operator
+      -n openshift-marketplace
+      -o jsonpath='{.status.defaultChannel}'
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+  register: sno_channel
+  changed_when: false
+  failed_when: false
+
+- name: Create SRIOV Network Operator Subscription
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    definition:
+      apiVersion: operators.coreos.com/v1alpha1
+      kind: Subscription
+      metadata:
+        name: sriov-network-operator-subscription
+        namespace: openshift-sriov-network-operator
+      spec:
+        channel: "{{ sno_channel.stdout | default('stable') }}"
+        name: sriov-network-operator
+        source: redhat-operators
+        sourceNamespace: openshift-marketplace
+
+- name: Wait for SRIOV Network Operator deployment
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
+    api_version: apps/v1
+    kind: Deployment
+    namespace: openshift-sriov-network-operator
+    label_selectors:
+      - app=sriov-network-operator
+  register: sno_deployment
+  until:
+    - sno_deployment.resources | length > 0
+    - sno_deployment.resources[0].status.readyReplicas is defined
+    - sno_deployment.resources[0].status.readyReplicas == sno_deployment.resources[0].status.replicas
+  retries: 30
+  delay: 30
+
+# Step 5: Apply SriovOperatorConfig (OCP 4.15+)
+- name: Apply SriovOperatorConfig
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    src: "{{ role_path }}/files/sriov-operator-config.yaml"
+  when: discovered_openshift_release is version('4.15', '>=')
+
+- name: Wait for SRIOV operator pods to be ready
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
+    api_version: v1
+    kind: Pod
+    namespace: openshift-sriov-network-operator
+    field_selectors:
+      - status.phase=Running
+  register: sno_pods
+  until: sno_pods.resources | length >= 1
+  retries: 10
+  delay: 30
+
+# Step 6: Label SRIOV nodes as SR-IOV capable
+- name: Get SRIOV worker nodes
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
+    api_version: v1
+    kind: Node
+    label_selectors:
+      - node-role.kubernetes.io/sriov
+  register: sriov_nodes
+
+- name: Label SRIOV nodes as SR-IOV capable
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    api_version: v1
+    kind: Node
+    name: "{{ item.metadata.name }}"
+    state: present
+    merge_type: merge
+    definition:
+      metadata:
+        labels:
+          feature.node.kubernetes.io/network-sriov.capable: "true"
+  loop: "{{ sriov_nodes.resources }}"
+  loop_control:
+    label: "{{ item.metadata.name }}"
+
+# Step 7: Create SriovNetworkNodePolicies for SRIOV networks
+- name: Get SRIOV network IDs from OpenStack
+  openstack.cloud.networks_info:
+    cloud: "{{ user_cloud }}"
+    name: "{{ item.name }}"
+  loop: "{{ telco_tuning.sriov.networks }}"
+  register: sriov_networks
+
+- name: Create SriovNetworkNodePolicies for SRIOV networks
+  ansible.builtin.template:
+    src: sriov-network-node-policy.yaml.j2
+    dest: "{{ ocp_installation_dir }}/sriov-policy-{{ item.item.resource_name }}.yaml"
+    mode: u=rw,g=rw,o=r
+  vars:
+    _policy_name: "{{ item.item.resource_name }}"
+    _network_id: "{{ item.networks[0].id }}"
+    _resource_name: "{{ item.item.resource_name }}"
+    _node_selector_label: "feature.node.kubernetes.io/network-sriov.capable"
+    _node_selector_value: "true"
+    _device_type: "{{ item.item.device_type | default('vfio-pci') }}"
+    _num_vfs: "{{ item.item.num_vfs | default(1) }}"
+  loop: "{{ sriov_networks.results }}"
+  loop_control:
+    label: "{{ item.item.name }}"
+
+- name: Apply SriovNetworkNodePolicies for SRIOV networks
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    src: "{{ ocp_installation_dir }}/sriov-policy-{{ item.item.resource_name }}.yaml"
+  loop: "{{ sriov_networks.results }}"
+  loop_control:
+    label: "{{ item.item.name }}"
+
+# Step 8: Create SriovNetworkNodePolicies for DPDK networks
+- name: Get DPDK network IDs from OpenStack
+  openstack.cloud.networks_info:
+    cloud: "{{ user_cloud }}"
+    name: "{{ item.name }}"
+  loop: "{{ telco_tuning.dpdk.networks }}"
+  register: dpdk_networks
+
+- name: Create SriovNetworkNodePolicies for DPDK networks
+  ansible.builtin.template:
+    src: sriov-network-node-policy.yaml.j2
+    dest: "{{ ocp_installation_dir }}/dpdk-policy-{{ item.item.resource_name }}.yaml"
+    mode: u=rw,g=rw,o=r
+  vars:
+    _policy_name: "{{ item.item.resource_name }}"
+    _network_id: "{{ item.networks[0].id }}"
+    _resource_name: "{{ item.item.resource_name }}"
+    _node_selector_label: "node-role.kubernetes.io/dpdk"
+    _node_selector_value: ""
+    _device_type: "{{ item.item.device_type | default('vfio-pci') }}"
+    _num_vfs: "{{ item.item.num_vfs | default(1) }}"
+  loop: "{{ dpdk_networks.results }}"
+  loop_control:
+    label: "{{ item.item.name }}"
+
+- name: Apply SriovNetworkNodePolicies for DPDK networks
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    src: "{{ ocp_installation_dir }}/dpdk-policy-{{ item.item.resource_name }}.yaml"
+  loop: "{{ dpdk_networks.results }}"
+  loop_control:
+    label: "{{ item.item.name }}"
+
+# Step 9: Wait for SRIOV operator to apply policies
+- name: Wait for SRIOV operator pods to be ready after policies
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
+    api_version: v1
+    kind: Pod
+    namespace: openshift-sriov-network-operator
+    field_selectors:
+      - status.phase=Running
+  register: sno_pods_final
+  until: sno_pods_final.resources | length >= 1
+  retries: 10
+  delay: 30
+
+# Step 10: Enforce Pod Security Standards (OCP 4.11+)
+- name: Enforce Pod Security Standards on default namespace
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    api_version: v1
+    kind: Namespace
+    name: default
+    state: present
+    merge_type: merge
+    definition:
+      metadata:
+        labels:
+          pod-security.kubernetes.io/audit: privileged
+          pod-security.kubernetes.io/enforce: privileged
+          pod-security.kubernetes.io/warn: privileged
+  when: discovered_openshift_release is version('4.11', '>=')
+
+# Final cluster health check
+- name: Final cluster health check after telco tuning
+  block:
+    - name: Wait for MCP to finish updates
+      ansible.builtin.include_role:
+        name: tools_cluster_checks
+        tasks_from: wait_mcp_updated.yml
+      vars:
+        wait_retries: 60
+        wait_delay: 60
+
+    - name: Wait until cluster is healthy
+      ansible.builtin.include_role:
+        name: tools_cluster_checks
+        tasks_from: wait_until_cluster_is_healthy.yml
+
+    - name: Wait until all nodes are ready
+      ansible.builtin.include_role:
+        name: tools_cluster_checks
+        tasks_from: wait_until_nodes_ready.yml
+
+    - name: Wait until ClusterOperators are ready
+      ansible.builtin.include_role:
+        name: tools_cluster_checks
+        tasks_from: wait_until_cluster_operators_ready.yml

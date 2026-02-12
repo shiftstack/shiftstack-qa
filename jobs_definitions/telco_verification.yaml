@@ -1,0 +1,140 @@
+---
+#
+#     * TELCO VERIFICATION *
+#
+# - This job will be run in integration pipeline and will be monitored by CI team.
+# - It includes the stages that will exercise the OSP integration in order to
+#     validate the OSP candidate release with Telco (SRIOV/DPDK) workloads.
+# - It will use latest stable version of OCP.
+# - It is prepared to run with a full virtualized setup, so the flavors are reduced
+#     from the official OCP documentation to fit on the virtualized resources.
+# - It is prepared to run on top of RHOSP18 OSASINFRA Validated Architecture.
+#
+
+# openshift_release: 4-stable # It can be "4.10", "4.11", etc. or "4-stable"
+openshift_release: 4.19 # It can be "4.10", "4.11", etc. or "4-stable"
+openshift_build_name: "" # It can be an empty value "" (latest nightly), a given build
+installation_type: ipi
+stages:
+  - prepare
+  - install
+  - post
+  - day2ops
+  - verification
+  # - openstack_test
+  # - lb_tests
+
+# Day2ops procedures to run
+day2ops_steps:
+  - create-telco-machinesets
+  - configure-telco-tuning
+
+openstack_infra: # The required OpenStack deployment info for deploying OCP on the OSP infra
+  external_network: access
+  region: regionOne
+  network_config:
+    ipv4:
+      dns_servers:
+        - '10.46.174.32'  # tigon22 routable IP - reverse proxy DNS for OCP services
+
+custom_network: 'management_net_management'
+custom_subnet: 'management_net_management'
+
+ocp_deployment_topology:
+  network_type: OVNKubernetes
+  machines_subnet: management_net_management
+  primary_ip_protocol: ipv4    # ipv4 or ipv6
+  secondary_ip_protocol: ""    # ipv4, ipv6, or "" for single-stack
+  defaultMachinePlatform:
+    type: "installer_host_numa_0"
+  platform:
+    openstack:
+      clusterOSImageProperties:
+        hw_cpu_policy: dedicated
+  ipv4:
+    ip_version: 4
+    tenant_subnet:
+      cidr: 10.10.107.0/24   # CIDR for the machine network (geneve internal network)
+    cluster_network:
+      cidr: 10.128.0.0/14
+      host_prefix: 23
+    service_network:
+      - 172.30.0.0/16
+  flavors:
+    master:
+      name: "masters_numa_1"  # Pre-existing DPDK-enabled flavor
+    worker:
+      name: "worker"  # Pre-existing flavor (0 replicas, but required by template)
+  replicas:
+    master: 3
+    worker: 0
+  servergroups:
+    master: "soft-anti-affinity"
+    worker: "soft-anti-affinity"
+
+# Telco MachineSet configuration for SRIOV/DPDK workers
+# These MachineSets are created by the create-telco-machinesets day2ops procedure
+telco_machinesets:
+  delete_default_workers: true
+  disable_masters_schedulable: true
+  machinesets:
+    - name: sriov
+      role: worker
+      type: sriov
+      replicas: 1
+      flavor: worker_0_numa_0
+      networks:
+        - name: sriov_net_158
+          port_name_suffix: sriov_net_158_direct_worker_port
+        - name: sriov_net_159
+          port_name_suffix: sriov_net_159_direct_worker_port
+    - name: dpdk
+      role: worker
+      type: dpdk
+      replicas: 1
+      flavor: worker_1_numa_1
+      networks:
+        - name: dpdk_net_nic0_158
+          port_name_suffix: dpdk_net_nic0_158_normal_worker_port
+
+# Telco tuning configuration for SRIOV/DPDK workloads
+# Applied by the configure-telco-tuning day2ops procedure
+telco_tuning:
+  sriov:
+    performance_profile:
+      cpu_isolated: "4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20"
+      cpu_reserved: "0,1,2,3"
+      hugepages_size: "1G"
+      hugepages_count: 7
+      numa_node: 0
+      numa_topology_policy: "best-effort"
+      realtime_kernel: false
+      additional_kernel_args:
+        - nosmt
+        - tsc=reliable
+    networks:
+      - name: sriov_net_158
+        resource_name: sriov158
+        device_type: vfio-pci
+        num_vfs: 1
+      - name: sriov_net_159
+        resource_name: sriov159
+        device_type: vfio-pci
+        num_vfs: 1
+  dpdk:
+    performance_profile:
+      cpu_isolated: "4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20"
+      cpu_reserved: "0,1,2,3"
+      hugepages_size: "1G"
+      hugepages_count: 7
+      numa_node: 0
+      numa_topology_policy: "best-effort"
+      realtime_kernel: false
+      additional_kernel_args:
+        - nosmt
+        - tsc=reliable
+    networks:
+      - name: dpdk_net_nic0_158
+        resource_name: dpdk158
+        device_type: vfio-pci
+        num_vfs: 1

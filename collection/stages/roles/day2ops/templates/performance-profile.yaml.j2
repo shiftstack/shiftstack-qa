@@ -1,0 +1,28 @@
+# PerformanceProfile for {{ _profile_type }} worker nodes
+# Configures CPU pinning, hugepages, and kernel args for telco workloads
+apiVersion: performance.openshift.io/v2
+kind: PerformanceProfile
+metadata:
+  name: {{ _profile_type }}-performanceprofile
+spec:
+  cpu:
+    isolated: "{{ _cpu_isolated }}"
+    reserved: "{{ _cpu_reserved }}"
+  hugepages:
+    defaultHugepagesSize: "{{ _hugepages_size }}"
+    pages:
+      - size: "{{ _hugepages_size }}"
+        count: {{ _hugepages_count }}
+        node: {{ _numa_node }}
+  realTimeKernel:
+    enabled: {{ _realtime_kernel | default(false) | lower }}
+  numa:
+    topologyPolicy: "{{ _numa_topology_policy | default('best-effort') }}"
+  nodeSelector:
+    node-role.kubernetes.io/{{ _profile_type }}: ""
+{% if _additional_kernel_args is defined and _additional_kernel_args | length > 0 %}
+  additionalKernelArgs:
+{% for arg in _additional_kernel_args %}
+    - {{ arg }}
+{% endfor %}
+{% endif %}

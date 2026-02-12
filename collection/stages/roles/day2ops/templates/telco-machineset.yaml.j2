@@ -1,0 +1,89 @@
+# Telco MachineSet template for SRIOV/DPDK workers
+# Ref: https://docs.openshift.com/container-platform/4.15/machine_management/creating_machinesets/creating-machineset-osp.html#machineset-yaml-osp-sr-iov-port-security_creating-machineset-osp
+apiVersion: machine.openshift.io/v1beta1
+kind: MachineSet
+metadata:
+  labels:
+    machine.openshift.io/cluster-api-cluster: {{ _infrastructure_id }}
+    machine.openshift.io/cluster-api-machine-role: {{ _machine_role }}
+    machine.openshift.io/cluster-api-machine-type: {{ _machine_role }}
+  name: {{ _infrastructure_id }}-{{ _machine_role }}-{{ _machineset_type }}
+  namespace: openshift-machine-api
+spec:
+  replicas: {{ _machineset_replicas }}
+  selector:
+    matchLabels:
+      machine.openshift.io/cluster-api-cluster: {{ _infrastructure_id }}
+      machine.openshift.io/cluster-api-machineset: {{ _infrastructure_id }}-{{ _machine_role }}-{{ _machineset_type }}
+  template:
+    metadata:
+      labels:
+        machine.openshift.io/cluster-api-cluster: {{ _infrastructure_id }}
+        machine.openshift.io/cluster-api-machine-role: {{ _machine_role }}
+        machine.openshift.io/cluster-api-machine-type: {{ _machine_role }}
+        machine.openshift.io/cluster-api-machineset: {{ _infrastructure_id }}-{{ _machine_role }}-{{ _machineset_type }}
+    spec:
+      metadata:
+        labels:
+{% if _machineset_type == "sriov" %}
+          node-role.kubernetes.io/sriov: ""
+{% elif _machineset_type == "dpdk" %}
+          node-role.kubernetes.io/dpdk: ""
+{% endif %}
+      providerSpec:
+        value:
+{% if discovered_openshift_release is version('4.16', '>=') %}
+          apiVersion: machine.openshift.io/v1alpha1
+{% else %}
+          apiVersion: openstackproviderconfig.openshift.io/v1alpha1
+{% endif %}
+          cloudName: openstack
+          cloudsSecret:
+            name: openstack-cloud-credentials
+            namespace: openshift-machine-api
+          configDrive: true
+          flavor: {{ _osp_flavor }}
+          image: {{ _infrastructure_id }}-rhcos
+          kind: OpenstackProviderSpec
+          ports:
+          - allowedAddressPairs:
+            - ipAddress: {{ _api_vip_port_ip }}
+            - ipAddress: {{ _ingress_vip_port_ip }}
+            fixedIPs:
+            - subnetID: {{ _machines_subnet }}
+            nameSuffix: nodes
+            networkID: {{ _machines_network }}
+            securityGroups:
+            - {{ _security_group }}
+          - fixedIPs:
+            - subnetID: {{ _subnet_id_0 }}
+            nameSuffix: {{ _name_suffix_0 }}
+            networkID: {{ _network_id_0 }}
+            portSecurity: false
+            tags:
+            - openshiftClusterID={{ _infrastructure_id }}
+            trunk: false
+{% if _machineset_type == "sriov" %}
+            vnicType: direct
+{% endif %}
+          - fixedIPs:
+            - subnetID: {{ _subnet_id_1 }}
+            nameSuffix: {{ _name_suffix_1 }}
+            networkID: {{ _network_id_1 }}
+            portSecurity: false
+            tags:
+            - openshiftClusterID={{ _infrastructure_id }}
+            trunk: false
+{% if _machineset_type == "sriov" %}
+            vnicType: direct
+{% endif %}
+          primarySubnet: {{ _machines_subnet }}
+          serverGroupName: {{ _infrastructure_id }}-{{ _machine_role }}
+          serverMetadata:
+            Name: {{ _infrastructure_id }}-{{ _machine_role }}
+            openshiftClusterID: {{ _infrastructure_id }}
+          tags:
+          - openshiftClusterID={{ _infrastructure_id }}
+          trunk: true
+          userDataSecret:
+            name: {{ _machine_role }}-user-data

@@ -1,0 +1,134 @@
+---
+# Day2ops procedure to create SRIOV/DPDK telco MachineSets
+# This procedure assumes telco networks already exist in OpenStack
+
+- name: Discover OCP version for apiVersion selection
+  ansible.builtin.include_role:
+    name: tools_get_deploy_info
+    tasks_from: discover_ocp_version.yml
+
+- name: Get the OCP Cluster infrastructure ID
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
+    api_version: config.openshift.io/v1
+    kind: Infrastructure
+    name: cluster
+  register: cluster_infrastructure
+
+- name: Set infrastructure_id fact
+  ansible.builtin.set_fact:
+    infrastructure_id: "{{ cluster_infrastructure.resources[0].status.infrastructureName }}"
+
+- name: Delete the default worker MachineSet
+  when: telco_machinesets.delete_default_workers | default(false) | bool
+  block:
+    - name: Get the current worker MachineSets
+      kubernetes.core.k8s_info:
+        kubeconfig: "{{ kubeconfig }}"
+        api_version: machine.openshift.io/v1beta1
+        kind: MachineSet
+        namespace: openshift-machine-api
+        label_selectors:
+          - machine.openshift.io/cluster-api-machine-role=worker
+      register: worker_machinesets
+
+    - name: Delete default worker MachineSets
+      kubernetes.core.k8s:
+        kubeconfig: "{{ kubeconfig }}"
+        api_version: machine.openshift.io/v1beta1
+        kind: MachineSet
+        name: "{{ item.metadata.name }}"
+        namespace: openshift-machine-api
+        state: absent
+        wait: true
+        wait_timeout: "{{ manifests_wait_timeout }}"
+      loop: "{{ worker_machinesets.resources }}"
+      loop_control:
+        label: "{{ item.metadata.name }}"
+      when:
+        - "'sriov' not in item.metadata.name"
+        - "'dpdk' not in item.metadata.name"
+
+    - name: Wait for cluster health after deleting default workers
+      ansible.builtin.include_role:
+        name: tools_cluster_checks
+        tasks_from: wait_until_cluster_is_healthy.yml
+
+- name: Get cluster install-config content for VIP IPs and subnet info
+  ansible.builtin.include_role:
+    name: tools_get_deploy_info
+    tasks_from: get_ic_content.yml
+
+- name: Set the API-IP, APPs-IP, and machinesSubnet from install-config
+  ansible.builtin.set_fact:
+    api_ip: "{{ ic_content.platform.openstack.apiFloatingIP }}"
+    apps_ip: "{{ ic_content.platform.openstack.ingressFloatingIP }}"
+    machines_subnet_name: "{{ ic_content.platform.openstack.machinesSubnet }}"
+
+- name: Get the machinesSubnet details from OpenStack
+  openstack.cloud.subnets_info:
+    cloud: "{{ user_cloud }}"
+    name: "{{ machines_subnet_name }}"
+  register: os_subnets
+
+- name: Get the security group details from OpenStack
+  openstack.cloud.security_group_info:
+    cloud: "{{ user_cloud }}"
+    name: "{{ infrastructure_id }}-worker"
+  register: os_security_group
+
+- name: Set the machinesSubnet network ID and security group ID
+  ansible.builtin.set_fact:
+    machines_subnet_id: "{{ os_subnets.subnets[0].id }}"
+    machines_subnet_net_id: "{{ os_subnets.subnets[0].network_id }}"
+    machines_security_group: "{{ os_security_group.security_groups[0].id }}"
+
+- name: Create telco MachineSets
+  ansible.builtin.include_tasks: apply-telco-machineset.yml
+  loop: "{{ telco_machinesets.machinesets }}"
+  loop_control:
+    loop_var: telco_machineset
+    label: "{{ telco_machineset.name }}"
+
+- name: Disable mastersSchedulable since we now have dedicated worker nodes
+  when: telco_machinesets.disable_masters_schedulable | default(true) | bool
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    api_version: config.openshift.io/v1
+    kind: Scheduler
+    name: cluster
+    state: present
+    merge_type: merge
+    definition:
+      spec:
+        mastersSchedulable: false
+
+- name: Final cluster health check after all telco machinesets
+  block:
+    - name: Wait for MCP to finish updates
+      ansible.builtin.include_role:
+        name: tools_cluster_checks
+        tasks_from: wait_mcp_updated.yml
+      vars:
+        wait_retries: 60
+        wait_delay: 60
+
+    - name: Wait until cluster is healthy
+      ansible.builtin.include_role:
+        name: tools_cluster_checks
+        tasks_from: wait_until_cluster_is_healthy.yml
+
+    - name: Wait until all nodes are ready
+      ansible.builtin.include_role:
+        name: tools_cluster_checks
+        tasks_from: wait_until_nodes_ready.yml
+
+    - name: Check MachineSets health
+      ansible.builtin.include_role:
+        name: tools_cluster_checks
+        tasks_from: check_machinesets.yml
+
+    - name: Wait until ClusterOperators are ready
+      ansible.builtin.include_role:
+        name: tools_cluster_checks
+        tasks_from: wait_until_cluster_operators_ready.yml

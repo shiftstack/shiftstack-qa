@@ -1,4 +1,16 @@
 ---
+- name: Discover machines subnet ID by name
+  when: ocp_deployment_topology.machines_subnet is defined
+  openstack.cloud.subnets_info:
+    cloud: "{{ user_cloud }}"
+    name: "{{ ocp_deployment_topology.machines_subnet }}"
+  register: machines_subnet_info
+
+- name: Set machines subnet ID fact
+  when: ocp_deployment_topology.machines_subnet is defined
+  ansible.builtin.set_fact:
+    machines_subnet_id: "{{ machines_subnet_info.subnets[0].id }}"
+
 - name: Generate install-config.yaml from install-config-ipi.yaml.j2 template
   ansible.builtin.template:
     src: install-config-ipi.yaml.j2
@@ -22,5 +34,8 @@
     installcfg_api_vips: "{{ ocp_deployment_topology.primary_ip_protocol == 'ipv6' }}"
     installcfg_api_floating_ip: "{{ precreated_api_fip }}"
     installcfg_ingress_floating_ip: "{{ precreated_ingress_fip }}"
+    installcfg_machines_subnet: "{{ machines_subnet_id | default(omit) }}"
     installcfg_cluster_network: "{{ ocp_deployment_topology[ocp_deployment_topology.primary_ip_protocol].cluster_network }}"
     installcfg_service_network: "{{ ocp_deployment_topology[ocp_deployment_topology.primary_ip_protocol].service_network }}"
+    installcfg_default_machine_platform: "{{ ocp_deployment_topology.defaultMachinePlatform | default({}) }}"
+    installcfg_cluster_os_image_properties: "{{ ocp_deployment_topology.platform.openstack.clusterOSImageProperties | default({}) }}"
