@@ -1,12 +1,10 @@
 ---
 repos:
   - repo: https://github.com/ansible/ansible-lint.git
-    rev: v6.22.2
+    rev: v25.8.2
     hooks:
       - id: ansible-lint
-        files: \.(yaml|yml)$
         name: Ansible Lint
-        description: Run configurations on .ansible-lint file
         verbose: true
         args: ["--strict"] # Treat warnings as errors
         additional_dependencies:

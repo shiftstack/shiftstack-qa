@@ -3,15 +3,14 @@ import sys
 import re
 import logging
 
-# Configure logging to send all levels to stderr and ensure visibility on the terminal
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(levelname)s: %(message)s",
-    handlers=[
-        logging.StreamHandler(sys.stderr),
-        logging.StreamHandler(open("/dev/tty", "w"))  # Ensure messages appear on terminal
-    ]
-)
+# Configure logging to stderr and, when available, mirror output to /dev/tty
+handlers = [logging.StreamHandler(sys.stderr)]
+try:
+    tty = open("/dev/tty", "w")
+    handlers.append(logging.StreamHandler(tty))
+except OSError:
+    pass  # /dev/tty unavailable in non-interactive contexts (containers, CI)
+logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s", handlers=handlers)
 
 # Jira configurations
 JIRA_BASE_URL = "https://issues.redhat.com/browse/"
@@ -29,7 +28,7 @@ def read_commit_message(file_path):
         sys.exit(1)
 
 
-def validate_commit_message_lines(lines):
+def validate_commit_message_lines(lines, msg_file):
     """
     Validates the commit message lines for the following:
     - At least 3 lines are present.
@@ -37,13 +36,15 @@ def validate_commit_message_lines(lines):
     - Third line contains a valid Jira ID or full Jira URL.
     """
     logging.info("Starting commit message validation")
-    if len(lines) < 3:
-        logging.warning("The commit message should contain the main Jira task in the 3rd line.")
 
     # Validate the first line length
     first_line = lines[0].strip()
     if len(first_line) > 72:
         logging.warning("The first line of the commit message exceeds 72 characters. Consider shortening it.")
+
+    if len(lines) < 3:
+        logging.warning("The commit message should contain the main Jira task in the 3rd line.")
+        return
 
     # Validate the second line is blank
     if lines[1].strip() != "":
@@ -53,14 +54,14 @@ def validate_commit_message_lines(lines):
     third_line = lines[2].strip()
     if re.fullmatch(JIRA_URL_PATTERN, third_line):
         logging.debug("Commit message validation passed. Full Jira URL already present.")
-    elif re.match(JIRA_PATTERN, third_line):
+    elif re.fullmatch(JIRA_PATTERN, third_line):
         # Replace Jira ID with the full URL
         lines[2] = f"{JIRA_BASE_URL}{third_line}\n"
-        with open(commit_msg_file, "w") as file:
+        with open(msg_file, "w") as file:
             file.writelines(lines)
         logging.info("Commit message validation passed. Jira ID replaced with full URL.")
     else:
-        logging.warning(f"Line 3 should contain a Jira task ID in the format PROJECT-123 or a valid URL.")
+        logging.warning("Line 3 should contain a Jira task ID in the format PROJECT-123 or a valid URL.")
 
 
 if __name__ == "__main__":
@@ -71,4 +72,4 @@ if __name__ == "__main__":
 
     commit_msg_file = sys.argv[1]
     commit_lines = read_commit_message(commit_msg_file)
-    validate_commit_message_lines(commit_lines)
+    validate_commit_message_lines(commit_lines, commit_msg_file)
