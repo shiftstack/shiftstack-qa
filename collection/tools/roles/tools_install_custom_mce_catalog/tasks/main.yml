@@ -26,8 +26,9 @@
 
 - name: Build the marketplace catalog source manifest for MCE
   vars:
+    _mce_version: "{{ tools_install_custom_mce_catalog_channel[discovered_openshift_release] }}"
     tools_install_custom_mce_catalog_img:
-      "quay.io:443/acm-d/mce-custom-registry:{{ tools_install_custom_mce_catalog_channel[discovered_openshift_release] }}"
+      "quay.io:443/acm-d/mce-dev-catalog:latest-{{ _mce_version }}"
   ansible.builtin.template:
     src: mce-catalog.yml.j2
     dest: mce-catalog.yml
