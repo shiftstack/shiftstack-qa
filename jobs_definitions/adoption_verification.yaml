@@ -1,0 +1,19 @@
+---
+#
+#     * ADOPTION VERIFICATION *
+#
+# - Post-adoption verification of the shiftstack cluster.
+# - Runs only the verification stage to confirm the OCP-on-OSP
+#   cluster is functional after adoption from OSP 17.1 to RHOSO 18.
+# - Skips prepare/install/post since the cluster already exists.
+#
+
+installation_type: ipi
+stages:
+  - verification
+# After adoption, OpenStack-dependent operators (OCCM, CSI,
+# image-registry) may be degraded because cloud-provider-config
+# still points at the dead pre-adoption endpoint (OSPRH-26025).
+# Skip the strict CO/CrashLoopBackOff checks - demo app
+# connectivity verifies the cluster is functional.
+skip_cluster_health_checks: true

@@ -38,26 +38,41 @@
     - name: Cleanup the ShiftStack setup
       when: openstack_project_info.projects | length == 1
       block:
-        - name: Remove default openstack creds directory
-          ansible.builtin.file:
-            path: "{{ home_dir }}/.config/openstack"
-            state: absent
+        - name: Check if {{ user_cloud }} credentials directory exists
+          ansible.builtin.stat:
+            path: "{{ osp_config_dir }}"
+          register: osp_config_dir_stat
 
-        - name: Restore openstack creds directory with {{ user_cloud }} credentials
-          ansible.builtin.copy:
-            src: "{{ osp_config_dir }}/"
-            dest: "{{ home_dir }}/.config/openstack/"
-            remote_src: yes
-            mode: u=rwx,g=rwx,o=rwx
+        - name: Skip cleanup when no prior installation exists
+          ansible.builtin.debug:
+            msg: >-
+              No prior {{ user_cloud }} credentials found at {{ osp_config_dir }}.
+              Skipping cleanup - nothing to clean up on a fresh run.
+          when: not osp_config_dir_stat.stat.exists
 
-        - name: Discover the OpenShift installation type
-          ansible.builtin.include_tasks: detect_ocp_installation.yml
+        - name: Cleanup existing ShiftStack resources
+          when: osp_config_dir_stat.stat.exists
+          block:
+            - name: Remove default openstack creds directory
+              ansible.builtin.file:
+                path: "{{ home_dir }}/.config/openstack"
+                state: absent
 
-        - name: Destroy the OpenShift cluster if it exists
-          ansible.builtin.include_tasks: destroy_openshift_cluster.yml
-          when: existing_ocp_installation_type != ''
+            - name: Restore openstack creds directory with {{ user_cloud }} credentials
+              ansible.builtin.copy:
+                src: "{{ osp_config_dir }}/"
+                dest: "{{ home_dir }}/.config/openstack/"
+                remote_src: yes
+                mode: u=rwx,g=rwx,o=rwx
 
-        - name: Cleanup the OpenStack project
-          vars:
-            project: "{{ openstack_project_info.projects[0] }}"
-          ansible.builtin.include_tasks: openstack_project_cleanup.yml
+            - name: Discover the OpenShift installation type
+              ansible.builtin.include_tasks: detect_ocp_installation.yml
+
+            - name: Destroy the OpenShift cluster if it exists
+              ansible.builtin.include_tasks: destroy_openshift_cluster.yml
+              when: existing_ocp_installation_type != ''
+
+            - name: Cleanup the OpenStack project
+              vars:
+                project: "{{ openstack_project_info.projects[0] }}"
+              ansible.builtin.include_tasks: openstack_project_cleanup.yml

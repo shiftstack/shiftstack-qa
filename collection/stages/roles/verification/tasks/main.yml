@@ -7,9 +7,14 @@
     KUBECONFIG: "{{ kubeconfig }}"
   changed_when: true
 
+- name: Set skip health checks shorthand
+  ansible.builtin.set_fact:
+    _skip_health: "{{ skip_cluster_health_checks | default(false) | bool }}"
+
 - name: Run verification steps
   block:
     - name: Check cluster health before the verification actions
+      when: not _skip_health
       block:
         - name: Wait until OCP cluster is healthy
           ansible.builtin.include_role:
@@ -50,10 +55,14 @@
       ansible.builtin.include_role:
         name: tools_cluster_checks
         tasks_from: check_controlplane_machinesets.yml
-      when: installation_type != 'upi'
+      when:
+        - installation_type != 'upi'
+        - not _skip_health
 
     - name: Soft Checks that can mark the installation as unstable
-      when: soft_checks
+      when:
+        - soft_checks
+        - not _skip_health
       block:
         - name: Check the pods are healthy
           ansible.builtin.include_role:
@@ -75,16 +84,19 @@
 
     - name: Check registry pods status
       ansible.builtin.include_tasks: check_registry.yml
+      when: not _skip_health
 
     - name: Enable prometheus PVCs
       ansible.builtin.include_tasks: check_prometheus_pvcs.yml
       when:
         - bm_workers|default(False) is false
+        - not _skip_health
 
     - name: Active wait until all the ClusterOperators are ready
       ansible.builtin.include_role:
         name: tools_cluster_checks
         tasks_from: wait_until_cluster_operators_ready.yml
+      when: not _skip_health
 
     - name: Create a demo app and check connectivity
       ansible.builtin.include_tasks: check_demo_app.yml
@@ -98,11 +110,13 @@
       when:
         - edge_nova_az is not defined # Skip due to Openstack Manila is not supported at the Edge
         - octavia_blocker_bugs_fixed | default(True) | bool
+        - not _skip_health  # LB needs OCCM which is dead post-adoption
 
     - name: Run cinder checks
       ansible.builtin.include_tasks: check_cinder_csi.yml
       when:
         - bm_workers|default(False) is false
+        - not _skip_health  # CSI is disabled post-adoption
 
     - name: Check if manila is present on the OSP installation
       ansible.builtin.command: openstack catalog show manila -c name
@@ -111,11 +125,13 @@
       register: manila_enabled
       failed_when: false
       changed_when: false
+      when: not _skip_health
 
     # TODO(itzikb) - Remove proxy condition when https://issues.redhat.com/browse/OSPRH-9130 is fixed
     - name: Run manila checks if it is enabled on OSP
       ansible.builtin.include_tasks: check_manila.yml
       when:
+        - not _skip_health
         - installation_type != 'upi'
         - manila_enabled.rc == 0
         - ceph_nfs_ready|default(true)|bool
@@ -123,6 +139,7 @@
         - not openshift_proxy_installation|default(false)|bool
 
     - name: Check cluster health after the verification actions
+      when: not _skip_health
       block:
         - name: Wait until OCP cluster is healthy
           ansible.builtin.include_role:

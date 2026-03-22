@@ -1,0 +1,14 @@
+---
+admin_cloud: "overcloud"
+disable_tenant_cacert: true
+legacy_installation: true
+openstack_infra: # The required OpenStack deployment info for deploying OCP on the OSP infra
+  external_network: public
+  region: regionOne
+  network_config:
+    ipv4:
+      dns_servers:
+        - '10.47.242.10' # TLV2 lab external network gateway - update for other labs
+    ipv6:
+      dns_servers:
+        - '2620:cf:cf:aaaa::1' # TLV2 lab external network gateway (IPv6)

@@ -43,6 +43,11 @@ platform:
         - subnet:
             name: "{{ installcfg_subnet.name }}"
     {%- else +%}
+    {%- if ocp_deployment_topology.api_vip is defined +%}
+    # Workaround for OCPBUGS-67159 (adoption uses pre-existing VIPs, not FIPs)
+    apiVIPs: ["{{ ocp_deployment_topology.api_vip }}"]
+    ingressVIPs: ["{{ ocp_deployment_topology.ingress_vip }}"]
+    {%- endif +%}
     externalNetwork:  "{{ installcfg_external_network }}"
     apiFloatingIP:     "{{ installcfg_api_floating_ip }}"
     ingressFloatingIP: "{{ installcfg_ingress_floating_ip }}"

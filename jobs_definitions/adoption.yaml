@@ -1,0 +1,50 @@
+---
+openshift_release: 4-stable # It can be "4.10", "4.11", etc. or "4-stable"
+openshift_build_name: "" # It can be an empty value "" (latest nightly), a given build
+installation_type: ipi
+stages:
+  - cleanup
+  - prepare
+  - install
+  - post
+  - verification
+  # openstack_test delegates DNS tasks to the hypervisor via
+  # tools_cifmw_dnsmasq, which is unreachable from the adoption
+  # container context. Tracked in OSPRH-27365.
+  # - openstack_test
+  # Removed LB tests until Octavia is supported and enabled in adoption jobs
+  # - lb_tests
+
+ocp_deployment_topology:
+  network_type: OVNKubernetes
+  primary_ip_protocol: ipv4    # ipv4 or ipv6
+  secondary_ip_protocol: ""    # ipv4, ipv6, or "" for single-stack
+  ipv4:
+    ip_version: 4
+    tenant_subnet:
+      cidr: 10.196.0.0/16     # CIDR for the machine network (tenant network)
+    cluster_network:
+      cidr: 10.128.0.0/14
+      host_prefix: 23
+    service_network:
+      - 172.30.0.0/16
+  flavors:
+    master:
+      name: "master"
+      ram: 16384  # openshift-install 4.21+ requires 16GB minimum for masters
+      vcpus: 4
+      disk: 50
+    worker:
+      name: "worker"
+      ram: 8192
+      vcpus: 2
+      disk: 50
+  replicas:
+    master: 3
+    worker: 2  # 2 workers to fit per-compute memory budget (2×16+1×8=40 < 45.9GB)
+  servergroups:
+    master: "soft-anti-affinity"  # Required if number of computes < 3, otherwise can be anti-affinity
+    worker: "soft-anti-affinity"  # Required if number of computes < 3, otherwise can be anti-affinity
+  # Workaround for OCPBUGS-67159
+  api_vip: "10.196.0.15"
+  ingress_vip: "10.196.0.17"

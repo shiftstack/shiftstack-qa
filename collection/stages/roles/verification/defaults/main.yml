@@ -17,3 +17,8 @@ alerts_to_ignore:
   - 'ClusterNotUpgradeable'
 demo_image: "quay.io/kuryr/demo"
 skip_mustgather_generation: false # Set it to true if you want to generate the must-gather outside this role.
+# Skip strict cluster health checks (CO readiness, CrashLoopBackOff,
+# ClusterVersion). Use for post-adoption where OpenStack-dependent
+# operators may be degraded (cloud-provider-config still points at
+# the dead pre-adoption endpoint).
+skip_cluster_health_checks: false
