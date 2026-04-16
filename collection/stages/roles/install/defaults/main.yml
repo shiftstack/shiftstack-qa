@@ -1,3 +1,4 @@
 ---
 # defaults file for install
 rhcos_image_name: "rhcos"
+nightly_disable_image_policy: {}

@@ -1,4 +1,16 @@
 ---
+# Resolve the OCP release build name (e.g. 4.22.0-0.nightly-2026-04-15-...).
+# The fact may already exist from the prepare stage, but we resolve it here too
+# so the install role is self-contained when run independently.
+- name: Get the OCP release build name (it sets the 'openshift_release_build_name' fact)
+  ansible.builtin.include_role:
+    name: tools_get_openshift_release
+    tasks_from: get_openshift_release_build_name.yml
+  vars:
+    release: "{{ openshift_release }}"
+    build_name: "{{ openshift_build_name }}"
+  when: openshift_release_build_name is not defined
+
 - name: Remove the directory for the installation files (if exists)
   ansible.builtin.file:
     path: "{{ ocp_installation_dir }}"
