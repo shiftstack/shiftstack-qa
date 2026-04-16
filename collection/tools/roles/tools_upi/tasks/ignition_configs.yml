@@ -2,6 +2,7 @@
 - name: Create the ignition config files
   ansible.builtin.shell: |
     openshift-install create ignition-configs --dir={{ ocp_installation_dir }}
+  environment: "{{ nightly_disable_image_policy }}"
   changed_when: true
 
 - name: Get the OCP cluster id

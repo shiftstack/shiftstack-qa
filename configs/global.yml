@@ -127,6 +127,10 @@ redhat_ca_file: "https://certs.corp.redhat.com/RH-IT-Root-CA.crt"
 openshift_proxy_installation: false
 openshift_manila_type: "foo"
 openshift_mirror: false
+# OCP 4.21+ enforces sigstore signature verification via ClusterImagePolicy.
+# Nightly images are unsigned, so disable this enforcement for nightly installs.
+# Ref: https://groups.google.com/a/redhat.com/g/openshift-eng/c/CLErmvJ2lY0
+nightly_disable_image_policy: "{{ {'OPENSHIFT_INSTALL_EXPERIMENTAL_DISABLE_IMAGE_POLICY': 'true'} if openshift_release_build_name | default('') is search('nightly') else {} }}"
 
 deploy_installer_host: false
 installer_vm_ssh_user: "cloud-user"

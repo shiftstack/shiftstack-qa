@@ -2,6 +2,7 @@
 - name: Generate the Kubernetes manifests for the cluster
   ansible.builtin.shell: |
     openshift-install create manifests --dir={{ ocp_installation_dir }}
+  environment: "{{ nightly_disable_image_policy }}"
   changed_when: true
 
 - name: Remove the Kubernetes manifest files that define the control plane machines and compute machineSets
