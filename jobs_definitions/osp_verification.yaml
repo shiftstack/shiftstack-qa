@@ -20,7 +20,9 @@ stages:
   - post
   - verification
   - openstack_test
-  - lb_tests
+  # - lb_tests  # disabled until OSPRH-29792 is fixed
+
+octavia_blocker_bugs_fixed: false # Amphora image upload blocked by OSPRH-29792
 
 ocp_deployment_topology:
   network_type: OVNKubernetes
