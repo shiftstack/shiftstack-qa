@@ -20,9 +20,7 @@ stages:
   - post
   - verification
   - openstack_test
-  # - lb_tests  # disabled until job is stabilized
-
-octavia_blocker_bugs_fixed: false
+  - lb_tests
 
 ocp_deployment_topology:
   network_type: OVNKubernetes
