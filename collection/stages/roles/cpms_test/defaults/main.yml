@@ -1,7 +1,6 @@
 ---
 # defaults file for cpms_test
 cpms_test_name: cluster-control-plane-machine-set-operator
-cpms_test_repo_url: "https://github.com/openshift/{{ cpms_test_name }}.git"
 cpms_test_dir: "{{ artifacts_dir }}/{{ cpms_test_name }}"
 cpms_test_results_dir: "{{ artifacts_dir }}/cpms_test-results"
 cpms_test_testsuite_name: cpms

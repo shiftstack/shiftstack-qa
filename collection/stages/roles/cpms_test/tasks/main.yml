@@ -1,43 +1,13 @@
 ---
 # tasks file for cpms_test
-- name: Install GO
+- name: Prepare CPMS test
   ansible.builtin.include_role:
     name: tools_openshift_tests
-    tasks_from: install_go.yml
-
-- name: Check if release branch exists for the CPMS operator repo
-  ansible.builtin.uri:
-    url: "https://github.com/openshift/{{ cpms_test_name }}/tree/release-{{ discovered_openshift_release }}"
-  register: cpms_branch_check
-  failed_when: false
-
-- name: Set the branch to clone based on availability
-  ansible.builtin.set_fact:
-    cpms_test_branch: >-
-      {% if cpms_branch_check.status == 200 %}release-{{ discovered_openshift_release }}{% else %}main{% endif %}
-
-- name: Clone openshift/{{ cpms_test_name }} repository at branch {{ cpms_test_branch }}
-  ansible.builtin.git:
-    repo: "{{ cpms_test_repo_url }}"
-    version: "{{ cpms_test_branch | trim }}"
-    dest: "{{ cpms_test_dir }}"
-    force: yes
-    depth: 1
-  retries: 3
-  delay: 5
-  register: cpms_repo
-  until: cpms_repo is succeeded
-
-- name: Remove the test results directory if it exists
-  ansible.builtin.file:
-    path: "{{ cpms_test_results_dir }}"
-    state: absent
-
-- name: Create the test results directory
-  ansible.builtin.file:
-    path: "{{ cpms_test_results_dir }}"
-    state: directory
-    mode: u=rwx,g=rw,o=r
+    tasks_from: prepare_openshift_tests.yml
+  vars:
+    repo_name: "{{ cpms_test_name }}"
+    results_dir: "{{ cpms_test_results_dir }}"
+    go_version_target: "{{ cpms_tests_go_version }}"
 
 - name: Run CPMS e2e-presubmit tests
   ansible.builtin.include_tasks: run_cpms_test.yml

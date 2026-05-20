@@ -2,7 +2,6 @@
 - name: Set result paths for {{ cpms_tests_type }}
   ansible.builtin.set_fact:
     cpms_results_subdir: "{{ cpms_test_results_dir }}/{{ cpms_tests_type }}"
-    cpms_xml_file: "{{ cpms_test_results_dir }}/{{ cpms_tests_type }}/{{ cpms_test_junit_filename }}"
 
 - name: Create results directory for {{ cpms_tests_type }}
   ansible.builtin.file:
@@ -24,7 +23,23 @@
         OPENSHIFT_CI: "true"
         ARTIFACT_DIR: "{{ cpms_results_subdir }}"
       changed_when: true
-      register: cpms_test_output
+
+    - name: Rename JUnit XML to match expected prefix
+      ansible.builtin.copy:
+        src: "{{ cpms_results_subdir }}/{{ cpms_test_junit_filename }}"
+        dest: "{{ cpms_results_subdir }}/junit_e2e_{{ cpms_tests_type }}.xml"
+        remote_src: yes
+        mode: u=rw,g=rw,o=r
+
+    - name: Post openshift-test
+      ansible.builtin.include_role:
+        name: tools_openshift_tests
+        tasks_from: post_openshift_tests.yml
+      vars:
+        testsuite_name: "{{ cpms_test_testsuite_name }}_{{ cpms_tests_type }}"
+        key_for_filtering_results: "cpms"
+        test_name: "{{ cpms_test_name }}-{{ cpms_tests_type }}"
+        results_dir: "{{ cpms_results_subdir }}"
 
   rescue:
     - name: Mark the CPMS {{ cpms_tests_type }} tests as UNSTABLE
@@ -40,44 +55,3 @@
         name: tools_must-gather
       vars:
         must_gather_suffix: "cpms-{{ cpms_tests_type }}"
-
-- name: Post-process CPMS {{ cpms_tests_type }} results
-  when: cpms_xml_file is file
-  block:
-    - name: Rename JUnit XML for post-processing
-      ansible.builtin.copy:
-        src: "{{ cpms_xml_file }}"
-        dest: "{{ cpms_results_subdir }}/tmp.xml"
-        remote_src: yes
-        mode: u=rw,g=rw,o=r
-
-    - name: Modify XML report tags for reporting
-      ansible.builtin.script: |
-        ../scripts/modifyE2ETags.py {{ cpms_results_subdir }}/tmp.xml {{ cpms_results_subdir }}/{{ cpms_test_name }}-{{ cpms_tests_type }}.xml \
-          cpms {{ cpms_test_testsuite_name }}_{{ cpms_tests_type }} \
-          > {{ cpms_results_subdir }}/report_processing.log
-
-    - name: Convert test results to HTML
-      ansible.builtin.shell: |
-        junit2html {{ cpms_results_subdir }}/tmp.xml {{ cpms_results_subdir }}/{{ cpms_test_name }}-{{ cpms_tests_type }}.html
-      changed_when: true
-
-    - name: Create report directory for {{ cpms_tests_type }}
-      ansible.builtin.file:
-        path: "{{ report_dir }}/{{ cpms_test_testsuite_name }}_{{ cpms_tests_type }}"
-        mode: u=rwx,g=rw,o=r
-        state: directory
-
-    - name: Copy XML to report directory
-      ansible.builtin.copy:
-        src: "{{ cpms_results_subdir }}/{{ cpms_test_name }}-{{ cpms_tests_type }}.xml"
-        dest: "{{ report_dir }}/{{ cpms_test_testsuite_name }}_{{ cpms_tests_type }}/{{ cpms_test_name }}-{{ cpms_tests_type }}.xml"
-        remote_src: yes
-        mode: u=rwx,g=rwx,o=rwx
-
-    - name: Copy HTML to report directory
-      ansible.builtin.copy:
-        src: "{{ cpms_results_subdir }}/{{ cpms_test_name }}-{{ cpms_tests_type }}.html"
-        dest: "{{ report_dir }}/{{ cpms_test_testsuite_name }}_{{ cpms_tests_type }}/{{ cpms_test_name }}-{{ cpms_tests_type }}.html"
-        remote_src: yes
-        mode: u=rwx,g=rwx,o=rwx
