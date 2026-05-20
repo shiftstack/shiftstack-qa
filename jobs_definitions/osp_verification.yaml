@@ -20,6 +20,7 @@ stages:
   - post
   - verification
   - day2ops
+  - cpms_test
   - openstack_test
   - lb_tests
   - egressip_tests

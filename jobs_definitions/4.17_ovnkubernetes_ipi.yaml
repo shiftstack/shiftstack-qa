@@ -10,6 +10,7 @@ stages:
   - post
   - verification
   - day2ops
+  - cpms_test
   - openstack_test
   - conformance_test
   - cinder_csi_tests
@@ -17,6 +18,13 @@ stages:
 
 day2ops_procedures:
   - moving-etcd-to-ephemeral
+  - cpms_replace_attrs
+
+cpms_replacements:
+  network_name: cpms-test-network
+  subnet_name: cpms-test-subnet
+  cidr: 192.168.240.0/24
+  sg_name: cpms-test-sg
 
 ocp_deployment_topology:
   network_type: OVNKubernetes

@@ -1,0 +1,228 @@
+---
+# Procedure that updates the CPMS object by adding a fake extra network/subnet and SG to the
+# masters and replacing failureDomain params on master-0 to have the same attributes as master-1.
+# After reconciliation, master-0 and master-1 will have same nova AZ, cinderAZ, and volumeType.
+- name: Set log directory for cpms_replace_attrs procedure
+  ansible.builtin.set_fact:
+    cpms_log_directory: "{{ artifacts_dir }}/cpms_replace_attrs"
+
+- name: Run cpms_replace_attrs procedure
+  block:
+    - name: Create {{ cpms_log_directory }} directory
+      ansible.builtin.file:
+        path: "{{ cpms_log_directory }}"
+        state: directory
+        mode: u=rwx,g=rw,o=r
+
+    - name: Set artifact paths
+      ansible.builtin.set_fact:
+        cpms_orig_path: "{{ cpms_log_directory }}/orig_cpms.yaml"
+        cpms_patch_to_apply_path: "{{ cpms_log_directory }}/cpms_patch_to_apply.yaml"
+        cpms_applied_path: "{{ cpms_log_directory }}/applied_cpms.yaml"
+        cpms_patch_to_restore_path: "{{ cpms_log_directory }}/cpms_patch_to_restore_NOTAPPLIED.yaml"
+
+    - name: Get original CPMS definition
+      kubernetes.core.k8s_info:
+        kubeconfig: "{{ kubeconfig }}"
+        api_version: machine.openshift.io/v1
+        kind: ControlPlaneMachineSet
+        namespace: openshift-machine-api
+      register: original_cpms
+
+    - name: Save the original CPMS definition
+      ansible.builtin.copy:
+        content: "{{ original_cpms.resources[0] | to_nice_yaml(indent=2) }}"
+        dest: "{{ cpms_orig_path }}"
+        mode: u=rw,g=rw,o=r
+
+    - name: Create network {{ cpms_replacements.network_name }}
+      openstack.cloud.network:
+        cloud: "{{ user_cloud }}"
+        name: "{{ cpms_replacements.network_name }}"
+        state: present
+      register: network_to_add
+
+    - name: Create subnet {{ cpms_replacements.subnet_name }}
+      openstack.cloud.subnet:
+        cloud: "{{ user_cloud }}"
+        name: "{{ cpms_replacements.subnet_name }}"
+        cidr: "{{ cpms_replacements.cidr }}"
+        network_name: "{{ cpms_replacements.network_name }}"
+        enable_dhcp: false
+        state: present
+
+    - name: Create security group {{ cpms_replacements.sg_name }}
+      openstack.cloud.security_group:
+        cloud: "{{ user_cloud }}"
+        name: "{{ cpms_replacements.sg_name }}"
+        state: present
+      register: sg_to_add
+
+    - name: Store original CPMS attributes that will be updated
+      ansible.builtin.set_fact:
+        orig_failuredomains: >-
+          {{ original_cpms.resources[0].spec.template.machines_v1beta1_machine_openshift_io.failureDomains.openstack | list }}
+        orig_networks: >-
+          {{ original_cpms.resources[0].spec.template.machines_v1beta1_machine_openshift_io.spec.providerSpec.value.networks | list }}
+        orig_sgs: >-
+          {{ original_cpms.resources[0].spec.template.machines_v1beta1_machine_openshift_io.spec.providerSpec.value.securityGroups | list }}
+
+    - name: Create patch for CPMS
+      ansible.builtin.template:
+        src: control-plane-machine-set-patch.yaml.j2
+        dest: "{{ cpms_patch_to_apply_path }}"
+        mode: u=rw,g=rw,o=r
+      vars:
+        cpms_failuredomains: >-
+          {{ orig_failuredomains |
+            replace(orig_failuredomains[0].availabilityZone, orig_failuredomains[1].availabilityZone) |
+            replace(orig_failuredomains[0].rootVolume.availabilityZone, orig_failuredomains[1].rootVolume.availabilityZone) |
+            replace(orig_failuredomains[0].rootVolume.volumeType, orig_failuredomains[1].rootVolume.volumeType) }}
+        cpms_networks: "{{ orig_networks + [{'filter': {}, 'uuid': network_to_add.id}] }}"
+        cpms_sgs: "{{ orig_sgs + [{'filter': {}, 'name': cpms_replacements.sg_name}] }}"
+
+    - name: Apply patch for CPMS
+      kubernetes.core.k8s:
+        kubeconfig: "{{ kubeconfig }}"
+        state: present
+        apply: true
+        src: "{{ cpms_patch_to_apply_path }}"
+
+    - name: Wait for CPMS reconciliation to complete
+      ansible.builtin.include_role:
+        name: tools_cluster_checks
+        tasks_from: wait_cpms_updated.yml
+      vars:
+        wait_retries: 180
+        wait_delay: 60
+
+    - name: Check cluster health after CPMS patch application
+      block:
+        - name: Check the Control Plane MachineSet is healthy
+          ansible.builtin.include_role:
+            name: tools_cluster_checks
+            tasks_from: check_controlplane_machinesets.yml
+
+        - name: Wait until OCP cluster is healthy
+          ansible.builtin.include_role:
+            name: tools_cluster_checks
+            tasks_from: wait_until_cluster_is_healthy.yml
+
+    - name: Get resulting CPMS definition after application
+      kubernetes.core.k8s_info:
+        kubeconfig: "{{ kubeconfig }}"
+        api_version: machine.openshift.io/v1
+        kind: ControlPlaneMachineSet
+        namespace: openshift-machine-api
+      register: applied_cpms
+
+    - name: Save the resulting CPMS after application
+      ansible.builtin.copy:
+        content: "{{ applied_cpms.resources[0] | to_nice_yaml(indent=2) }}"
+        dest: "{{ cpms_applied_path }}"
+        mode: u=rw,g=rw,o=r
+
+    - name: Get all the master VMs after procedure
+      openstack.cloud.server_info:
+        cloud: "{{ user_cloud }}"
+        server: "*master*"
+      register: result
+
+    - name: Store the master VMs after procedure
+      ansible.builtin.set_fact:
+        master_after: "{{ result.servers | sort(attribute='name') | list }}"
+
+    - name: Get root volumes info
+      ansible.builtin.shell: >
+        openstack volume show {{ item }} -c type -c availability_zone -f shell
+      environment:
+        OS_CLOUD: "{{ user_cloud }}"
+      register: root_volumes_after
+      changed_when: false
+      with_items:
+        - "{{ master_after[0].volumes[0].id }}"
+        - "{{ master_after[1].volumes[0].id }}"
+        - "{{ master_after[2].volumes[0].id }}"
+
+    - name: Confirm that master VMs reflect FailureDomain changes after procedure
+      ansible.builtin.assert:
+        that:
+          - master_after | length == 3
+          - master_after | selectattr('location.zone', 'eq', expected_fd_az) | list | length == 2
+          - root_volumes_after.results | selectattr('stdout', 'eq',
+             'availability_zone="' + expected_fd_cinderaz + '"\ntype="' + expected_fd_volumeType + '"') | list | length == 2
+      vars:
+        expected_fd_az: "{{ orig_failuredomains[1].availabilityZone }}"
+        expected_fd_cinderaz: "{{ orig_failuredomains[1].rootVolume.availabilityZone }}"
+        expected_fd_volumeType: "{{ orig_failuredomains[1].rootVolume.volumeType }}"
+
+    - name: Confirm that the VMs include the added network and SG
+      ansible.builtin.assert:
+        that:
+          - cpms_replacements.network_name in item.addresses.keys()
+          - cpms_replacements.sg_name in item.security_groups | json_query('[*].name')
+      with_items: "{{ master_after }}"
+
+  rescue:
+    - name: Run must-gather after cpms_replace_attrs failure
+      ansible.builtin.include_role:
+        name: tools_must-gather
+      vars:
+        must_gather_suffix: "cpms-replace-attrs"
+
+    - name: Fail inside rescue block
+      ansible.builtin.fail:
+        msg: "The cpms_replace_attrs procedure failed"
+
+  always:
+    - name: Create restore patch for CPMS
+      ansible.builtin.template:
+        src: control-plane-machine-set-patch.yaml.j2
+        dest: "{{ cpms_patch_to_restore_path }}"
+        mode: u=rw,g=rw,o=r
+      vars:
+        cpms_failuredomains: "{{ orig_failuredomains }}"
+        cpms_networks: "{{ orig_networks }}"
+        cpms_sgs: "{{ orig_sgs }}"
+
+    - name: Apply restore patch for CPMS
+      kubernetes.core.k8s:
+        kubeconfig: "{{ kubeconfig }}"
+        state: present
+        apply: true
+        src: "{{ cpms_patch_to_restore_path }}"
+
+    - name: Wait for CPMS restore reconciliation to complete
+      ansible.builtin.include_role:
+        name: tools_cluster_checks
+        tasks_from: wait_cpms_updated.yml
+      vars:
+        wait_retries: 180
+        wait_delay: 60
+
+    - name: Check cluster health after restore
+      block:
+        - name: Check the Control Plane MachineSet is healthy
+          ansible.builtin.include_role:
+            name: tools_cluster_checks
+            tasks_from: check_controlplane_machinesets.yml
+
+        - name: Wait until OCP cluster is healthy
+          ansible.builtin.include_role:
+            name: tools_cluster_checks
+            tasks_from: wait_until_cluster_is_healthy.yml
+
+    - name: Clean up test OpenStack resources
+      block:
+        - name: Delete test network
+          openstack.cloud.network:
+            cloud: "{{ user_cloud }}"
+            name: "{{ cpms_replacements.network_name }}"
+            state: absent
+
+        - name: Delete test security group
+          openstack.cloud.security_group:
+            cloud: "{{ user_cloud }}"
+            name: "{{ cpms_replacements.sg_name }}"
+            state: absent
+      ignore_errors: true
