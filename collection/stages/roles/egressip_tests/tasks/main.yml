@@ -1,0 +1,25 @@
+---
+# tasks file for egressip_tests
+- name: Prepare EgressIP test
+  ansible.builtin.include_tasks: prepare_private_tests.yml
+  vars:
+    results_dir: "{{ egressip_test_results_dir }}"
+    go_version_target: "{{ egressip_tests_go_version }}"
+
+- name: Run egressip tests
+  ansible.builtin.include_tasks: run_egressip_tests.yml
+
+- name: Post EgressIP test
+  ansible.builtin.include_role:
+    name: tools_openshift_tests
+    tasks_from: post_openshift_tests.yml
+  vars:
+    testsuite_name: "egressip_tests"
+    key_for_filtering_results: "egressip"
+    test_name: "{{ egressip_test_name }}"
+    results_dir: "{{ egressip_test_results_dir }}"
+
+- name: Remove the source directory after tests complete
+  ansible.builtin.file:
+    path: "{{ egressip_test_dir }}"
+    state: absent

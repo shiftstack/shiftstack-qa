@@ -1,0 +1,33 @@
+---
+- name: Create results directory
+  ansible.builtin.file:
+    path: "{{ results_dir }}"
+    state: directory
+    mode: '0755'
+
+- name: Write SSH deploy key temporarily
+  ansible.builtin.copy:
+    content: "{{ openshift_tests_private_ssh_key }}"
+    dest: "{{ ansible_env.HOME }}/.ssh/openshift_tests_private_deploy_key"
+    mode: '0600'
+  no_log: true
+
+- name: Clone openshift-tests-private via SSH
+  ansible.builtin.git:
+    repo: "git@github.com:openshift/openshift-tests-private.git"
+    version: "release-{{ discovered_openshift_release }}"
+    dest: "{{ egressip_test_dir }}"
+    key_file: "{{ ansible_env.HOME }}/.ssh/openshift_tests_private_deploy_key"
+    accept_hostkey: yes
+
+- name: Remove SSH deploy key
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.ssh/openshift_tests_private_deploy_key"
+    state: absent
+
+- name: Setup Go version
+  ansible.builtin.include_role:
+    name: shiftstack.tools.tools_openshift_tests
+    tasks_from: setup_go_version.yml
+  vars:
+    go_version_target: "{{ go_version_target }}"

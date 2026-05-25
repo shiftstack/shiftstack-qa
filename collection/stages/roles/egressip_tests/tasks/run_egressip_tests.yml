@@ -1,0 +1,97 @@
+---
+- name: Load the full allowlist file
+  ansible.builtin.set_fact:
+    egressip_full_allowlist: "{{ lookup('file', egressip_allowlist_file) | from_yaml }}"
+
+- name: Detect network backend
+  ansible.builtin.shell: |
+    oc get network.config cluster -o jsonpath='{.status.networkType}'
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+  register: network_backend_result
+  changed_when: false
+
+- name: Set network backend fact
+  ansible.builtin.set_fact:
+    network_backend: "{{ network_backend_result.stdout }}"
+
+- name: Extract allowlist for current version and network backend
+  ansible.builtin.set_fact:
+    egressip_version_allowlist: "{{ egressip_full_allowlist[discovered_openshift_release][network_backend] | default({}) }}"
+
+- name: Fail if no allowlist found for this version/backend combination
+  ansible.builtin.fail:
+    msg: "No allowlist found for OCP {{ discovered_openshift_release }} with {{ network_backend }}"
+  when: egressip_version_allowlist | length == 0
+
+- name: Write filtered allowlist to temporary file
+  ansible.builtin.copy:
+    content: "{{ egressip_version_allowlist | to_nice_yaml }}"
+    dest: "{{ egressip_test_results_dir }}/allowlist.yaml"
+    mode: '0644'
+
+- name: Set artifact paths
+  ansible.builtin.set_fact:
+    all_tests_path: "{{ egressip_test_results_dir }}/egressip_tests.txt"
+    allowlist_path: "{{ egressip_test_results_dir }}/allowlist.txt"
+    tests_to_run_path: "{{ egressip_test_results_dir }}/list_of_tests_to_run.txt"
+
+- name: Build extended-platform-tests executable
+  ansible.builtin.shell: |
+    source {{ home_dir }}/.bashrc
+    make build
+  args:
+    chdir: "{{ egressip_test_dir }}"
+  changed_when: true
+
+- name: Get full list of tests
+  ansible.builtin.shell: >
+    {{ egressip_test_executable }} run all --dry-run > {{ all_tests_path }}
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+    OS_CLOUD: "{{ user_cloud }}"
+  changed_when: true
+
+- name: Convert the allowlist YAML to TXT
+  ansible.builtin.include_role:
+    name: tools_openshift_tests
+    tasks_from: convert_yaml_tests_file_to_txt.yml
+  vars:
+    input_tests_list: "{{ egressip_test_results_dir }}/allowlist.yaml"
+    output_tests_list: "{{ allowlist_path }}"
+    yaml_format_based_on_ocp_version: true
+
+- name: Prepare the tests list to run
+  shiftstack.tools.filter_tests_list:
+    input_tests_file: "{{ all_tests_path }}"
+    allowlist_file: "{{ allowlist_path }}"
+    blocklist_file: ""
+    output_file: "{{ tests_to_run_path }}"
+
+- name: Run the egressip tests
+  block:
+    - name: Run egressIP tests
+      ansible.builtin.shell: >
+        {{ egressip_test_executable }} run
+        -f {{ tests_to_run_path }}
+        --output-file {{ egressip_test_results_dir }}/{{ egressip_test_name }}.log
+        --junit-dir={{ egressip_test_results_dir }} > /dev/null
+      environment:
+        KUBECONFIG: "{{ kubeconfig }}"
+        OS_CLOUD: "{{ user_cloud }}"
+      changed_when: true
+
+  rescue:
+    - name: Mark the egressip tests as UNSTABLE
+      ansible.builtin.include_role:
+        name: tools_stage_results
+        tasks_from: mark_stage_unstable.yml
+      vars:
+        unstable_msg: >-
+          The EgressIP test suite failed.
+
+    - name: Run must-gather
+      ansible.builtin.include_role:
+        name: tools_must-gather
+      vars:
+        must_gather_suffix: "egressip-tests"

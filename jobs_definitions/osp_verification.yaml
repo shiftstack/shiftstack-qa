@@ -21,6 +21,7 @@ stages:
   - verification
   - openstack_test
   - lb_tests
+  - egressip_tests
 
 ocp_deployment_topology:
   network_type: OVNKubernetes
