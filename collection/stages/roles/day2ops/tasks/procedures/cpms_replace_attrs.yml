@@ -163,17 +163,6 @@
           - cpms_replacements.sg_name in item.security_groups | json_query('[*].name')
       with_items: "{{ master_after }}"
 
-  rescue:
-    - name: Run must-gather after cpms_replace_attrs failure
-      ansible.builtin.include_role:
-        name: tools_must-gather
-      vars:
-        must_gather_suffix: "cpms-replace-attrs"
-
-    - name: Fail inside rescue block
-      ansible.builtin.fail:
-        msg: "The cpms_replace_attrs procedure failed"
-
   always:
     - name: Create restore patch for CPMS
       ansible.builtin.template:
