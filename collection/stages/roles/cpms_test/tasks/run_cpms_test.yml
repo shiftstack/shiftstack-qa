@@ -45,7 +45,7 @@
     dest: "{{ cpms_results_subdir }}/junit_e2e_{{ cpms_tests_type }}.xml"
     remote_src: yes
     mode: u=rw,g=rw,o=r
-  when: cpms_results_subdir + '/' + cpms_test_junit_filename is file
+  when: (cpms_results_subdir + '/' + cpms_test_junit_filename) is file
 
 - name: Post openshift-test
   ansible.builtin.include_role:
@@ -56,4 +56,4 @@
     key_for_filtering_results: "cpms"
     test_name: "{{ cpms_test_name }}-{{ cpms_tests_type }}"
     results_dir: "{{ cpms_results_subdir }}"
-  when: cpms_results_subdir + '/' + cpms_test_junit_filename is file
+  when: (cpms_results_subdir + '/' + cpms_test_junit_filename) is file
