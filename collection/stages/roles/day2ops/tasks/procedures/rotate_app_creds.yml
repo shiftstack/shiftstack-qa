@@ -1,0 +1,107 @@
+---
+# Source: https://github.com/shiftstack/installer/blob/master/docs/user/openstack/README.md#openstack-credentials-update
+- name: Delete existing Application Credential
+  ansible.builtin.shell: |
+    openstack application credential delete {{ app_credential_name }}
+  environment:
+    OS_CLOUD: "{{ user_cloud }}"
+  failed_when: false
+  changed_when: false
+
+- name: Create Application Credential
+  ansible.builtin.shell: |
+    openstack application credential create \
+      --description "App Creds - All roles" \
+      "{{ app_credential_name }}" -f yaml
+  environment:
+    OS_CLOUD: "{{ user_cloud }}"
+  register: app_cred_output
+  changed_when: true
+
+- name: Parse Application Credential output
+  ansible.builtin.set_fact:
+    app_cred_info: "{{ app_cred_output.stdout | from_yaml }}"
+
+- name: Read current clouds.yaml
+  ansible.builtin.slurp:
+    src: "{{ clouds_yaml_file_path }}"
+  register: clouds_yaml_file
+
+- name: Set clouds.yaml fact
+  ansible.builtin.set_fact:
+    clouds_yaml_params: "{{ clouds_yaml_file.content | b64decode | from_yaml }}"
+
+- name: Build updated cloud entry with application credentials
+  ansible.builtin.set_fact:
+    updated_cloud_entry:
+      auth:
+        auth_url: "{{ clouds_yaml_params.clouds[user_cloud].auth.auth_url }}"
+        application_credential_id: "{{ app_cred_info.id }}"
+        application_credential_secret: "{{ app_cred_info.secret }}"
+      auth_type: v3applicationcredential
+      identity_api_version: "{{ clouds_yaml_params.clouds[user_cloud].identity_api_version | default('3') }}"
+      region_name: "{{ clouds_yaml_params.clouds[user_cloud].region_name | default(omit) }}"
+
+- name: Add cacert to updated cloud entry
+  ansible.builtin.set_fact:
+    updated_cloud_entry: "{{ updated_cloud_entry | combine({'cacert': clouds_yaml_params.clouds[user_cloud].cacert}, recursive=True) }}"
+  when: clouds_yaml_params.clouds[user_cloud].cacert is defined
+
+- name: Update clouds.yaml with application credentials
+  ansible.builtin.set_fact:
+    clouds_yaml_params: "{{ {'clouds': (clouds_yaml_params.clouds | combine({user_cloud: updated_cloud_entry}))} }}"
+
+- name: Write updated clouds.yaml
+  ansible.builtin.copy:
+    content: "{{ clouds_yaml_params | to_nice_yaml(indent=4) }}"
+    dest: "{{ clouds_yaml_file_path }}"
+    mode: u=rw,g=rw,o=r
+
+- name: Update clouds.yaml copy in osp_config_dir
+  ansible.builtin.copy:
+    content: "{{ clouds_yaml_params | to_nice_yaml(indent=4) }}"
+    dest: "{{ osp_config_dir }}/clouds.yaml"
+    mode: u=rw,g=rw,o=r
+
+- name: Create clouds.yaml copy with cloud renamed for OCP secret
+  ansible.builtin.shell: |
+    set -o pipefail && \
+    cat {{ clouds_yaml_file_path }} | sed 's/{{ user_cloud }}:/openstack:/' > /tmp/clouds_for_ocp.yaml
+  changed_when: false
+
+- name: Rotate OpenShift Cloud Credentials
+  ansible.builtin.shell: |
+    oc set data -n kube-system secret/openstack-credentials clouds.yaml="$(cat /tmp/clouds_for_ocp.yaml)"
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+  changed_when: true
+
+- name: Clean up temporary file
+  ansible.builtin.file:
+    path: /tmp/clouds_for_ocp.yaml
+    state: absent
+
+- name: Get OpenStack Credentials from OCP cluster
+  ansible.builtin.shell: |
+    set -o pipefail && \
+    oc get secret -n kube-system openstack-credentials -o json | jq -r '.data."clouds.yaml"' | base64 -d
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+  register: ocp_creds_output
+  changed_when: false
+
+- name: Parse OCP credentials
+  ansible.builtin.set_fact:
+    ocp_creds: "{{ ocp_creds_output.stdout | from_yaml }}"
+
+- name: Verify credentials rotated to application credentials
+  ansible.builtin.assert:
+    that:
+      - ocp_creds.clouds.openstack.auth_type == 'v3applicationcredential'
+    fail_msg: "Credential rotation failed — auth_type is not v3applicationcredential"
+    success_msg: "Credential rotation verified — auth_type is v3applicationcredential"
+
+- name: Wait until the Cluster Operators are healthy
+  ansible.builtin.include_role:
+    name: tools_cluster_checks
+    tasks_from: wait_until_cluster_operators_ready.yml

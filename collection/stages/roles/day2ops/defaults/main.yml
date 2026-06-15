@@ -2,3 +2,6 @@
 # defaults file for day2ops
 day2ops_steps: []
 day2ops_report_filename: shiftstack-qa-day2ops-results.xml
+
+# Application Credentials rotation
+app_credential_name: "AppCreds-{{ user_cloud }}"

@@ -19,8 +19,12 @@ stages:
   - install
   - post
   - verification
+  - day2ops
   - openstack_test
   - lb_tests
+
+day2ops_procedures:
+  - rotate_app_creds
 
 ocp_deployment_topology:
   network_type: OVNKubernetes

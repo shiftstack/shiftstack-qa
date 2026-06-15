@@ -32,6 +32,10 @@
 - name: Update clouds.yml file with new Project
   ansible.builtin.include_tasks: clouds.yml
 
+- name: Configure Application Credentials for OpenStack authentication
+  ansible.builtin.include_tasks: app_creds.yml
+  when: use_application_credentials | default(false)
+
 - name: Restricted Network Preparations
   ansible.builtin.include_tasks: restricted_network.yml
   when:
