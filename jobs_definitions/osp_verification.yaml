@@ -38,7 +38,7 @@ ocp_deployment_topology:
   flavors:
     master:
       name: "master"
-      ram: 16384
+      ram: 24576
       vcpus: 4
       disk: 30
     worker:
