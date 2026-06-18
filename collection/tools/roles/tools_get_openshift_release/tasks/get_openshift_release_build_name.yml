@@ -39,12 +39,25 @@
       ansible.builtin.set_fact:
         openshift_release_build_name: "{{ latest_build_info.name }}"
 
-- name: Set openshift_release_build_name when a specific build is given
-  ansible.builtin.set_fact:
-    openshift_release_build_name: "{{ build_name }}"
+    - name: Set openshift_release_pull_spec from release stream API response
+      ansible.builtin.set_fact:
+        openshift_release_pull_spec: "{{ latest_build_info.pullSpec }}"
+
+- name: Set build name and pull spec when a specific build is given
   when:
     - release is not match("4-stable")
     - build_name not in ['','candidate','fast','stable','eus']
+  block:
+    - name: Set openshift_release_build_name for specific build
+      ansible.builtin.set_fact:
+        openshift_release_build_name: "{{ build_name }}"
+
+    - name: Construct openshift_release_pull_spec for specific build
+      ansible.builtin.set_fact:
+        openshift_release_pull_spec: >-
+          {{ 'registry.ci.openshift.org/ocp/release:' + build_name
+             if build_name is search('nightly')
+             else 'quay.io/openshift-release-dev/ocp-release:' + build_name + '-x86_64' }}
 
 - name: Discover the release build name for the z-stream promoted to upgrade channel on {{ release }}
   # Ref: https://docs.openshift.com/container-platform/4.9/updating/understanding-upgrade-channels-release.html
@@ -68,3 +81,12 @@
     - name: Set openshift_release_build_name when openshift.build is set to a channel
       ansible.builtin.set_fact:
         openshift_release_build_name: "{{ result.stdout }}"
+
+    - name: Parse openshift_release_pull_spec from Pull From field in release.txt
+      ansible.builtin.shell: set -o pipefail && grep '^Pull From:' {{ home_dir }}/release.txt | awk '{print $3}'
+      changed_when: false
+      register: pull_from_result
+
+    - name: Set openshift_release_pull_spec from channel release.txt
+      ansible.builtin.set_fact:
+        openshift_release_pull_spec: "{{ pull_from_result.stdout }}"
