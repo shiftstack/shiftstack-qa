@@ -1,85 +1,23 @@
 ---
 # Source: https://github.com/shiftstack/installer/blob/master/docs/user/openstack/README.md#openstack-credentials-update
-- name: Delete existing Application Credential
-  ansible.builtin.shell: |
-    openstack application credential delete {{ app_credential_name }}
-  environment:
-    OS_CLOUD: "{{ user_cloud }}"
-  failed_when: false
-  changed_when: false
+- name: Restore user/password auth to ensure full permissions for app credential creation
+  ansible.builtin.include_role:
+    name: shiftstack.stages.prepare
+    tasks_from: clouds.yml
 
-- name: Create Application Credential
-  ansible.builtin.shell: |
-    openstack application credential create \
-      --description "App Creds - All roles" \
-      "{{ app_credential_name }}" -f yaml
-  environment:
-    OS_CLOUD: "{{ user_cloud }}"
-  register: app_cred_output
-  changed_when: true
-
-- name: Parse Application Credential output
-  ansible.builtin.set_fact:
-    app_cred_info: "{{ app_cred_output.stdout | from_yaml }}"
-
-- name: Read current clouds.yaml
-  ansible.builtin.slurp:
-    src: "{{ clouds_yaml_file_path }}"
-  register: clouds_yaml_file
-
-- name: Set clouds.yaml fact
-  ansible.builtin.set_fact:
-    clouds_yaml_params: "{{ clouds_yaml_file.content | b64decode | from_yaml }}"
-
-- name: Build updated cloud entry with application credentials
-  ansible.builtin.set_fact:
-    updated_cloud_entry:
-      auth:
-        auth_url: "{{ clouds_yaml_params.clouds[user_cloud].auth.auth_url }}"
-        application_credential_id: "{{ app_cred_info.id }}"
-        application_credential_secret: "{{ app_cred_info.secret }}"
-      auth_type: v3applicationcredential
-      identity_api_version: "{{ clouds_yaml_params.clouds[user_cloud].identity_api_version | default('3') }}"
-      region_name: "{{ clouds_yaml_params.clouds[user_cloud].region_name | default(omit) }}"
-
-- name: Add cacert to updated cloud entry
-  ansible.builtin.set_fact:
-    updated_cloud_entry: "{{ updated_cloud_entry | combine({'cacert': clouds_yaml_params.clouds[user_cloud].cacert}, recursive=True) }}"
-  when: clouds_yaml_params.clouds[user_cloud].cacert is defined
-
-- name: Update clouds.yaml with application credentials
-  ansible.builtin.set_fact:
-    clouds_yaml_params: "{{ {'clouds': (clouds_yaml_params.clouds | combine({user_cloud: updated_cloud_entry}))} }}"
-
-- name: Write updated clouds.yaml
-  ansible.builtin.copy:
-    content: "{{ clouds_yaml_params | to_nice_yaml(indent=4) }}"
-    dest: "{{ clouds_yaml_file_path }}"
-    mode: u=rw,g=rw,o=r
-
-- name: Update clouds.yaml copy in osp_config_dir
-  ansible.builtin.copy:
-    content: "{{ clouds_yaml_params | to_nice_yaml(indent=4) }}"
-    dest: "{{ osp_config_dir }}/clouds.yaml"
-    mode: u=rw,g=rw,o=r
-
-- name: Create clouds.yaml copy with cloud renamed for OCP secret
-  ansible.builtin.shell: |
-    set -o pipefail && \
-    cat {{ clouds_yaml_file_path }} | sed 's/{{ user_cloud }}:/openstack:/' > /tmp/clouds_for_ocp.yaml
-  changed_when: false
+- name: Create application credentials and update clouds.yaml
+  ansible.builtin.include_role:
+    name: shiftstack.stages.prepare
+    tasks_from: app_creds.yml
 
 - name: Rotate OpenShift Cloud Credentials
   ansible.builtin.shell: |
-    oc set data -n kube-system secret/openstack-credentials clouds.yaml="$(cat /tmp/clouds_for_ocp.yaml)"
+    set -o pipefail && \
+    cat {{ clouds_yaml_file_path }} | sed 's/{{ user_cloud }}:/openstack:/' | \
+    oc set data -n kube-system secret/openstack-credentials clouds.yaml=-
   environment:
     KUBECONFIG: "{{ kubeconfig }}"
   changed_when: true
-
-- name: Clean up temporary file
-  ansible.builtin.file:
-    path: /tmp/clouds_for_ocp.yaml
-    state: absent
 
 - name: Get OpenStack Credentials from OCP cluster
   ansible.builtin.shell: |

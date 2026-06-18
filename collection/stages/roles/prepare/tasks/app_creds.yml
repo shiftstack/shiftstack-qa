@@ -1,17 +1,17 @@
 ---
-- name: Delete existing Application Credential
+- name: Delete stale temporary Application Credential from interrupted previous run
   ansible.builtin.shell: |
-    openstack application credential delete {{ app_credential_name }}
+    openstack application credential delete {{ app_credential_name }}-new
   environment:
     OS_CLOUD: "{{ user_cloud }}"
   failed_when: false
   changed_when: false
 
-- name: Create Application Credential
+- name: Create new Application Credential
   ansible.builtin.shell: |
     openstack application credential create \
       --description "App Creds - All roles" \
-      "{{ app_credential_name }}" -f yaml
+      "{{ app_credential_name }}-new" -f yaml
   environment:
     OS_CLOUD: "{{ user_cloud }}"
   register: app_cred_output
@@ -63,6 +63,14 @@
     mode: u=rw,g=rw,o=r
   when: osp_config_dir is defined
 
-- name: Validate application credentials work
+- name: Validate new application credentials work
   openstack.cloud.auth:
     cloud: "{{ user_cloud }}"
+
+- name: Delete previous Application Credential
+  ansible.builtin.shell: |
+    openstack application credential delete {{ app_credential_name }}
+  environment:
+    OS_CLOUD: "{{ user_cloud }}"
+  failed_when: false
+  changed_when: false
