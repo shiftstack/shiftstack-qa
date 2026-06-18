@@ -6,5 +6,5 @@ metadata:
 data:
   ca-bundle.pem: |
     {{original_cm_yaml.data['ca-bundle.pem']|trim|indent(width=4)}}
-  config: |
+  cloud.conf: |
     {{ini_config|indent(width=4)}}
