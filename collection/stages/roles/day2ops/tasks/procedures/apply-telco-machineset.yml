@@ -1,0 +1,78 @@
+---
+# Helper task to apply a single telco MachineSet
+# This task is included by create-telco-machinesets.yml for each machineset
+
+- name: "Get network details for {{ telco_machineset.networks[0].name }}"
+  openstack.cloud.networks_info:
+    cloud: "{{ user_cloud }}"
+    name: "{{ telco_machineset.networks[0].name }}"
+  register: network_0
+
+- name: "Get network details for {{ telco_machineset.networks[1].name }}"
+  openstack.cloud.networks_info:
+    cloud: "{{ user_cloud }}"
+    name: "{{ telco_machineset.networks[1].name }}"
+  register: network_1
+
+- name: Set the telco network and subnet IDs
+  ansible.builtin.set_fact:
+    network_id_0: "{{ network_0.networks[0].id }}"
+    network_subnet_id_0: "{{ network_0.networks[0].subnet_ids[0] }}"
+    network_id_1: "{{ network_1.networks[0].id }}"
+    network_subnet_id_1: "{{ network_1.networks[0].subnet_ids[0] }}"
+
+- name: "Generate telco MachineSet manifest for {{ telco_machineset.name }}"
+  ansible.builtin.template:
+    src: telco-machineset.yaml.j2
+    dest: "{{ ocp_installation_dir }}/{{ telco_machineset.name }}-machineset.yaml"
+    mode: u=rw,g=rw,o=r
+  vars:
+    _infrastructure_id: "{{ infrastructure_id }}"
+    _machine_role: "{{ telco_machineset.role | default('worker') }}"
+    _machineset_type: "{{ telco_machineset.type }}"
+    _machineset_replicas: "{{ telco_machineset.replicas }}"
+    _osp_flavor: "{{ telco_machineset.flavor }}"
+    _api_vip_port_ip: "{{ api_ip }}"
+    _ingress_vip_port_ip: "{{ apps_ip }}"
+    _machines_subnet: "{{ machines_subnet_id }}"
+    _machines_network: "{{ machines_subnet_net_id }}"
+    _security_group: "{{ machines_security_group }}"
+    _subnet_id_0: "{{ network_subnet_id_0 }}"
+    _name_suffix_0: "{{ telco_machineset.networks[0].port_name_suffix }}"
+    _network_id_0: "{{ network_id_0 }}"
+    _subnet_id_1: "{{ network_subnet_id_1 }}"
+    _name_suffix_1: "{{ telco_machineset.networks[1].port_name_suffix }}"
+    _network_id_1: "{{ network_id_1 }}"
+
+- name: "Apply telco MachineSet manifest for {{ telco_machineset.name }}"
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    src: "{{ ocp_installation_dir }}/{{ telco_machineset.name }}-machineset.yaml"
+    wait: true
+    wait_timeout: "{{ manifests_wait_timeout }}"
+
+- name: "Wait for cluster health after applying {{ telco_machineset.name }} machineset"
+  block:
+    - name: Wait for MCP updates
+      ansible.builtin.include_role:
+        name: tools_cluster_checks
+        tasks_from: wait_mcp_updated.yml
+      vars:
+        wait_retries: 60
+        wait_delay: 60
+
+    - name: Wait until cluster is healthy
+      ansible.builtin.include_role:
+        name: tools_cluster_checks
+        tasks_from: wait_until_cluster_is_healthy.yml
+
+    - name: Wait until nodes are ready
+      ansible.builtin.include_role:
+        name: tools_cluster_checks
+        tasks_from: wait_until_nodes_ready.yml
+
+    - name: Wait until ClusterOperators are ready
+      ansible.builtin.include_role:
+        name: tools_cluster_checks
+        tasks_from: wait_until_cluster_operators_ready.yml

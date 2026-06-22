@@ -5,3 +5,82 @@ day2ops_report_filename: shiftstack-qa-day2ops-results.xml
 
 # Application Credentials rotation
 app_credential_name: "AppCreds-{{ user_cloud }}"
+
+# Telco MachineSet configuration for SRIOV/DPDK workers
+# Used by the create-telco-machinesets procedure
+telco_machinesets:
+  delete_default_workers: true  # Whether to delete the default worker machineset
+  disable_masters_schedulable: true  # Set mastersSchedulable: false after adding workers
+  machinesets: []  # List of machinesets to create (configure in job definition)
+  # Example machineset configuration:
+  # machinesets:
+  #   - name: sriov
+  #     role: worker
+  #     type: sriov
+  #     replicas: 1
+  #     flavor: worker_0_numa_0
+  #     networks:
+  #       - name: sriov_net_nic0
+  #         port_name_suffix: sriov_net_nic0_direct_worker_port
+  #       - name: sriov_net_nic1
+  #         port_name_suffix: sriov_net_nic1_direct_worker_port
+  #   - name: dpdk
+  #     role: worker
+  #     type: dpdk
+  #     replicas: 1
+  #     flavor: worker_1_numa_1
+  #     networks:
+  #       - name: dpdk_net_nic0
+  #         port_name_suffix: dpdk_net_nic0_normal_worker_port
+  #       - name: dpdk_net_nic1
+  #         port_name_suffix: dpdk_net_nic1_normal_worker_port
+
+# Telco tuning configuration for SRIOV/DPDK workloads
+# Used by the configure-telco-tuning procedure
+telco_tuning:
+  sriov:
+    performance_profile:
+      cpu_isolated: "4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20"
+      cpu_reserved: "0,1,2,3"
+      hugepages_size: "1G"
+      hugepages_count: 7
+      numa_node: 0
+      numa_topology_policy: "best-effort"
+      realtime_kernel: false
+      additional_kernel_args:
+        - nosmt
+        - tsc=reliable
+    networks: []  # List of SRIOV networks for SriovNetworkNodePolicy (configure in job definition)
+    # Example network configuration:
+    # networks:
+    #   - name: sriov_net_nic0_9
+    #     resource_name: sriov9
+    #     device_type: vfio-pci
+    #     num_vfs: 1
+    #   - name: sriov_net_nic1_10
+    #     resource_name: sriov10
+    #     device_type: vfio-pci
+    #     num_vfs: 1
+  dpdk:
+    performance_profile:
+      cpu_isolated: "4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20"
+      cpu_reserved: "0,1,2,3"
+      hugepages_size: "1G"
+      hugepages_count: 7
+      numa_node: 0
+      numa_topology_policy: "best-effort"
+      realtime_kernel: false
+      additional_kernel_args:
+        - nosmt
+        - tsc=reliable
+    networks: []  # List of DPDK networks for SriovNetworkNodePolicy (configure in job definition)
+    # Example network configuration:
+    # networks:
+    #   - name: dpdk_net_nic0_9
+    #     resource_name: dpdk9
+    #     device_type: vfio-pci
+    #     num_vfs: 1
+    #   - name: dpdk_net_nic1_10
+    #     resource_name: dpdk10
+    #     device_type: vfio-pci
+    #     num_vfs: 1
