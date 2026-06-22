@@ -19,15 +19,56 @@
         msg: "'openshift_release_pull_spec' must be set by get_openshift_release_build_name.yml"
       when: openshift_release_pull_spec is not defined or openshift_release_pull_spec == ''
 
-    - name: Extract pull secret from host cluster
+    - name: Check if rhoso_kubeconfig file exists
+      ansible.builtin.stat:
+        path: "{{ rhoso_kubeconfig }}"
+      register: _rhoso_kubeconfig_stat
+
+    - name: Debug kubeconfig and environment info
+      ansible.builtin.debug:
+        msg: |
+          rhoso_kubeconfig path: {{ rhoso_kubeconfig }}
+          rhoso_kubeconfig exists: {{ _rhoso_kubeconfig_stat.stat.exists }}
+          home_dir: {{ home_dir }}
+          KUBECONFIG env: {{ lookup('ansible.builtin.env', 'KUBECONFIG', default='(not set)') }}
+
+    - name: Extract pull secret using rhoso_kubeconfig
       ansible.builtin.shell: >-
         set -o pipefail &&
         oc get secret pull-secret -n openshift-config
         --kubeconfig={{ rhoso_kubeconfig }}
         -o jsonpath='{.data.\.dockerconfigjson}'
         | base64 -d > {{ pull_secret_file }}
-      changed_when: true
+      register: _pull_secret_rhoso
+      ignore_errors: true
       no_log: true
+      when: _rhoso_kubeconfig_stat.stat.exists
+
+    - name: Extract pull secret using default kubeconfig (fallback)
+      ansible.builtin.shell: >-
+        set -o pipefail &&
+        oc get secret pull-secret -n openshift-config
+        -o jsonpath='{.data.\.dockerconfigjson}'
+        | base64 -d > {{ pull_secret_file }}
+      register: _pull_secret_default
+      ignore_errors: true
+      no_log: true
+      when: _rhoso_kubeconfig_stat.stat.exists == false or _pull_secret_rhoso is failed
+
+    - name: Verify pull secret file was created and is valid JSON
+      ansible.builtin.shell: python3 -c "import json; d=json.load(open('{{ pull_secret_file }}')); print(len(d.get('auths',{})), 'registries found')"
+      register: _pull_secret_verify
+      ignore_errors: true
+
+    - name: Fail with diagnostic info if pull secret extraction failed
+      ansible.builtin.fail:
+        msg: |
+          Failed to extract pull secret from host cluster.
+          rhoso_kubeconfig exists: {{ _rhoso_kubeconfig_stat.stat.exists }}
+          rhoso_kubeconfig result: {{ 'skipped' if _pull_secret_rhoso is skipped else ('ok' if _pull_secret_rhoso is success else 'FAILED rc=' + (_pull_secret_rhoso.rc | default('?') | string)) }}
+          default kubeconfig result: {{ 'skipped' if _pull_secret_default is skipped else ('ok' if _pull_secret_default is success else 'FAILED rc=' + (_pull_secret_default.rc | default('?') | string)) }}
+          pull secret validation: {{ _pull_secret_verify.stdout | default('FAILED - ' + _pull_secret_verify.stderr | default('unknown error')) }}
+      when: _pull_secret_verify is failed
 
     - name: Create the installer directory
       ansible.builtin.file:
