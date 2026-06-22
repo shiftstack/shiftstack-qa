@@ -1,5 +1,12 @@
 ---
-- name: Install OpenShift cluster using openshift-install
+- name: Install OpenShift cluster with bootstrap flavor workaround
+  ansible.builtin.include_tasks: ipi_bootstrap_flavor_workaround.yml
+  when:
+    - bootstrap_flavor_override is defined
+    - bootstrap_flavor_override | length > 0
+
+- name: Install OpenShift cluster using openshift-install (standard)
+  when: bootstrap_flavor_override is not defined or bootstrap_flavor_override | length == 0
   block:
     - name: Install Openshift
       ansible.builtin.shell: |
