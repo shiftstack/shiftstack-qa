@@ -1,0 +1,73 @@
+---
+# Workaround for bootstrap flavor configuration (CAPI mode)
+# This allows overriding the bootstrap machine flavor by:
+# 1. Creating manifests (generates cluster-api/machines/ directory)
+# 2. Modifying the bootstrap OpenStackMachine manifest in cluster-api/machines/
+# 3. Running cluster creation with modified manifests
+#
+# Note: In CAPI-based OpenStack installs, bootstrap uses the same flavor as masters
+# (from controlPlane.platform.openstack.type), NOT defaultMachinePlatform.type.
+# This workaround allows using a different (typically smaller) flavor for bootstrap.
+
+- name: Create OpenShift manifests
+  ansible.builtin.shell: |
+    openshift-install create manifests --log-level debug --dir {{ ocp_installation_dir }}
+  environment:
+    OS_CLOUD: "{{ user_cloud }}"
+  changed_when: true
+
+- name: Find bootstrap OpenStackMachine manifest (CAPI mode)
+  ansible.builtin.find:
+    paths: "{{ ocp_installation_dir }}/cluster-api/machines"
+    patterns: "10_inframachine_*-bootstrap.yaml"
+    contains: "kind: OpenStackMachine"
+  register: bootstrap_manifest
+
+- name: Fail if bootstrap manifest not found
+  ansible.builtin.fail:
+    msg: "Bootstrap OpenStackMachine manifest not found in {{ ocp_installation_dir }}/cluster-api/machines"
+  when: bootstrap_manifest.matched == 0
+
+- name: Override bootstrap flavor in manifest
+  ansible.builtin.replace:
+    path: "{{ bootstrap_manifest.files[0].path }}"
+    regexp: '^(\s+flavor:\s+).*$'
+    replace: '\1{{ bootstrap_flavor_override }}'
+  when: bootstrap_flavor_override is defined and bootstrap_flavor_override | length > 0
+
+- name: Display modified bootstrap manifest path
+  ansible.builtin.debug:
+    msg: "Modified bootstrap flavor in {{ bootstrap_manifest.files[0].path }} to {{ bootstrap_flavor_override }}"
+  when: bootstrap_flavor_override is defined and bootstrap_flavor_override | length > 0
+
+- name: Install OpenShift cluster with modified manifests
+  block:
+    - name: Install Openshift
+      ansible.builtin.shell: |
+        openshift-install create cluster --log-level debug --dir {{ ocp_installation_dir }}
+      environment:
+        OS_CLOUD: "{{ user_cloud }}"
+      changed_when: true
+  rescue:
+    - name: Use an openshift-install flag to wait until the cluster is ready
+      ansible.builtin.shell: |
+        openshift-install wait-for install-complete --log-level debug --dir {{ ocp_installation_dir }}
+      environment:
+        OS_CLOUD: "{{ user_cloud }}"
+      changed_when: true
+
+    - name: Remove the bootstrap resources after the OCP installation succeeded
+      ansible.builtin.shell: |
+        openshift-install destroy bootstrap --log-level debug --dir {{ ocp_installation_dir }}
+      environment:
+        OS_CLOUD: "{{ user_cloud }}"
+      changed_when: true
+
+    - name: Mark the openshift tests as UNSTABLE
+      ansible.builtin.include_role:
+        name: tools_stage_results
+        tasks_from: mark_stage_unstable.yml
+      vars:
+        unstable_msg: >-
+          The openshift installation passed but unexpectedly needed the wait-for flag.
+          More info in Jira KURYRQE-1002.
