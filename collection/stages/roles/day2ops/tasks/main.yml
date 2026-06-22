@@ -40,7 +40,7 @@
     mode: u=rw,g=rw,o=r
 
 - name: Run day2ops procedures sequentially
-  ansible.builtin.include_tasks: run_procedure.yml
+  ansible.builtin.include_tasks: "{{ day2ops_run_procedure_task | default('run_procedure.yml') }}"
   vars:
     procedure_task_file: "{{ item }}.yml"
   loop: "{{ day2ops_steps }}"
