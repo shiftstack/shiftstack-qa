@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ dut.pod_name }}
+  namespace: default
+  annotations:
+    irq-load-balancing.crio.io: disable
+    cpu-load-balancing.crio.io: disable
+    cpu-quota.crio.io: disable
+spec:
+  runtimeClassName: {{ dut.runtime_class }}
+  containers:
+  - name: {{ dut.pod_name }}
+    command: ["/bin/sh"]
+    args:
+    - "-c"
+    - >-
+      testpmd
+      -l $(taskset -pc 1 | cut -d: -f2)
+      --in-memory
+      --socket-mem {{ dut.socket_mem | default('1024') }}
+      -n 4
+      --
+      --nb-cores={{ dut.testpmd_nb_cores }}
+      --auto-start
+      --stats-period 10
+{% if dut.testpmd_rxd is defined %}
+      --rxd={{ dut.testpmd_rxd }}
+      --txd={{ dut.testpmd_txd }}
+{% endif %}
+    image: {{ dut.image | default('registry.redhat.io/openshift4/dpdk-base-rhel8:v4.10.0-5') }}
+    securityContext:
+      privileged: true
+      runAsUser: 0
+    resources:
+      requests:
+{% for res in dut.resources %}
+        openshift.io/{{ res.name }}: "{{ res.count }}"
+{% endfor %}
+        memory: {{ dut.memory }}
+        hugepages-{{ dut.hugepages_size | default('1Gi') }}: {{ dut.hugepages }}
+        cpu: '{{ dut.cpu }}'
+      limits:
+{% for res in dut.resources %}
+        openshift.io/{{ res.name }}: "{{ res.count }}"
+{% endfor %}
+        memory: {{ dut.memory }}
+        hugepages-{{ dut.hugepages_size | default('1Gi') }}: {{ dut.hugepages }}
+        cpu: '{{ dut.cpu }}'
+    volumeMounts:
+      - mountPath: /dev/hugepages
+        name: hugepage
+        readOnly: false
+  nodeSelector:
+    {{ dut.node_selector }}: ""
+  volumes:
+  - name: hugepage
+    emptyDir:
+      medium: HugePages
