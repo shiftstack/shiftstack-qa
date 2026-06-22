@@ -28,6 +28,10 @@ spec:
       --rxd={{ dut.testpmd_rxd }}
       --txd={{ dut.testpmd_txd }}
 {% endif %}
+{% if dut.testpmd_rxq is defined %}
+      --rxq={{ dut.testpmd_rxq }}
+      --txq={{ dut.testpmd_txq }}
+{% endif %}
     image: {{ dut.image | default('registry.redhat.io/openshift4/dpdk-base-rhel8:v4.10.0-5') }}
     securityContext:
       privileged: true
