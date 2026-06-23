@@ -27,54 +27,54 @@
       when: openshift_release_pull_spec is not defined or openshift_release_pull_spec == ''
 
     - name: Extract pull secret from host cluster via Kubernetes API
-      ansible.builtin.script:
-        cmd: python3 -
-        stdin: |
-          import yaml, json, base64, subprocess, os, sys
+      ansible.builtin.shell: |
+        python3 << 'PYEOF'
+        import yaml, json, base64, subprocess, os, sys
 
-          kubeconfig_path = "{{ rhoso_kubeconfig }}"
-          output_path = "{{ pull_secret_file }}"
+        kubeconfig_path = "{{ rhoso_kubeconfig }}"
+        output_path = "{{ pull_secret_file }}"
 
-          with open(kubeconfig_path) as f:
-              kc = yaml.safe_load(f)
+        with open(kubeconfig_path) as f:
+            kc = yaml.safe_load(f)
 
-          server = kc['clusters'][0]['cluster']['server']
-          user = kc['users'][0]['user']
+        server = kc['clusters'][0]['cluster']['server']
+        user = kc['users'][0]['user']
 
-          ca_path = '/tmp/k8s-ca.crt'
-          cert_path = '/tmp/k8s-client.crt'
-          key_path = '/tmp/k8s-client.key'
+        ca_path = '/tmp/k8s-ca.crt'
+        cert_path = '/tmp/k8s-client.crt'
+        key_path = '/tmp/k8s-client.key'
 
-          with open(ca_path, 'wb') as f:
-              f.write(base64.b64decode(kc['clusters'][0]['cluster']['certificate-authority-data']))
-          with open(cert_path, 'wb') as f:
-              f.write(base64.b64decode(user['client-certificate-data']))
-          with open(key_path, 'wb') as f:
-              f.write(base64.b64decode(user['client-key-data']))
+        with open(ca_path, 'wb') as f:
+            f.write(base64.b64decode(kc['clusters'][0]['cluster']['certificate-authority-data']))
+        with open(cert_path, 'wb') as f:
+            f.write(base64.b64decode(user['client-certificate-data']))
+        with open(key_path, 'wb') as f:
+            f.write(base64.b64decode(user['client-key-data']))
 
-          result = subprocess.run([
-              'curl', '-s', '--fail',
-              '--cacert', ca_path,
-              '--cert', cert_path,
-              '--key', key_path,
-              f'{server}/api/v1/namespaces/openshift-config/secrets/pull-secret'
-          ], capture_output=True, text=True)
+        result = subprocess.run([
+            'curl', '-s', '--fail',
+            '--cacert', ca_path,
+            '--cert', cert_path,
+            '--key', key_path,
+            f'{server}/api/v1/namespaces/openshift-config/secrets/pull-secret'
+        ], capture_output=True, text=True)
 
-          for f in [ca_path, cert_path, key_path]:
-              os.remove(f)
+        for f in [ca_path, cert_path, key_path]:
+            os.remove(f)
 
-          if result.returncode != 0:
-              print(f"Failed to fetch pull secret from {server}: {result.stderr}", file=sys.stderr)
-              sys.exit(1)
+        if result.returncode != 0:
+            print(f"Failed to fetch pull secret from {server}: {result.stderr}", file=sys.stderr)
+            sys.exit(1)
 
-          data = json.loads(result.stdout)
-          decoded = base64.b64decode(data['data']['.dockerconfigjson']).decode()
-          auths = json.loads(decoded)
+        data = json.loads(result.stdout)
+        decoded = base64.b64decode(data['data']['.dockerconfigjson']).decode()
+        auths = json.loads(decoded)
 
-          with open(output_path, 'w') as f:
-              f.write(decoded)
+        with open(output_path, 'w') as f:
+            f.write(decoded)
 
-          print(f"Pull secret extracted: {len(auths.get('auths', {}))} registries")
+        print(f"Pull secret extracted: {len(auths.get('auths', {}))} registries")
+        PYEOF
       register: _pull_secret_result
       no_log: true
 
