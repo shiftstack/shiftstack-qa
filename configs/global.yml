@@ -167,3 +167,21 @@ upi_playbooks_logs_dir: "{{ upi_playbooks_dir }}/playbooks_logs"
 
 tests:
   default_go_version_target: '1.22.5'
+
+# IPv6 Secondary Interface Networks (used with secondary_ip_protocol: ipv6)
+ipv6_secondary_networks:
+  router_name: 'ipv6-secondary-router'
+  networks:
+    - net_name: slaac
+      subnet_name: subnet-slaac
+      cidr: '2001:db8:2222:5555::/64'
+      ipv6_ra_mode: 'slaac'
+      ipv6_address_mode: 'slaac'
+    - net_name: dhcpstateless
+      subnet_name: subnet-dhcpstateless
+      cidr: '2001:db8:2222:6666::/64'
+      ipv6_ra_mode: 'dhcpv6-stateless'
+      ipv6_address_mode: 'dhcpv6-stateless'
+  projects:
+    - slaac
+    - dhcpstateless
