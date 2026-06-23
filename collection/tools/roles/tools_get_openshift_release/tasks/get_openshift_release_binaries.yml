@@ -3,11 +3,18 @@
 # using `oc adm release extract --tools` instead of the release-controller's
 # file-cache (openshift-release-artifacts), which has no SLA and can get stuck
 # indefinitely during tool extraction.
+#
+# Since the shiftstackclient pod starts with no `oc` binary, we bootstrap one
+# from mirror.openshift.com, extract the pull secret from the host cluster via
+# the Kubernetes API (using the kubeconfig's client certificate), then use
+# `oc adm release extract --tools` to get the version-matched binaries.
 - name: Get the OCP installer and/or client binaries
   vars:
     installer_tarball: "openshift-install-linux-{{ release_name }}.tar.gz"
     client_tarball: "openshift-client-linux-{{ release_name }}.tar.gz"
     pull_secret_file: "{{ home_dir }}/pull-secret.json"
+    bootstrap_oc_dir: "{{ home_dir }}/bootstrap-oc"
+    bootstrap_oc_url: "{{ openshift_mirror_url }}/stable/openshift-client-linux.tar.gz"
   block:
     - name: Fail if release_name var is not defined
       ansible.builtin.fail:
@@ -19,56 +26,82 @@
         msg: "'openshift_release_pull_spec' must be set by get_openshift_release_build_name.yml"
       when: openshift_release_pull_spec is not defined or openshift_release_pull_spec == ''
 
-    - name: Check if rhoso_kubeconfig file exists
-      ansible.builtin.stat:
-        path: "{{ rhoso_kubeconfig }}"
-      register: _rhoso_kubeconfig_stat
+    - name: Extract pull secret from host cluster via Kubernetes API
+      ansible.builtin.script:
+        cmd: python3 -
+        stdin: |
+          import yaml, json, base64, subprocess, os, sys
 
-    - name: Debug kubeconfig and environment info
-      ansible.builtin.debug:
-        msg: |
-          rhoso_kubeconfig path: {{ rhoso_kubeconfig }}
-          rhoso_kubeconfig exists: {{ _rhoso_kubeconfig_stat.stat.exists }}
-          home_dir: {{ home_dir }}
-          KUBECONFIG env: {{ lookup('ansible.builtin.env', 'KUBECONFIG', default='(not set)') }}
+          kubeconfig_path = "{{ rhoso_kubeconfig }}"
+          output_path = "{{ pull_secret_file }}"
 
-    - name: Extract pull secret using rhoso_kubeconfig
-      ansible.builtin.shell: >-
-        set -o pipefail &&
-        oc get secret pull-secret -n openshift-config
-        --kubeconfig={{ rhoso_kubeconfig }}
-        -o jsonpath='{.data.\.dockerconfigjson}'
-        | base64 -d > {{ pull_secret_file }}
-      register: _pull_secret_rhoso
-      ignore_errors: true
+          with open(kubeconfig_path) as f:
+              kc = yaml.safe_load(f)
+
+          server = kc['clusters'][0]['cluster']['server']
+          user = kc['users'][0]['user']
+
+          ca_path = '/tmp/k8s-ca.crt'
+          cert_path = '/tmp/k8s-client.crt'
+          key_path = '/tmp/k8s-client.key'
+
+          with open(ca_path, 'wb') as f:
+              f.write(base64.b64decode(kc['clusters'][0]['cluster']['certificate-authority-data']))
+          with open(cert_path, 'wb') as f:
+              f.write(base64.b64decode(user['client-certificate-data']))
+          with open(key_path, 'wb') as f:
+              f.write(base64.b64decode(user['client-key-data']))
+
+          result = subprocess.run([
+              'curl', '-s', '--fail',
+              '--cacert', ca_path,
+              '--cert', cert_path,
+              '--key', key_path,
+              f'{server}/api/v1/namespaces/openshift-config/secrets/pull-secret'
+          ], capture_output=True, text=True)
+
+          for f in [ca_path, cert_path, key_path]:
+              os.remove(f)
+
+          if result.returncode != 0:
+              print(f"Failed to fetch pull secret from {server}: {result.stderr}", file=sys.stderr)
+              sys.exit(1)
+
+          data = json.loads(result.stdout)
+          decoded = base64.b64decode(data['data']['.dockerconfigjson']).decode()
+          auths = json.loads(decoded)
+
+          with open(output_path, 'w') as f:
+              f.write(decoded)
+
+          print(f"Pull secret extracted: {len(auths.get('auths', {}))} registries")
+      register: _pull_secret_result
       no_log: true
-      when: _rhoso_kubeconfig_stat.stat.exists
 
-    - name: Extract pull secret using default kubeconfig (fallback)
+    - name: Verify pull secret file is valid
       ansible.builtin.shell: >-
-        set -o pipefail &&
-        oc get secret pull-secret -n openshift-config
-        -o jsonpath='{.data.\.dockerconfigjson}'
-        | base64 -d > {{ pull_secret_file }}
-      register: _pull_secret_default
-      ignore_errors: true
-      no_log: true
-      when: _rhoso_kubeconfig_stat.stat.exists == false or _pull_secret_rhoso is failed
-
-    - name: Verify pull secret file was created and is valid JSON
-      ansible.builtin.shell: python3 -c "import json; d=json.load(open('{{ pull_secret_file }}')); print(len(d.get('auths',{})), 'registries found')"
+        python3 -c "import json; d=json.load(open('{{ pull_secret_file }}'));
+        print(len(d.get('auths',{})), 'registries found')"
       register: _pull_secret_verify
-      ignore_errors: true
+      changed_when: false
 
-    - name: Fail with diagnostic info if pull secret extraction failed
-      ansible.builtin.fail:
-        msg: |
-          Failed to extract pull secret from host cluster.
-          rhoso_kubeconfig exists: {{ _rhoso_kubeconfig_stat.stat.exists }}
-          rhoso_kubeconfig result: {{ 'skipped' if _pull_secret_rhoso is skipped else ('ok' if _pull_secret_rhoso is success else 'FAILED rc=' + (_pull_secret_rhoso.rc | default('?') | string)) }}
-          default kubeconfig result: {{ 'skipped' if _pull_secret_default is skipped else ('ok' if _pull_secret_default is success else 'FAILED rc=' + (_pull_secret_default.rc | default('?') | string)) }}
-          pull secret validation: {{ _pull_secret_verify.stdout | default('FAILED - ' + _pull_secret_verify.stderr | default('unknown error')) }}
-      when: _pull_secret_verify is failed
+    - name: Bootstrap oc client from {{ bootstrap_oc_url }}
+      block:
+        - name: Create bootstrap directory
+          ansible.builtin.file:
+            path: "{{ bootstrap_oc_dir }}"
+            state: directory
+            mode: u=rwx,g=rw,o=r
+
+        - name: Download stable oc client from mirror
+          ansible.builtin.unarchive:
+            src: "{{ bootstrap_oc_url }}"
+            dest: "{{ bootstrap_oc_dir }}"
+            remote_src: yes
+          register: _bootstrap_download
+          until: _bootstrap_download is not failed
+          retries: 3
+          delay: 10
 
     - name: Create the installer directory
       ansible.builtin.file:
@@ -79,7 +112,7 @@
     - name: Extract OCP tools from release image {{ openshift_release_pull_spec }}
       ansible.builtin.command:
         cmd: >-
-          oc adm release extract
+          {{ bootstrap_oc_dir }}/oc adm release extract
           --tools
           --registry-config={{ pull_secret_file }}
           --to={{ home_dir }}/{{ release_name }}
@@ -132,4 +165,9 @@
     - name: Remove pull secret file
       ansible.builtin.file:
         path: "{{ pull_secret_file }}"
+        state: absent
+
+    - name: Remove bootstrap oc directory
+      ansible.builtin.file:
+        path: "{{ bootstrap_oc_dir }}"
         state: absent
