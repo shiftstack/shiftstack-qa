@@ -1,0 +1,176 @@
+---
+- name: Apply DHCP MachineConfig to workers
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    definition: "{{ lookup('file', '../files/worker-machineconfig-dhcp.yaml') | from_yaml }}"
+
+- name: Wait for the MCP to finish the cluster updates
+  ansible.builtin.include_role:
+    name: tools_cluster_checks
+    tasks_from: wait_mcp_updated.yml
+  vars:
+    wait_retries: 60
+    wait_delay: 60
+
+- name: Active wait until all the ClusterOperators are ready
+  ansible.builtin.include_role:
+    name: tools_cluster_checks
+    tasks_from: wait_until_cluster_operators_ready.yml
+
+- name: Wait until OCP cluster is healthy
+  ansible.builtin.include_role:
+    name: tools_cluster_checks
+    tasks_from: wait_until_cluster_is_healthy.yml
+
+- name: Get OCP worker nodes
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
+    api_version: v1
+    kind: Node
+    label_selectors:
+      - node-role.kubernetes.io/worker
+  register: workers
+
+- name: Store the OCP worker node names
+  ansible.builtin.set_fact:
+    ocp_workers: "{{ workers | json_query('resources[*].metadata.name') | sort }}"
+    num_workers: "{{ workers.resources | length }}"
+
+- name: Discover IPv6 interfaces on first worker
+  ansible.builtin.shell: |
+    set -o pipefail && \
+    oc adm node-logs {{ ocp_workers[0] }} | \
+    grep '{{ item.cidr | regex_replace('::/64$', '') }}' | \
+    grep dev | \
+    sed 's/.*{{ item.cidr | regex_replace('::/64$', '') }}::.* dev \(\S\+\).*/\1/g' | \
+    tail -1
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+  loop: "{{ ipv6_secondary_networks.networks }}"
+  register: ipv6_interfaces_results
+  changed_when: false
+  retries: 10
+  delay: 30
+  until: ipv6_interfaces_results.stdout != ""
+
+- name: Store IPv6 interface names
+  ansible.builtin.set_fact:
+    ipv6_interfaces: "{{ ipv6_interfaces_results.results | map(attribute='stdout') | list }}"
+
+- name: Display discovered IPv6 interfaces
+  ansible.builtin.debug:
+    var: ipv6_interfaces
+
+- name: Template CNO macvlan patch
+  ansible.builtin.template:
+    src: network-macvlan.yml.j2
+    dest: "/tmp/network-macvlan.yml"
+    mode: u=rw,g=rw,o=r
+
+- name: Create OCP projects for IPv6 network testing
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    api_version: project.openshift.io/v1
+    kind: Project
+    name: "{{ item }}"
+    state: present
+  loop: "{{ ipv6_secondary_networks.projects }}"
+
+- name: Patch CNO with macvlan additionalNetworks
+  ansible.builtin.shell: |
+    set -o pipefail && \
+    oc patch network.operator cluster --patch "$(cat /tmp/network-macvlan.yml)" --type merge
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+  changed_when: true
+
+- name: Verify NetworkAttachmentDefinition CRs exist
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
+    api_version: k8s.cni.cncf.io/v1
+    kind: NetworkAttachmentDefinition
+  register: network_attachments
+  until:
+    - network_attachments is defined
+    - network_attachments is not failed
+    - network_attachments | json_query('resources[*].metadata.name') | list | sort == ipv6_secondary_networks.projects | sort
+  retries: 10
+  delay: 30
+
+- name: Template IPv6 test deployments
+  ansible.builtin.template:
+    src: ipv6-deployment.yml.j2
+    dest: "/tmp/ipv6-deployment-{{ item }}.yml"
+    mode: u=rw,g=rw,o=r
+  vars:
+    ipv6_project: "{{ item }}"
+  loop: "{{ ipv6_secondary_networks.projects }}"
+
+- name: Deploy hello-openshift pods with IPv6 network annotation
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    src: "/tmp/ipv6-deployment-{{ item }}.yml"
+    wait: true
+    wait_timeout: 300
+    namespace: "{{ item }}"
+  loop: "{{ ipv6_secondary_networks.projects }}"
+
+- name: Wait for pods to be ready in each IPv6 namespace
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
+    kind: Pod
+    namespace: "{{ item }}"
+    label_selectors:
+      - app=hello-openshift
+    field_selectors:
+      - status.phase=Running
+  register: running_pods
+  until: running_pods.resources | length == num_workers | int
+  retries: 20
+  delay: 15
+  loop: "{{ ipv6_secondary_networks.projects }}"
+
+- name: Get IPv6 network IDs for port security operations
+  openstack.cloud.networks_info:
+    cloud: "{{ user_cloud }}"
+  register: all_openstack_networks
+
+- name: Build list of IPv6 secondary network IDs
+  ansible.builtin.set_fact:
+    ipv6_net_ids: "{{ all_openstack_networks.networks | selectattr('name', 'in', ipv6_secondary_networks.networks | map(attribute='net_name') | list) | map(attribute='id') | list }}"
+
+- name: Get worker ports on IPv6 secondary networks
+  openstack.cloud.port_info:
+    cloud: "{{ user_cloud }}"
+    filters:
+      device_owner: compute:nova
+  register: all_compute_ports
+
+- name: Filter worker ports on IPv6 networks
+  ansible.builtin.set_fact:
+    ipv6_worker_ports: "{{ all_compute_ports.ports | selectattr('network_id', 'in', ipv6_net_ids) | list }}"
+
+- name: Disable port security on worker IPv6 ports
+  openstack.cloud.port:
+    cloud: "{{ user_cloud }}"
+    state: present
+    name: "{{ item.id }}"
+    port_security_enabled: false
+    no_security_groups: true
+  loop: "{{ ipv6_worker_ports }}"
+  loop_control:
+    label: "{{ item.id }}"
+
+- name: Verify pod-to-pod IPv6 connectivity on each network
+  ansible.builtin.include_tasks: procedures/verify_ipv6_connectivity.yml
+  loop: "{{ ipv6_secondary_networks.projects }}"
+  loop_control:
+    loop_var: ipv6_namespace
+
+- name: Verify external IPv6 reachability from worker nodes
+  ansible.builtin.include_tasks: procedures/verify_ipv6_external_reachability.yml
+  loop: "{{ ipv6_secondary_networks.projects }}"
+  loop_control:
+    loop_var: ipv6_namespace

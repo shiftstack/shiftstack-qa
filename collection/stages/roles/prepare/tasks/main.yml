@@ -2,7 +2,7 @@
 - name: Validate openshift topology network configuration
   vars:
     primary_ip_protocol: "{{ ocp_deployment_topology.primary_ip_protocol | default('') }}"
-    network_secondary: "{{ ocp_deployment_topology.network_secondary | default('') }}"
+    network_secondary: "{{ ocp_deployment_topology.secondary_ip_protocol | default('') }}"
   ansible.builtin.assert:
     that:
       - primary_ip_protocol in ['ipv4', 'ipv6']
@@ -43,6 +43,10 @@
 
 - name: Prepare setup for accessing the OCP Cluster
   ansible.builtin.include_tasks: external_access.yml
+
+- name: Create IPv6 secondary interface networks
+  ansible.builtin.include_tasks: create_ipv6_secondary_networks.yml
+  when: ocp_deployment_topology.secondary_ip_protocol == 'ipv6'
 
 - name: Deploy and configure an installer host VM and update the inventory
   ansible.builtin.include_role:

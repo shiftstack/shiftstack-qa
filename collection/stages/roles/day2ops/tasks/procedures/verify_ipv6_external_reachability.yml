@@ -1,0 +1,41 @@
+---
+- name: Get pods in namespace {{ ipv6_namespace }} for external reachability test
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
+    kind: Pod
+    namespace: "{{ ipv6_namespace }}"
+    label_selectors:
+      - app=hello-openshift
+    field_selectors:
+      - status.phase=Running
+  register: ipv6_ext_pods
+
+- name: Store pod names for external test
+  ansible.builtin.set_fact:
+    ipv6_ext_pod_names: "{{ ipv6_ext_pods.resources | map(attribute='metadata.name') | list }}"
+
+- name: Get pod IPv6 addresses for external test
+  ansible.builtin.shell: |
+    set -o pipefail && \
+    oc exec {{ item }} -n {{ ipv6_namespace }} -- ip -6 addr show dev net1 scope global | \
+    awk '/inet6/{print $2}' | cut -f1 -d'/'
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+  loop: "{{ ipv6_ext_pod_names }}"
+  register: ext_pod_ipv6_results
+  changed_when: false
+
+- name: Verify external IPv6 reachability from worker node to pods in {{ ipv6_namespace }}
+  ansible.builtin.shell: |
+    oc debug node/{{ ocp_workers[0] }} -- chroot /host curl -s --connect-timeout 10 http://[{{ item.stdout }}]:8080
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+  loop: "{{ ext_pod_ipv6_results.results }}"
+  loop_control:
+    label: "{{ item.item }}"
+  when: item.stdout != ""
+  register: external_check
+  changed_when: false
+  retries: 5
+  delay: 10
+  until: external_check.stdout is search('Hello OpenShift!')
