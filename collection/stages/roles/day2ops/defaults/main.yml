@@ -9,7 +9,7 @@ app_credential_name: "AppCreds-{{ user_cloud }}"
 # Telco MachineSet configuration for SRIOV/DPDK workers
 # Used by the create-telco-machinesets procedure
 telco_machinesets:
-  delete_default_workers: true  # Whether to delete the default worker machineset
+  delete_default_workers: false  # Whether to delete the default worker machineset
   disable_masters_schedulable: true  # Set mastersSchedulable: false after adding workers
   machinesets: []  # List of machinesets to create (configure in job definition)
   # Example machineset configuration:

@@ -67,6 +67,12 @@
     apps_ip: "{{ ic_content.platform.openstack.ingressFloatingIP }}"
     machines_subnet_name: "{{ ic_content.platform.openstack.machinesSubnet | default('') }}"
 
+- name: Verify machinesSubnet is defined in install-config
+  ansible.builtin.assert:
+    that:
+      - machines_subnet_name | length > 0
+    fail_msg: "machinesSubnet must be defined in install-config for telco MachineSet creation"
+
 - name: Get the machinesSubnet details from OpenStack
   openstack.cloud.subnets_info:
     cloud: "{{ user_cloud }}"
