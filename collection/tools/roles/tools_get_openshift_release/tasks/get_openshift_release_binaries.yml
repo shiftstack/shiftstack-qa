@@ -4,10 +4,10 @@
 # file-cache (openshift-release-artifacts), which has no SLA and can get stuck
 # indefinitely during tool extraction.
 #
-# Since the shiftstackclient pod starts with no `oc` binary, we bootstrap one
-# from mirror.openshift.com, extract the pull secret from the host cluster via
-# the Kubernetes API (using the kubeconfig's client certificate), then use
-# `oc adm release extract --tools` to get the version-matched binaries.
+# The pull secret is extracted from the host cluster via the Kubernetes API
+# using the kubeconfig's client certificate. If `oc` is not already present
+# in the pod (cold-start), a stable client is bootstrapped from
+# mirror.openshift.com before running `oc adm release extract --tools`.
 - name: Get the OCP installer and/or client binaries
   vars:
     installer_tarball: "openshift-install-linux-{{ release_name }}.tar.gz"
@@ -29,7 +29,7 @@
     - name: Extract pull secret from host cluster via Kubernetes API
       ansible.builtin.shell: |
         python3 << 'PYEOF'
-        import yaml, json, base64, subprocess, os, sys
+        import yaml, json, base64, subprocess, os, sys, tempfile
 
         kubeconfig_path = "{{ rhoso_kubeconfig }}"
         output_path = "{{ pull_secret_file }}"
@@ -40,27 +40,33 @@
         server = kc['clusters'][0]['cluster']['server']
         user = kc['users'][0]['user']
 
-        ca_path = '/tmp/k8s-ca.crt'
-        cert_path = '/tmp/k8s-client.crt'
-        key_path = '/tmp/k8s-client.key'
+        try:
+            cert_data = user['client-certificate-data']
+            key_data = user['client-key-data']
+        except KeyError:
+            print(f"rhoso_kubeconfig must use client-certificate auth, "
+                  f"found auth keys: {list(user.keys())}", file=sys.stderr)
+            sys.exit(1)
 
-        with open(ca_path, 'wb') as f:
-            f.write(base64.b64decode(kc['clusters'][0]['cluster']['certificate-authority-data']))
-        with open(cert_path, 'wb') as f:
-            f.write(base64.b64decode(user['client-certificate-data']))
-        with open(key_path, 'wb') as f:
-            f.write(base64.b64decode(user['client-key-data']))
+        with tempfile.TemporaryDirectory() as tmpdir:
+            ca_path = os.path.join(tmpdir, 'ca.crt')
+            cert_path = os.path.join(tmpdir, 'client.crt')
+            key_path = os.path.join(tmpdir, 'client.key')
 
-        result = subprocess.run([
-            'curl', '-s', '--fail',
-            '--cacert', ca_path,
-            '--cert', cert_path,
-            '--key', key_path,
-            f'{server}/api/v1/namespaces/openshift-config/secrets/pull-secret'
-        ], capture_output=True, text=True)
+            with open(ca_path, 'wb') as f:
+                f.write(base64.b64decode(kc['clusters'][0]['cluster']['certificate-authority-data']))
+            with open(cert_path, 'wb') as f:
+                f.write(base64.b64decode(cert_data))
+            with open(key_path, 'wb') as f:
+                f.write(base64.b64decode(key_data))
 
-        for f in [ca_path, cert_path, key_path]:
-            os.remove(f)
+            result = subprocess.run([
+                'curl', '-s', '--fail',
+                '--cacert', ca_path,
+                '--cert', cert_path,
+                '--key', key_path,
+                f'{server}/api/v1/namespaces/openshift-config/secrets/pull-secret'
+            ], capture_output=True, text=True)
 
         if result.returncode != 0:
             print(f"Failed to fetch pull secret from {server}: {result.stderr}", file=sys.stderr)
@@ -85,7 +91,14 @@
       register: _pull_secret_verify
       changed_when: false
 
+    - name: Check if oc is already available
+      ansible.builtin.command: which oc
+      register: _oc_available
+      ignore_errors: true
+      changed_when: false
+
     - name: Bootstrap oc client from {{ bootstrap_oc_url }}
+      when: _oc_available is failed
       block:
         - name: Create bootstrap directory
           ansible.builtin.file:
@@ -103,6 +116,10 @@
           retries: 3
           delay: 10
 
+    - name: Set oc binary path
+      ansible.builtin.set_fact:
+        _oc_bin: "{{ (bootstrap_oc_dir + '/oc') if _oc_available is failed else 'oc' }}"
+
     - name: Create the installer directory
       ansible.builtin.file:
         path: "{{ home_dir }}/{{ release_name }}"
@@ -112,7 +129,8 @@
     - name: Extract OCP tools from release image {{ openshift_release_pull_spec }}
       ansible.builtin.command:
         cmd: >-
-          {{ bootstrap_oc_dir }}/oc adm release extract
+          timeout 900
+          {{ _oc_bin }} adm release extract
           --tools
           --registry-config={{ pull_secret_file }}
           --to={{ home_dir }}/{{ release_name }}
