@@ -8,7 +8,7 @@
 - name: Write SSH deploy key temporarily
   ansible.builtin.copy:
     content: "{{ openshift_tests_private_ssh_key }}"
-    dest: "{{ ansible_env.HOME }}/.ssh/openshift_tests_private_deploy_key"
+    dest: "{{ lookup('env', 'HOME') }}/.ssh/openshift_tests_private_deploy_key"
     mode: '0600'
   no_log: true
 
@@ -17,17 +17,16 @@
     repo: "git@github.com:openshift/openshift-tests-private.git"
     version: "release-{{ discovered_openshift_release }}"
     dest: "{{ egressip_test_dir }}"
-    key_file: "{{ ansible_env.HOME }}/.ssh/openshift_tests_private_deploy_key"
+    key_file: "{{ lookup('env', 'HOME') }}/.ssh/openshift_tests_private_deploy_key"
     accept_hostkey: yes
+    force: yes
 
 - name: Remove SSH deploy key
   ansible.builtin.file:
-    path: "{{ ansible_env.HOME }}/.ssh/openshift_tests_private_deploy_key"
+    path: "{{ lookup('env', 'HOME') }}/.ssh/openshift_tests_private_deploy_key"
     state: absent
 
 - name: Setup Go version
   ansible.builtin.include_role:
     name: shiftstack.tools.tools_openshift_tests
-    tasks_from: setup_go_version.yml
-  vars:
-    go_version_target: "{{ go_version_target }}"
+    tasks_from: install_go.yml

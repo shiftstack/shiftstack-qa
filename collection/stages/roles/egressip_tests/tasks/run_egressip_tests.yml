@@ -59,7 +59,7 @@
   vars:
     input_tests_list: "{{ egressip_test_results_dir }}/allowlist.yaml"
     output_tests_list: "{{ allowlist_path }}"
-    yaml_format_based_on_ocp_version: true
+    yaml_format_based_on_ocp_version: false
 
 - name: Prepare the tests list to run
   shiftstack.tools.filter_tests_list:
