@@ -42,7 +42,7 @@ custom_subnet: "{{ telco_env.management_network }}"
 project:
   name: "{{ user_cloud }}"
   user: user
-  password: redhat
+  password: "{{ telco_project_pass }}"
   role: member
   swift_role: swiftoperator
   domain_name: Default
