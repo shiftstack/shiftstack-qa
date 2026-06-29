@@ -23,24 +23,24 @@
 
 - name: Save the cloud provider ConfigMap in a file
   ansible.builtin.shell: |
-    oc get cm cloud-provider-config -n openshift-config -o yaml > "{{ config_orig_path }}"
+    oc get cm cloud-conf -n openshift-cloud-controller-manager -o yaml > "{{ config_orig_path }}"
   changed_when: false
   environment:
     KUBECONFIG: "{{ kubeconfig }}"
 
-- name: Read original cloud-provider-config
+- name: Read original cloud-conf ConfigMap
   ansible.builtin.shell: |
     cat "{{ config_orig_path }}"
   register: result
   changed_when: false
 
-- name: Set variable from cloud-provider-config to manipulate it
+- name: Set variable from cloud-conf ConfigMap to manipulate it
   ansible.builtin.set_fact:
     original_cm_yaml: "{{ result.stdout | from_yaml }}"
 
-- name: Save the config.ini in a file for modifications
+- name: Save the cloud.conf in a file for modifications
   ansible.builtin.copy:
-    content: "{{ original_cm_yaml.data.config }}"
+    content: "{{ original_cm_yaml.data['cloud.conf'] }}"
     dest: "{{ config_ini_path }}"
     mode: u=rwx,g=rw,o=r
 
@@ -152,52 +152,33 @@
 
 - name: Apply the modified cloud provider ConfigMap
   ansible.builtin.shell: |
-    oc replace --force --wait --filename "{{ config_to_apply_path }}"
+    oc apply -f "{{ config_to_apply_path }}"
   changed_when: true
   environment:
     KUBECONFIG: "{{ kubeconfig }}"
 
 - name: Save the resulting cloud provider ConfigMap after application in a file
   ansible.builtin.shell: |
-    oc get configmap/cloud-provider-config -n openshift-config -o yaml > "{{ config_applied_path }}"
+    oc get configmap/cloud-conf -n openshift-cloud-controller-manager -o yaml > "{{ config_applied_path }}"
   changed_when: false
   environment:
     KUBECONFIG: "{{ kubeconfig }}"
 
-- name: Wait until the configuration is succesfully applied in the cluster
+- name: Restart cloud-controller-manager deployment to apply configuration
   block:
-    - name: Wait until some node is unschedulable (oc get nodes --field-selector spec.unschedulable=true)
-      kubernetes.core.k8s_info:
-        kubeconfig: "{{ kubeconfig }}"
-        api_version: v1
-        kind: Node
-        field_selectors:
-          - spec.unschedulable=true
-      register: unschedulable_nodes
-      until:
-        - unschedulable_nodes.resources is defined
-        - unschedulable_nodes.resources|length != 0
-      retries: 30
-      delay: 10
+    - name: Trigger rollout restart of openstack-cloud-controller-manager
+      ansible.builtin.shell: |
+        oc rollout restart deployment/openstack-cloud-controller-manager -n openshift-cloud-controller-manager
+      changed_when: true
+      environment:
+        KUBECONFIG: "{{ kubeconfig }}"
 
-    - name: Wait until there are no unschedulable nodes - this means the config has been applied
-      ansible.builtin.include_role:
-        name: tools_cluster_checks
-        tasks_from: wait_until_no_unschedulable_nodes.yml
-      vars:
-        wait_retries: 30
-        wait_delay: 120
-      loop: "{{ range(3) | list }}"
-      loop_control:
-        pause: 120
-
-    - name: Check that there are no unschedulable nodes and cluster is healthy
-      ansible.builtin.include_role:
-        name: tools_cluster_checks
-        tasks_from: wait_until_no_unschedulable_nodes.yml
-      vars:
-        wait_retries: 1
-        wait_delay: 0
+    - name: Wait for openstack-cloud-controller-manager rollout to complete
+      ansible.builtin.shell: |
+        oc rollout status deployment/openstack-cloud-controller-manager -n openshift-cloud-controller-manager --timeout=5m
+      changed_when: false
+      environment:
+        KUBECONFIG: "{{ kubeconfig }}"
 
   rescue:
     - name: Get cluster debug information
