@@ -58,6 +58,15 @@
   ansible.builtin.set_fact:
     ipv6_interfaces: "{{ ipv6_interfaces_results.results | map(attribute='stdout') | list }}"
 
+- name: Validate discovered IPv6 interfaces are not empty
+  ansible.builtin.assert:
+    that:
+      - ipv6_interfaces | length == ipv6_secondary_networks.networks | length
+      - ipv6_interfaces | select('equalto', '') | list | length == 0
+    fail_msg: |
+      Failed to discover IPv6 interfaces on worker {{ ocp_workers[0] }}.
+      Expected {{ ipv6_secondary_networks.networks | length }} interfaces, got: {{ ipv6_interfaces }}
+
 - name: Display discovered IPv6 interfaces
   ansible.builtin.debug:
     var: ipv6_interfaces
@@ -174,3 +183,12 @@
   loop: "{{ ipv6_secondary_networks.projects }}"
   loop_control:
     loop_var: ipv6_namespace
+
+- name: Cleanup temporary manifest files
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop: "{{ ['/tmp/network-macvlan.yml'] + ipv6_secondary_networks.projects | map('regex_replace', '^(.*)$', '/tmp/ipv6-deployment-\\1.yml') | list }}"
+  loop_control:
+    label: "{{ item }}"
+  ignore_errors: true  # noqa: ignore-errors
