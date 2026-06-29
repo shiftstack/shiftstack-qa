@@ -27,7 +27,8 @@
 
 - name: Verify external IPv6 reachability from worker node to pods in {{ ipv6_namespace }}
   ansible.builtin.shell: |
-    oc debug node/{{ ocp_workers[0] }} -- chroot /host curl -s --connect-timeout 10 http://[{{ item.stdout }}]:8080
+    set -o pipefail && \
+    timeout 120 oc debug node/{{ ocp_workers[0] }} -- chroot /host curl -s --connect-timeout 10 http://[{{ item.stdout }}]:8080
   environment:
     KUBECONFIG: "{{ kubeconfig }}"
   loop: "{{ ext_pod_ipv6_results.results }}"

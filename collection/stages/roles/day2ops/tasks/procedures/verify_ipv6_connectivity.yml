@@ -39,8 +39,18 @@
   ansible.builtin.debug:
     var: ipv6_pod_ips
 
+- name: Validate all pods have IPv6 addresses
+  ansible.builtin.assert:
+    that:
+      - ipv6_pod_ips | length > 0
+      - ipv6_pod_ips.values() | select('equalto', '') | list | length == 0
+    fail_msg: |
+      Not all pods in {{ ipv6_namespace }} received IPv6 addresses.
+      Pod IPs: {{ ipv6_pod_ips }}
+
 - name: Check pod-to-pod IPv6 connectivity in {{ ipv6_namespace }}
   ansible.builtin.shell: |
+    set -o pipefail && \
     oc exec {{ item[0] }} -n {{ ipv6_namespace }} -- /bin/curl -s --connect-timeout 10 http://[{{ item[1] }}]:8080
   environment:
     KUBECONFIG: "{{ kubeconfig }}"
