@@ -21,6 +21,10 @@ project:
     load_balancers: 1000
     load_balancer_listeners: 5000
     load_balancer_pools: 5000
+# Application Credentials
+use_application_credentials: false
+app_credential_name: "AppCreds-{{ user_cloud }}"
+
 ocp_api_description: "API {{ ocp_cluster_name }}.{{ ocp_base_domain }}"
 ocp_apps_description: "APPS {{ ocp_cluster_name }}.{{ ocp_base_domain }}"
 ocp_bootstrap_fip_description: "Bootstrap {{ ocp_cluster_name }}.{{ ocp_base_domain }}"

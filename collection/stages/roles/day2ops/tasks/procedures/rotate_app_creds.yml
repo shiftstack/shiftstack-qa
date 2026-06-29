@@ -1,0 +1,45 @@
+---
+# Source: https://github.com/shiftstack/installer/blob/master/docs/user/openstack/README.md#openstack-credentials-update
+- name: Restore user/password auth to ensure full permissions for app credential creation
+  ansible.builtin.include_role:
+    name: shiftstack.stages.prepare
+    tasks_from: clouds.yml
+
+- name: Create application credentials and update clouds.yaml
+  ansible.builtin.include_role:
+    name: shiftstack.stages.prepare
+    tasks_from: app_creds.yml
+
+- name: Rotate OpenShift Cloud Credentials
+  ansible.builtin.shell: |
+    set -o pipefail && \
+    cat {{ clouds_yaml_file_path }} | sed 's/{{ user_cloud }}:/openstack:/' | \
+    oc set data -n kube-system secret/openstack-credentials clouds.yaml=-
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+  changed_when: true
+
+- name: Get OpenStack Credentials from OCP cluster
+  ansible.builtin.shell: |
+    set -o pipefail && \
+    oc get secret -n kube-system openstack-credentials -o json | jq -r '.data."clouds.yaml"' | base64 -d
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+  register: ocp_creds_output
+  changed_when: false
+
+- name: Parse OCP credentials
+  ansible.builtin.set_fact:
+    ocp_creds: "{{ ocp_creds_output.stdout | from_yaml }}"
+
+- name: Verify credentials rotated to application credentials
+  ansible.builtin.assert:
+    that:
+      - ocp_creds.clouds.openstack.auth_type == 'v3applicationcredential'
+    fail_msg: "Credential rotation failed — auth_type is not v3applicationcredential"
+    success_msg: "Credential rotation verified — auth_type is v3applicationcredential"
+
+- name: Wait until the Cluster Operators are healthy
+  ansible.builtin.include_role:
+    name: tools_cluster_checks
+    tasks_from: wait_until_cluster_operators_ready.yml

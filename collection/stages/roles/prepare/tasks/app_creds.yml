@@ -1,0 +1,76 @@
+---
+- name: Delete stale temporary Application Credential from interrupted previous run
+  ansible.builtin.shell: |
+    openstack application credential delete {{ app_credential_name }}-new
+  environment:
+    OS_CLOUD: "{{ user_cloud }}"
+  failed_when: false
+  changed_when: false
+
+- name: Create new Application Credential
+  ansible.builtin.shell: |
+    openstack application credential create \
+      --description "App Creds - All roles" \
+      "{{ app_credential_name }}-new" -f yaml
+  environment:
+    OS_CLOUD: "{{ user_cloud }}"
+  register: app_cred_output
+  changed_when: true
+
+- name: Parse Application Credential output
+  ansible.builtin.set_fact:
+    app_cred_info: "{{ app_cred_output.stdout | from_yaml }}"
+
+- name: Read current clouds.yaml
+  ansible.builtin.slurp:
+    src: "{{ clouds_yaml_file_path }}"
+  register: clouds_yaml_file
+
+- name: Set clouds.yaml fact
+  ansible.builtin.set_fact:
+    clouds_yaml_params: "{{ clouds_yaml_file.content | b64decode | from_yaml }}"
+
+- name: Build updated cloud entry with application credentials
+  ansible.builtin.set_fact:
+    updated_cloud_entry:
+      auth:
+        auth_url: "{{ clouds_yaml_params.clouds[user_cloud].auth.auth_url }}"
+        application_credential_id: "{{ app_cred_info.id }}"
+        application_credential_secret: "{{ app_cred_info.secret }}"
+      auth_type: v3applicationcredential
+      identity_api_version: "{{ clouds_yaml_params.clouds[user_cloud].identity_api_version | default('3') }}"
+      region_name: "{{ clouds_yaml_params.clouds[user_cloud].region_name | default(omit) }}"
+
+- name: Add cacert to updated cloud entry
+  ansible.builtin.set_fact:
+    updated_cloud_entry: "{{ updated_cloud_entry | combine({'cacert': clouds_yaml_params.clouds[user_cloud].cacert}, recursive=True) }}"
+  when: clouds_yaml_params.clouds[user_cloud].cacert is defined
+
+- name: Update clouds.yaml with application credentials
+  ansible.builtin.set_fact:
+    clouds_yaml_params: "{{ {'clouds': (clouds_yaml_params.clouds | combine({user_cloud: updated_cloud_entry}))} }}"
+
+- name: Write updated clouds.yaml
+  ansible.builtin.copy:
+    content: "{{ clouds_yaml_params | to_nice_yaml(indent=4) }}"
+    dest: "{{ clouds_yaml_file_path }}"
+    mode: u=rw,g=rw,o=r
+
+- name: Update clouds.yaml copy in osp_config_dir
+  ansible.builtin.copy:
+    content: "{{ clouds_yaml_params | to_nice_yaml(indent=4) }}"
+    dest: "{{ osp_config_dir }}/clouds.yaml"
+    mode: u=rw,g=rw,o=r
+  when: osp_config_dir is defined
+
+- name: Validate new application credentials work
+  openstack.cloud.auth:
+    cloud: "{{ user_cloud }}"
+
+- name: Delete previous Application Credential
+  ansible.builtin.shell: |
+    openstack application credential delete {{ app_credential_name }}
+  environment:
+    OS_CLOUD: "{{ user_cloud }}"
+  failed_when: false
+  changed_when: false
