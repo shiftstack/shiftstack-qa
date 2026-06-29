@@ -6,3 +6,5 @@ cpms_test_results_dir: "{{ artifacts_dir }}/cpms_test-results"
 cpms_test_testsuite_name: cpms
 cpms_tests_go_version: "{{ tests.default_go_version_target }}"
 cpms_test_junit_filename: junit_control_plane_machine_set_operator.xml
+cpms_test_suites:
+  - e2e-presubmit

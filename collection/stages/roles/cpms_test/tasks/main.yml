@@ -9,15 +9,11 @@
     results_dir: "{{ cpms_test_results_dir }}"
     go_version_target: "{{ cpms_tests_go_version }}"
 
-- name: Run CPMS e2e-presubmit tests
+- name: Run CPMS {{ item }} tests
   ansible.builtin.include_tasks: run_cpms_test.yml
   vars:
-    cpms_tests_type: e2e-presubmit
-
-- name: Run CPMS e2e-periodic tests
-  ansible.builtin.include_tasks: run_cpms_test.yml
-  vars:
-    cpms_tests_type: e2e-periodic
+    cpms_tests_type: "{{ item }}"
+  loop: "{{ cpms_test_suites }}"
 
 - name: Remove the source directory after tests complete
   ansible.builtin.file:
