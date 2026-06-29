@@ -1,0 +1,8 @@
+---
+# defaults file for egressip_tests
+egressip_test_name: "openshift-tests-private"
+egressip_test_dir: "{{ artifacts_dir }}/{{ egressip_test_name }}"
+egressip_test_executable: "{{ egressip_test_dir }}/bin/extended-platform-tests"
+egressip_test_results_dir: "{{ artifacts_dir }}/egressip_tests"
+egressip_allowlist_file: "{{ role_path }}/files/egressip-allowlist.yaml"
+egressip_tests_go_version: "{{ tests.default_go_version_target }}"

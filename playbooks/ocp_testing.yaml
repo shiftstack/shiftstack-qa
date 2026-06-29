@@ -103,3 +103,7 @@
 - name: Run Openshift Manila CSI Tests on OpenShift
   ansible.builtin.import_playbook: plays/manila_csi.yaml
   when: "'manila_csi_tests' in stages"
+
+- name: Run EgressIP tests on OpenShift
+  ansible.builtin.import_playbook: plays/egressip_tests.yaml
+  when: "'egressip_tests' in stages"

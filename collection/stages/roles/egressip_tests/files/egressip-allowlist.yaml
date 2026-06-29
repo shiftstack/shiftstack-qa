@@ -1,0 +1,149 @@
+---
+all_allow_list: &all_allow_list
+  {}
+
+sdn_list: &sdn_tests
+  <<: *all_allow_list
+  ".*Author:jechen-High-46555-Medium-46962-[Automatic EgressIP] Random egressIP is used on a pod that is not on a node hosting an egressIP, and random outages with egressIP . [.*":
+    description: "https://issues.redhat.com/browse/KURYRQE-1007"
+  ".*Author:jechen-High-46556-[Automatic EgressIP] A pod that is on a node hosting egressIP, it will always use the egressIP of the node . [.*":
+    description: "https://issues.redhat.com/browse/KURYRQE-1007"
+  ".*Author:jechen-High-46557-[Manual EgressIP] Random egressIP is used on a pod that is not on a node hosting an egressIP . [.*":
+    description: "https://issues.redhat.com/browse/KURYRQE-1007"
+  ".*Author:jechen-High-46558-[Manual EgressIP] A pod that is on a node hosting egressIP, it will always use the egressIP of the node . [.*":
+    description: "https://issues.redhat.com/browse/KURYRQE-1007"
+  ".*Author:jechen-High-47462-EgressNetworkPolicy should work well with egressIP [.*":
+    description: "https://issues.redhat.com/browse/KURYRQE-1007"
+  ".*Author:jechen-Medium-47461-Should not be able to access the node via the egressIP [.*":
+    description: "https://issues.redhat.com/browse/KURYRQE-1007"
+  ".*Author:jechen-High-46559-[Automatic EgressIP] If some egress node is unavailable, pods continue use other available egressIPs after a short delay. [.*":
+    description: "https://issues.redhat.com/browse/KURYRQE-1007"
+  ".*Author:jechen-High-46561-[Manual EgressIP] If some egress node is unavailable, pods continue use other available egressIPs after a short delay. [.*":
+    description: "https://issues.redhat.com/browse/KURYRQE-1007"
+  ".*Author:jechen-High-46701-High-47470-Pods will lose external access if same egressIP is assigned to different netnamespace, error should be logged on master node. [.*":
+    description: "https://issues.redhat.com/browse/KURYRQE-1007"
+  ".*Author:jechen-High-46705-The egressIP should still work fine after the node or network service restarted. [.*":
+    description: "https://issues.redhat.com/browse/KURYRQE-1007"
+  ".*Author:jechen-High-46960- EgressIP can failover if the node is NotReady. [.*":
+    description: "https://issues.redhat.com/browse/KURYRQE-1007"
+  ".*Author:jechen-High-47455-The egressIP could be assigned to project automatically once it is defined in hostsubnet egressCIDR. [.*":
+    description: "https://issues.redhat.com/browse/KURYRQE-1007"
+  ".*Author:jechen-High-47464-The egressIP will be unavailable if it is set to multiple hostsubnets. [.*":
+    description: "https://issues.redhat.com/browse/KURYRQE-1007"
+  ".*Author:jechen-High-47468-High-47469-Pod access external through egressIP if egress node hosts the egressIP that assigned to netns, or it lose access to external if no node hosts the egressIP that assigned to netns. [.*":
+    description: "https://issues.redhat.com/browse/KURYRQE-1007"
+  ".*Author:jechen-High-47054-The egressIP can be HA if netnamespace has single egressIP . [.*":
+    description: "https://issues.redhat.com/browse/KURYRQE-1007"
+  ".*Author:jechen-High-47456-High-47457-Can change egressIP of project when there are multiple egressIP, can access outside with nodeIP after egressIP is removed. [.*":
+    description: "https://issues.redhat.com/browse/KURYRQE-1007"
+  ".*Author:jechen-High-47458-High-47459-EgressIP works when reusing the egressIP that was held by a deleted project, EgressIP works well after removed egressIP is added back. [.*":
+    description: "https://issues.redhat.com/browse/KURYRQE-1007"
+  ".*Author:jechen-High-47463-Pod will not be affected by the egressIP set on other netnamespace. [.*":
+    description: "https://issues.redhat.com/browse/KURYRQE-1007"
+
+ovnk_list: &ovnk_tests
+  <<: *all_allow_list
+  ".*Author:huirwang.*47019.*EgressIP works well with networkpolicy and egressFirewall.*":
+    description: "https://issues.redhat.com/browse/KURYRQE-1016"
+  ".*Author:huirwang.*47018.*47017.*Multiple projects use same EgressIP.*":
+    description: "https://issues.redhat.com/browse/KURYRQE-1016"
+  ".*Author:huirwang.*47028.*After remove EgressIP node tag.*failover.*":
+    description: "https://issues.redhat.com/browse/KURYRQE-1016"
+  ".*Author:huirwang.*47030.*EgressIP object can not have multiple egress IP assignments on the same node.*":
+    description: "https://issues.redhat.com/browse/KURYRQE-1016"
+  ".*Author:huirwang.*47031.*After reboot egress node EgressIP still work.*":
+    description: "https://issues.redhat.com/browse/KURYRQE-1016"
+  ".*Author:huirwang.*47032.*47034.*Traffic is load balanced between egress nodes.*":
+    description: "https://issues.redhat.com/browse/KURYRQE-1016"
+  ".*Author:huirwang.*47164.*47025.*update egressip object.*pods removed matched labels.*":
+    description: "https://issues.redhat.com/browse/KURYRQE-1016"
+  ".*Author:huirwang.*47272.*Pods will not be affected by the egressIP set on other netnamespace.*":
+    description: "https://issues.redhat.com/browse/KURYRQE-1016"
+  ".*Author:huirwang.*55632.*egress node shouldn't generate broadcast ARP for service IPs.*":
+    description: "https://issues.redhat.com/browse/KURYRQE-1016"
+  ".*Author:huirwang.*47029.*47024.*egress IP can only be assigned to one node only.*Warning event.*":
+    description: "https://issues.redhat.com/browse/KURYRQE-1016"
+  ".*Author:huirwang.*47163.*47026.*Deleting EgressIP object and recreating it works.*":
+    description: "https://issues.redhat.com/browse/KURYRQE-1016"
+  ".*Author:huirwang.*47021.*lr-policy-list and snat should be updated correctly after remove pods.*":
+    description: "https://issues.redhat.com/browse/KURYRQE-1016"
+  ".*Author:huirwang.*55030.*After reboot egress node.*lr-policy-list and snat should keep correct.*":
+    description: "https://issues.redhat.com/browse/KURYRQE-1016"
+  ".*Author:huirwang.*53069.*EgressIP should work for recreated same name pod.*":
+    description: "https://issues.redhat.com/browse/KURYRQE-1016"
+
+##########
+# This feature is supported since OpenShift 4.12
+
+# OpenShift 4.12
+"4.12":
+  "OpenShiftSDN":
+    <<: *sdn_tests
+
+  "OVNKubernetes":
+    <<: *ovnk_tests
+
+  "Kuryr":
+    <<: *all_allow_list
+
+# OpenShift 4.13
+"4.13":
+  "OpenShiftSDN":
+    <<: *sdn_tests
+
+  "OVNKubernetes":
+    <<: *ovnk_tests
+
+  "Kuryr":
+    <<: *all_allow_list
+
+# OpenShift 4.14
+"4.14":
+  "OpenShiftSDN":
+    <<: *sdn_tests
+
+  "OVNKubernetes":
+    <<: *ovnk_tests
+
+  "Kuryr":
+    <<: *all_allow_list
+
+# OpenShift 4.15
+"4.15":
+  "OVNKubernetes":
+    <<: *ovnk_tests
+
+# OpenShift 4.16
+"4.16":
+  "OVNKubernetes":
+    <<: *ovnk_tests
+
+# OpenShift 4.17
+"4.17":
+  "OVNKubernetes":
+    <<: *ovnk_tests
+
+# OpenShift 4.18
+"4.18":
+  "OVNKubernetes":
+    <<: *ovnk_tests
+
+# OpenShift 4.19
+"4.19":
+  "OVNKubernetes":
+    <<: *ovnk_tests
+
+# OpenShift 4.20
+"4.20":
+  "OVNKubernetes":
+    <<: *ovnk_tests
+
+# OpenShift 4.21
+"4.21":
+  "OVNKubernetes":
+    <<: *ovnk_tests
+
+# OpenShift 4.22
+"4.22":
+  "OVNKubernetes":
+    <<: *ovnk_tests

@@ -1,0 +1,23 @@
+---
+- name: Run EgressIP tests on OpenShift
+  hosts: installer
+  gather_facts: yes
+  vars_files:
+    - "../../configs/global.yml"
+    - "../../configs/secret.yaml"
+  tasks:
+    - name: Discover OCP version and network type
+      ansible.builtin.include_role:
+        name: shiftstack.tools.tools_get_deploy_info
+        tasks_from: discover_ocp_version.yml
+
+    - name: Main block
+      block:
+        - name: Run EgressIP tests on OpenShift
+          ansible.builtin.include_role:
+            name: shiftstack.stages.egressip_tests
+      always:
+        - name: Synchronize artifacts from the Ansible Managed Node to Ansible Controller
+          ansible.builtin.include_role:
+            name: shiftstack.tools.tools_ansible_inventory
+            tasks_from: sync_artifacts.yml

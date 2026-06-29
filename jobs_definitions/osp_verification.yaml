@@ -22,6 +22,7 @@ stages:
   - day2ops
   - openstack_test
   - lb_tests
+  - egressip_tests
 
 day2ops_procedures:
   - rotate_app_creds
