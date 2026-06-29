@@ -39,13 +39,18 @@
       vars:
         must_gather_suffix: "cpms-{{ cpms_tests_type }}"
 
+- name: Check if JUnit file exists
+  ansible.builtin.stat:
+    path: "{{ cpms_results_subdir }}/{{ cpms_test_junit_filename }}"
+  register: _cpms_junit_file
+
 - name: Rename JUnit XML to match expected prefix
   ansible.builtin.copy:
     src: "{{ cpms_results_subdir }}/{{ cpms_test_junit_filename }}"
     dest: "{{ cpms_results_subdir }}/junit_e2e_{{ cpms_tests_type }}.xml"
     remote_src: yes
     mode: u=rw,g=rw,o=r
-  when: (cpms_results_subdir + '/' + cpms_test_junit_filename) is file
+  when: _cpms_junit_file.stat.exists
 
 - name: Post openshift-test
   ansible.builtin.include_role:
@@ -56,4 +61,4 @@
     key_for_filtering_results: "cpms"
     test_name: "{{ cpms_test_name }}-{{ cpms_tests_type }}"
     results_dir: "{{ cpms_results_subdir }}"
-  when: (cpms_results_subdir + '/' + cpms_test_junit_filename) is file
+  when: _cpms_junit_file.stat.exists
