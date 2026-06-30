@@ -1,0 +1,21 @@
+---
+cloud_resources: external
+cloud_name: "{{ user_cloud }}"
+query_cloud: "{{ user_cloud }}"
+trex_lcores: "{{ perf_test.trex_lcores | default(perf_trex_lcores | default('2-10')) }}"
+# master_thread_id=2, latency_thread_id=3, data threads start at 4
+# TRex VM has 11 vCPUs (0-10), so max data thread is 10 -> 7 data threads
+trex_process_threads: "{{ perf_test.trex_process_threads | default(7) }}"
+binary_search_disable_upward_search: true
+binary_search_warmup_trial_runtime: {{ perf_warmup_runtime | default(120) }}
+discover_instance_external_ip: true
+ssh_key: {{ perf_trex_ssh_key | basename }}
+# Use system Python instead of the ansible-nfv venv (not created when manual_run=false)
+# Note: ansible-nfv uses 'python_interperter' (typo) as the override variable
+python_interperter: /usr/bin/python3
+venv_path: /usr
+dut_compute: ""
+dynamic_instances:
+  - name: {{ perf_test.trex_server }}
+    group: trex
+    user: {{ perf_trex_user | default('cloud-user') }}

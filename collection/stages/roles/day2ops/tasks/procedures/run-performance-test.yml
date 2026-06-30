@@ -1,0 +1,274 @@
+---
+# Run NFV performance tests using TRex traffic generator against testpmd DUT pods.
+# Supports SRIOV and DPDK test types.
+#
+# Required variables:
+#   perf_test: dict with sriov/dpdk config (see telco_verification.yaml)
+
+- name: Clone ansible-nfv repository
+  ansible.builtin.git:
+    repo: "{{ perf_test.ansible_nfv_repo }}"
+    dest: "{{ home_dir }}/ansible-nfv"
+    version: "{{ perf_test.ansible_nfv_branch | default('main') }}"
+    force: true
+
+- name: Install ansible-nfv collection requirements
+  ansible.builtin.command:
+    cmd: ansible-galaxy collection install openvswitch.openvswitch -p {{ home_dir }}/.ansible/collections
+  changed_when: true
+
+- name: Create performance results directory
+  ansible.builtin.file:
+    path: "{{ artifacts_dir }}/performance"
+    state: directory
+    mode: u=rwx,g=rw,o=r
+
+- name: Get TRex server floating IP
+  ansible.builtin.shell: |
+    set -o pipefail
+    openstack floating ip list --port \
+      "$(openstack port list --server {{ perf_test.trex_server }} \
+         --network {{ perf_test.trex_management_network | default('management_net_management') }} \
+         -c ID -f value | head -1)" \
+      -c "Floating IP Address" -f value
+  environment:
+    OS_CLOUD: "{{ user_cloud }}"
+  register: _trex_fip
+  changed_when: false
+
+- name: Save TRex SSH key path
+  ansible.builtin.set_fact:
+    perf_trex_ssh_key: "{{ perf_test.trex_ssh_key }}"
+
+- name: Generate performance inventory
+  ansible.builtin.template:
+    src: perf-inventory.ini.j2
+    dest: "{{ home_dir }}/perf-inventory.ini"
+    mode: u=rw,g=rw,o=r
+
+- name: Run SRIOV performance test
+  when: perf_test.sriov.enabled | default(true) | bool
+  block:
+    - name: Reboot TRex VM for SRIOV test
+      ansible.builtin.shell: |
+        openstack server stop {{ perf_test.trex_server }} && sleep 5 && openstack server start {{ perf_test.trex_server }}
+      environment:
+        OS_CLOUD: "{{ user_cloud }}"
+      changed_when: true
+
+    - name: Wait for TRex VM to become active
+      ansible.builtin.shell: |
+        openstack server show {{ perf_test.trex_server }} -c status -f value
+      environment:
+        OS_CLOUD: "{{ user_cloud }}"
+      register: _trex_status
+      until: _trex_status.stdout == 'ACTIVE'
+      retries: 30
+      delay: 10
+      changed_when: false
+
+    - name: Wait for TRex SSH connectivity
+      ansible.builtin.wait_for:
+        host: "{{ _trex_fip.stdout }}"
+        port: 22
+        timeout: 300
+
+    - name: Create SRIOV testpmd DUT pod
+      kubernetes.core.k8s:
+        kubeconfig: "{{ kubeconfig }}"
+        state: present
+        definition: "{{ lookup('template', 'testpmd-dut-pod.yaml.j2') }}"
+        wait: true
+        wait_sleep: 10
+        wait_timeout: 120
+      vars:
+        dut: "{{ perf_test.sriov }}"
+
+    - name: Wait for SRIOV testpmd to start
+      ansible.builtin.pause:
+        seconds: 15
+
+    - name: Collect SRIOV DUT port MACs
+      ansible.builtin.shell: |
+        oc --kubeconfig {{ kubeconfig }} logs {{ perf_test.sriov.pod_name }} -n default | grep -E "^Port [0-9]" | grep -v "link state change"
+      register: _sriov_macs
+      retries: 10
+      delay: 10
+      until: _sriov_macs.stdout | length > 0
+      changed_when: false
+
+    - name: Save SRIOV DUT MACs
+      ansible.builtin.copy:
+        content: "{{ _sriov_macs.stdout }}"
+        dest: "{{ artifacts_dir }}/performance/sriov_dut_port_macs.conf"
+        mode: u=rw,g=rw,o=r
+
+    - name: Parse SRIOV DUT MACs into comma-separated format for ansible-nfv
+      ansible.builtin.set_fact:
+        _sriov_dut_macs: >-
+          {{ _sriov_macs.stdout_lines
+             | map('regex_search', '([0-9A-Fa-f:]{17})')
+             | select('string')
+             | list
+             | join(',') }}
+
+    - name: Display SRIOV DUT MACs
+      ansible.builtin.debug:
+        msg: "DUT MACs for TRex: {{ _sriov_dut_macs }}"
+
+    - name: Generate SRIOV performance extra vars
+      ansible.builtin.template:
+        src: perf-extra-vars.yaml.j2
+        dest: "{{ home_dir }}/perf-sriov-vars.yaml"
+        mode: u=rw,g=rw,o=r
+
+    - name: Run SRIOV performance scenario
+      ansible.builtin.shell: |
+        cd {{ home_dir }}/ansible-nfv && ansible-playbook \
+          -i {{ home_dir }}/perf-inventory.ini \
+          -e @{{ home_dir }}/perf-sriov-vars.yaml \
+          -e manual_run=false \
+          -e binary_perf_log={{ artifacts_dir }}/performance/sriov_performance.log \
+          -e dut_group=sriov_dut \
+          -e dut_type=sriov \
+          -e report_junitxml_junitxml_output_path={{ artifacts_dir }}/performance/sriov_perf_results.xml \
+          -e testpmd_lcores={{ perf_test.sriov.testpmd_lcores | default('1,2,3') }} \
+          -e trex_rate={{ perf_test.sriov.trex_rate }} \
+          -e clone_traffic_gen_repo=false \
+          -e launch_testpmd=false \
+          -e discover_dut_macs=false \
+          "-e dut_macs={{ _sriov_dut_macs }}" \
+          -e private_key_fetch_location={{ perf_trex_ssh_key | dirname }}/ \
+          -e python_interperter=/usr/bin/python3 \
+          playbooks/packet_gen/trex/performance_scenario.yml
+      register: _sriov_perf_result
+      changed_when: true
+
+    - name: Display SRIOV performance result
+      ansible.builtin.debug:
+        msg: "SRIOV performance test completed with rc={{ _sriov_perf_result.rc }}"
+
+- name: Run DPDK performance test
+  when: perf_test.dpdk.enabled | default(true) | bool
+  block:
+    - name: Delete SRIOV DUT pod before DPDK test
+      kubernetes.core.k8s:
+        kubeconfig: "{{ kubeconfig }}"
+        state: absent
+        kind: Pod
+        namespace: default
+        name: "{{ perf_test.sriov.pod_name }}"
+        wait: true
+      when: perf_test.sriov.enabled | default(true) | bool
+
+    - name: Reboot TRex VM for DPDK test
+      ansible.builtin.shell: |
+        openstack server stop {{ perf_test.trex_server }} && sleep 5 && openstack server start {{ perf_test.trex_server }}
+      environment:
+        OS_CLOUD: "{{ user_cloud }}"
+      changed_when: true
+
+    - name: Wait for TRex VM to become active
+      ansible.builtin.shell: |
+        openstack server show {{ perf_test.trex_server }} -c status -f value
+      environment:
+        OS_CLOUD: "{{ user_cloud }}"
+      register: _trex_status
+      until: _trex_status.stdout == 'ACTIVE'
+      retries: 30
+      delay: 10
+      changed_when: false
+
+    - name: Wait for TRex SSH connectivity
+      ansible.builtin.wait_for:
+        host: "{{ _trex_fip.stdout }}"
+        port: 22
+        timeout: 300
+
+    - name: Create DPDK testpmd DUT pod
+      kubernetes.core.k8s:
+        kubeconfig: "{{ kubeconfig }}"
+        state: present
+        definition: "{{ lookup('template', 'testpmd-dut-pod.yaml.j2') }}"
+        wait: true
+        wait_sleep: 10
+        wait_timeout: 120
+      vars:
+        dut: "{{ perf_test.dpdk }}"
+
+    - name: Wait for DPDK testpmd to start
+      ansible.builtin.pause:
+        seconds: 15
+
+    - name: Collect DPDK DUT port MACs
+      ansible.builtin.shell: |
+        oc --kubeconfig {{ kubeconfig }} logs {{ perf_test.dpdk.pod_name }} -n default | grep -E "^Port [0-9]" | grep -v "link state change"
+      register: _dpdk_macs
+      retries: 10
+      delay: 10
+      until: _dpdk_macs.stdout | length > 0
+      changed_when: false
+
+    - name: Save DPDK DUT MACs
+      ansible.builtin.copy:
+        content: "{{ _dpdk_macs.stdout }}"
+        dest: "{{ artifacts_dir }}/performance/dpdk_dut_port_macs.conf"
+        mode: u=rw,g=rw,o=r
+
+    - name: Parse DPDK DUT MACs into comma-separated format for ansible-nfv
+      ansible.builtin.set_fact:
+        _dpdk_dut_macs: >-
+          {{ _dpdk_macs.stdout_lines
+             | map('regex_search', '([0-9A-Fa-f:]{17})')
+             | select('string')
+             | list
+             | join(',') }}
+
+    - name: Display DPDK DUT MACs
+      ansible.builtin.debug:
+        msg: "DUT MACs for TRex: {{ _dpdk_dut_macs }}"
+
+    - name: Generate DPDK performance extra vars
+      ansible.builtin.template:
+        src: perf-extra-vars.yaml.j2
+        dest: "{{ home_dir }}/perf-dpdk-vars.yaml"
+        mode: u=rw,g=rw,o=r
+
+    - name: Run DPDK performance scenario
+      ansible.builtin.shell: |
+        cd {{ home_dir }}/ansible-nfv && ansible-playbook \
+          -i {{ home_dir }}/perf-inventory.ini \
+          -e @{{ home_dir }}/perf-dpdk-vars.yaml \
+          -e manual_run=false \
+          -e binary_perf_log={{ artifacts_dir }}/performance/dpdk_performance.log \
+          -e dut_group=dpdk_dut \
+          -e dut_type=dpdk \
+          -e report_junitxml_junitxml_output_path={{ artifacts_dir }}/performance/dpdk_perf_results.xml \
+          -e testpmd_lcores={{ perf_test.dpdk.testpmd_lcores | default('3,4,5') }} \
+          -e trex_rate={{ perf_test.dpdk.trex_rate }} \
+          -e clone_traffic_gen_repo=false \
+          -e launch_testpmd=false \
+          -e discover_dut_macs=false \
+          "-e dut_macs={{ _dpdk_dut_macs }}" \
+          -e private_key_fetch_location={{ perf_trex_ssh_key | dirname }}/ \
+          -e python_interperter=/usr/bin/python3 \
+          playbooks/packet_gen/trex/performance_scenario.yml
+      register: _dpdk_perf_result
+      changed_when: true
+
+    - name: Display DPDK performance result
+      ansible.builtin.debug:
+        msg: "DPDK performance test completed with rc={{ _dpdk_perf_result.rc }}"
+
+- name: Cleanup DUT pods
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: absent
+    kind: Pod
+    namespace: default
+    name: "{{ item }}"
+    wait: true
+  loop:
+    - "{{ perf_test.sriov.pod_name }}"
+    - "{{ perf_test.dpdk.pod_name }}"
+  ignore_errors: true

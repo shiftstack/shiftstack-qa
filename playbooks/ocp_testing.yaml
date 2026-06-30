@@ -76,6 +76,10 @@
   ansible.builtin.import_playbook: plays/post_install.yaml
   when: "'post' in stages"
 
+- name: NFV setup stage
+  ansible.builtin.import_playbook: plays/nfv_setup.yaml
+  when: "'nfv_setup' in stages"
+
 - name: Run OpenShift Verification stage
   ansible.builtin.import_playbook: plays/verification.yaml
   when: "'verification' in stages"

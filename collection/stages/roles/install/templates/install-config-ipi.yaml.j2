@@ -35,6 +35,19 @@ platform:
   openstack:
     cloud:            "{{ user_cloud }}"
     region:           "{{ installcfg_region }}"
+    {%- if installcfg_default_machine_platform.type is defined +%}
+    defaultMachinePlatform:
+      type: "{{ installcfg_default_machine_platform.type }}"
+    {%- endif +%}
+    {%- if installcfg_cluster_os_image_properties != {} +%}
+    clusterOSImageProperties:
+      {%- for key, value in installcfg_cluster_os_image_properties.items() +%}
+      {{ key }}: {{ value }}
+      {%- endfor +%}
+    {%- endif +%}
+    {%- if installcfg_machines_subnet is defined +%}
+    machinesSubnet: {{ installcfg_machines_subnet }}
+    {%- endif +%}
     {%- if installcfg_api_vips +%}
     apiVIPs: ["{{ installcfg_api_floating_ip }}"]
     ingressVIPs: ["{{ installcfg_ingress_floating_ip }}"]
@@ -51,9 +64,17 @@ platform:
     externalNetwork:  "{{ installcfg_external_network }}"
     apiFloatingIP:     "{{ installcfg_api_floating_ip }}"
     ingressFloatingIP: "{{ installcfg_ingress_floating_ip }}"
+    {%- if installcfg_machines_subnet is not defined +%}
     externalDNS: {{ installcfg_dns_servers }}
+    {%- endif +%}
     {%- endif +%}
 pullSecret: |
   {{ ocp_pull_secret }}
 sshKey: |
   {{ ocp_public_key }}
+{%- if installcfg_additional_trust_bundle is defined +%}
+additionalTrustBundle: |
+{% for line in installcfg_additional_trust_bundle %}
+  {{ line }}
+{% endfor %}
+{%- endif +%}

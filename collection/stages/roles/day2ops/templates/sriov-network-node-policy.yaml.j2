@@ -1,0 +1,20 @@
+# SriovNetworkNodePolicy for {{ _policy_name }}
+# Attaches OpenStack network to SRIOV-capable nodes
+apiVersion: sriovnetwork.openshift.io/v1
+kind: SriovNetworkNodePolicy
+metadata:
+  name: {{ _policy_name }}
+  namespace: openshift-sriov-network-operator
+spec:
+  deviceType: {{ _device_type | default('vfio-pci') }}
+  nicSelector:
+    netFilter: openstack/NetworkID:{{ _network_id }}
+  nodeSelector:
+{% if _node_selector_label is defined %}
+    {{ _node_selector_label }}: "{{ _node_selector_value | default('') }}"
+{% else %}
+    feature.node.kubernetes.io/network-sriov.capable: "true"
+{% endif %}
+  numVfs: {{ _num_vfs | default(1) }}
+  priority: {{ _priority | default(99) }}
+  resourceName: {{ _resource_name }}
