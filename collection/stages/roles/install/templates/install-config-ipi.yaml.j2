@@ -45,7 +45,7 @@ platform:
       {{ key }}: {{ value }}
       {%- endfor +%}
     {%- endif +%}
-    {%- if installcfg_machines_subnet is defined +%}
+    {%- if installcfg_machines_subnet +%}
     machinesSubnet: {{ installcfg_machines_subnet }}
     {%- endif +%}
     {%- if installcfg_api_vips +%}
@@ -64,7 +64,7 @@ platform:
     externalNetwork:  "{{ installcfg_external_network }}"
     apiFloatingIP:     "{{ installcfg_api_floating_ip }}"
     ingressFloatingIP: "{{ installcfg_ingress_floating_ip }}"
-    {%- if installcfg_machines_subnet is not defined +%}
+    {%- if not installcfg_machines_subnet +%}
     externalDNS: {{ installcfg_dns_servers }}
     {%- endif +%}
     {%- endif +%}
@@ -72,7 +72,7 @@ pullSecret: |
   {{ ocp_pull_secret }}
 sshKey: |
   {{ ocp_public_key }}
-{%- if installcfg_additional_trust_bundle is defined +%}
+{%- if installcfg_additional_trust_bundle +%}
 additionalTrustBundle: |
 {% for line in installcfg_additional_trust_bundle %}
   {{ line }}
