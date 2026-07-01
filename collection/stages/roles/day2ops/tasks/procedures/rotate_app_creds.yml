@@ -13,7 +13,7 @@
 - name: Rotate OpenShift Cloud Credentials
   ansible.builtin.shell: |
     set -o pipefail && \
-    cat {{ clouds_yaml_file_path }} | sed 's/{{ user_cloud }}:/openstack:/' | \
+    cat {{ clouds_yaml_file_path }} | sed '/^---$/d' | sed 's/{{ user_cloud }}:/openstack:/' | \
     oc set data -n kube-system secret/openstack-credentials clouds.yaml=-
   environment:
     KUBECONFIG: "{{ kubeconfig }}"
@@ -29,8 +29,10 @@
   changed_when: false
 
 - name: Parse OCP credentials
+  vars:
+    parsed_yaml: "{{ ocp_creds_output.stdout | from_yaml }}"
   ansible.builtin.set_fact:
-    ocp_creds: "{{ ocp_creds_output.stdout | from_yaml }}"
+    ocp_creds: "{{ (parsed_yaml is mapping) | ternary(parsed_yaml, parsed_yaml[0]) }}"
 
 - name: Verify credentials rotated to application credentials
   ansible.builtin.assert:
