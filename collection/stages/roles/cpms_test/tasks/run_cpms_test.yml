@@ -1,0 +1,64 @@
+---
+- name: Set result paths for {{ cpms_tests_type }}
+  ansible.builtin.set_fact:
+    cpms_results_subdir: "{{ cpms_test_results_dir }}/{{ cpms_tests_type }}"
+
+- name: Create results directory for {{ cpms_tests_type }}
+  ansible.builtin.file:
+    path: "{{ cpms_results_subdir }}"
+    state: directory
+    mode: u=rwx,g=rw,o=r
+
+- name: Run {{ cpms_test_name }} {{ cpms_tests_type }} tests
+  block:
+    - name: Run make {{ cpms_tests_type }}
+      ansible.builtin.shell: |
+        source {{ home_dir }}/.bashrc
+        make {{ cpms_tests_type }}
+      args:
+        chdir: "{{ cpms_test_dir }}"
+      environment:
+        KUBECONFIG: "{{ kubeconfig }}"
+        OS_CLOUD: "{{ user_cloud }}"
+        OPENSHIFT_CI: "true"
+        ARTIFACT_DIR: "{{ cpms_results_subdir }}"
+      changed_when: true
+
+  rescue:
+    - name: Mark the CPMS {{ cpms_tests_type }} tests as UNSTABLE
+      ansible.builtin.include_role:
+        name: tools_stage_results
+        tasks_from: mark_stage_unstable.yml
+      vars:
+        unstable_msg: >-
+          The {{ cpms_test_name }} {{ cpms_tests_type }} test suite failed.
+
+    - name: Run must-gather
+      ansible.builtin.include_role:
+        name: tools_must-gather
+      vars:
+        must_gather_suffix: "cpms-{{ cpms_tests_type }}"
+
+- name: Check if JUnit file exists
+  ansible.builtin.stat:
+    path: "{{ cpms_results_subdir }}/{{ cpms_test_junit_filename }}"
+  register: _cpms_junit_file
+
+- name: Rename JUnit XML to match expected prefix
+  ansible.builtin.copy:
+    src: "{{ cpms_results_subdir }}/{{ cpms_test_junit_filename }}"
+    dest: "{{ cpms_results_subdir }}/junit_e2e_{{ cpms_tests_type }}.xml"
+    remote_src: yes
+    mode: u=rw,g=rw,o=r
+  when: _cpms_junit_file.stat.exists
+
+- name: Post openshift-test
+  ansible.builtin.include_role:
+    name: tools_openshift_tests
+    tasks_from: post_openshift_tests.yml
+  vars:
+    testsuite_name: "{{ cpms_test_testsuite_name }}_{{ cpms_tests_type }}"
+    key_for_filtering_results: "cpms"
+    test_name: "{{ cpms_test_name }}-{{ cpms_tests_type }}"
+    results_dir: "{{ cpms_results_subdir }}"
+  when: _cpms_junit_file.stat.exists

@@ -100,6 +100,10 @@
   ansible.builtin.import_playbook: plays/conformance_test.yaml
   when: "'conformance_test' in stages"
 
+- name: Run CPMS e2e tests on OpenShift
+  ansible.builtin.import_playbook: plays/cpms_test.yaml
+  when: "'cpms_test' in stages"
+
 - name: Run Openshift Cinder CSI Tests on OpenShift
   ansible.builtin.import_playbook: plays/cinder_csi.yaml
   when: "'cinder_csi_tests' in stages"

@@ -1,0 +1,21 @@
+---
+# tasks file for cpms_test
+- name: Prepare CPMS test
+  ansible.builtin.include_role:
+    name: tools_openshift_tests
+    tasks_from: prepare_openshift_tests.yml
+  vars:
+    repo_name: "{{ cpms_test_name }}"
+    results_dir: "{{ cpms_test_results_dir }}"
+    go_version_target: "{{ cpms_tests_go_version }}"
+
+- name: Run CPMS {{ item }} tests
+  ansible.builtin.include_tasks: run_cpms_test.yml
+  vars:
+    cpms_tests_type: "{{ item }}"
+  loop: "{{ cpms_test_suites }}"
+
+- name: Remove the source directory after tests complete
+  ansible.builtin.file:
+    path: "{{ cpms_test_dir }}"
+    state: absent
