@@ -90,6 +90,7 @@
 
     - name: Collect SRIOV DUT port MACs
       ansible.builtin.shell: |
+        set -o pipefail
         oc --kubeconfig {{ kubeconfig }} logs {{ perf_test.sriov.pod_name }} -n default | grep -E "^Port [0-9]" | grep -v "link state change"
       register: _sriov_macs
       retries: 10
@@ -202,6 +203,7 @@
 
     - name: Collect DPDK DUT port MACs
       ansible.builtin.shell: |
+        set -o pipefail
         oc --kubeconfig {{ kubeconfig }} logs {{ perf_test.dpdk.pod_name }} -n default | grep -E "^Port [0-9]" | grep -v "link state change"
       register: _dpdk_macs
       retries: 10
@@ -271,4 +273,4 @@
   loop:
     - "{{ perf_test.sriov.pod_name }}"
     - "{{ perf_test.dpdk.pod_name }}"
-  ignore_errors: true
+  failed_when: false
