@@ -1,0 +1,28 @@
+---
+name: Ansible Lint
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  ansible-lint:
+    runs-on: ubuntu-latest
+    container:
+      image: quay.io/shiftstack-qe/shiftstack-client
+      options: --user root
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Mark workspace as safe for git
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: Install Ansible collections
+        run: ansible-galaxy collection install -r requirements.yaml
+
+      - name: Run pre-commit (ansible-lint)
+        run: pre-commit run --all-files
+        env:
+          ANSIBLE_VAULT_PASSWORD_FILE: /home/cloud-admin/.vault-pass
