@@ -3,6 +3,7 @@
 aliases:
   openstack-approvers:
     - arxcruz
+    - chenwng
     - dlaw4608
     - ekuris-redhat
     - eshulman2
@@ -15,6 +16,7 @@ aliases:
     - winiciusallan
   openstack-reviewers:
     - arxcruz
+    - chenwng
     - dlaw4608
     - ekuris-redhat
     - eshulman2
