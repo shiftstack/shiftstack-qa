@@ -10,14 +10,23 @@
     name: shiftstack.stages.prepare
     tasks_from: app_creds.yml
 
-- name: Rotate OpenShift Cloud Credentials
+- name: Create clouds.yaml copy with cloud renamed for OCP secret
   ansible.builtin.shell: |
     set -o pipefail && \
-    cat {{ clouds_yaml_file_path }} | sed '/^---$/d' | sed 's/{{ user_cloud }}:/openstack:/' | \
-    oc set data -n kube-system secret/openstack-credentials clouds.yaml=-
+    cat {{ clouds_yaml_file_path }} | sed '/^---$/d' | sed 's/{{ user_cloud }}:/openstack:/' > /tmp/clouds_for_ocp.yaml
+  changed_when: false
+
+- name: Rotate OpenShift Cloud Credentials
+  ansible.builtin.shell: |
+    oc set data -n kube-system secret/openstack-credentials clouds.yaml="$(cat /tmp/clouds_for_ocp.yaml)"
   environment:
     KUBECONFIG: "{{ kubeconfig }}"
   changed_when: true
+
+- name: Clean up temporary file
+  ansible.builtin.file:
+    path: /tmp/clouds_for_ocp.yaml
+    state: absent
 
 - name: Get OpenStack Credentials from OCP cluster
   ansible.builtin.shell: |
@@ -29,10 +38,8 @@
   changed_when: false
 
 - name: Parse OCP credentials
-  vars:
-    parsed_yaml: "{{ ocp_creds_output.stdout | from_yaml }}"
   ansible.builtin.set_fact:
-    ocp_creds: "{{ (parsed_yaml is mapping) | ternary(parsed_yaml, parsed_yaml[0]) }}"
+    ocp_creds: "{{ ocp_creds_output.stdout | from_yaml }}"
 
 - name: Verify credentials rotated to application credentials
   ansible.builtin.assert:
