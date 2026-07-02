@@ -2,7 +2,7 @@
 # This file just uses aliases defined in OWNERS_ALIASES.
 
 approvers:
-  - shiftstack-approvers
+  - openstack-approvers
 
 reviewers:
-  - shiftstack-reviewers
+  - openstack-reviewers

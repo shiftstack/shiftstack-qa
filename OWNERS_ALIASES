@@ -1,22 +1,26 @@
 # See the OWNERS_ALIASES docs: https://git.k8s.io/community/contributors/guide/owners.md#OWNERS_ALIASES
 
 aliases:
-  shiftstack-approvers:
+  openstack-approvers:
+    - arxcruz
     - dlaw4608
     - ekuris-redhat
     - eshulman2
     - gryf
     - imatza-rh
+    - kstrenkova
     - mandre
     - stephenfin
     - tusharjadhav3302
     - winiciusallan
-  shiftstack-reviewers:
+  openstack-reviewers:
+    - arxcruz
     - dlaw4608
     - ekuris-redhat
     - eshulman2
     - gryf
     - imatza-rh
+    - kstrenkova
     - mandre
     - stephenfin
     - tusharjadhav3302
