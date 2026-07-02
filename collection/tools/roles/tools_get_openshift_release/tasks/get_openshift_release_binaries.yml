@@ -27,6 +27,7 @@
       when: openshift_release_pull_spec is not defined or openshift_release_pull_spec == ''
 
     - name: Extract pull secret from host cluster via Kubernetes API
+      changed_when: true
       ansible.builtin.shell: |
         python3 << 'PYEOF'
         import yaml, json, base64, subprocess, os, sys, tempfile
@@ -127,6 +128,7 @@
         mode: u=rwx,g=rw,o=r
 
     - name: Extract OCP tools from release image {{ openshift_release_pull_spec }}
+      changed_when: true
       ansible.builtin.command:
         cmd: >-
           timeout 900

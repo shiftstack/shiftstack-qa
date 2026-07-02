@@ -1,0 +1,29 @@
+# See the OWNERS_ALIASES docs: https://git.k8s.io/community/contributors/guide/owners.md#OWNERS_ALIASES
+
+aliases:
+  openstack-approvers:
+    - arxcruz
+    - chenwng
+    - dlaw4608
+    - ekuris-redhat
+    - eshulman2
+    - gryf
+    - imatza-rh
+    - kstrenkova
+    - mandre
+    - stephenfin
+    - tusharjadhav3302
+    - winiciusallan
+  openstack-reviewers:
+    - arxcruz
+    - chenwng
+    - dlaw4608
+    - ekuris-redhat
+    - eshulman2
+    - gryf
+    - imatza-rh
+    - kstrenkova
+    - mandre
+    - stephenfin
+    - tusharjadhav3302
+    - winiciusallan
