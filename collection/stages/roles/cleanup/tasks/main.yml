@@ -68,6 +68,10 @@
             - name: Discover the OpenShift installation type
               ansible.builtin.include_tasks: detect_ocp_installation.yml
 
+            - name: Cleanup IPv6 secondary network resources if they exist
+              ansible.builtin.include_tasks: cleanup_ipv6_secondary.yml
+              when: ocp_deployment_topology.secondary_ip_protocol | default('') == 'ipv6'
+
             - name: Destroy the OpenShift cluster if it exists
               ansible.builtin.include_tasks: destroy_openshift_cluster.yml
               when: existing_ocp_installation_type != ''

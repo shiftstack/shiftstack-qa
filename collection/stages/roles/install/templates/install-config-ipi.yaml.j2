@@ -17,6 +17,9 @@ compute:
     openstack:
       type: "{{ installcfg_worker_flavor }}"
       serverGroupPolicy: "{{ installcfg_worker_servergrouppolicy }}"
+      {%- if ocp_deployment_topology.secondary_ip_protocol == 'ipv6' +%}
+      additionalNetworkIDs: {{ ipv6_secondary_network_ids | to_json }}
+      {%- endif +%}
   replicas: {{ installcfg_worker_replicas }}
 metadata:
   name: "{{ installcfg_cluster_name }}"

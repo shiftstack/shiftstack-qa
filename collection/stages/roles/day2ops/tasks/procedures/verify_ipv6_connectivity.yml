@@ -1,0 +1,65 @@
+---
+- name: Get pods in namespace {{ ipv6_namespace }}
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
+    kind: Pod
+    namespace: "{{ ipv6_namespace }}"
+    label_selectors:
+      - app=hello-openshift
+    field_selectors:
+      - status.phase=Running
+  register: ipv6_pods
+
+- name: Store pod names for {{ ipv6_namespace }}
+  ansible.builtin.set_fact:
+    ipv6_pod_names: "{{ ipv6_pods.resources | map(attribute='metadata.name') | list }}"
+
+- name: Get pod IPv6 addresses on net1 interface
+  ansible.builtin.shell: |
+    set -o pipefail && \
+    oc exec {{ item }} -n {{ ipv6_namespace }} -- ip -6 addr show dev net1 scope global | \
+    awk '/inet6/{print $2}' | cut -f1 -d'/'
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+  loop: "{{ ipv6_pod_names }}"
+  register: pod_ipv6_results
+  changed_when: false
+  retries: 20
+  delay: 30
+  until: pod_ipv6_results.stdout != ""
+
+- name: Build pod name to IPv6 address mapping
+  ansible.builtin.set_fact:
+    ipv6_pod_ips: "{{ ipv6_pod_ips | default({}) | combine({item.item: item.stdout}) }}"
+  loop: "{{ pod_ipv6_results.results }}"
+  loop_control:
+    label: "{{ item.item }}"
+
+- name: Display pod IPv6 addresses for {{ ipv6_namespace }}
+  ansible.builtin.debug:
+    var: ipv6_pod_ips
+
+- name: Validate all pods have IPv6 addresses
+  ansible.builtin.assert:
+    that:
+      - ipv6_pod_ips | length > 0
+      - ipv6_pod_ips.values() | select('equalto', '') | list | length == 0
+    fail_msg: |
+      Not all pods in {{ ipv6_namespace }} received IPv6 addresses.
+      Pod IPs: {{ ipv6_pod_ips }}
+
+- name: Check pod-to-pod IPv6 connectivity in {{ ipv6_namespace }}
+  ansible.builtin.shell: |
+    set -o pipefail && \
+    oc exec {{ item[0] }} -n {{ ipv6_namespace }} -- /bin/curl -s --connect-timeout 10 http://[{{ item[1] }}]:8080
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+  with_nested:
+    - "{{ ipv6_pod_ips.keys() | list }}"
+    - "{{ ipv6_pod_ips.values() | list }}"
+  when: ipv6_pod_ips[item[0]] != item[1]
+  register: connectivity_check
+  changed_when: false
+  retries: 5
+  delay: 10
+  until: connectivity_check.stdout is search('Hello OpenShift!')

@@ -1,0 +1,58 @@
+---
+#
+#     * OSP VERIFICATION - IPv6 SECONDARY INTERFACE *
+#
+# - Validates IPv6 secondary interface support on OCP workers.
+# - Uses latest stable OCP version (same as osp_verification.yaml).
+# - Deploys OCP with primary IPv4 + secondary IPv6 networks attached to workers.
+# - Runs configure_ipv6_secondary day2ops procedure: DHCP MachineConfig,
+#   macvlan CNO configuration, and pod-to-pod IPv6 connectivity verification.
+# - Prepared to run on top of RHOSO 18.0 OSASINFRA Validated Architecture.
+#
+# Jira: https://redhat.atlassian.net/browse/OSPRH-6486
+#
+
+openshift_release: 4-stable
+openshift_build_name: ""
+installation_type: ipi
+stages:
+  - cleanup
+  - prepare
+  - install
+  - post
+  - verification
+  - day2ops
+
+day2ops_procedures:
+  - configure_ipv6_secondary
+
+ocp_deployment_topology:
+  network_type: OVNKubernetes
+  primary_ip_protocol: ipv4
+  secondary_ip_protocol: "ipv6"
+  ipv4:
+    ip_version: 4
+    tenant_subnet:
+      cidr: 10.196.0.0/16
+    cluster_network:
+      cidr: 10.128.0.0/14
+      host_prefix: 23
+    service_network:
+      - 172.30.0.0/16
+  flavors:
+    master:
+      name: "master"
+      ram: 16384
+      vcpus: 4
+      disk: 30
+    worker:
+      name: "worker"
+      ram: 8192
+      vcpus: 2
+      disk: 30
+  replicas:
+    master: 3
+    worker: 2
+  servergroups:
+    master: "anti-affinity"
+    worker: "anti-affinity"

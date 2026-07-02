@@ -1,0 +1,53 @@
+---
+- name: Create IPv6 secondary networks for additional worker interfaces
+  openstack.cloud.network:
+    cloud: "{{ user_cloud }}"
+    state: present
+    name: "{{ item.net_name }}"
+  loop: "{{ ipv6_secondary_networks.networks }}"
+  register: ipv6_secondary_networks_created
+
+- name: Store IPv6 secondary network IDs
+  ansible.builtin.set_fact:
+    ipv6_secondary_network_ids: "{{ ipv6_secondary_networks_created.results | map(attribute='network.id') | list }}"
+
+- name: Create IPv6 secondary subnets
+  openstack.cloud.subnet:
+    cloud: "{{ user_cloud }}"
+    state: present
+    name: "{{ item.subnet_name }}"
+    network_name: "{{ item.net_name }}"
+    ip_version: 6
+    cidr: "{{ item.cidr }}"
+    ipv6_ra_mode: "{{ item.ipv6_ra_mode }}"
+    ipv6_address_mode: "{{ item.ipv6_address_mode }}"
+  loop: "{{ ipv6_secondary_networks.networks }}"
+  register: ipv6_secondary_subnets_created
+
+- name: Store IPv6 secondary subnet IDs
+  ansible.builtin.set_fact:
+    ipv6_secondary_subnet_ids: "{{ ipv6_secondary_subnets_created.results | map(attribute='subnet.id') | list }}"
+
+- name: Create router for IPv6 secondary networks
+  openstack.cloud.router:
+    cloud: "{{ user_cloud }}"
+    state: present
+    name: "{{ ipv6_secondary_networks.router_name }}"
+  register: ipv6_secondary_router
+
+- name: Attach IPv6 secondary subnets to router
+  ansible.builtin.shell: >
+    openstack router add subnet {{ ipv6_secondary_networks.router_name }} {{ item }}
+  loop: "{{ ipv6_secondary_subnet_ids }}"
+  environment:
+    OS_CLOUD: "{{ user_cloud }}"
+  changed_when: true
+
+- name: Register IPv6 secondary network resources for cleanup
+  ansible.builtin.include_role:
+    name: shiftstack.tools.tools_register_resources_file
+  vars:
+    input:
+      ipv6_secondary_network_ids: "{{ ipv6_secondary_network_ids }}"
+      ipv6_secondary_subnet_ids: "{{ ipv6_secondary_subnet_ids }}"
+      ipv6_secondary_router_name: "{{ ipv6_secondary_networks.router_name }}"
