@@ -55,5 +55,5 @@ ocp_deployment_topology:
     master: 3
     worker: 2
   servergroups:
-    master: "anti-affinity"
-    worker: "anti-affinity"
+    master: "soft-anti-affinity"
+    worker: "soft-anti-affinity"

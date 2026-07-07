@@ -69,8 +69,8 @@
             name: tools_cluster_checks
             tasks_from: check_pods.yml
           vars:
-            wait_retries: 20
-            wait_delay: 10
+            wait_retries: 30
+            wait_delay: 30
 
         - name: Check cluster alerts
           ansible.builtin.include_role:
