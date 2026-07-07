@@ -1,0 +1,25 @@
+---
+# This should be set in job definitions
+upgrade_target_version: ""
+
+# Optional: specific build name to upgrade to (e.g., "4.19.3")
+# If empty, will use latest from channel
+upgrade_build_name: ""
+
+# Optional: release channel (candidate, fast, stable, eus)
+# Used if upgrade_build_name is empty
+upgrade_channel: "candidate"
+
+# Wait parameters for health checks
+wait_retries: 90
+wait_delay: 120
+
+# OSP 18 supported OCP versions
+osp18_supported_versions:
+  - "4.16"
+  - "4.18"
+  - "4.19"
+  - "4.20"
+  - "4.21"
+  - "4.22"
+  - "4.23"

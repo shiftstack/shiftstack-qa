@@ -84,6 +84,10 @@
   ansible.builtin.import_playbook: plays/verification.yaml
   when: "'verification' in stages"
 
+- name: Upgrade OpenShift cluster
+  ansible.builtin.import_playbook: plays/upgrade.yaml
+  when: "'upgrade' in stages"
+
 - name: Day2ops OpenShift stage
   ansible.builtin.import_playbook: plays/day2ops.yaml
   when: "'day2ops' in stages"

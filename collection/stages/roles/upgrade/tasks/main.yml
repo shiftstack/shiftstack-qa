@@ -1,0 +1,51 @@
+---
+# Main entry point - orchestrates sequential OCP upgrades
+# This role upgrades from the current cluster version to upgrade_target_version
+# following OSP 18 supported version path (skipping unsupported versions like 4.17)
+
+- name: Validate required variables
+  ansible.builtin.assert:
+    that:
+      - upgrade_target_version is defined
+      - upgrade_target_version | length > 0
+    fail_msg: "upgrade_target_version must be defined (e.g., '4.21')"
+
+- name: Discover current OCP version
+  ansible.builtin.include_role:
+    name: shiftstack.tools.tools_get_deploy_info
+    tasks_from: discover_ocp_version.yml
+
+- name: Display current cluster version
+  ansible.builtin.debug:
+    msg: "Current OCP version: {{ discovered_openshift_release }}"
+
+- name: Build upgrade path from current version to target (only OSP 18 supported versions)
+  ansible.builtin.set_fact:
+    upgrade_path: "{{ osp18_supported_versions |
+                      select('version', discovered_openshift_release, '>') |
+                      select('version', upgrade_target_version, '<=') |
+                      list }}"
+
+- name: Validate upgrade path is not empty
+  ansible.builtin.assert:
+    that:
+      - upgrade_path | length > 0
+    fail_msg: |
+      No upgrade path found from {{ discovered_openshift_release }} to {{ upgrade_target_version }}.
+      OSP 18 supported versions: {{ osp18_supported_versions | join(', ') }}
+    success_msg: "Upgrade path validated: {{ discovered_openshift_release }} → {{ upgrade_path | join(' → ') }}"
+
+- name: Display upgrade path
+  ansible.builtin.debug:
+    msg: "Upgrade path: {{ discovered_openshift_release }} → {{ upgrade_path | join(' → ') }}"
+
+- name: Execute sequential upgrades
+  ansible.builtin.include_tasks: single_upgrade.yml
+  loop: "{{ upgrade_path }}"
+  loop_control:
+    loop_var: target_release
+    label: "Upgrade to {{ target_release }}"
+
+- name: Display upgrade completion
+  ansible.builtin.debug:
+    msg: "Successfully upgraded cluster from {{ discovered_openshift_release }} to {{ upgrade_target_version }}"
