@@ -44,7 +44,7 @@ ocp_deployment_topology:
   flavors:
     master:
       name: "master"
-      ram: 24576
+      ram: 16384
       vcpus: 4
       disk: 30
     worker:
@@ -56,5 +56,5 @@ ocp_deployment_topology:
     master: 3
     worker: 2
   servergroups:
-    master: "anti-affinity"
-    worker: "anti-affinity"
+    master: "soft-anti-affinity"
+    worker: "soft-anti-affinity"
