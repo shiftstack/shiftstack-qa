@@ -150,11 +150,11 @@
           - master_after | length == 3
           - master_after | selectattr('location.zone', 'eq', expected_fd_az) | list | length == 2
           - root_volumes_after.results | selectattr('stdout', 'eq',
-             'availability_zone="' + expected_fd_cinderaz + '"\ntype="' + expected_fd_volumeType + '"') | list | length == 2
+             'availability_zone="' + expected_fd_cinderaz + '"\ntype="' + expected_fd_volume_type + '"') | list | length == 2
       vars:
         expected_fd_az: "{{ orig_failuredomains[1].availabilityZone }}"
         expected_fd_cinderaz: "{{ orig_failuredomains[1].rootVolume.availabilityZone }}"
-        expected_fd_volumeType: "{{ orig_failuredomains[1].rootVolume.volumeType }}"
+        expected_fd_volume_type: "{{ orig_failuredomains[1].rootVolume.volumeType }}"
 
     - name: Confirm that the VMs include the added network and SG
       ansible.builtin.assert:
@@ -202,6 +202,7 @@
             tasks_from: wait_until_cluster_is_healthy.yml
 
     - name: Clean up test OpenStack resources
+      failed_when: false
       block:
         - name: Delete test network
           openstack.cloud.network:
@@ -214,4 +215,3 @@
             cloud: "{{ user_cloud }}"
             name: "{{ cpms_replacements.sg_name }}"
             state: absent
-      ignore_errors: true
