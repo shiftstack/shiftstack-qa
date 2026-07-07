@@ -1,0 +1,20 @@
+---
+# Example job: Full OSP 18 upgrade chain
+# Sequential upgrade: 4.16 → 4.18 → 4.19 → 4.20 → 4.21
+# Note: OSP 18 supports 4.16, 4.18, 4.19, 4.20, 4.21 (NOT 4.17)
+openshift_release: 4.16
+installation_type: ipi
+stages:
+  - cleanup
+  - prepare
+  - install
+  - post
+  - verification
+  - upgrade
+
+# Target version for upgrade stage
+upgrade_target_version: "4.21"
+upgrade_channel: candidate
+
+# Optional: Enable availability zones for testing CPMS updates
+# provision_az_enable: true

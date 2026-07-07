@@ -1,0 +1,16 @@
+---
+# Example job: Upgrade from 4.19 to 4.21 on OSP 18
+# Tests the 4.19 ACK workaround when upgrading TO 4.19
+openshift_release: 4.19
+installation_type: ipi
+stages:
+  - cleanup
+  - prepare
+  - install
+  - post
+  - verification
+  - upgrade
+
+# Target version for upgrade stage
+upgrade_target_version: "4.21"
+upgrade_channel: candidate
