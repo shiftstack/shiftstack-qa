@@ -1,5 +1,9 @@
 ---
-- name: Get pods in namespace {{ ipv6_namespace }} for external reachability test
+- name: Reset pod-node mapping for {{ ipv6_namespace }}
+  ansible.builtin.set_fact:
+    ipv6_ext_pod_nodes: {}
+
+- name: Get pods with node info in namespace {{ ipv6_namespace }} for external reachability test
   kubernetes.core.k8s_info:
     kubeconfig: "{{ kubeconfig }}"
     kind: Pod
@@ -10,9 +14,12 @@
       - status.phase=Running
   register: ipv6_ext_pods
 
-- name: Store pod names for external test
+- name: Build pod-to-node mapping for {{ ipv6_namespace }}
   ansible.builtin.set_fact:
-    ipv6_ext_pod_names: "{{ ipv6_ext_pods.resources | map(attribute='metadata.name') | list }}"
+    ipv6_ext_pod_nodes: "{{ ipv6_ext_pod_nodes | default({}) | combine({item.metadata.name: item.spec.nodeName}) }}"
+  loop: "{{ ipv6_ext_pods.resources }}"
+  loop_control:
+    label: "{{ item.metadata.name }}"
 
 - name: Get pod IPv6 addresses for external test
   ansible.builtin.shell: |
@@ -21,14 +28,15 @@
     awk '/inet6/{print $2}' | cut -f1 -d'/'
   environment:
     KUBECONFIG: "{{ kubeconfig }}"
-  loop: "{{ ipv6_ext_pod_names }}"
+  loop: "{{ ipv6_ext_pod_nodes.keys() | list }}"
   register: ext_pod_ipv6_results
   changed_when: false
 
-- name: Verify external IPv6 reachability from worker node to pods in {{ ipv6_namespace }}
+- name: Verify external IPv6 reachability from cross-node worker to pods in {{ ipv6_namespace }}
   ansible.builtin.shell: |
     set -o pipefail && \
-    timeout 120 oc debug node/{{ ocp_workers[0] }} -- chroot /host curl -s --connect-timeout 10 http://[{{ item.stdout }}]:8080
+    timeout 120 oc debug node/{{ ocp_workers | difference([ipv6_ext_pod_nodes[item.item]]) | first }} -- \
+    chroot /host curl -s --connect-timeout 10 http://[{{ item.stdout }}]:8080
   environment:
     KUBECONFIG: "{{ kubeconfig }}"
   loop: "{{ ext_pod_ipv6_results.results }}"
