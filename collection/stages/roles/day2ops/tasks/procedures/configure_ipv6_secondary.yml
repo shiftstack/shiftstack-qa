@@ -180,6 +180,7 @@
     cloud: "{{ user_cloud }}"
     state: present
     name: "{{ item.id }}"
+    network: "{{ item.network_id }}"
     port_security_enabled: false
     no_security_groups: true
   loop: "{{ ipv6_worker_ports }}"
