@@ -37,26 +37,38 @@
     ocp_workers: "{{ workers | json_query('resources[*].metadata.name') | sort }}"
     num_workers: "{{ workers.resources | length }}"
 
-- name: Discover IPv6 interfaces on first worker
+- name: Discover IPv6 interfaces on all workers via live state
   ansible.builtin.shell: |
     set -o pipefail && \
-    oc adm node-logs {{ ocp_workers[0] }} | \
-    grep '{{ item.cidr | regex_replace('::/64$', '') }}' | \
-    grep dev | \
-    sed 's/.*{{ item.cidr | regex_replace('::/64$', '') }}::.* dev \(\S\+\).*/\1/g' | \
-    tail -1
+    timeout 120 oc debug node/{{ item.0 }} -- chroot /host \
+    ip -6 addr show scope global | \
+    grep -B1 '{{ item.1.cidr | regex_replace('::/64$', '') }}' | \
+    awk -F': ' '/^[0-9]/{print $2}' | head -1
   environment:
     KUBECONFIG: "{{ kubeconfig }}"
-  loop: "{{ ipv6_secondary_networks.networks }}"
-  register: ipv6_interfaces_results
+  with_nested:
+    - "{{ ocp_workers }}"
+    - "{{ ipv6_secondary_networks.networks }}"
+  register: all_worker_interfaces
   changed_when: false
   retries: 10
   delay: 30
-  until: ipv6_interfaces_results.stdout != ""
+  until: all_worker_interfaces.stdout != ""
 
-- name: Store IPv6 interface names
+- name: Validate consistent NIC naming across all workers
+  ansible.builtin.assert:
+    that:
+      - per_network_interfaces | unique | length == 1
+    fail_msg: |
+      NIC naming inconsistency for {{ item.net_name }}: {{ per_network_interfaces }}
+      Workers have different interface names for the same IPv6 network.
+  vars:
+    per_network_interfaces: "{{ all_worker_interfaces.results | selectattr('item.1.net_name', 'equalto', item.net_name) | map(attribute='stdout') | list }}"
+  loop: "{{ ipv6_secondary_networks.networks }}"
+
+- name: Store IPv6 interface names (validated consistent across workers)
   ansible.builtin.set_fact:
-    ipv6_interfaces: "{{ ipv6_interfaces_results.results | map(attribute='stdout') | list }}"
+    ipv6_interfaces: "{{ all_worker_interfaces.results | selectattr('item.0', 'equalto', ocp_workers[0]) | map(attribute='stdout') | list }}"
 
 - name: Validate discovered IPv6 interfaces are not empty
   ansible.builtin.assert:
@@ -64,7 +76,7 @@
       - ipv6_interfaces | length == ipv6_secondary_networks.networks | length
       - ipv6_interfaces | select('equalto', '') | list | length == 0
     fail_msg: |
-      Failed to discover IPv6 interfaces on worker {{ ocp_workers[0] }}.
+      Failed to discover IPv6 interfaces on workers.
       Expected {{ ipv6_secondary_networks.networks | length }} interfaces, got: {{ ipv6_interfaces }}
 
 - name: Display discovered IPv6 interfaces
@@ -94,18 +106,20 @@
     KUBECONFIG: "{{ kubeconfig }}"
   changed_when: true
 
-- name: Verify NetworkAttachmentDefinition CRs exist
+- name: Verify NetworkAttachmentDefinition CR exists in {{ item }}
   kubernetes.core.k8s_info:
     kubeconfig: "{{ kubeconfig }}"
     api_version: k8s.cni.cncf.io/v1
     kind: NetworkAttachmentDefinition
+    namespace: "{{ item }}"
   register: network_attachments
   until:
     - network_attachments is defined
     - network_attachments is not failed
-    - network_attachments | json_query('resources[*].metadata.name') | list | sort == ipv6_secondary_networks.projects | sort
+    - network_attachments.resources | length > 0
   retries: 10
   delay: 30
+  loop: "{{ ipv6_secondary_networks.projects }}"
 
 - name: Template IPv6 test deployments
   ansible.builtin.template:

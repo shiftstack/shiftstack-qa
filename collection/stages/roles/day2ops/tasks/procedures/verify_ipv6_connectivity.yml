@@ -1,4 +1,8 @@
 ---
+- name: Reset pod IP mapping for {{ ipv6_namespace }}
+  ansible.builtin.set_fact:
+    ipv6_pod_ips: {}
+
 - name: Get pods in namespace {{ ipv6_namespace }}
   kubernetes.core.k8s_info:
     kubeconfig: "{{ kubeconfig }}"

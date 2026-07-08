@@ -22,6 +22,12 @@
   changed_when: false
   register: _cacert_content
 
+- name: Load registered resources for IPv6 secondary network IDs
+  ansible.builtin.include_vars:
+    file: "{{ resources_file }}"
+    name: registered_resources
+  when: ocp_deployment_topology.secondary_ip_protocol == 'ipv6'
+
 - name: Generate install-config.yaml from install-config-ipi.yaml.j2 template
   ansible.builtin.template:
     src: install-config-ipi.yaml.j2
