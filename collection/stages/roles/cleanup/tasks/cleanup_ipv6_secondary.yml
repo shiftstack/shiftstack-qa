@@ -1,0 +1,37 @@
+---
+- name: Check if IPv6 secondary resources exist (via resources file)
+  ansible.builtin.include_vars:
+    file: "{{ resources_file }}"
+    name: registered_resources
+  ignore_errors: true  # noqa: ignore-errors
+  register: resources_load
+
+- name: Cleanup IPv6 secondary OpenStack resources
+  when:
+    - resources_load is succeeded
+    - registered_resources.ipv6_secondary_router_name is defined
+  block:
+    - name: Detach IPv6 secondary subnets from router
+      ansible.builtin.shell: >
+        openstack router remove subnet {{ registered_resources.ipv6_secondary_router_name }} {{ item }}
+      loop: "{{ registered_resources.ipv6_secondary_subnet_ids | default([]) }}"
+      environment:
+        OS_CLOUD: "{{ user_cloud }}"
+      changed_when: true
+      ignore_errors: true  # noqa: ignore-errors
+
+    - name: Delete IPv6 secondary router
+      openstack.cloud.router:
+        cloud: "{{ user_cloud }}"
+        state: absent
+        name: "{{ registered_resources.ipv6_secondary_router_name }}"
+      ignore_errors: true  # noqa: ignore-errors
+
+    - name: Delete IPv6 secondary networks
+      ansible.builtin.shell: >
+        openstack network delete {{ item }}
+      loop: "{{ registered_resources.ipv6_secondary_network_ids | default([]) }}"
+      environment:
+        OS_CLOUD: "{{ user_cloud }}"
+      changed_when: true
+      ignore_errors: true  # noqa: ignore-errors

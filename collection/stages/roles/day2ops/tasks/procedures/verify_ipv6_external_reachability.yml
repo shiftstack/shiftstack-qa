@@ -1,0 +1,50 @@
+---
+- name: Reset pod-node mapping for {{ ipv6_namespace }}
+  ansible.builtin.set_fact:
+    ipv6_ext_pod_nodes: {}
+
+- name: Get pods with node info in namespace {{ ipv6_namespace }} for external reachability test
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
+    kind: Pod
+    namespace: "{{ ipv6_namespace }}"
+    label_selectors:
+      - app=hello-openshift
+    field_selectors:
+      - status.phase=Running
+  register: ipv6_ext_pods
+
+- name: Build pod-to-node mapping for {{ ipv6_namespace }}
+  ansible.builtin.set_fact:
+    ipv6_ext_pod_nodes: "{{ ipv6_ext_pod_nodes | default({}) | combine({item.metadata.name: item.spec.nodeName}) }}"
+  loop: "{{ ipv6_ext_pods.resources }}"
+  loop_control:
+    label: "{{ item.metadata.name }}"
+
+- name: Get pod IPv6 addresses for external test
+  ansible.builtin.shell: |
+    set -o pipefail && \
+    oc exec {{ item }} -n {{ ipv6_namespace }} -- ip -6 addr show dev net1 scope global | \
+    awk '/inet6/{print $2}' | cut -f1 -d'/'
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+  loop: "{{ ipv6_ext_pod_nodes.keys() | list }}"
+  register: ext_pod_ipv6_results
+  changed_when: false
+
+- name: Verify external IPv6 reachability from cross-node worker to pods in {{ ipv6_namespace }}
+  ansible.builtin.shell: |
+    set -o pipefail && \
+    timeout 120 oc debug node/{{ ocp_workers | difference([ipv6_ext_pod_nodes[item.item]]) | first }} -- \
+    chroot /host curl -s --connect-timeout 10 http://[{{ item.stdout }}]:8080
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+  loop: "{{ ext_pod_ipv6_results.results }}"
+  loop_control:
+    label: "{{ item.item }}"
+  when: item.stdout != ""
+  register: external_check
+  changed_when: false
+  retries: 5
+  delay: 10
+  until: external_check.stdout is search('Hello OpenShift!')
