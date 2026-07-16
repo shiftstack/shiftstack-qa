@@ -2,6 +2,7 @@
 Ansible playbooks and roles for QA automation for OSP18 and up.
 
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit)
+[![prow](https://img.shields.io/badge/prow-enabled-blue)](https://docs.ci.openshift.org/docs/how-tos/onboarding-a-new-component/)
 
 ## Requirements
 1. This code is intended to run on top of the image https://quay.io/repository/shiftstack-qe/shiftstack-client
