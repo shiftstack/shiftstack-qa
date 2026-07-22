@@ -1,0 +1,234 @@
+---
+# Single upgrade step: upgrade from current version to target_release
+# This file is included in a loop from main.yml with target_release variable
+
+- name: Check cluster health before upgrading to {{ target_release }}
+  ansible.builtin.include_role:
+    name: shiftstack.tools.tools_cluster_checks
+  vars:
+    actions:
+      - wait_until_cluster_is_healthy
+      - wait_until_nodes_ready
+      - wait_until_no_unschedulable_nodes
+    wait_retries: 1
+    wait_delay: 0
+
+- name: Get the ClusterVersion object before upgrade
+  ansible.builtin.shell: |
+    oc get clusterversion version -o json
+  register: cluster_version_json_before
+  changed_when: false
+
+- name: Parse ClusterVersion before upgrade
+  ansible.builtin.set_fact:
+    cluster_version_before_upgrade: "{{ cluster_version_json_before.stdout | from_json }}"
+
+- name: Get current cluster version from history
+  ansible.builtin.set_fact:
+    current_version: "{{ cluster_version_before_upgrade.status.history[0].version }}"
+
+- name: Check the version to upgrade to is >= the current version
+  ansible.builtin.assert:
+    that:
+      - target_release is version(current_version | regex_replace('^(\\d+\\.\\d+).*', '\\1'), '>=')
+    fail_msg: "The version to upgrade to ({{ target_release }}) must be >= the current version ({{ current_version }})"
+
+- name: Get the OCP release build name to upgrade to
+  ansible.builtin.include_role:
+    name: shiftstack.tools.tools_get_openshift_release
+    tasks_from: get_openshift_release_build_name.yml
+  vars:
+    release: "{{ target_release }}"
+    build_name: "{{ upgrade_build_name }}"
+
+- name: Print upgrade versions
+  ansible.builtin.debug:
+    msg: "Upgrading FROM: '{{ current_version }}' TO: '{{ openshift_release_build_name }}'"
+
+- name: Mark the OpenShift version to upgrade to
+  ansible.builtin.debug:
+    msg: "Build mark: upgrade_to={{ openshift_release_build_name }}"
+
+# Version-specific workarounds for OSP 18
+- name: Set patch data for consoleplugins (4.16 only)
+  ansible.builtin.set_fact:
+    console_patch:
+      storedVersions:
+        - v1
+  when: openshift_release_build_name is regex('^4\\.16\\..*')
+
+- name: Set consoleplugins to v1 for 4.16 upgrade
+  ansible.builtin.shell: |
+    oc patch crd consoleplugins.console.openshift.io --subresource='status' --type="merge" -p '{{ console_patch | to_json }}'
+  when: openshift_release_build_name is regex('^4\\.16\\..*')
+  changed_when: true
+
+- name: Set ack data for 4.19 upgrade handholding
+  ansible.builtin.set_fact:
+    ack419_patch:
+      data:
+        ack-4.18-kube-1.32-api-removals-in-4.19: "true"
+  when: openshift_release_build_name is regex('^4\\.19\\..*')
+
+- name: Manual ack for 4.19 upgrade (k8s 1.32 API removals)
+  ansible.builtin.shell: |
+    oc -n openshift-config patch cm admin-acks --type="merge" -p '{{ ack419_patch | to_json }}'
+  when: openshift_release_build_name is regex('^4\\.19\\..*')
+  changed_when: true
+
+# Get the digest ID from the release image
+- name: Create secret.json for OCP release info
+  ansible.builtin.copy:
+    content: "{{ ocp_pull_secret }}"
+    dest: /tmp/secret.json
+    mode: '0600'
+
+- name: Get the OCP release digest
+  ansible.builtin.shell: |
+    set -o pipefail
+    oc adm release info registry.ci.openshift.org/ocp/release:{{ openshift_release_build_name }} --registry-config=/tmp/secret.json | grep Digest | awk '{print $2}'
+  args:
+    executable: /bin/bash
+  register: release_digest
+  changed_when: false
+
+- name: Display release digest
+  ansible.builtin.debug:
+    msg: "{{ openshift_release_build_name }} release digest: {{ release_digest.stdout }}"
+
+- name: Run openshift upgrade command
+  ansible.builtin.shell: |
+    oc adm upgrade --to-image=registry.ci.openshift.org/ocp/release@{{ release_digest.stdout }} --allow-explicit-upgrade --force
+  register: upgrade
+  changed_when: true
+
+- name: Display upgrade command output
+  ansible.builtin.debug:
+    var: upgrade
+
+- name: Check the upgrade command returns ok
+  ansible.builtin.assert:
+    that:
+      - upgrade.rc == 0
+    fail_msg: "oc adm upgrade command returned {{ upgrade.rc }} and stderr {{ upgrade.stderr_lines }}"
+
+- name: Set upgrade start datetime
+  ansible.builtin.set_fact:
+    start_time: "{{ lookup('pipe', 'date +%Y-%m-%dT%H:%M:%S') }}"
+
+- name: Wait until the upgrade starts (Progressing=True)
+  ansible.builtin.shell: |
+    set -o pipefail
+    oc get clusterversion version -o json | jq '.status.conditions[] | select(.type=="Progressing" and .status=="True")'
+  args:
+    executable: /bin/bash
+  register: progressing_check
+  until: progressing_check.stdout | length > 0
+  retries: 20
+  delay: 15
+  changed_when: false
+
+# Main upgrade validation block with must-gather rescue
+- name: Block for upgrade checks with must-gather on failure
+  block:
+    - name: Wait until the upgrade is completed (cluster is healthy)
+      ansible.builtin.include_role:
+        name: shiftstack.tools.tools_cluster_checks
+      vars:
+        actions:
+          - wait_until_cluster_is_healthy
+        wait_retries: 90
+        wait_delay: 120
+
+    - name: Wait until cluster nodes are ready after OCP upgrade
+      ansible.builtin.include_role:
+        name: shiftstack.tools.tools_cluster_checks
+      vars:
+        actions:
+          - wait_until_nodes_ready
+        wait_retries: 80
+        wait_delay: 30
+
+    - name: Wait until there are no unschedulable nodes after OCP upgrade
+      ansible.builtin.include_role:
+        name: shiftstack.tools.tools_cluster_checks
+      vars:
+        actions:
+          - wait_until_no_unschedulable_nodes
+        wait_retries: 80
+        wait_delay: 30
+
+    - name: Set upgrade finish datetime
+      ansible.builtin.set_fact:
+        finish_time: "{{ lookup('pipe', 'date +%Y-%m-%dT%H:%M:%S') }}"
+
+    - name: Set the upgrade execution time in minutes
+      ansible.builtin.set_fact:
+        upgrade_time: "{{ (((finish_time | to_datetime('%Y-%m-%dT%H:%M:%S')) - (start_time | to_datetime('%Y-%m-%dT%H:%M:%S'))).total_seconds() / 60) | int }}"
+
+    - name: Mark the upgrade execution time
+      ansible.builtin.debug:
+        msg: "Build mark: upgrade_minutes={{ upgrade_time }}"
+
+    - name: Check there are no pods in CrashLoopBackOff
+      ansible.builtin.include_role:
+        name: shiftstack.tools.tools_cluster_checks
+      vars:
+        actions:
+          - check_no_crashloopbackoff
+
+    - name: Wait until the running cluster pods are ready after OCP upgrade
+      ansible.builtin.include_role:
+        name: shiftstack.tools.tools_cluster_checks
+      vars:
+        actions:
+          - wait_until_pods_ready
+        wait_retries: 20
+        wait_delay: 30
+
+    - name: Get the ClusterVersion object after upgrade
+      ansible.builtin.shell: |
+        oc get clusterversion version -o json
+      register: cluster_version_json_after
+      changed_when: false
+
+    - name: Parse ClusterVersion after upgrade
+      ansible.builtin.set_fact:
+        cluster_version_after: "{{ cluster_version_json_after.stdout | from_json }}"
+
+    - name: Check the upgraded cluster version is the desired one
+      ansible.builtin.assert:
+        that:
+          - cluster_version_after.status.history[0].version == openshift_release_build_name
+        fail_msg: "Cluster upgraded to '{{ cluster_version_after.status.history[0].version }}' instead of '{{ openshift_release_build_name }}'"
+        success_msg: "Cluster successfully upgraded to '{{ cluster_version_after.status.history[0].version }}'"
+
+    - name: Check cluster operators are ready after the OCP upgrade
+      ansible.builtin.include_role:
+        name: shiftstack.tools.tools_cluster_checks
+      vars:
+        actions:
+          - check_cluster_operators
+        release_name: "{{ openshift_release_build_name | default('') }}"
+
+  rescue:
+    - name: Run must-gather for failed upgrade
+      ansible.builtin.include_role:
+        name: shiftstack.tools.tools_must-gather
+      vars:
+        must_gather_dir_suffix: "must-gather-upgrade-{{ target_release }}"
+
+    - name: Fail inside rescue block
+      ansible.builtin.fail:
+        msg: "The cluster is not healthy after the upgrade to {{ target_release }}. Check must-gather artifacts."
+
+# Post-upgrade tasks
+- name: Get the installer and oc client binaries for {{ openshift_release_build_name }} release
+  ansible.builtin.include_role:
+    name: shiftstack.tools.tools_get_openshift_release
+    tasks_from: get_openshift_release_binaries.yml
+  vars:
+    binaries:
+      - installer
+      - client
+    release_name: "{{ openshift_release_build_name | default('') }}"

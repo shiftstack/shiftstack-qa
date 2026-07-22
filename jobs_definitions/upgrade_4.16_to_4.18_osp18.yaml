@@ -1,0 +1,16 @@
+---
+# Example job: Single-hop upgrade on OSP 18
+# Upgrades from 4.16 to 4.18 (skipping 4.17 which is not supported on OSP 18)
+openshift_release: 4.16
+installation_type: ipi
+stages:
+  - cleanup
+  - prepare
+  - install
+  - post
+  - verification
+  - upgrade
+
+# Target version for upgrade stage
+upgrade_target_version: "4.18"
+upgrade_channel: candidate

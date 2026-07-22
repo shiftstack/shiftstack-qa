@@ -14,7 +14,7 @@
 - name: Run day2ops procedure {{ procedure_task_file }}
   vars:
     procedure: "{{ procedure_task_file | regex_replace('\\.yml$', '') }}"
-    report_path: "{{ report_dir }}/{{ day2ops_report_filename }}"
+    report_path: "{{ artifacts_dir }}/{{ day2ops_report_filename }}"
   block:
 
     - name: Create entry on report
