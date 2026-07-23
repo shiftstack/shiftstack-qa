@@ -14,3 +14,4 @@ stages:
 # Target version for upgrade stage
 upgrade_target_version: "4.18"
 upgrade_channel: candidate
+openshift_build_name: ""
