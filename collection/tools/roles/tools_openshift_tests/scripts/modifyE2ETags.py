@@ -49,7 +49,14 @@ for ts in root:
                     ts.remove(tc)
                 else:
                     new_tc_name = format_test_case_name(tc_name)
-                    tc.set('name', new_tc_name)
+                    if new_tc_name.startswith('OTP.'):
+                        new_tc_name = new_tc_name[4:]
+                    if '.' in new_tc_name:
+                        tc_classname, tc_name_rest = new_tc_name.split('.', 1)
+                        tc.set('classname', tc_classname)
+                        tc.set('name', tc_name_rest)
+                    else:
+                        tc.set('name', new_tc_name)
                     print('TestCase added to output XML:', new_tc_name)
     ts.set('tests', str(len(ts.getchildren())))
 
