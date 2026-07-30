@@ -4,11 +4,57 @@ from lxml import etree
 import sys
 import time
 
+# Mapping of testsuite names whose tests originate from openshift-tests-private
+# and need classname remapped to match the Polarion naming convention used by
+# the main openstack test suites (sig-installer.Suite_openshift_openstack.*).
+PRIVATE_TEST_SUITES = {
+    'egressip_tests': 'sig-installer.Suite_openshift_openstack.egressip',
+}
+
+
 def format_test_case_name(s):
     return s.replace(':', '_').replace('/', '_').replace(' ', '_').replace('.', '_').replace('[', '.').replace(']', '.').rstrip('.').replace('..','.').replace('_.','.').replace('._','.')[1::]
 
+
+def remap_private_test_name(tc_name, testsuite_name):
+    """Remap openshift-tests-private names to Polarion-compatible format.
+
+    Tests from openshift-tests-private use [sig-networking] SDN_OVN_EgressIP_*
+    naming which JUMP cannot match. Remap to the sig-installer.Suite_openshift_openstack
+    pattern that has registered Polarion test case entries.
+    """
+    prefix = PRIVATE_TEST_SUITES.get(testsuite_name)
+    if not prefix:
+        return None
+    short_name = format_test_case_name(tc_name)
+    # Strip the sig-networking (or similar) classname prefix from Ginkgo output
+    if '.' in short_name:
+        _, short_name = short_name.split('.', 1)
+    return f"{prefix}.{short_name}"
+
+
+# Self-test mode: verify transform logic without processing XML files.
+if len(sys.argv) == 2 and sys.argv[1] == '--self-test':
+    egressip_input = (
+        '[sig-networking] SDN OVN EgressIP Author:huirwang-ConnectedOnly-Medium-47272-'
+        '.FdpOvnOvs.Pods will not be affected by the egressIP set on other netnamespace .Serial'
+    )
+    result = remap_private_test_name(egressip_input, 'egressip_tests')
+    assert result.startswith('sig-installer.Suite_openshift_openstack.egressip.SDN_OVN_EgressIP_'), \
+        f"Unexpected remap result: {result}"
+
+    assert remap_private_test_name(egressip_input, 'unknown_suite') is None, \
+        "Unknown suite should return None"
+
+    otp_input = '[OTP][sig-installer] Suite openshift openstack lb Serial test'
+    otp_result = format_test_case_name(otp_input)
+    assert otp_result.startswith('OTP.sig-installer'), \
+        f"OTP prefix not preserved by format_test_case_name: {otp_result}"
+
+    print("All self-tests passed.")
+    sys.exit(0)
+
 # This script modify a given xml report so it can be uploaded to ReportPortal and Polarion.
-# third argument. Currently it's used for NetworkPolicy and Conformance tests
 # @arg1: input xml file.
 # @arg2: output xml file.
 # @arg3: Tests to include
@@ -48,9 +94,14 @@ for ts in root:
                     print('TestCase removed from input XML:', tc_name)
                     ts.remove(tc)
                 else:
-                    new_tc_name = format_test_case_name(tc_name)
-                    if new_tc_name.startswith('OTP.'):
-                        new_tc_name = new_tc_name[4:]
+                    remapped = remap_private_test_name(tc_name, testsuite_name)
+                    if remapped:
+                        new_tc_name = remapped
+                    else:
+                        new_tc_name = format_test_case_name(tc_name)
+                        if new_tc_name.startswith('OTP.'):
+                            new_tc_name = new_tc_name[4:]
+
                     if '.' in new_tc_name:
                         tc_classname, tc_name_rest = new_tc_name.split('.', 1)
                         tc.set('classname', tc_classname)
