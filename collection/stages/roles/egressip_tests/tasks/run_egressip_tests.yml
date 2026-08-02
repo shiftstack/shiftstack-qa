@@ -36,6 +36,14 @@
     allowlist_path: "{{ egressip_test_results_dir }}/allowlist.txt"
     tests_to_run_path: "{{ egressip_test_results_dir }}/list_of_tests_to_run.txt"
 
+- name: Download Go module dependencies before build
+  ansible.builtin.shell: |
+    source {{ home_dir }}/.bashrc
+    go mod download
+  args:
+    chdir: "{{ egressip_test_dir }}"
+  changed_when: true
+
 - name: Build extended-platform-tests executable
   ansible.builtin.shell: |
     source {{ home_dir }}/.bashrc
