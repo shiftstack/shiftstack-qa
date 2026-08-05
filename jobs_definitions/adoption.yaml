@@ -8,10 +8,7 @@ stages:
   - install
   - post
   - verification
-  # openstack_test delegates DNS tasks to the hypervisor via
-  # tools_cifmw_dnsmasq, which is unreachable from the adoption
-  # container context. Tracked in OSPRH-27365.
-  # - openstack_test
+  - openstack_test
   # Removed LB tests until Octavia is supported and enabled in adoption jobs
   # - lb_tests
 
@@ -45,6 +42,3 @@ ocp_deployment_topology:
   servergroups:
     master: "soft-anti-affinity"  # Required if number of computes < 3, otherwise can be anti-affinity
     worker: "soft-anti-affinity"  # Required if number of computes < 3, otherwise can be anti-affinity
-  # Workaround for OCPBUGS-67159
-  api_vip: "10.196.0.15"
-  ingress_vip: "10.196.0.17"
