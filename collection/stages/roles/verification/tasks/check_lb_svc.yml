@@ -52,16 +52,24 @@
         - not internal_lb
         - lb_ingress_ip is match(ipv4_regex)
       block:
-        - name: Get the LB internal IP on openstack when the lb is using a FIP
-          ansible.builtin.command: openstack floating ip show {{ lb_ingress_ip }} -f json
+        # NOTE: `openstack floating ip show … -f <any>` is broken on the
+        # shiftstackclient OSC ("Invalid formatter provided"). Use list+filter.
+        - name: Get the LB FIP details on openstack when the lb is using a FIP
+          ansible.builtin.command: openstack floating ip list --floating-ip-address {{ lb_ingress_ip }} -f json
           environment:
             OS_CLOUD: "{{ user_cloud }}"
-          register: lb_fip_show
+          register: lb_fip_list
           changed_when: false
+
+        - name: Check the FIP "{{ lb_ingress_ip }}" exists on OpenStack
+          ansible.builtin.assert:
+            that:
+              - (lb_fip_list.stdout | from_json | length) > 0
+            fail_msg: Could not find floating IP "{{ lb_ingress_ip }}" in OSP
 
         - name: Define the internal IP
           ansible.builtin.set_fact:
-            lb_internal_ip: "{{ internal_lb | ternary(lb_ingress_ip, (lb_fip_show.stdout | from_json).fixed_ip_address) }}"
+            lb_internal_ip: "{{ internal_lb | ternary(lb_ingress_ip, (lb_fip_list.stdout | from_json | first)['Fixed IP Address']) }}"
 
         - name: List load balancers on OpenStack
           ansible.builtin.command: openstack loadbalancer list -f json
@@ -163,12 +171,12 @@
         - lb_internal_ip is defined
         - lb_internal_ip | length > 0
 
+    # Prefer list over show: floating ip show -f * fails on shiftstackclient OSC.
     - name: Check whether the fip "{{ lb_ingress_ip }}" still exists on OSP
-      ansible.builtin.command: openstack floating ip show {{ lb_ingress_ip }} -f json
+      ansible.builtin.command: openstack floating ip list --floating-ip-address {{ lb_ingress_ip }} -f json
       environment:
         OS_CLOUD: "{{ user_cloud }}"
-      register: fip
-      failed_when: false
+      register: fip_list
       changed_when: false
       when:
         - lb_internal_ip is defined
@@ -177,7 +185,7 @@
     - name: Check the fip "{{ lb_ingress_ip }}" has been removed from OSP
       ansible.builtin.assert:
         that:
-          - fip.rc != 0
+          - (fip_list.stdout | from_json | length) == 0
         fail_msg: FIP "{{ lb_ingress_ip }}" is still present in OSP
       when:
         - lb_internal_ip is defined
