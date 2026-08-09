@@ -3,8 +3,12 @@
 openstack_test_name: openstack-test
 openstack_testsuite_name: openstack
 openstack_test_dir: "{{ artifacts_dir }}/{{ openstack_test_name }}"
+# Installed binary path is set in run_openstack_test.yml (OTE vs legacy).
 openstack_test_executable: "{{ home_dir }}/openstack-tests"
 openstack_test_results_dir: "{{ artifacts_dir }}/{{ openstack_test_name }}-results"
 openstack_tests_allowlist_file: ""
 openstack_tests_blocklist_file: ""
 openstack_tests_go_version: "{{ tests.default_go_version_target }}"
+# OTE (OpenShift Tests Extension) — used when discovered_openshift_release >= 4.20
+openstack_test_suite: openstack-test/all
+openstack_test_ote_binary_relpath: bin/openstack-test-tests-ext
