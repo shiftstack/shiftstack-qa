@@ -52,36 +52,45 @@
         - not internal_lb
         - lb_ingress_ip is match(ipv4_regex)
       block:
-        - name: Get the LB internal IP on openstack when the lb is using a FIP
-          ansible.builtin.shell: |
-            openstack floating ip show {{ lb_ingress_ip }} -c fixed_ip_address -f value
+        # NOTE: `openstack floating ip show … -f <any>` is broken on the
+        # shiftstackclient OSC ("Invalid formatter provided"). Use list+filter.
+        - name: Get the LB FIP details on openstack when the lb is using a FIP
+          ansible.builtin.command: openstack floating ip list --floating-ip-address {{ lb_ingress_ip }} -f json
           environment:
             OS_CLOUD: "{{ user_cloud }}"
-          register: lb_internal_ip_output
+          register: lb_fip_list
           changed_when: false
+
+        - name: Check the FIP "{{ lb_ingress_ip }}" exists on OpenStack
+          ansible.builtin.assert:
+            that:
+              - (lb_fip_list.stdout | from_json | length) > 0
+            fail_msg: Could not find floating IP "{{ lb_ingress_ip }}" in OSP
 
         - name: Define the internal IP
           ansible.builtin.set_fact:
-            lb_internal_ip: "{{ internal_lb | ternary(lb_ingress_ip, lb_internal_ip_output.stdout) }}"
+            lb_internal_ip: "{{ internal_lb | ternary(lb_ingress_ip, (lb_fip_list.stdout | from_json | first)['Fixed IP Address']) }}"
 
-        - name: Get the Octavia provider type for the LB
-          ansible.builtin.shell: |
-            set -o pipefail
-            openstack loadbalancer list -c vip_address -c provider -f value | grep {{ lb_internal_ip }} | awk '{print $2}'
+        - name: List load balancers on OpenStack
+          ansible.builtin.command: openstack loadbalancer list -f json
           environment:
             OS_CLOUD: "{{ user_cloud }}"
-          register: svc_lb_type
+          register: svc_lb_list
           changed_when: false
+
+        - name: Select the LB matching VIP "{{ lb_internal_ip }}"
+          ansible.builtin.set_fact:
+            svc_lb_matches: "{{ svc_lb_list.stdout | from_json | selectattr('vip_address', 'defined') | selectattr('vip_address', 'equalto', lb_internal_ip) | list }}"
 
         - name: Check the LB exists with the internal IP (VIP address) "{{ lb_internal_ip }}"
           ansible.builtin.assert:
-            that: svc_lb_type.stdout | length > 0
+            that: svc_lb_matches | length > 0
             fail_msg: Could not find a LB in OSP with the vip_address "{{ lb_internal_ip }}"
             success_msg: A LB with the vip_address "{{ lb_internal_ip }}" has been found in OSP
 
         - name: Detecte LB Octavia provider
           ansible.builtin.debug:
-            msg: "Detected LB Octavia provider: {{ svc_lb_type.stdout }}"
+            msg: "Detected LB Octavia provider: {{ svc_lb_matches[0].provider }}"
 
     - name: Get pod names
       kubernetes.core.k8s_info:
@@ -142,27 +151,42 @@
       delay: 15
       until: oc_project.resources|length == 0
 
-    - name: Check the LB with "{{ lb_ingress_ip }}" ingress IP has been removed from OSP
-      ansible.builtin.shell: |
-        set -o pipefail
-        openstack loadbalancer list -f value | grep {{ lb_ingress_ip }}
+    - name: List load balancers after project deletion
+      ansible.builtin.command: openstack loadbalancer list -f json
       environment:
         OS_CLOUD: "{{ user_cloud }}"
-      register: svc_lb
-      failed_when: svc_lb.rc == 0
+      register: svc_lb_after
+      changed_when: false
+      when:
+        - lb_internal_ip is defined
+        - lb_internal_ip | length > 0
+
+    - name: Check the LB with "{{ lb_ingress_ip }}" ingress IP has been removed from OSP
+      ansible.builtin.assert:
+        that:
+          - (svc_lb_after.stdout | from_json | selectattr('vip_address', 'defined') | selectattr('vip_address', 'equalto', lb_ingress_ip) | list | length) == 0
+          - (svc_lb_after.stdout | from_json | selectattr('vip_address', 'defined') | selectattr('vip_address', 'equalto', lb_internal_ip) | list | length) == 0
+        fail_msg: Found a LB in OSP still associated with vip_address "{{ lb_ingress_ip }}" or "{{ lb_internal_ip }}"
+      when:
+        - lb_internal_ip is defined
+        - lb_internal_ip | length > 0
+
+    # Prefer list over show: floating ip show -f * fails on shiftstackclient OSC.
+    - name: Check whether the fip "{{ lb_ingress_ip }}" still exists on OSP
+      ansible.builtin.command: openstack floating ip list --floating-ip-address {{ lb_ingress_ip }} -f json
+      environment:
+        OS_CLOUD: "{{ user_cloud }}"
+      register: fip_list
       changed_when: false
       when:
         - lb_internal_ip is defined
         - lb_internal_ip | length > 0
 
     - name: Check the fip "{{ lb_ingress_ip }}" has been removed from OSP
-      ansible.builtin.shell: |
-        openstack floating ip show {{ lb_ingress_ip }} -f value
-      environment:
-        OS_CLOUD: "{{ user_cloud }}"
-      register: fip
-      failed_when: fip.rc == 0
-      changed_when: false
+      ansible.builtin.assert:
+        that:
+          - (fip_list.stdout | from_json | length) == 0
+        fail_msg: FIP "{{ lb_ingress_ip }}" is still present in OSP
       when:
         - lb_internal_ip is defined
         - lb_internal_ip | length > 0

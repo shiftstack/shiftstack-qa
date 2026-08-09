@@ -119,7 +119,7 @@
         - not _skip_health  # CSI is disabled post-adoption
 
     - name: Check if manila is present on the OSP installation
-      ansible.builtin.command: openstack catalog show manila -c name
+      ansible.builtin.command: openstack catalog show manila -f json
       environment:
         OS_CLOUD: "{{ user_cloud }}"
       register: manila_enabled
