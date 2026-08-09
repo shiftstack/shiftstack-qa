@@ -1,5 +1,5 @@
 ---
-- name: Set artifact paths
+- name: Set artifact paths and OTE vs legacy mode
   ansible.builtin.set_fact:
     all_tests_path: >-
       {{ openstack_test_results_dir }}/openstack_tests.txt
@@ -9,28 +9,79 @@
       {{ openstack_tests_blocklist_file | ternary(openstack_test_results_dir + '/blocklist.txt', '') }}
     tests_to_run_path: >-
       {{ openstack_test_results_dir }}/list_of_tests_to_run.txt
+    openstack_test_log_path: >-
+      {{ openstack_test_results_dir }}/{{ openstack_test_name }}.log
+    openstack_test_junit_path: >-
+      {{ openstack_test_results_dir }}/junit_e2e_openstack.xml
+    # Upstream dropped make openstack-tests on release-4.20+ (OTE migration,
+    # openshift/openstack-test#303 / OSASINFRA-4375; backports #306/#307/#308).
+    # Older release branches still ship the legacy target.
+    openstack_test_use_ote: "{{ discovered_openshift_release is version('4.20', '>=') }}"
 
-- name: Build the openstack-tests for tests in the "openstack-test" repository
+- name: Set openstack-test executable path for OTE
+  ansible.builtin.set_fact:
+    openstack_test_executable: "{{ home_dir }}/openstack-test-tests-ext"
+  when: openstack_test_use_ote | bool
+
+- name: Set openstack-test executable path for legacy openshift-tests
+  ansible.builtin.set_fact:
+    openstack_test_executable: "{{ home_dir }}/openstack-tests"
+  when: not (openstack_test_use_ote | bool)
+
+# --- Build ---
+# OTE: make extension → bin/openstack-test-tests-ext (openshift/openstack-test#303)
+- name: Build the OTE openstack-test extension binary
+  ansible.builtin.shell: |
+    source {{ home_dir }}/.bashrc
+    make extension
+  args:
+    chdir: "{{ openstack_test_dir }}"
+  changed_when: true
+  when: openstack_test_use_ote | bool
+
+- name: Build the legacy openstack-tests binary
   ansible.builtin.shell: |
     source {{ home_dir }}/.bashrc
     make openstack-tests
   args:
     chdir: "{{ openstack_test_dir }}"
   changed_when: true
+  when: not (openstack_test_use_ote | bool)
 
-- name: Copy openstack-test executable
+- name: Copy OTE openstack-test executable
+  ansible.builtin.copy:
+    src: "{{ openstack_test_dir }}/{{ openstack_test_ote_binary_relpath }}"
+    dest: "{{ openstack_test_executable }}"
+    mode: u=rwx,g=rwx,o=rwx
+    remote_src: yes
+  when: openstack_test_use_ote | bool
+
+- name: Copy legacy openstack-test executable
   ansible.builtin.copy:
     src: "{{ openstack_test_dir }}/openstack-tests"
     dest: "{{ openstack_test_executable }}"
     mode: u=rwx,g=rwx,o=rwx
     remote_src: yes
+  when: not (openstack_test_use_ote | bool)
 
 - name: Remove source directory once compilation succeeded
   ansible.builtin.file:
     path: "{{ openstack_test_dir }}"
     state: absent
 
-- name: Prepare {{ all_tests_path }} file with all the tests that can be run
+# --- List tests ---
+- name: Prepare {{ all_tests_path }} with OTE list (names)
+  ansible.builtin.shell: >
+    {{ openstack_test_executable }} list
+    --suite {{ openstack_test_suite }}
+    -o names > {{ all_tests_path }}
+  environment:
+    OS_CLOUD: "{{ user_cloud }}"
+    KUBECONFIG: "{{ kubeconfig }}"
+  changed_when: true
+  when: openstack_test_use_ote | bool
+
+- name: Prepare {{ all_tests_path }} with legacy dry-run
   ansible.builtin.shell: >
     {{ openstack_test_executable }} run openshift/openstack
     --dry-run > {{ all_tests_path }}
@@ -38,6 +89,7 @@
     OS_CLOUD: "{{ user_cloud }}"
     KUBECONFIG: "{{ kubeconfig }}"
   changed_when: true
+  when: not (openstack_test_use_ote | bool)
 
 - name: Convert the allowlist YAML files to TXT
   ansible.builtin.include_role:
@@ -67,13 +119,104 @@
     blocklist_file: "{{ blocklist_path }}"
     output_file: "{{ tests_to_run_path }}"
 
+- name: Detect whether allow or block list filtering is active
+  ansible.builtin.set_fact:
+    openstack_test_filtering: "{{ (openstack_tests_allowlist_file | length > 0) or (openstack_tests_blocklist_file | length > 0) }}"
+
 - name: Run the openshift tests
   block:
-    - name: Run openstack tests
+    - name: Run OTE suite (no allow/block filter)
+      ansible.builtin.shell: >
+        {{ openstack_test_executable }} run-suite {{ openstack_test_suite }}
+        --junit-path {{ openstack_test_junit_path }}
+        > {{ openstack_test_log_path }}
+      environment:
+        # RHOSO_KUBECONFIG and SHIFTSTACK_PASS_FILE are required for the observability test
+        OS_CLOUD: "{{ user_cloud }}"
+        KUBECONFIG: "{{ kubeconfig }}"
+        RHOSO_KUBECONFIG: "{{ rhoso_kubeconfig }}"
+        SHIFTSTACK_PASS_FILE: "{{ kubeadmin_password }}"
+      changed_when: true
+      when:
+        - openstack_test_use_ote | bool
+        - not (openstack_test_filtering | bool)
+
+    # OTE run-test has no --junit-path; pipe filtered names via stdin and
+    # synthesize junit_e2e_*.xml from JSON results for post_openshift_tests.
+    - name: Run OTE filtered tests via run-test and write junit
+      ansible.builtin.shell: |
+        set -o pipefail
+        cat {{ tests_to_run_path }} | {{ openstack_test_executable }} run-test \
+          > {{ openstack_test_log_path }} || run_exit=$?
+        python3 - {{ openstack_test_log_path }} {{ openstack_test_junit_path }} <<'PY'
+        import json
+        import sys
+        import xml.etree.ElementTree as ET
+
+        log_path, junit_path = sys.argv[1], sys.argv[2]
+        with open(log_path, encoding="utf-8") as f:
+            raw = f.read().strip()
+        if not raw:
+            results = []
+        else:
+            try:
+                data = json.loads(raw)
+                results = data if isinstance(data, list) else [data]
+            except json.JSONDecodeError:
+                results = []
+                for line in raw.splitlines():
+                    line = line.strip()
+                    if not line:
+                        continue
+                    try:
+                        results.append(json.loads(line))
+                    except json.JSONDecodeError:
+                        continue
+
+        suite = ET.Element("testsuite", name="openstack-test")
+        for r in results:
+            name = r.get("name", "unknown")
+            duration_ms = r.get("duration") or 0
+            try:
+                time_s = f"{float(duration_ms) / 1000.0:.3f}"
+            except (TypeError, ValueError):
+                time_s = "0"
+            case = ET.SubElement(suite, "testcase", name=name, time=time_s)
+            result = (r.get("result") or "").lower()
+            if result == "failed":
+                fail = ET.SubElement(case, "failure")
+                fail.text = r.get("error") or r.get("output") or "failed"
+            elif result == "skipped":
+                skip = ET.SubElement(case, "skipped")
+                skip.text = r.get("output") or "skipped"
+        suite.set("tests", str(len(results)))
+        suite.set(
+            "failures",
+            str(sum(1 for r in results if (r.get("result") or "").lower() == "failed")),
+        )
+        suite.set(
+            "skipped",
+            str(sum(1 for r in results if (r.get("result") or "").lower() == "skipped")),
+        )
+        ET.ElementTree(suite).write(junit_path, encoding="utf-8", xml_declaration=True)
+        PY
+        py_exit=$?
+        exit ${run_exit:-${py_exit:-0}}
+      environment:
+        OS_CLOUD: "{{ user_cloud }}"
+        KUBECONFIG: "{{ kubeconfig }}"
+        RHOSO_KUBECONFIG: "{{ rhoso_kubeconfig }}"
+        SHIFTSTACK_PASS_FILE: "{{ kubeadmin_password }}"
+      changed_when: true
+      when:
+        - openstack_test_use_ote | bool
+        - openstack_test_filtering | bool
+
+    - name: Run legacy openstack tests
       ansible.builtin.shell: >
         {{ openstack_test_executable }} run openshift/openstack
         -f {{ tests_to_run_path }}
-        --output-file {{ openstack_test_results_dir }}/{{ openstack_test_name }}.log
+        --output-file {{ openstack_test_log_path }}
         --junit-dir={{ openstack_test_results_dir }} > /dev/null
       environment:
         # RHOSO_KUBECONFIG and SHIFTSTACK_PASS_FILE are required for the observability test
@@ -82,6 +225,7 @@
         RHOSO_KUBECONFIG: "{{ rhoso_kubeconfig }}"
         SHIFTSTACK_PASS_FILE: "{{ kubeadmin_password }}"
       changed_when: true
+      when: not (openstack_test_use_ote | bool)
 
   rescue:
     - name: Mark the openshift tests as UNSTABLE
@@ -92,21 +236,93 @@
         unstable_msg: >-
           The openshift test Suite failed.
 
-    - name: Get the number of failed openstack tests
+    - name: Get the number of failed openstack tests (OTE JSON log)
+      ansible.builtin.shell: |
+        set -o pipefail
+        python3 - {{ openstack_test_log_path }} failed <<'PY' || true
+        import json
+        import sys
+        path, want = sys.argv[1], sys.argv[2]
+        try:
+            with open(path, encoding="utf-8") as f:
+                raw = f.read().strip()
+        except OSError:
+            print(0)
+            raise SystemExit
+        if not raw:
+            print(0)
+            raise SystemExit
+        results = []
+        try:
+            data = json.loads(raw)
+            results = data if isinstance(data, list) else [data]
+        except json.JSONDecodeError:
+            for line in raw.splitlines():
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    results.append(json.loads(line))
+                except json.JSONDecodeError:
+                    continue
+        print(sum(1 for r in results if (r.get("result") or "").lower() == want))
+        PY
+      register: number_of_failed_tests
+      changed_when: false
+      when: openstack_test_use_ote | bool
+
+    - name: Get the number of passed openstack tests (OTE JSON log)
+      ansible.builtin.shell: |
+        set -o pipefail
+        python3 - {{ openstack_test_log_path }} passed <<'PY' || true
+        import json
+        import sys
+        path, want = sys.argv[1], sys.argv[2]
+        try:
+            with open(path, encoding="utf-8") as f:
+                raw = f.read().strip()
+        except OSError:
+            print(0)
+            raise SystemExit
+        if not raw:
+            print(0)
+            raise SystemExit
+        results = []
+        try:
+            data = json.loads(raw)
+            results = data if isinstance(data, list) else [data]
+        except json.JSONDecodeError:
+            for line in raw.splitlines():
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    results.append(json.loads(line))
+                except json.JSONDecodeError:
+                    continue
+        print(sum(1 for r in results if (r.get("result") or "").lower() == want))
+        PY
+      register: number_of_passed_tests
+      changed_when: false
+      when: openstack_test_use_ote | bool
+
+    - name: Get the number of failed openstack tests (legacy log)
       ansible.builtin.shell: >
         set -o pipefail &&
-        grep -e "^failed:" {{ openstack_test_results_dir }}/{{ openstack_test_name }}.log | wc -l
+        grep -e "^failed:" {{ openstack_test_log_path }} | wc -l
         || true
       register: number_of_failed_tests
       changed_when: false
+      when: not (openstack_test_use_ote | bool)
 
-    - name: Get the number of passed openstack tests
+    - name: Get the number of passed openstack tests (legacy log)
       ansible.builtin.shell: >
         set -o pipefail &&
-        grep -e "^passed:" {{ openstack_test_results_dir }}/{{ openstack_test_name }}.log | wc -l
+        grep -e "^passed:" {{ openstack_test_log_path }} | wc -l
         || true
       register: number_of_passed_tests
       changed_when: false
+      when: not (openstack_test_use_ote | bool)
 
     # This fail task is added to detect failures in openstack-test execution
     - name: Fail the playbook in case there are no failed and passed tests
