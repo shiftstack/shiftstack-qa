@@ -123,84 +123,55 @@
   ansible.builtin.set_fact:
     openstack_test_filtering: "{{ (openstack_tests_allowlist_file | length > 0) or (openstack_tests_blocklist_file | length > 0) }}"
 
+# OTE run-suite often marks every outer JSON result as failed when stderr has
+# klog lines (Deserializaion Error: invalid character 'I'...). True outcomes
+# live in nested STDOUT JSON / ginkgo SUCCESS!|FAIL! lines — see
+# files/ote_resolve_results.py.
+- name: Set path to OTE result resolver helper
+  ansible.builtin.set_fact:
+    openstack_test_ote_resolve_script: "{{ role_path }}/files/ote_resolve_results.py"
+  when: openstack_test_use_ote | bool
+
 - name: Run the openshift tests
   block:
     - name: Run OTE suite (no allow/block filter)
-      ansible.builtin.shell: >
-        {{ openstack_test_executable }} run-suite {{ openstack_test_suite }}
-        --junit-path {{ openstack_test_junit_path }}
-        > {{ openstack_test_log_path }}
-      environment:
-        # RHOSO_KUBECONFIG and SHIFTSTACK_PASS_FILE are required for the observability test
-        OS_CLOUD: "{{ user_cloud }}"
-        KUBECONFIG: "{{ kubeconfig }}"
-        RHOSO_KUBECONFIG: "{{ rhoso_kubeconfig }}"
-        SHIFTSTACK_PASS_FILE: "{{ kubeadmin_password }}"
-      changed_when: true
       when:
         - openstack_test_use_ote | bool
         - not (openstack_test_filtering | bool)
+      block:
+        - name: Execute OTE run-suite
+          ansible.builtin.shell: >
+            {{ openstack_test_executable }} run-suite {{ openstack_test_suite }}
+            --junit-path {{ openstack_test_junit_path }}
+            > {{ openstack_test_log_path }}
+          environment:
+            # RHOSO_KUBECONFIG and SHIFTSTACK_PASS_FILE are required for the observability test
+            OS_CLOUD: "{{ user_cloud }}"
+            KUBECONFIG: "{{ kubeconfig }}"
+            RHOSO_KUBECONFIG: "{{ rhoso_kubeconfig }}"
+            SHIFTSTACK_PASS_FILE: "{{ kubeadmin_password }}"
+          changed_when: true
+      always:
+        # Rewrite junit from resolved outcomes (OTE's own junit inherits false fails).
+        - name: Rewrite junit from resolved OTE run-suite outcomes
+          ansible.builtin.command:
+            argv:
+              - python3
+              - "{{ openstack_test_ote_resolve_script }}"
+              - junit
+              - "{{ openstack_test_log_path }}"
+              - "{{ openstack_test_junit_path }}"
+          changed_when: true
 
     # OTE run-test has no --junit-path; pipe filtered names via stdin and
-    # synthesize junit_e2e_*.xml from JSON results for post_openshift_tests.
+    # synthesize junit from resolved log outcomes for post_openshift_tests.
     - name: Run OTE filtered tests via run-test and write junit
       ansible.builtin.shell: |
         set -o pipefail
         cat {{ tests_to_run_path }} | {{ openstack_test_executable }} run-test \
           > {{ openstack_test_log_path }} || run_exit=$?
-        python3 - {{ openstack_test_log_path }} {{ openstack_test_junit_path }} <<'PY'
-        import json
-        import sys
-        import xml.etree.ElementTree as ET
-
-        log_path, junit_path = sys.argv[1], sys.argv[2]
-        with open(log_path, encoding="utf-8") as f:
-            raw = f.read().strip()
-        if not raw:
-            results = []
-        else:
-            try:
-                data = json.loads(raw)
-                results = data if isinstance(data, list) else [data]
-            except json.JSONDecodeError:
-                results = []
-                for line in raw.splitlines():
-                    line = line.strip()
-                    if not line:
-                        continue
-                    try:
-                        results.append(json.loads(line))
-                    except json.JSONDecodeError:
-                        continue
-
-        suite = ET.Element("testsuite", name="openstack-test")
-        for r in results:
-            name = r.get("name", "unknown")
-            duration_ms = r.get("duration") or 0
-            try:
-                time_s = f"{float(duration_ms) / 1000.0:.3f}"
-            except (TypeError, ValueError):
-                time_s = "0"
-            case = ET.SubElement(suite, "testcase", name=name, time=time_s)
-            result = (r.get("result") or "").lower()
-            if result == "failed":
-                fail = ET.SubElement(case, "failure")
-                fail.text = r.get("error") or r.get("output") or "failed"
-            elif result == "skipped":
-                skip = ET.SubElement(case, "skipped")
-                skip.text = r.get("output") or "skipped"
-        suite.set("tests", str(len(results)))
-        suite.set(
-            "failures",
-            str(sum(1 for r in results if (r.get("result") or "").lower() == "failed")),
-        )
-        suite.set(
-            "skipped",
-            str(sum(1 for r in results if (r.get("result") or "").lower() == "skipped")),
-        )
-        ET.ElementTree(suite).write(junit_path, encoding="utf-8", xml_declaration=True)
-        PY
-        py_exit=$?
+        python3 "{{ openstack_test_ote_resolve_script }}" junit \
+          "{{ openstack_test_log_path }}" "{{ openstack_test_junit_path }}" || py_exit=$?
         exit ${run_exit:-${py_exit:-0}}
       environment:
         OS_CLOUD: "{{ user_cloud }}"
@@ -236,74 +207,30 @@
         unstable_msg: >-
           The openshift test Suite failed.
 
-    - name: Get the number of failed openstack tests (OTE JSON log)
-      ansible.builtin.shell: |
-        set -o pipefail
-        python3 - {{ openstack_test_log_path }} failed <<'PY' || true
-        import json
-        import sys
-        path, want = sys.argv[1], sys.argv[2]
-        try:
-            with open(path, encoding="utf-8") as f:
-                raw = f.read().strip()
-        except OSError:
-            print(0)
-            raise SystemExit
-        if not raw:
-            print(0)
-            raise SystemExit
-        results = []
-        try:
-            data = json.loads(raw)
-            results = data if isinstance(data, list) else [data]
-        except json.JSONDecodeError:
-            for line in raw.splitlines():
-                line = line.strip()
-                if not line:
-                    continue
-                try:
-                    results.append(json.loads(line))
-                except json.JSONDecodeError:
-                    continue
-        print(sum(1 for r in results if (r.get("result") or "").lower() == want))
-        PY
+    - name: Get the number of failed openstack tests (OTE resolved log)
+      ansible.builtin.command:
+        argv:
+          - python3
+          - "{{ openstack_test_ote_resolve_script }}"
+          - count
+          - "{{ openstack_test_log_path }}"
+          - failed
       register: number_of_failed_tests
       changed_when: false
+      failed_when: false
       when: openstack_test_use_ote | bool
 
-    - name: Get the number of passed openstack tests (OTE JSON log)
-      ansible.builtin.shell: |
-        set -o pipefail
-        python3 - {{ openstack_test_log_path }} passed <<'PY' || true
-        import json
-        import sys
-        path, want = sys.argv[1], sys.argv[2]
-        try:
-            with open(path, encoding="utf-8") as f:
-                raw = f.read().strip()
-        except OSError:
-            print(0)
-            raise SystemExit
-        if not raw:
-            print(0)
-            raise SystemExit
-        results = []
-        try:
-            data = json.loads(raw)
-            results = data if isinstance(data, list) else [data]
-        except json.JSONDecodeError:
-            for line in raw.splitlines():
-                line = line.strip()
-                if not line:
-                    continue
-                try:
-                    results.append(json.loads(line))
-                except json.JSONDecodeError:
-                    continue
-        print(sum(1 for r in results if (r.get("result") or "").lower() == want))
-        PY
+    - name: Get the number of passed openstack tests (OTE resolved log)
+      ansible.builtin.command:
+        argv:
+          - python3
+          - "{{ openstack_test_ote_resolve_script }}"
+          - count
+          - "{{ openstack_test_log_path }}"
+          - passed
       register: number_of_passed_tests
       changed_when: false
+      failed_when: false
       when: openstack_test_use_ote | bool
 
     - name: Get the number of failed openstack tests (legacy log)
