@@ -71,10 +71,15 @@
 
 # --- List tests ---
 - name: Prepare {{ all_tests_path }} with OTE list (names)
-  ansible.builtin.shell: >
-    {{ openstack_test_executable }} list
-    --suite {{ openstack_test_suite }}
-    -o names > {{ all_tests_path }}
+  # OTE prints klog to stdout (I0810 ...); strip those so allow/block filters
+  # match real test names. stderr discarded for the same reason.
+  ansible.builtin.shell: |
+    set -o pipefail
+    {{ openstack_test_executable }} list \
+      --suite {{ openstack_test_suite }} \
+      -o names 2>/dev/null \
+      | grep -v -E '^I[0-9]{4} ' \
+      > {{ all_tests_path }}
   environment:
     OS_CLOUD: "{{ user_cloud }}"
     KUBECONFIG: "{{ kubeconfig }}"
