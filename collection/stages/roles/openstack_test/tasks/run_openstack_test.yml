@@ -207,6 +207,9 @@
         unstable_msg: >-
           The openshift test Suite failed.
 
+    # Use distinct registers for OTE vs legacy. Skipped tasks still overwrite
+    # a shared register in Ansible, which wiped OTE counts and falsely hit
+    # "no tests where run!" after a real suite run.
     - name: Get the number of failed openstack tests (OTE resolved log)
       ansible.builtin.command:
         argv:
@@ -215,7 +218,7 @@
           - count
           - "{{ openstack_test_log_path }}"
           - failed
-      register: number_of_failed_tests
+      register: openstack_test_ote_failed_count
       changed_when: false
       failed_when: false
       when: openstack_test_use_ote | bool
@@ -228,7 +231,7 @@
           - count
           - "{{ openstack_test_log_path }}"
           - passed
-      register: number_of_passed_tests
+      register: openstack_test_ote_passed_count
       changed_when: false
       failed_when: false
       when: openstack_test_use_ote | bool
@@ -238,7 +241,7 @@
         set -o pipefail &&
         grep -e "^failed:" {{ openstack_test_log_path }} | wc -l
         || true
-      register: number_of_failed_tests
+      register: openstack_test_legacy_failed_count
       changed_when: false
       when: not (openstack_test_use_ote | bool)
 
@@ -247,9 +250,30 @@
         set -o pipefail &&
         grep -e "^passed:" {{ openstack_test_log_path }} | wc -l
         || true
-      register: number_of_passed_tests
+      register: openstack_test_legacy_passed_count
       changed_when: false
       when: not (openstack_test_use_ote | bool)
+
+    - name: Normalize openstack-test pass/fail counts
+      ansible.builtin.set_fact:
+        number_of_failed_tests: >-
+          {{ (
+               openstack_test_ote_failed_count.stdout | default('0')
+               if (openstack_test_use_ote | bool)
+               else openstack_test_legacy_failed_count.stdout | default('0')
+             ) | trim }}
+        number_of_passed_tests: >-
+          {{ (
+               openstack_test_ote_passed_count.stdout | default('0')
+               if (openstack_test_use_ote | bool)
+               else openstack_test_legacy_passed_count.stdout | default('0')
+             ) | trim }}
+
+    - name: Print resolved openstack-test pass/fail counts
+      ansible.builtin.debug:
+        msg: >-
+          openstack-test counts: passed={{ number_of_passed_tests }},
+          failed={{ number_of_failed_tests }}
 
     # This fail task is added to detect failures in openstack-test execution
     - name: Fail the playbook in case there are no failed and passed tests
@@ -257,8 +281,8 @@
         msg: >
           openstack-test execution failed or no tests where run!
       when:
-        - (number_of_failed_tests.stdout | default("0")) | int == 0
-        - (number_of_passed_tests.stdout | default("0")) | int == 0
+        - (number_of_failed_tests | default("0")) | int == 0
+        - (number_of_passed_tests | default("0")) | int == 0
 
     # must-gather is retrieved if openstack-test is successfully executed and there are failing
     # tests
