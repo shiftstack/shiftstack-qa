@@ -32,9 +32,7 @@
     monitoring_pvc_ids: "{{ monitoring_pvcs | json_query('resources[].spec.volumeName') | list }}"
 
 - name: Check cinder volume for PVC exist
-  ansible.builtin.shell: |
-    set -o pipefail
-    openstack volume list -f csv | grep  {{ item }}
+  ansible.builtin.command: openstack volume show "{{ item }}" -f json
   environment:
     OS_CLOUD: "{{ user_cloud }}"
   changed_when: false

@@ -43,13 +43,20 @@
 - name: Get volume az for workers (if any)
   ansible.builtin.shell: |
     set -o pipefail
-    openstack volume show $(openstack volume list -c ID -c Name -f value | grep "{{ item }}" | cut -d' ' -f2) -c availability_zone -f value
+    vol_id=$(openstack volume list -f json | jq -r --arg w "{{ item }}" '
+      [.[] | select((.Name // .name // "") | contains($w)) | (.ID // .id)] | first // empty
+    ')
+    if [ -z "${vol_id}" ]; then
+      exit 0
+    fi
+    openstack volume show "${vol_id}" -f json | jq -r '.availability_zone // empty'
   environment:
     OS_CLOUD: "{{ user_cloud }}"
   loop: "{{ worker_names }}"
   register: temporary_output
   failed_when: false
   changed_when: false
+  when: edge_nova_az is not defined
 
 - name: Convert output on a list
   ansible.builtin.set_fact:
@@ -97,8 +104,7 @@
     existing_pvc_ids: "{{ existing_pvcs | json_query('resources[].spec.volumeName') | list }}"
 
 - name: Get cinder volumes for PVCs
-  ansible.builtin.shell: |
-    openstack volume show "{{ item }}" -c availability_zone -f value
+  ansible.builtin.command: openstack volume show "{{ item }}" -f json
   environment:
     OS_CLOUD: "{{ user_cloud }}"
   loop: "{{ existing_pvc_ids }}"
@@ -107,7 +113,7 @@
 
 - name: Convert output on a list
   ansible.builtin.set_fact:
-    existing_pvc_azs: "{{ existing_pvc_azs + [item.stdout] }}"
+    existing_pvc_azs: "{{ existing_pvc_azs + [(item.stdout | from_json).availability_zone] }}"
   loop: "{{ temporary_output.results | list }}"
 
 - name: Check - expected cinder AZs on PVCs
