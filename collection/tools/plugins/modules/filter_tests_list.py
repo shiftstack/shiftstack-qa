@@ -98,6 +98,25 @@ def escape_special_characters(string):
     return string.translate(translation_table)
 
 
+def normalize_test_line(line):
+    """Normalize a tests-list / allow|block list line for matching.
+
+    - Strip whitespace/newlines
+    - Strip optional surrounding double quotes (legacy dry-run / convert_yaml
+      wrap patterns as ``".*[lb].*"`` while OTE ``list -o names`` is unquoted)
+    - Drop OTE/klog noise lines that land in list output (``I0810 ...``)
+    """
+    s = line.strip()
+    if not s:
+        return None
+    # klog-style lines mixed into OTE list stdout
+    if re.match(r'I\d{4}\s', s) or 'test_context.go:' in s:
+        return None
+    if len(s) >= 2 and s[0] == '"' and s[-1] == '"':
+        s = s[1:-1].strip()
+    return s or None
+
+
 def run_module():
     # define the AnsibleModule object with the available
     # arguments/parameters a user can pass to the module
@@ -128,9 +147,16 @@ def run_module():
 
     try:
         with open(input_tests_file, 'r') as f:
-            input_tests = set([line for line in f])
+            # Preserve original lines for output, keyed by normalized name.
+            input_tests_raw = [line for line in f]
     except IOError:
         module.fail_json(msg="Error opening the input tests file")
+
+    input_tests = []
+    for line in input_tests_raw:
+        normalized = normalize_test_line(line)
+        if normalized is not None:
+            input_tests.append((normalized, line if line.endswith('\n') else line + '\n'))
 
     if allowlist_file and blocklist_file:
         module.fail_json(msg="parameters are mutually exclusive: "
@@ -146,12 +172,15 @@ def run_module():
             module.fail_json(msg="Error opening the allowlist file")
 
         for allowlist_test in allowlist:
+            allow_norm = normalize_test_line(allowlist_test)
+            if allow_norm is None:
+                continue
             allowlist_test_in_input_tests = False
+            escaped_allow_test = escape_special_characters(allow_norm)
 
-            for test in input_tests:
-                escaped_allow_test = escape_special_characters(allowlist_test)
-                if re.fullmatch(escaped_allow_test, test):
-                    tests_to_run.append(test)
+            for test_norm, test_raw in input_tests:
+                if re.fullmatch(escaped_allow_test, test_norm):
+                    tests_to_run.append(test_raw)
                     allowlist_test_in_input_tests = True
 
             if not allowlist_test_in_input_tests:
@@ -173,9 +202,15 @@ def run_module():
     elif blocklist_file:
         try:
             with open(blocklist_file, 'r') as f:
-                blocklist = set([line for line in f])
+                blocklist = [line for line in f]
         except IOError:
             module.fail_json(msg="Error opening the blocklist file")
+
+        blocklist_norms = []
+        for blocklist_test in blocklist:
+            block_norm = normalize_test_line(blocklist_test)
+            if block_norm is not None:
+                blocklist_norms.append((block_norm, blocklist_test))
 
         # initialize lists for tests
         tests_to_run = []
@@ -183,25 +218,26 @@ def run_module():
         unused_blocklist_tests = []
 
         # iterate over the list of tests and set the tests to run
-        for test in input_tests:
+        for test_norm, test_raw in input_tests:
             test_in_blocklist = False
 
-            for blocklist_test in blocklist:
-                escaped_block_test = escape_special_characters(blocklist_test)
-                if re.fullmatch(escaped_block_test, test):
+            for block_norm, _block_raw in blocklist_norms:
+                escaped_block_test = escape_special_characters(block_norm)
+                if re.fullmatch(escaped_block_test, test_norm):
                     test_in_blocklist = True
                     break
 
             if test_in_blocklist:
-                blocked_tests.append(test)
+                blocked_tests.append(test_raw)
             else:
-                tests_to_run.append(test)
+                tests_to_run.append(test_raw)
 
         # set the unused blocklist tests
-        for blocklist_test in blocklist:
-            escaped_block_test = escape_special_characters(blocklist_test)
-            if not any(re.fullmatch(escaped_block_test, test) for test in input_tests):
-                unused_blocklist_tests.append(blocklist_test)
+        for block_norm, block_raw in blocklist_norms:
+            escaped_block_test = escape_special_characters(block_norm)
+            if not any(re.fullmatch(escaped_block_test, test_norm)
+                       for test_norm, _ in input_tests):
+                unused_blocklist_tests.append(block_raw)
         if unused_blocklist_tests:
             module.warn("Warning! Some tests in the blocklist were not used")
             result['unused_blocklist_tests'] = unused_blocklist_tests
@@ -227,7 +263,13 @@ def run_module():
         result['changed'] = True
 
     else:
-        shutil.copyfile(input_tests_file, output_file)
+        # Drop klog noise even when no allow/block filter is applied (OTE list).
+        try:
+            with open(output_file, 'w') as f:
+                for _test_norm, test_raw in input_tests:
+                    f.write(test_raw)
+        except IOError:
+            module.fail_json(msg="Error writing to output file")
 
         result['filter_type'] = 'no filter applied'
         result['changed'] = True
