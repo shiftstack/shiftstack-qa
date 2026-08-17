@@ -157,3 +157,8 @@ ovnk_list: &ovnk_tests
 "5.0":
   "OVNKubernetes":
     <<: *ovnk_tests
+
+# OpenShift 5.1
+"5.1":
+  "OVNKubernetes":
+    <<: *ovnk_tests
