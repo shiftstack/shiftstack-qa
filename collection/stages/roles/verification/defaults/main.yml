@@ -5,7 +5,7 @@ cinder_csi_project_name: cinder-test # project for testing cinder-csi sc provide
 manila_project_name: manila-test # project for testing manila sc provider
 demo_project_name: demo # project for testing demo app
 verify_existing_namespace: false
-soft_checks: true # run checks that won't stop the playbook but will generate the jenkins message to mark the run as unstable.
+soft_checks: true # run checks that won't stop the playbook but will mark the run as UNSTABLE via stage_unstable_flag.
 alerts_to_ignore:
   # - 'Watchdog' # Should not be considered as severity is none
   - 'NodeClockNotSynchronising'

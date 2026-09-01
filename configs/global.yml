@@ -32,9 +32,14 @@ report_dir: "{{ artifacts_dir }}/test_results"
 
 # Sets the Ansible Controller Node machine's HOME environment variable
 controller_home_dir: "{{ lookup('ansible.builtin.env', 'HOME') }}"
-# The resources_file and stage_unstable_flag are in the Ansible control node's HOME environment variable
+# The resources_file and stage_unstable flags are on the Ansible control node's HOME.
+# test_stage_unstable_flag is written only by testing-stage rescues. The ci-framework-jobs
+# post-run playbook check-test-unstable-post.yaml fails Zuul POST_FAILURE when this file
+# is present in rsynced shiftstack artifacts (run phase stays SUCCESS).
+# stage_unstable_flag is used by soft verification/install workarounds (no end-of-run fail).
 resources_file: "{{ controller_home_dir }}/artifacts/resources.yml"
 stage_unstable_flag: "{{ controller_home_dir }}/artifacts/stage_unstable_flag"
+test_stage_unstable_flag: "{{ controller_home_dir }}/artifacts/test_stage_unstable_flag"
 
 admin_cloud: "default"
 admin_env_file: "{{ osp_config_dir }}/{{ admin_cloud }}rc"
