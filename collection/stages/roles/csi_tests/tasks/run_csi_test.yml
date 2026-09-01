@@ -28,7 +28,7 @@
     - name: Mark the openshift tests as UNSTABLE
       ansible.builtin.include_role:
         name: tools_stage_results
-        tasks_from: mark_stage_unstable.yml
+        tasks_from: mark_test_stage_unstable.yml
       vars:
         unstable_msg: >-
           The openshift test Suite failed.

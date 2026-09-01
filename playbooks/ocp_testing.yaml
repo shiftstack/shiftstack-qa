@@ -10,6 +10,12 @@
         path: "{{ stage_unstable_flag }}"
         state: absent
 
+    - name: Cleanup workspace flags - Remove the test_stage_unstable_flag if it exists
+      ansible.builtin.file:
+        path: "{{ test_stage_unstable_flag }}"
+        state: absent
+      delegate_to: localhost
+
     - name: Update ocp_deployment_topology with overrides if defined
       # Apply ocp_deployment_topology_override on top of the base topology
       # The base configuration comes from `configs/global.yml`

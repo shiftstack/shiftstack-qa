@@ -1,0 +1,17 @@
+---
+- name: Set the test stage unstable var as true
+  ansible.builtin.set_fact:
+    test_stage_unstable: true
+    unstable_warning: "Warning! {{ unstable_msg }}"
+
+- name: Print the test stage UNSTABLE message
+  ansible.builtin.debug:
+    msg: "{{ unstable_warning }}"
+
+- name: Mark the test stage result as UNSTABLE
+  ansible.builtin.lineinfile:
+    path: "{{ test_stage_unstable_flag }}"
+    line: "{{ unstable_warning }}"
+    create: yes
+    mode: u=rw,g=rw,o=r
+  delegate_to: localhost
