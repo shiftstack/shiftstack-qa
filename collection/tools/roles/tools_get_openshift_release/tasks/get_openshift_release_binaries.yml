@@ -26,7 +26,13 @@
         msg: "'openshift_release_pull_spec' must be set by get_openshift_release_build_name.yml"
       when: openshift_release_pull_spec is not defined or openshift_release_pull_spec == ''
 
+    - name: Check if pull secret is pre-populated
+      ansible.builtin.stat:
+        path: "{{ pull_secret_file }}"
+      register: _pull_secret_preexists
+
     - name: Extract pull secret from host cluster via Kubernetes API
+      when: not (_pull_secret_preexists.stat.exists and _pull_secret_preexists.stat.size > 0)
       changed_when: true
       ansible.builtin.shell: |
         python3 << 'PYEOF'
@@ -183,6 +189,7 @@
 
   always:
     - name: Remove pull secret file
+      when: not (_pull_secret_preexists.stat.exists | default(false))
       ansible.builtin.file:
         path: "{{ pull_secret_file }}"
         state: absent
