@@ -22,6 +22,12 @@
     state: directory
     mode: u=rwx,g=rw,o=r
 
+- name: Discover Nova and Cinder AZs for install-config generation
+  ansible.builtin.include_role:
+    name: tools_cluster_checks
+    tasks_from: discover_az.yml
+  when: az_enable | default(false) | bool
+
 - name: Prepare for UPI installation
   ansible.builtin.include_role:
     name: tools_upi

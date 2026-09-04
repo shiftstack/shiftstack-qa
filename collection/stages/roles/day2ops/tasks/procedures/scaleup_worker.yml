@@ -1,0 +1,52 @@
+---
+- name: Get the worker machineset
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
+    api_version: machine.openshift.io/v1beta1
+    kind: MachineSet
+    namespace: openshift-machine-api
+    label_selectors:
+      - machine.openshift.io/cluster-api-machine-type=worker
+  register: ms_worker
+
+- name: Set the expected workers replicas
+  ansible.builtin.set_fact:
+    worker_spec_replicas: "{{ ms_worker.resources[0].spec.replicas }}"
+
+- name: Check that the number of worker replicas are as expected
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
+    api_version: machine.openshift.io/v1beta1
+    kind: MachineSet
+    namespace: openshift-machine-api
+    name: "{{ ms_worker.resources[0].metadata.name }}"
+  register: workers
+  until: workers | json_query('resources[0].status.readyReplicas') == worker_spec_replicas | int
+  retries: 40
+  delay: 30
+
+- name: Set the number of new workers
+  ansible.builtin.set_fact:
+    new_num_workers: "{{ ms_worker.resources[0].spec.replicas | int + 1 }}"
+
+- name: Scale workers
+  ansible.builtin.command:
+    cmd: >-
+      oc scale --replicas={{ new_num_workers }}
+      machineset/{{ ms_worker.resources[0].metadata.name }}
+      -n openshift-machine-api
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+  changed_when: true
+
+- name: Wait for all the workers to be up
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
+    api_version: machine.openshift.io/v1beta1
+    kind: MachineSet
+    namespace: openshift-machine-api
+    name: "{{ ms_worker.resources[0].metadata.name }}"
+  register: new_workers
+  until: new_workers | json_query('resources[0].status.readyReplicas') | int == new_num_workers | int
+  retries: 40
+  delay: 30

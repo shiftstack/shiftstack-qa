@@ -101,6 +101,12 @@
     - name: Create a demo app and check connectivity
       ansible.builtin.include_tasks: check_demo_app.yml
 
+    - name: Run Availability Zone checks
+      ansible.builtin.include_tasks: check_azs.yml
+      when:
+        - az_enable | default(false) | bool
+        - not _skip_health
+
     - name: Create a LB type svc and check connectivity
       vars:
         # Using internal-lb annotation when cluster is deployed on restricted or provider network (FIPless):

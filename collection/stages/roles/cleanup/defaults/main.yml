@@ -4,3 +4,6 @@
 # Set the OpenShift installation type to None
 existing_ocp_installation_type: ""
 force_cleanup: false
+az_remove_on_cleanup: false
+az_volume_type_prefix: "fastpool-"
+az_volume_type_count: 3
