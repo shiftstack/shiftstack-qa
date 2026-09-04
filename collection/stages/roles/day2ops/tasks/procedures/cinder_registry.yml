@@ -1,0 +1,257 @@
+---
+- name: Get existing workers
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
+    api_version: v1
+    kind: Node
+    label_selectors:
+      - node-role.kubernetes.io/worker
+  register: workers
+
+- name: Get first worker name and its Cinder zone label
+  ansible.builtin.set_fact:
+    worker_name: "{{ workers.resources[0].metadata.labels['kubernetes.io/hostname'] }}"
+    nova_az_for_registry: "{{ workers.resources[0].metadata.labels['topology.cinder.csi.openstack.org/zone'] }}"
+
+- name: Discover Cinder AZ for the worker root volume
+  block:
+    - name: Query worker root volume AZ
+      ansible.builtin.shell: |
+        set -o pipefail
+        openstack volume show \
+          "$(openstack volume list -c ID -c Name -f value | grep "{{ worker_name }}" | cut -d' ' -f2)" \
+          -c availability_zone -f value
+      environment:
+        OS_CLOUD: "{{ user_cloud }}"
+      register: registry_worker_volume_az
+      failed_when: false
+      changed_when: false
+
+    - name: Set Cinder AZ for registry PVC
+      ansible.builtin.set_fact:
+        cinder_az_for_registry: "{{ (registry_worker_volume_az.stdout | trim == '') | ternary('nova', registry_worker_volume_az.stdout | trim) }}"
+
+- name: Remove existing topology-aware storage class
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: absent
+    api_version: storage.k8s.io/v1
+    kind: StorageClass
+    name: topology-aware-image-registry
+
+- name: Create a storage class for integrated registry
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    definition:
+      apiVersion: storage.k8s.io/v1
+      kind: StorageClass
+      metadata:
+        name: topology-aware-image-registry
+      provisioner: cinder.csi.openstack.org
+      parameters:
+        availability: "{{ cinder_az_for_registry }}"
+      volumeBindingMode: WaitForFirstConsumer
+
+- name: Create PVC for integrated registry
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    definition:
+      apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: pvc-registry
+        namespace: openshift-image-registry
+        annotations:
+          imageregistry.openshift.io: "true"
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+        storageClassName: topology-aware-image-registry
+
+- name: Trigger registry reconfiguration
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    definition:
+      apiVersion: imageregistry.operator.openshift.io/v1
+      kind: Config
+      metadata:
+        name: cluster
+      spec:
+        defaultRoute: true
+        disableRedirect: false
+        rolloutStrategy: Recreate
+        replicas: 1
+        storage:
+          managementState: Managed
+          pvc:
+            claim: pvc-registry
+          swift: null
+        status: null
+    state: present
+
+- name: Wait for registry pod on Running phase
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
+    kind: Pod
+    namespace: openshift-image-registry
+    label_selectors:
+      - docker-registry=default
+  register: registry_pod
+  retries: 60
+  delay: 10
+  until:
+    - registry_pod.resources[0].spec.volumes[0].persistentVolumeClaim is defined
+    - registry_pod.resources[0].spec.volumes[0].persistentVolumeClaim.claimName == "pvc-registry"
+    - registry_pod.resources[0].status is defined
+    - registry_pod.resources[0].status.phase == "Running"
+
+- name: Get integrated registry route
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
+    api_version: route.openshift.io/v1
+    kind: Route
+    namespace: openshift-image-registry
+    name: default-route
+  register: registry_routes
+
+- name: Set integrated registry URL
+  ansible.builtin.set_fact:
+    registry_url: "{{ registry_routes.resources[0].spec.host }}"
+
+- name: Add registry domain resolution to /etc/hosts
+  block:
+    - name: Resolve apps ingress IP from /etc/hosts
+      ansible.builtin.shell: |
+        set -o pipefail
+        awk '{if ($2 ~ "apps.{{ ocp_cluster_name }}") print $1}' /etc/hosts | uniq
+      register: hosts_apps_ip
+      changed_when: false
+
+    - name: Set apps ingress IP
+      ansible.builtin.set_fact:
+        apps_fip_ip: "{{ hosts_apps_ip.stdout }}"
+
+    - name: Add registry floating IP to /etc/hosts
+      ansible.builtin.lineinfile:
+        path: /etc/hosts
+        line: "{{ apps_fip_ip }} {{ registry_url }}"
+      become: true
+
+- name: Delete the registry test project if it exists
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: absent
+    api_version: project.openshift.io/v1
+    kind: Project
+    name: "{{ registry_test_project }}"
+    wait: true
+    wait_timeout: 60
+
+- name: Create the registry test project
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    api_version: project.openshift.io/v1
+    kind: Project
+    name: "{{ registry_test_project }}"
+
+- name: Add registry permissions to admin user
+  ansible.builtin.shell: |
+    set -o pipefail
+    oc project {{ registry_test_project }}
+    oc policy add-role-to-user registry-viewer admin
+    oc policy add-role-to-user registry-editor admin
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+  changed_when: true
+
+- name: Get builder service account token for OCP before 4.11
+  when: openshift_release_build_name is version('4.11', '<')
+  block:
+    - name: Get builder token
+      ansible.builtin.command: oc serviceaccounts get-token builder
+      environment:
+        KUBECONFIG: "{{ kubeconfig }}"
+      register: registry_token_result
+      retries: 5
+      delay: 60
+      until: registry_token_result is succeeded
+      changed_when: false
+
+    - name: Set registry token
+      ansible.builtin.set_fact:
+        registry_token: "{{ registry_token_result.stdout }}"
+
+- name: Get builder service account token for OCP 4.11 and later
+  when: openshift_release_build_name is version('4.11', '>=')
+  block:
+    - name: Create builder token
+      ansible.builtin.command: oc create token builder
+      environment:
+        KUBECONFIG: "{{ kubeconfig }}"
+      register: registry_token_result
+      retries: 5
+      delay: 60
+      until: registry_token_result is succeeded
+      changed_when: false
+
+    - name: Set registry token
+      ansible.builtin.set_fact:
+        registry_token: "{{ registry_token_result.stdout }}"
+
+- name: Push demo image to integrated registry
+  ansible.builtin.shell: |
+    set -o pipefail
+    sudo podman login -u admin -p {{ registry_token }} --tls-verify=false {{ registry_url }} && \
+    sudo podman pull quay.io/kuryr/demo && \
+    sudo podman tag quay.io/kuryr/demo {{ registry_url }}/{{ registry_test_project }}/demo && \
+    sudo podman push {{ registry_url }}/{{ registry_test_project }}/demo --tls-verify=false
+  register: registry_push_result
+  retries: 10
+  delay: 30
+  until: not registry_push_result.failed
+  changed_when: true
+
+- name: Create a pod using integrated registry
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: demo
+        namespace: "{{ registry_test_project }}"
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app: demo
+        template:
+          metadata:
+            labels:
+              app: demo
+          spec:
+            containers:
+              - name: demo
+                image: image-registry.openshift-image-registry.svc:5000/{{ registry_test_project }}/demo
+                ports:
+                  - containerPort: 80
+
+- name: Wait for demo pod to reach Running phase
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
+    kind: Pod
+    label_selectors:
+      - app=demo
+  register: demo_pod
+  retries: 5
+  delay: 10
+  until:
+    - demo_pod.resources[0].status is defined
+    - demo_pod.resources[0].status.phase == "Running"

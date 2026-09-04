@@ -1,0 +1,143 @@
+---
+- name: Reset AZ verification facts
+  ansible.builtin.set_fact:
+    current_nova_az_for_masters: []
+    current_nova_az_for_workers: []
+    current_cinder_az_for_masters: []
+    current_cinder_az_for_workers: []
+    cinder_volumes_for_masters: []
+    cinder_volumes_for_workers: []
+
+- name: Gather OpenStack server details for the cluster
+  openstack.cloud.server_info:
+    cloud: "{{ user_cloud }}"
+  register: az_openstack_servers
+  changed_when: false
+
+- name: Store sorted master and worker server info
+  ansible.builtin.set_fact:
+    az_masters: "{{ az_openstack_servers.servers | selectattr('name', 'search', 'master') | sort(attribute='name') | list }}"
+    az_workers: "{{ az_openstack_servers.servers | selectattr('name', 'search', 'worker') | sort(attribute='name') | list }}"
+
+- name: Discover expected AZ distribution for install
+  ansible.builtin.include_role:
+    name: tools_cluster_checks
+    tasks_from: discover_az.yml
+  vars:
+    ocp_deployment_topology: >-
+      {{
+        ocp_deployment_topology | combine(
+          {
+            'replicas': {
+              'master': az_masters | length,
+              'worker': az_workers | length
+            }
+          },
+          recursive=True
+        )
+      }}
+
+- name: Set expected nova AZ assignments
+  ansible.builtin.set_fact:
+    expected_nova_az_for_masters: "{{ nova_az_for_masters }}"
+    expected_nova_az_for_workers: "{{ nova_az_for_workers }}"
+
+- name: Set expected cinder AZ assignments
+  ansible.builtin.set_fact:
+    expected_cinder_az_for_masters: "{{ cinder_az_for_masters }}"
+    expected_cinder_az_for_workers: "{{ cinder_az_for_workers }}"
+  when: openshift_root_volumes | default(false) | bool
+
+- name: Collect current nova AZs for masters
+  ansible.builtin.set_fact:
+    current_nova_az_for_masters: "{{ current_nova_az_for_masters + [item.location.zone] }}"
+  loop: "{{ az_masters }}"
+
+- name: Collect current nova AZs for workers
+  ansible.builtin.set_fact:
+    current_nova_az_for_workers: "{{ current_nova_az_for_workers + [item.location.zone] }}"
+  loop: "{{ az_workers }}"
+
+- name: Collect Cinder volume AZ data for masters
+  when: openshift_root_volumes | default(false) | bool
+  block:
+    - name: Collect master root volume IDs
+      ansible.builtin.set_fact:
+        cinder_volumes_for_masters: "{{ cinder_volumes_for_masters + [item.volumes[0].id] }}"
+      loop: "{{ az_masters }}"
+      when: item.volumes | length > 0
+
+    - name: Query Cinder AZ for master root volumes
+      ansible.builtin.command:
+        cmd: openstack volume show {{ item }} -c availability_zone -f value
+      environment:
+        OS_CLOUD: "{{ user_cloud }}"
+      loop: "{{ cinder_volumes_for_masters }}"
+      register: az_master_volume_azs
+      changed_when: false
+
+    - name: Store master Cinder AZ list
+      ansible.builtin.set_fact:
+        current_cinder_az_for_masters: "{{ current_cinder_az_for_masters + [item.stdout | trim] }}"
+      loop: "{{ az_master_volume_azs.results }}"
+
+- name: Collect Cinder volume AZ data for workers
+  when: openshift_root_volumes | default(false) | bool
+  block:
+    - name: Collect worker root volume IDs
+      ansible.builtin.set_fact:
+        cinder_volumes_for_workers: "{{ cinder_volumes_for_workers + [item.volumes[0].id] }}"
+      loop: "{{ az_workers }}"
+      when: item.volumes | length > 0
+
+    - name: Query Cinder AZ for worker root volumes
+      ansible.builtin.command:
+        cmd: openstack volume show {{ item }} -c availability_zone -f value
+      environment:
+        OS_CLOUD: "{{ user_cloud }}"
+      loop: "{{ cinder_volumes_for_workers }}"
+      register: az_worker_volume_azs
+      changed_when: false
+
+    - name: Store worker Cinder AZ list
+      ansible.builtin.set_fact:
+        current_cinder_az_for_workers: "{{ current_cinder_az_for_workers + [item.stdout | trim] }}"
+      loop: "{{ az_worker_volume_azs.results }}"
+
+- name: Verify masters landed in expected nova AZs
+  ansible.builtin.assert:
+    that:
+      - current_nova_az_for_masters | sort == expected_nova_az_for_masters | sort
+    fail_msg: |
+      Unexpected nova AZs on masters:
+       obtained: {{ current_nova_az_for_masters | sort }}
+       expected: {{ expected_nova_az_for_masters | sort }}
+
+- name: Verify workers landed in expected nova AZs
+  ansible.builtin.assert:
+    that:
+      - current_nova_az_for_workers | sort == expected_nova_az_for_workers | sort
+    fail_msg: |
+      Unexpected nova AZs on workers:
+       obtained: {{ current_nova_az_for_workers | sort }}
+       expected: {{ expected_nova_az_for_workers | sort }}
+
+- name: Verify masters landed in expected Cinder AZs
+  ansible.builtin.assert:
+    that:
+      - current_cinder_az_for_masters | sort == expected_cinder_az_for_masters | sort
+    fail_msg: |
+      Unexpected cinder AZs on masters:
+       obtained: {{ current_cinder_az_for_masters | sort }}
+       expected: {{ expected_cinder_az_for_masters | sort }}
+  when: openshift_root_volumes | default(false) | bool
+
+- name: Verify workers landed in expected Cinder AZs
+  ansible.builtin.assert:
+    that:
+      - current_cinder_az_for_workers | sort == expected_cinder_az_for_workers | sort
+    fail_msg: |
+      Unexpected cinder AZs on workers:
+       obtained: {{ current_cinder_az_for_workers | sort }}
+       expected: {{ expected_cinder_az_for_workers | sort }}
+  when: openshift_root_volumes | default(false) | bool

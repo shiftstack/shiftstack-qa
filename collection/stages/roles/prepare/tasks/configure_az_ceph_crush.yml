@@ -1,0 +1,50 @@
+---
+- name: Resolve SSH targets for compute hosts
+  ansible.builtin.command:
+    cmd: openstack hypervisor show {{ item }} -c host_ip -f value
+  environment:
+    OS_CLOUD: "{{ admin_cloud }}"
+  loop: "{{ az_compute_hosts }}"
+  register: az_hypervisor_ips
+  changed_when: false
+
+- name: Build compute SSH target list
+  ansible.builtin.set_fact:
+    az_compute_ssh_hosts: "{{ az_hypervisor_ips.results | map(attribute='stdout') | map('trim') | list }}"
+
+# Pin each per-AZ pool (fastpool-<n>) to the OSDs that physically live on the
+# corresponding compute host <n>, so a volume created in AZ-<n> stays local to
+# that host. The OSD ids are discovered from the cluster (via `ceph osd
+# ls-tree <crush-host>`) rather than assumed to equal the AZ index: OSD ids are
+# cluster-assigned and are not guaranteed to be contiguous or one-per-host.
+#
+# NOTE: a per-host device class can only satisfy an `osd` failure domain (there
+# is a single host in the class), so the rule uses `osd`. If the pool `size`
+# exceeds the number of OSDs on the host the pool will not reach active+clean;
+# tune the pool size per cluster if needed.
+- name: Pin each fastpool to its host-local OSDs via Ceph crush rules
+  ansible.builtin.shell: |
+    set -o pipefail
+    SSH="ssh -i {{ openstack_key_file }} -o StrictHostKeyChecking=no {{ az_compute_ssh_user }}@{{ az_compute_ssh_hosts[az_idx] }}"
+    CEPH_HOST=$(${SSH} "hostname -s")
+    OSDS=$(${SSH} "sudo cephadm shell -- ceph osd ls-tree ${CEPH_HOST}" | tr -d '\r')
+    if [ -z "${OSDS}" ]; then
+      echo "No OSDs found on crush host ${CEPH_HOST} (compute host {{ item }})" >&2
+      exit 1
+    fi
+    for osd in ${OSDS}; do
+      ${SSH} "sudo cephadm shell -- ceph osd crush rm-device-class ${osd} 2>/dev/null || true"
+      ${SSH} "sudo cephadm shell -- ceph osd crush set-device-class pool{{ az_idx }}_class ${osd}"
+    done
+    ${SSH} "sudo cephadm shell -- ceph osd crush rule create-replicated pool{{ az_idx }}_rule default osd pool{{ az_idx }}_class 2>/dev/null || true"
+    ${SSH} "sudo cephadm shell -- ceph osd pool set {{ az_volume_type_prefix }}{{ az_idx }} crush_rule pool{{ az_idx }}_rule"
+  args:
+    executable: /bin/bash
+  loop: "{{ az_compute_hosts }}"
+  loop_control:
+    index_var: az_idx
+    label: "{{ item }} -> {{ az_volume_type_prefix }}{{ az_idx }}"
+  when:
+    - az_idx < az_compute_ssh_hosts | length
+    - az_compute_ssh_hosts[az_idx] | length > 0
+  changed_when: true

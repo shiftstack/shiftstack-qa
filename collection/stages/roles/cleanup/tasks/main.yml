@@ -68,6 +68,10 @@
             - name: Discover the OpenShift installation type
               ansible.builtin.include_tasks: detect_ocp_installation.yml
 
+            - name: Remove availability zone configuration from OpenStack
+              ansible.builtin.include_tasks: remove_az.yml
+              when: az_remove_on_cleanup | default(false) | bool
+
             - name: Cleanup IPv6 secondary network resources if they exist
               ansible.builtin.include_tasks: cleanup_ipv6_secondary.yml
               when: ocp_deployment_topology.secondary_ip_protocol | default('') == 'ipv6'
