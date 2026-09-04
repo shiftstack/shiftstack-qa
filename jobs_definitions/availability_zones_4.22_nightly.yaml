@@ -1,0 +1,76 @@
+---
+#
+#     * AVAILABILITY ZONES - OCP 4.22 NIGHTLY *
+#
+# - Port of DFG-osasinfra-shiftstack_periodic-multijob-availabilityzones
+# - OSP with Nova + Cinder AZs; OCP IPI with rootVolumes per AZ
+# - Runs on RHOSO 18.0 OSASINFRA Validated Architecture (serval70)
+#
+# Legacy ref:
+#   rhos-infrared/.../periodic-availabilityzones-env-vars-no-replace-master.groovy
+#
+
+openshift_release: "4.22"
+openshift_build_name: ""
+installation_type: ipi
+
+az_enable: true
+openshift_root_volumes: true
+az_remove_on_cleanup: true
+openshift_ipi_preload_rhcos_image: true
+
+stages:
+  - prepare
+  - install
+  - post
+  - verification
+  - day2ops
+  - openstack_test
+  - conformance_test
+  - cinder_csi_tests
+  - cpms_test
+
+conformance_test_type: serial
+
+day2ops_procedures:
+  - moving-etcd-to-ephemeral
+  - cpms_replace_attrs
+  - scaleup_worker
+  - cinder_registry
+
+ocp_deployment_topology:
+  network_type: OVNKubernetes
+  primary_ip_protocol: ipv4
+  secondary_ip_protocol: ""
+  ipv4:
+    ip_version: 4
+    tenant_subnet:
+      cidr: 10.196.0.0/16
+    cluster_network:
+      cidr: 10.128.0.0/14
+      host_prefix: 23
+    service_network:
+      - 172.30.0.0/16
+  flavors:
+    master:
+      name: "master"
+      ram: 16384
+      vcpus: 4
+      disk: 30
+      ephemeral: 10
+    worker:
+      name: "worker"
+      ram: 8192
+      vcpus: 2
+      disk: 30
+  replicas:
+    master: 3
+    worker: 2
+  servergroups:
+    master: "soft-anti-affinity"
+    worker: "soft-anti-affinity"
+  controlplane_rootvolume:
+    # Root volume size for AZ rootVolumes; per-AZ volume types and zones are
+    # derived at install time from the discovered Cinder AZs, so no static
+    # types list is needed here.
+    size: 30

@@ -1,0 +1,46 @@
+---
+- name: Discover existing host aggregates
+  ansible.builtin.command:
+    cmd: openstack aggregate list -c Name -f value
+  environment:
+    OS_CLOUD: "{{ admin_cloud }}"
+  register: az_existing_aggregates
+  changed_when: false
+
+- name: Remove hosts from existing aggregates
+  openstack.cloud.host_aggregate:
+    cloud: "{{ admin_cloud }}"
+    state: present
+    name: "{{ item }}"
+    hosts: []
+  loop: "{{ az_existing_aggregates.stdout_lines }}"
+  when: az_existing_aggregates.stdout_lines | length > 0
+
+- name: Delete existing host aggregates
+  openstack.cloud.host_aggregate:
+    cloud: "{{ admin_cloud }}"
+    state: absent
+    name: "{{ item }}"
+  loop: "{{ az_existing_aggregates.stdout_lines }}"
+  when: az_existing_aggregates.stdout_lines | length > 0
+
+- name: Show nova host AZ mapping after aggregate cleanup
+  ansible.builtin.command:
+    cmd: openstack host list -c Zone -c "Host Name" -f table
+  environment:
+    OS_CLOUD: "{{ admin_cloud }}"
+  register: az_host_list_after_cleanup
+  changed_when: false
+
+- name: Print nova host AZ mapping after aggregate cleanup
+  ansible.builtin.debug:
+    var: az_host_list_after_cleanup.stdout_lines
+
+- name: Delete AZ volume types
+  ansible.builtin.command:
+    cmd: openstack volume type delete {{ az_volume_type_prefix }}{{ item }}
+  environment:
+    OS_CLOUD: "{{ admin_cloud }}"
+  loop: "{{ range(0, az_volume_type_count | int) | list }}"
+  failed_when: false
+  changed_when: true

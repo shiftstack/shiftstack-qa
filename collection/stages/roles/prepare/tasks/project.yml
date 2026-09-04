@@ -47,7 +47,7 @@
     port: "{{ project.os_quota.port | default(omit) }}"
     volumes: "{{ project.os_quota.volumes | default(omit) }}"
     snapshots: "{{ project.os_quota.snapshots | default(omit) }}"
-    gigabytes: "{{ project.os_quota.gigabytes | default(omit) }}"
+    gigabytes: "{{ project.os_quota.gigabytes | default(az_enable | default(false) | ternary(2000, omit)) }}"
     verify: "{{ admin_verify_cacert }}"
 
 - name: Create flavors

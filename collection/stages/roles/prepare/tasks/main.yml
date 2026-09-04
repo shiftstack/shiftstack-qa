@@ -29,6 +29,10 @@
 - name: Create new Project
   ansible.builtin.include_tasks: project.yml
 
+- name: Configure Nova and Cinder availability zones
+  ansible.builtin.include_tasks: configure_az.yml
+  when: az_enable | default(false) | bool
+
 - name: Update clouds.yml file with new Project
   ansible.builtin.include_tasks: clouds.yml
 
