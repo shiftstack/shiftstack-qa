@@ -133,7 +133,9 @@
       when:
         - not _skip_health
         - installation_type != 'upi'
-        - manila_enabled.rc == 0
+        # catalog show -f json returns rc=0 and "{}" when the service is missing
+        # (PR #32). Ansible when lists are not short-circuit; default empty JSON.
+        - manila_enabled.rc == 0 and ((manila_enabled.stdout | default('{}', true) | from_json | length) > 0)
         - ceph_nfs_ready|default(true)|bool
         - edge_nova_az is not defined # Skip due to Openstack Manila is not supported at the Edge
         - not openshift_proxy_installation|default(false)|bool
