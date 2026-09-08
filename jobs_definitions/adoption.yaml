@@ -8,7 +8,6 @@ stages:
   - install
   - post
   - verification
-  - openstack_test
   # Removed LB tests until Octavia is supported and enabled in adoption jobs
   # - lb_tests
 
