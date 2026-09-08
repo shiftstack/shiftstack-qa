@@ -1,0 +1,67 @@
+---
+- name: Get worker MachineSets
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
+    api_version: machine.openshift.io/v1beta1
+    kind: MachineSet
+    namespace: openshift-machine-api
+    label_selectors:
+      - machine.openshift.io/cluster-api-machine-type=worker
+  register: ms_worker
+
+- name: Fail when no worker MachineSets exist
+  ansible.builtin.assert:
+    that:
+      - ms_worker.resources | length > 0
+    fail_msg: No worker MachineSets found in openshift-machine-api.
+
+- name: Use deterministic worker MachineSet order
+  ansible.builtin.set_fact:
+    worker_machinesets: "{{ ms_worker.resources | sort(attribute='metadata.name') | list }}"
+
+- name: Wait until each worker MachineSet matches its expected replica count
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
+    api_version: machine.openshift.io/v1beta1
+    kind: MachineSet
+    namespace: openshift-machine-api
+    name: "{{ item.metadata.name }}"
+  register: worker_ms_ready
+  until: >-
+    worker_ms_ready | json_query('resources[0].status.readyReplicas') | int
+    == item.spec.replicas | int
+  retries: 40
+  delay: 30
+  loop: "{{ worker_machinesets }}"
+  loop_control:
+    label: "{{ item.metadata.name }}"
+
+- name: Scale each worker MachineSet by one replica
+  ansible.builtin.command:
+    cmd: >-
+      oc scale --replicas={{ item.spec.replicas | int + 1 }}
+      machineset/{{ item.metadata.name }}
+      -n openshift-machine-api
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+  loop: "{{ worker_machinesets }}"
+  loop_control:
+    label: "{{ item.metadata.name }}"
+  changed_when: true
+
+- name: Wait until each scaled worker MachineSet is ready
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
+    api_version: machine.openshift.io/v1beta1
+    kind: MachineSet
+    namespace: openshift-machine-api
+    name: "{{ item.metadata.name }}"
+  register: worker_ms_scaled
+  until: >-
+    worker_ms_scaled | json_query('resources[0].status.readyReplicas') | int
+    == (item.spec.replicas | int + 1)
+  retries: 40
+  delay: 30
+  loop: "{{ worker_machinesets }}"
+  loop_control:
+    label: "{{ item.metadata.name }}"

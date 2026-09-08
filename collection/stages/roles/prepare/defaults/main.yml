@@ -38,3 +38,17 @@ etc_hosts_entries:
   - {regex: 'grafana-openshift-monitoring.apps\..*\.{{ ocp_base_domain }}', row: '{{ apps_ip }} grafana-openshift-monitoring.apps.{{ ocp_cluster_name }}.{{ ocp_base_domain }}'}
   - {regex: 'prometheus-k8s-openshift-monitoring.apps\..*\.{{ ocp_base_domain }}', row: '{{ apps_ip }} prometheus-k8s-openshift-monitoring.apps.{{ ocp_cluster_name }}.{{ ocp_base_domain }}'}
   - {regex: 'thanos-querier-openshift-monitoring.apps\..*\.{{ ocp_base_domain }}', row: '{{ apps_ip }} thanos-querier-openshift-monitoring.apps.{{ ocp_cluster_name }}.{{ ocp_base_domain }}'}
+
+az_enable: false
+openshift_root_volumes: false
+az_remove_on_cleanup: false
+openshift_ipi_preload_rhcos_image: false
+az_volume_type_prefix: "fastpool-"
+az_backend_prefix: "backend_AZ"
+az_volume_type_count: 3
+az_root_volume_types:
+  - fastpool-0
+  - fastpool-1
+  - fastpool-2
+az_configure_ceph_crush: true
+az_compute_ssh_user: cloud-admin

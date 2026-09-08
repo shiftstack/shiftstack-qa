@@ -1,0 +1,82 @@
+---
+- name: Discover nova compute service hosts
+  ansible.builtin.command:
+    cmd: openstack compute service list --service nova-compute -c Host -f value
+  environment:
+    OS_CLOUD: "{{ admin_cloud }}"
+  register: az_compute_services
+  changed_when: false
+
+- name: Set sorted compute host list for AZ configuration
+  ansible.builtin.set_fact:
+    az_compute_hosts: >-
+      {{
+        az_compute_services.stdout_lines
+        | map('trim')
+        | reject('equalto', '')
+        | sort
+        | list
+      }}
+
+- name: Fail when fewer than three compute hosts are available for AZ
+  ansible.builtin.assert:
+    that:
+      - az_compute_hosts | length >= az_volume_type_count | int
+    fail_msg: >-
+      Expected at least {{ az_volume_type_count }} compute hosts for AZ setup,
+      found {{ az_compute_hosts | length }}: {{ az_compute_hosts }}
+
+# Derive the AZ index from the (sorted) position of the host in the list, not
+# from the hostname. Compute service Host values may be FQDNs that do not end
+# in a digit, in which case parsing a numeric suffix would produce AZ names
+# that do not match the "AZ-<n>" Cinder backends configured in the deployment.
+- name: Create one host aggregate per compute host and assign its AZ
+  openstack.cloud.host_aggregate:
+    cloud: "{{ admin_cloud }}"
+    state: present
+    name: "HA-{{ az_idx }}"
+    availability_zone: "AZ-{{ az_idx }}"
+    hosts:
+      - "{{ item }}"
+  loop: "{{ az_compute_hosts }}"
+  loop_control:
+    index_var: az_idx
+    label: "{{ item }} -> AZ-{{ az_idx }}"
+
+- name: Show nova host AZ mapping
+  ansible.builtin.command:
+    cmd: openstack host list -c Zone -c "Host Name" -f table
+  environment:
+    OS_CLOUD: "{{ admin_cloud }}"
+  register: az_host_list
+  changed_when: false
+
+- name: Print nova host AZ mapping
+  ansible.builtin.debug:
+    var: az_host_list.stdout_lines
+
+- name: Delete existing AZ volume types if present
+  ansible.builtin.command:
+    cmd: openstack volume type delete {{ az_volume_type_prefix }}{{ item }}
+  environment:
+    OS_CLOUD: "{{ admin_cloud }}"
+  loop: "{{ range(0, az_volume_type_count | int) | list }}"
+  register: az_delete_volume_types
+  failed_when: false
+  changed_when: az_delete_volume_types.rc == 0
+
+- name: Create AZ volume types
+  ansible.builtin.command:
+    cmd: >-
+      openstack volume type create
+      --property volume_backend_name={{ az_backend_prefix }}{{ item }}
+      {{ az_volume_type_prefix }}{{ item }}
+  environment:
+    OS_CLOUD: "{{ admin_cloud }}"
+  loop: "{{ range(0, az_volume_type_count | int) | list }}"
+  when: openshift_release is version('4.13', '>=')
+  changed_when: true
+
+- name: Configure Ceph crush rules for per-AZ pools
+  ansible.builtin.include_tasks: configure_az_ceph_crush.yml
+  when: az_configure_ceph_crush | bool

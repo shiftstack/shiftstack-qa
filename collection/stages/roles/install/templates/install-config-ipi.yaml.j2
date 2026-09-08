@@ -7,7 +7,21 @@ controlPlane:
     openstack:
       type: "{{ installcfg_master_flavor }}"
       serverGroupPolicy: "{{ installcfg_master_servergrouppolicy }}"
-      {%- if installcfg_ctrl_rootvolume != {} +%}
+      {%- if az_enable | default(false) +%}
+      zones: {{ nova_az_for_masters | default([]) | to_json }}
+      {%- endif +%}
+      {%- if openshift_root_volumes | default(false) and az_enable | default(false) +%}
+      rootVolume:
+        size: {{ ocp_deployment_topology.controlplane_rootvolume.size | default(30) }}
+        # One volume type per zone, matched by AZ index so the installer can
+        # pair types[i] with zones[i]. Type for "AZ-<n>" is "<prefix><n>"
+        # (e.g. AZ-0 -> fastpool-0), matching the per-AZ Cinder backends.
+        types:
+{%- for zone in cinder_az_for_masters | default([]) +%}
+         - {{ az_volume_type_prefix | default('fastpool-') }}{{ zone | regex_replace('^AZ-', '') }}
+{%- endfor +%}
+        zones: {{ cinder_az_for_masters | default([]) | to_json }}
+      {%- elif installcfg_ctrl_rootvolume != {} +%}
       rootVolume: {{ installcfg_ctrl_rootvolume }}
       {%- endif +%}
   replicas: {{ installcfg_master_replicas }}
@@ -17,6 +31,21 @@ compute:
     openstack:
       type: "{{ installcfg_worker_flavor }}"
       serverGroupPolicy: "{{ installcfg_worker_servergrouppolicy }}"
+      {%- if az_enable | default(false) +%}
+      zones: {{ nova_az_for_workers | default([]) | to_json }}
+      {%- endif +%}
+      {%- if openshift_root_volumes | default(false) and az_enable | default(false) +%}
+      rootVolume:
+        size: {{ ocp_deployment_topology.controlplane_rootvolume.size | default(30) }}
+        # One volume type per zone, matched by AZ index so the installer can
+        # pair types[i] with zones[i]. Type for "AZ-<n>" is "<prefix><n>"
+        # (e.g. AZ-0 -> fastpool-0), matching the per-AZ Cinder backends.
+        types:
+{%- for zone in cinder_az_for_workers | default([]) +%}
+         - {{ az_volume_type_prefix | default('fastpool-') }}{{ zone | regex_replace('^AZ-', '') }}
+{%- endfor +%}
+        zones: {{ cinder_az_for_workers | default([]) | to_json }}
+      {%- endif +%}
       {%- if ocp_deployment_topology.secondary_ip_protocol == 'ipv6' +%}
       additionalNetworkIDs: {{ registered_resources.ipv6_secondary_network_ids | to_json }}
       {%- endif +%}
@@ -47,6 +76,9 @@ platform:
       {%- for key, value in installcfg_cluster_os_image_properties.items() +%}
       {{ key }}: {{ value }}
       {%- endfor +%}
+    {%- endif +%}
+    {%- if openshift_ipi_preload_rhcos_image | default(false) | bool +%}
+    clusterOSImage: rhcos
     {%- endif +%}
     {%- if installcfg_machines_subnet +%}
     machinesSubnet: {{ installcfg_machines_subnet }}
