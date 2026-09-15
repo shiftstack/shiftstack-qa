@@ -31,6 +31,7 @@
           - "{{ resources.apps_accessible_ip }}"
       delegate_to: "{{ hypervisor }}"
       remote_user: root
+      when: hypervisor is defined
 
     - name: Include Openstack-Test tasks
       ansible.builtin.include_tasks: run_openstack_test.yml
@@ -52,3 +53,4 @@
         tasks_from: restore.yml
       delegate_to: "{{ hypervisor }}"
       remote_user: root
+      when: hypervisor is defined
