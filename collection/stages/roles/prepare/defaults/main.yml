@@ -37,6 +37,7 @@ etc_hosts_entries:
   - {regex: 'alertmanager-main-openshift-monitoring.apps\..*\.{{ ocp_base_domain }}', row: '{{ apps_ip }} alertmanager-main-openshift-monitoring.apps.{{ ocp_cluster_name }}.{{ ocp_base_domain }}'}
   - {regex: 'grafana-openshift-monitoring.apps\..*\.{{ ocp_base_domain }}', row: '{{ apps_ip }} grafana-openshift-monitoring.apps.{{ ocp_cluster_name }}.{{ ocp_base_domain }}'}
   - {regex: 'prometheus-k8s-openshift-monitoring.apps\..*\.{{ ocp_base_domain }}', row: '{{ apps_ip }} prometheus-k8s-openshift-monitoring.apps.{{ ocp_cluster_name }}.{{ ocp_base_domain }}'}
+  - {regex: 'prometheus-k8s-federate-openshift-monitoring.apps\..*\.{{ ocp_base_domain }}', row: '{{ apps_ip }} prometheus-k8s-federate-openshift-monitoring.apps.{{ ocp_cluster_name }}.{{ ocp_base_domain }}'}
   - {regex: 'thanos-querier-openshift-monitoring.apps\..*\.{{ ocp_base_domain }}', row: '{{ apps_ip }} thanos-querier-openshift-monitoring.apps.{{ ocp_cluster_name }}.{{ ocp_base_domain }}'}
 
 az_enable: false
