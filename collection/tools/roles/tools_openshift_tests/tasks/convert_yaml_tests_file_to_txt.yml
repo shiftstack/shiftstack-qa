@@ -8,11 +8,6 @@
     yaml_testslist: "{{ yaml_testslist[discovered_openshift_release][discovered_ocp_network_type] }}"
   when: yaml_format_based_on_ocp_version|default(False)
 
-- name: Remove stale "{{ output_tests_list }}" before rewrite
-  ansible.builtin.file:
-    path: "{{ output_tests_list }}"
-    state: absent
-
 - name: Create the "{{ output_tests_list }}" file
   ansible.builtin.file:
     path: "{{ output_tests_list }}"

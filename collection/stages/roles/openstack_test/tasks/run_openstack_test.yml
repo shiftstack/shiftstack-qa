@@ -96,6 +96,12 @@
   changed_when: true
   when: not (openstack_test_use_ote | bool)
 
+- name: Remove stale allowlist txt before YAML conversion
+  ansible.builtin.file:
+    path: "{{ allowlist_path }}"
+    state: absent
+  when: openstack_tests_allowlist_file != ''
+
 - name: Convert the allowlist YAML files to TXT
   ansible.builtin.include_role:
     name: tools_openshift_tests
@@ -105,6 +111,12 @@
     output_tests_list: "{{ allowlist_path }}"
   with_items: "{{ openstack_tests_allowlist_file.split(',') }}"
   when: openstack_tests_allowlist_file != ''
+
+- name: Remove stale blocklist txt before YAML conversion
+  ansible.builtin.file:
+    path: "{{ blocklist_path }}"
+    state: absent
+  when: openstack_tests_blocklist_file != ''
 
 - name: Convert the blocklist YAML files to TXT
   ansible.builtin.include_role:
