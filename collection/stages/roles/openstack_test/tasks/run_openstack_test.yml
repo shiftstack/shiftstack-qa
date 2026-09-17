@@ -189,6 +189,7 @@
         set -o pipefail
         : > {{ openstack_test_log_path }}
         run_exit=0
+        py_exit=0
         while IFS= read -r test || [[ -n "$test" ]]; do
           [[ -z "${test// }" ]] && continue
           if ! {{ openstack_test_executable }} run-test --output=json "$test" \
@@ -198,7 +199,10 @@
         done < {{ tests_to_run_path }}
         python3 "{{ openstack_test_ote_resolve_script }}" junit \
           "{{ openstack_test_log_path }}" "{{ openstack_test_junit_path }}" || py_exit=$?
-        exit ${run_exit:-${py_exit:-0}}
+        if [ "$run_exit" -ne 0 ] || [ "$py_exit" -ne 0 ]; then
+          exit 1
+        fi
+        exit 0
       environment:
         OS_CLOUD: "{{ user_cloud }}"
         KUBECONFIG: "{{ kubeconfig }}"
@@ -213,11 +217,16 @@
     - name: Run OTE filtered tests via run-test (stdin batch) and write junit
       ansible.builtin.shell: |
         set -o pipefail
+        run_exit=0
+        py_exit=0
         cat {{ tests_to_run_path }} | {{ openstack_test_executable }} run-test \
           > {{ openstack_test_log_path }} || run_exit=$?
         python3 "{{ openstack_test_ote_resolve_script }}" junit \
           "{{ openstack_test_log_path }}" "{{ openstack_test_junit_path }}" || py_exit=$?
-        exit ${run_exit:-${py_exit:-0}}
+        if [ "$run_exit" -ne 0 ] || [ "$py_exit" -ne 0 ]; then
+          exit 1
+        fi
+        exit 0
       environment:
         OS_CLOUD: "{{ user_cloud }}"
         KUBECONFIG: "{{ kubeconfig }}"

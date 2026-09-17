@@ -2,6 +2,7 @@
 # include_role(openstack_test) re-templates vars; role_path there is openstack_test, not lb_tests.
 - name: Best-effort cleanup before LB tests
   ansible.builtin.include_tasks: cleanup_lb_test_leftovers.yml
+  when: lb_tests_guest_cleanup | bool
 
 - name: Materialize LB allow/block paths for nested openstack_test role
   ansible.builtin.set_fact:
@@ -49,6 +50,7 @@
 
     - name: Cleanup guest LB leftovers between amphora phases
       ansible.builtin.include_tasks: cleanup_lb_test_leftovers.yml
+      when: lb_tests_guest_cleanup | bool
 
 - name: Amphora LB tests — phase 2 (remaining amphora cases)
   ansible.builtin.include_tasks: run_amphora_openstack_test.yml
