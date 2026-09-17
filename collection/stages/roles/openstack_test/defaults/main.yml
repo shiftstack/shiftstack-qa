@@ -12,3 +12,5 @@ openstack_tests_go_version: "{{ tests.default_go_version_target }}"
 # OTE (OpenShift Tests Extension) — used when discovered_openshift_release >= 4.20
 openstack_test_suite: openstack-test/all
 openstack_test_ote_binary_relpath: bin/openstack-test-tests-ext
+# Run filtered OTE tests one-by-one (required for [lb][Serial] under Octavia limits).
+openstack_test_ote_run_serial: false

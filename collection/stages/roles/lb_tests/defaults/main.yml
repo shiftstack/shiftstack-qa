@@ -1,4 +1,6 @@
 ---
 # defaults file for lb_tests
 lb_allowlist_file: 'files/openstack-test-lb-allowlist.yaml'
+lb_amphora_allowlist_file: "{{ role_path }}/files/openstack-test-lb-amphora-allowlist.yaml"
+lb_ovn_allowlist_file: "{{ role_path }}/files/openstack-test-lb-ovn-allowlist.yaml"
 lb_blocklist_file: "{{ role_path }}/files/openstack-test-lb-ingress-blocklist.yaml"

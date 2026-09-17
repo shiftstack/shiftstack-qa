@@ -169,9 +169,36 @@
               - "{{ openstack_test_junit_path }}"
           changed_when: true
 
-    # OTE run-test has no --junit-path; pipe filtered names via stdin and
-    # synthesize junit from resolved log outcomes for post_openshift_tests.
-    - name: Run OTE filtered tests via run-test and write junit
+    # OTE run-test has no --junit-path; synthesize junit via ote_resolve_results.py.
+    # lb_tests: run serially — piping the list runs many LBs in parallel and hits
+    # Octavia/max-shared-lb timeouts despite [lb][Serial] in test names.
+    - name: Run OTE filtered tests serially via run-test and write junit
+      ansible.builtin.shell: |
+        set -o pipefail
+        : > {{ openstack_test_log_path }}
+        run_exit=0
+        while IFS= read -r test || [[ -n "$test" ]]; do
+          [[ -z "${test// }" ]] && continue
+          if ! {{ openstack_test_executable }} run-test --output=json "$test" \
+            >> {{ openstack_test_log_path }} 2>&1; then
+            run_exit=1
+          fi
+        done < {{ tests_to_run_path }}
+        python3 "{{ openstack_test_ote_resolve_script }}" junit \
+          "{{ openstack_test_log_path }}" "{{ openstack_test_junit_path }}" || py_exit=$?
+        exit ${run_exit:-${py_exit:-0}}
+      environment:
+        OS_CLOUD: "{{ user_cloud }}"
+        KUBECONFIG: "{{ kubeconfig }}"
+        RHOSO_KUBECONFIG: "{{ rhoso_kubeconfig }}"
+        SHIFTSTACK_PASS_FILE: "{{ kubeadmin_password }}"
+      changed_when: true
+      when:
+        - openstack_test_use_ote | bool
+        - openstack_test_filtering | bool
+        - openstack_test_ote_run_serial | bool
+
+    - name: Run OTE filtered tests via run-test (stdin batch) and write junit
       ansible.builtin.shell: |
         set -o pipefail
         cat {{ tests_to_run_path }} | {{ openstack_test_executable }} run-test \
@@ -188,6 +215,7 @@
       when:
         - openstack_test_use_ote | bool
         - openstack_test_filtering | bool
+        - not (openstack_test_ote_run_serial | bool)
 
     - name: Run legacy openstack tests
       ansible.builtin.shell: >
