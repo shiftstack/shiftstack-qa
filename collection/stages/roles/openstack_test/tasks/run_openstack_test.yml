@@ -96,6 +96,12 @@
   changed_when: true
   when: not (openstack_test_use_ote | bool)
 
+- name: Remove stale allowlist txt before YAML conversion
+  ansible.builtin.file:
+    path: "{{ allowlist_path }}"
+    state: absent
+  when: openstack_tests_allowlist_file != ''
+
 - name: Convert the allowlist YAML files to TXT
   ansible.builtin.include_role:
     name: tools_openshift_tests
@@ -106,6 +112,12 @@
   with_items: "{{ openstack_tests_allowlist_file.split(',') }}"
   when: openstack_tests_allowlist_file != ''
 
+- name: Remove stale blocklist txt before YAML conversion
+  ansible.builtin.file:
+    path: "{{ blocklist_path }}"
+    state: absent
+  when: openstack_tests_blocklist_file != ''
+
 - name: Convert the blocklist YAML files to TXT
   ansible.builtin.include_role:
     name: tools_openshift_tests
@@ -113,7 +125,8 @@
   vars:
     input_tests_list: "{{ item | trim }}"
     output_tests_list: "{{ blocklist_path }}"
-    yaml_format_based_on_ocp_version: true
+    # Flat regex map (same shape as lb allowlist); not conformance version-keyed YAML.
+    yaml_format_based_on_ocp_version: false
   with_items: "{{ openstack_tests_blocklist_file.split(',') }}"
   when: openstack_tests_blocklist_file != ''
 
@@ -168,16 +181,28 @@
               - "{{ openstack_test_junit_path }}"
           changed_when: true
 
-    # OTE run-test has no --junit-path; pipe filtered names via stdin and
-    # synthesize junit from resolved log outcomes for post_openshift_tests.
-    - name: Run OTE filtered tests via run-test and write junit
+    # OTE run-test has no --junit-path; synthesize junit via ote_resolve_results.py.
+    # lb_tests: run serially — piping the list runs many LBs in parallel and hits
+    # Octavia/max-shared-lb timeouts despite [lb][Serial] in test names.
+    - name: Run OTE filtered tests serially via run-test and write junit
       ansible.builtin.shell: |
         set -o pipefail
-        cat {{ tests_to_run_path }} | {{ openstack_test_executable }} run-test \
-          > {{ openstack_test_log_path }} || run_exit=$?
+        : > {{ openstack_test_log_path }}
+        run_exit=0
+        py_exit=0
+        while IFS= read -r test || [[ -n "$test" ]]; do
+          [[ -z "${test// }" ]] && continue
+          if ! {{ openstack_test_executable }} run-test --output=json "$test" \
+            >> {{ openstack_test_log_path }} 2>&1; then
+            run_exit=1
+          fi
+        done < {{ tests_to_run_path }}
         python3 "{{ openstack_test_ote_resolve_script }}" junit \
           "{{ openstack_test_log_path }}" "{{ openstack_test_junit_path }}" || py_exit=$?
-        exit ${run_exit:-${py_exit:-0}}
+        if [ "$run_exit" -ne 0 ] || [ "$py_exit" -ne 0 ]; then
+          exit 1
+        fi
+        exit 0
       environment:
         OS_CLOUD: "{{ user_cloud }}"
         KUBECONFIG: "{{ kubeconfig }}"
@@ -187,6 +212,31 @@
       when:
         - openstack_test_use_ote | bool
         - openstack_test_filtering | bool
+        - openstack_test_ote_run_serial | bool
+
+    - name: Run OTE filtered tests via run-test (stdin batch) and write junit
+      ansible.builtin.shell: |
+        set -o pipefail
+        run_exit=0
+        py_exit=0
+        cat {{ tests_to_run_path }} | {{ openstack_test_executable }} run-test \
+          > {{ openstack_test_log_path }} || run_exit=$?
+        python3 "{{ openstack_test_ote_resolve_script }}" junit \
+          "{{ openstack_test_log_path }}" "{{ openstack_test_junit_path }}" || py_exit=$?
+        if [ "$run_exit" -ne 0 ] || [ "$py_exit" -ne 0 ]; then
+          exit 1
+        fi
+        exit 0
+      environment:
+        OS_CLOUD: "{{ user_cloud }}"
+        KUBECONFIG: "{{ kubeconfig }}"
+        RHOSO_KUBECONFIG: "{{ rhoso_kubeconfig }}"
+        SHIFTSTACK_PASS_FILE: "{{ kubeadmin_password }}"
+      changed_when: true
+      when:
+        - openstack_test_use_ote | bool
+        - openstack_test_filtering | bool
+        - not (openstack_test_ote_run_serial | bool)
 
     - name: Run legacy openstack tests
       ansible.builtin.shell: >

@@ -1,0 +1,12 @@
+---
+# Shared openstack_test invocation for amphora LB (single or two-phase).
+- name: Run Openstack-Test on OCP with Amphora LoadBalancer provider and sourceIP lb method
+  ansible.builtin.include_role:
+    name: shiftstack.stages.openstack_test
+  vars:
+    openstack_test_results_dir: "{{ lb_amphora_openstack_test_results_dir }}"
+    openstack_tests_allowlist_file: "{{ lb_amphora_openstack_test_allowlist }}"
+    openstack_tests_blocklist_file: "{{ lb_amphora_openstack_test_blocklist }}"
+    openstack_test_ote_run_serial: true
+    openstack_testsuite_name: "{{ lb_amphora_openstack_testsuite_name }}"
+    openstack_reset_result_dir: "{{ lb_amphora_openstack_reset_result_dir | default(false) }}"
