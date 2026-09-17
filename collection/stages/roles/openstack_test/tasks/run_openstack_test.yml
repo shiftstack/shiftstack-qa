@@ -113,7 +113,8 @@
   vars:
     input_tests_list: "{{ item | trim }}"
     output_tests_list: "{{ blocklist_path }}"
-    yaml_format_based_on_ocp_version: true
+    # Flat regex map (same shape as lb allowlist); not conformance version-keyed YAML.
+    yaml_format_based_on_ocp_version: false
   with_items: "{{ openstack_tests_blocklist_file.split(',') }}"
   when: openstack_tests_blocklist_file != ''
 

@@ -5,6 +5,7 @@
 # - Version-pinned variant of osp_verification.yaml for OCP 5.1 pre-GA nightly.
 # - Enables early regression detection on the next OCP minor stream.
 # - Runs on the RHOSO 18.0 OSASINFRA Validated Architecture (serval71).
+# - lb_tests runs before openstack_test; default openstack suite excludes [lb] specs.
 #
 # Note: The sigstore fix env var (nightly_disable_image_policy) is EXPERIMENTAL
 # and may change. Monitor shiftstack-qa/configs/global.yml for updates.
@@ -19,8 +20,8 @@ stages:
   - post
   - verification
   - day2ops
-  - openstack_test
   - lb_tests
+  - openstack_test
   - egressip_tests
 
 day2ops_procedures:

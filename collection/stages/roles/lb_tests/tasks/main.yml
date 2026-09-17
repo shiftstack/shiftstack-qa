@@ -1,4 +1,9 @@
 ---
+# include_role(openstack_test) re-templates vars; role_path there is openstack_test, not lb_tests.
+- name: Materialize ingress blocklist path for nested openstack_test role
+  ansible.builtin.set_fact:
+    lb_ingress_blocklist_resolved: "{{ lb_blocklist_file }}"
+
 - name: Get install-config content to obtain the 1st machineCIDR
   ansible.builtin.include_role:
     name: shiftstack.tools.tools_get_deploy_info
@@ -30,6 +35,7 @@
   vars:
     openstack_test_results_dir: "{{ artifacts_dir }}/lb_amphora_sourceip"
     openstack_tests_allowlist_file: "{{ lb_allowlist_file }}"
+    openstack_tests_blocklist_file: "{{ lb_ingress_blocklist_resolved }}"
     openstack_testsuite_name: openstack_tests_lb_amphora_sourceip
     openstack_reset_result_dir: no # As we want to keep the logs generated in the previous step
 
@@ -48,5 +54,6 @@
   vars:
     openstack_test_results_dir: "{{ artifacts_dir }}/lb_ovn"
     openstack_tests_allowlist_file: "{{ lb_allowlist_file }}"
+    openstack_tests_blocklist_file: "{{ lb_ingress_blocklist_resolved }}"
     openstack_testsuite_name: openstack_tests_lb_ovn
     openstack_reset_result_dir: no # As we want to keep the logs generated in the previous step
