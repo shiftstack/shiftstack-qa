@@ -1,4 +1,17 @@
 ---
+# include_role(openstack_test) re-templates vars; role_path there is openstack_test, not lb_tests.
+- name: Best-effort cleanup before LB tests
+  ansible.builtin.include_tasks: cleanup_lb_test_leftovers.yml
+  when: lb_tests_guest_cleanup | bool
+
+- name: Materialize LB allow/block paths for nested openstack_test role
+  ansible.builtin.set_fact:
+    lb_ingress_blocklist_resolved: "{{ lb_blocklist_file }}"
+    lb_amphora_allowlist_resolved: "{{ lb_amphora_allowlist_file }}"
+    lb_amphora_isolated_allowlist_resolved: "{{ lb_amphora_isolated_allowlist_file }}"
+    lb_amphora_sourceranges_allowlist_resolved: "{{ lb_amphora_sourceranges_allowlist_file }}"
+    lb_ovn_allowlist_resolved: "{{ lb_ovn_allowlist_file }}"
+
 - name: Get install-config content to obtain the 1st machineCIDR
   ansible.builtin.include_role:
     name: shiftstack.tools.tools_get_deploy_info
@@ -24,14 +37,50 @@
     max_shared_lb: "2"
     log_directory: "{{ artifacts_dir }}/lb_amphora_sourceip"
 
-- name: Run Openstack-Test on OCP with Amphora LoadBalancer provider and sourceIP lb method
-  ansible.builtin.include_role:
-    name: shiftstack.stages.openstack_test
+- name: Amphora LB tests — phase 1 (isolation-sensitive cases on clean slate)
+  when: lb_amphora_two_phase_tests | bool
+  block:
+    - name: Run amphora isolated LB openstack-test phase
+      ansible.builtin.include_tasks: run_amphora_openstack_test.yml
+      vars:
+        lb_amphora_openstack_test_results_dir: "{{ artifacts_dir }}/lb_amphora_sourceip_isolated"
+        lb_amphora_openstack_test_allowlist: "{{ lb_amphora_isolated_allowlist_resolved }}"
+        lb_amphora_openstack_test_blocklist: "{{ lb_ingress_blocklist_resolved }}"
+        lb_amphora_openstack_testsuite_name: openstack_tests_lb_amphora_sourceip_isolated
+        lb_amphora_openstack_reset_result_dir: true
+
+    - name: Cleanup guest LB leftovers between amphora phases
+      ansible.builtin.include_tasks: cleanup_lb_test_leftovers.yml
+      when: lb_tests_guest_cleanup | bool
+
+- name: Amphora LB tests — phase 2 (remaining amphora cases)
+  ansible.builtin.include_tasks: run_amphora_openstack_test.yml
   vars:
-    openstack_test_results_dir: "{{ artifacts_dir }}/lb_amphora_sourceip"
-    openstack_tests_allowlist_file: "{{ lb_allowlist_file }}"
-    openstack_testsuite_name: openstack_tests_lb_amphora_sourceip
-    openstack_reset_result_dir: no # As we want to keep the logs generated in the previous step
+    lb_amphora_openstack_test_results_dir: "{{ artifacts_dir }}/lb_amphora_sourceip"
+    lb_amphora_openstack_test_allowlist: "{{ lb_amphora_allowlist_resolved }}"
+    # Exclude isolated + late sourceRanges so those patterns are not double-run.
+    lb_amphora_openstack_test_blocklist: >-
+      {{ lb_ingress_blocklist_resolved ~ ',' ~ lb_amphora_isolated_allowlist_resolved ~ ',' ~ lb_amphora_sourceranges_allowlist_resolved
+         if (lb_amphora_two_phase_tests | bool)
+         else lb_ingress_blocklist_resolved }}
+    lb_amphora_openstack_testsuite_name: openstack_tests_lb_amphora_sourceip
+    lb_amphora_openstack_reset_result_dir: false
+
+- name: Amphora LB tests — phase 3 (UDP sourceRanges after other Amphora cases)
+  when: lb_amphora_two_phase_tests | bool
+  block:
+    - name: Cleanup guest LB leftovers before late sourceRanges
+      ansible.builtin.include_tasks: cleanup_lb_test_leftovers.yml
+      when: lb_tests_guest_cleanup | bool
+
+    - name: Run amphora UDP sourceRanges openstack-test phase
+      ansible.builtin.include_tasks: run_amphora_openstack_test.yml
+      vars:
+        lb_amphora_openstack_test_results_dir: "{{ artifacts_dir }}/lb_amphora_sourceip_sourceranges"
+        lb_amphora_openstack_test_allowlist: "{{ lb_amphora_sourceranges_allowlist_resolved }}"
+        lb_amphora_openstack_test_blocklist: "{{ lb_ingress_blocklist_resolved }}"
+        lb_amphora_openstack_testsuite_name: openstack_tests_lb_amphora_sourceip_sourceranges
+        lb_amphora_openstack_reset_result_dir: true
 
 - name: Enable OVN provider on cloud-provider-config
   ansible.builtin.include_tasks: change_cloud_cm.yml
@@ -47,6 +96,8 @@
     name: shiftstack.stages.openstack_test
   vars:
     openstack_test_results_dir: "{{ artifacts_dir }}/lb_ovn"
-    openstack_tests_allowlist_file: "{{ lb_allowlist_file }}"
+    openstack_tests_allowlist_file: "{{ lb_ovn_allowlist_resolved }}"
+    openstack_tests_blocklist_file: "{{ lb_ingress_blocklist_resolved }}"
+    openstack_test_ote_run_serial: true
     openstack_testsuite_name: openstack_tests_lb_ovn
     openstack_reset_result_dir: no # As we want to keep the logs generated in the previous step

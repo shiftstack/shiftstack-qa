@@ -1,0 +1,6 @@
+---
+# Late Amphora-only phase (after isolated + remaining amphora, before OVN).
+# sourceRanges clearing allowed_cidrs is sensitive to OCCM load; running it last
+# under Amphora config improves odds without a dedicated ansible stage.
+".*limit service access on an UDP Amphora LoadBalancer when an UDP LoadBalancer svc setting the loadBalancerSourceRanges spec is created on Openshift":
+  note: "UDP Amphora loadBalancerSourceRanges (after other Amphora LB tests)"

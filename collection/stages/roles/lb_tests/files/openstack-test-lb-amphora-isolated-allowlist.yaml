@@ -1,0 +1,11 @@
+---
+# Run first on a clean cluster (see lb_tests two-phase amphora flow).
+# Order of keys defines serial run order when filter_tests_list applies this allowlist.
+# UDP sourceRanges is intentionally NOT here — it runs in a late Amphora phase after
+# other Amphora cases so OCCM/Octavia are less contended (allowed_cidrs clear flake).
+".*create a UDP Amphora LoadBalancer when a UDP svc with type:LoadBalancer is created on Openshift":
+  note: "UDP Amphora basic (before other cases allocate shared LBs)"
+".*apply lb-method on TCP Amphora LoadBalancer when a TCP svc with monitors and ETP:Local is created on Openshift":
+  note: "TCP Amphora lb-method + monitors"
+".*apply lb-method on UDP Amphora LoadBalancer when a UDP svc with monitors and ETP:Local is created on Openshift":
+  note: "UDP Amphora lb-method + monitors"

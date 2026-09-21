@@ -7,8 +7,10 @@ openstack_test_dir: "{{ artifacts_dir }}/{{ openstack_test_name }}"
 openstack_test_executable: "{{ home_dir }}/openstack-tests"
 openstack_test_results_dir: "{{ artifacts_dir }}/{{ openstack_test_name }}-results"
 openstack_tests_allowlist_file: ""
-openstack_tests_blocklist_file: ""
+openstack_tests_blocklist_file: "{{ role_path }}/files/openstack-test-lb-blocklist.yaml"
 openstack_tests_go_version: "{{ tests.default_go_version_target }}"
 # OTE (OpenShift Tests Extension) — used when discovered_openshift_release >= 4.20
 openstack_test_suite: openstack-test/all
 openstack_test_ote_binary_relpath: bin/openstack-test-tests-ext
+# Run filtered OTE tests one-by-one (required for [lb][Serial] under Octavia limits).
+openstack_test_ote_run_serial: false

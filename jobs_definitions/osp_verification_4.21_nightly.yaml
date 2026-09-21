@@ -19,8 +19,8 @@ stages:
   - post
   - verification
   - day2ops
-  - openstack_test
   - lb_tests
+  - openstack_test
   - egressip_tests
 
 day2ops_procedures:

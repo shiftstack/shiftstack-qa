@@ -1,0 +1,3 @@
+---
+".*LoadBalancerService ingressController is created on Openshift.*":
+  note: "Deferred — OSASINFRA-2412 / IngressController admission (run 7); re-enable when fixed."

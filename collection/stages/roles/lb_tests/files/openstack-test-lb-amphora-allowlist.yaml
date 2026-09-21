@@ -1,0 +1,3 @@
+---
+".*Amphora.*":
+  note: "Amphora Load Balancer tests (lb_tests stage only)"
