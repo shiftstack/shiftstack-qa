@@ -159,8 +159,67 @@ def run_module():
             input_tests.append((normalized, line if line.endswith('\n') else line + '\n'))
 
     if allowlist_file and blocklist_file:
-        module.fail_json(msg="parameters are mutually exclusive: "
-                         "allowlist_file|blocklist_file", **result)
+        # Apply allowlist first, then blocklist (used by lb_tests: [lb] allow + ingress block).
+        tests_to_run = []
+        try:
+            with open(allowlist_file, 'r') as f:
+                allowlist = [line for line in f]
+        except IOError:
+            module.fail_json(msg="Error opening the allowlist file")
+
+        for allowlist_test in allowlist:
+            allow_norm = normalize_test_line(allowlist_test)
+            if allow_norm is None:
+                continue
+            allowlist_test_in_input_tests = False
+            escaped_allow_test = escape_special_characters(allow_norm)
+
+            for test_norm, test_raw in input_tests:
+                if re.fullmatch(escaped_allow_test, test_norm):
+                    tests_to_run.append((test_norm, test_raw))
+                    allowlist_test_in_input_tests = True
+
+            if not allowlist_test_in_input_tests:
+                module.fail_json(msg="Error: Found a test that exists in {} but not in {} -"
+                                 " '{}'".format(allowlist_file,
+                                                input_tests_file,
+                                                allowlist_test), **result)
+
+        try:
+            with open(blocklist_file, 'r') as f:
+                blocklist = [line for line in f]
+        except IOError:
+            module.fail_json(msg="Error opening the blocklist file")
+
+        blocklist_norms = []
+        for blocklist_test in blocklist:
+            block_norm = normalize_test_line(blocklist_test)
+            if block_norm is not None:
+                blocklist_norms.append((block_norm, blocklist_test))
+
+        filtered_tests = []
+        blocked_tests = []
+        for test_norm, test_raw in tests_to_run:
+            test_in_blocklist = False
+            for block_norm, _block_raw in blocklist_norms:
+                escaped_block_test = escape_special_characters(block_norm)
+                if re.fullmatch(escaped_block_test, test_norm):
+                    test_in_blocklist = True
+                    break
+            if test_in_blocklist:
+                blocked_tests.append(test_raw)
+            else:
+                filtered_tests.append(test_raw)
+
+        try:
+            with open(output_file, 'w') as f:
+                f.writelines(filtered_tests)
+        except IOError:
+            module.fail_json(msg="Error writing to output file")
+
+        result['filter_type'] = 'allowlist+blocklist'
+        result['filter_tests_file'] = allowlist_file
+        result['changed'] = True
 
     elif allowlist_file:
         tests_to_run = []

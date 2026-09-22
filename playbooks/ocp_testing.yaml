@@ -98,13 +98,13 @@
   ansible.builtin.import_playbook: plays/day2ops.yaml
   when: "'day2ops' in stages"
 
-- name: Run Openstack-Test on OpenShift
-  ansible.builtin.import_playbook: plays/openstack_test.yaml
-  when: "'openstack_test' in stages"
-
 - name: Run LB-Test on OpenShift
   ansible.builtin.import_playbook: plays/lb_tests.yaml
   when: "'lb_tests' in stages"
+
+- name: Run Openstack-Test on OpenShift
+  ansible.builtin.import_playbook: plays/openstack_test.yaml
+  when: "'openstack_test' in stages"
 
 - name: Run Openshift Conformance Test on OpenShift
   ansible.builtin.import_playbook: plays/conformance_test.yaml

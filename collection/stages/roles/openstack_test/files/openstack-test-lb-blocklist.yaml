@@ -1,0 +1,3 @@
+---
+".*[lb].*":
+  note: "Load Balancer tests run only in lb_tests after cloud.conf patch (change_cloud_cm)."

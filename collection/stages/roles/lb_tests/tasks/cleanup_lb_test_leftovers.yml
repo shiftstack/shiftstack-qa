@@ -1,0 +1,69 @@
+---
+# Best-effort guest cleanup between LB test phases (max-shared-lb / Octavia slots).
+- name: List e2e-test-openstack projects
+  ansible.builtin.shell: |
+    set -o pipefail
+    oc get projects -o name 2>/dev/null | sed 's|project/||' | grep -E '^e2e-test-openstack-' || true
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+  register: lb_cleanup_e2e_projects_cmd
+  changed_when: false
+  failed_when: false
+
+- name: List shard IngressControllers
+  ansible.builtin.shell: |
+    set -o pipefail
+    oc get ingresscontroller -n openshift-ingress-operator -o name 2>/dev/null | grep shard- || true
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+  register: lb_cleanup_shard_ics_cmd
+  changed_when: false
+  failed_when: false
+
+- name: Delete stale e2e-test-openstack projects (async)
+  ansible.builtin.command:
+    argv:
+      - oc
+      - delete
+      - project
+      - "{{ item }}"
+      - --wait=false
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+  loop: "{{ lb_cleanup_e2e_projects_cmd.stdout_lines | default([]) }}"
+  loop_control:
+    label: "{{ item }}"
+  register: lb_cleanup_delete_projects
+  changed_when: lb_cleanup_delete_projects.rc == 0
+  failed_when: false
+  when: lb_cleanup_e2e_projects_cmd.stdout_lines | default([]) | length > 0
+
+- name: Delete shard IngressControllers left by ingress LB tests (async)
+  ansible.builtin.command:
+    argv:
+      - oc
+      - delete
+      - "{{ item }}"
+      - --wait=false
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+  loop: "{{ lb_cleanup_shard_ics_cmd.stdout_lines | default([]) }}"
+  loop_control:
+    label: "{{ item }}"
+  register: lb_cleanup_delete_ics
+  changed_when: lb_cleanup_delete_ics.rc == 0
+  failed_when: false
+  when: lb_cleanup_shard_ics_cmd.stdout_lines | default([]) | length > 0
+
+- name: Delete Octavia load balancers in ERROR state
+  ansible.builtin.shell: |
+    set -o pipefail
+    openstack loadbalancer list -f value -c id -c provisioning_status 2>/dev/null | while read -r id st; do
+      if [ "$st" = "ERROR" ]; then
+        openstack loadbalancer delete "$id" --wait 2>/dev/null || true
+      fi
+    done
+  environment:
+    OS_CLOUD: "{{ user_cloud }}"
+  changed_when: false
+  failed_when: false
