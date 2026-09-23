@@ -67,3 +67,23 @@
     OS_CLOUD: "{{ user_cloud }}"
   changed_when: false
   failed_when: false
+
+# Orphan lb-sg-* Neutron SGs left on node ports trip ProviderSpec SG matching
+# when lb_tests runs before openstack_test (seen on 4.21 warm re-runs).
+- name: Best-effort remove orphan lb-sg-* security group attachments and SGs
+  ansible.builtin.shell: |
+    set -o pipefail
+    openstack security group list -f value -c ID -c Name 2>/dev/null | while read -r sg_id sg_name; do
+      case "$sg_name" in
+        lb-sg-*)
+          for port_id in $(openstack port list --security-group "$sg_id" -f value -c ID 2>/dev/null); do
+            openstack port unset --security-group "$sg_id" "$port_id" 2>/dev/null || true
+          done
+          openstack security group delete "$sg_id" 2>/dev/null || true
+          ;;
+      esac
+    done
+  environment:
+    OS_CLOUD: "{{ user_cloud }}"
+  changed_when: false
+  failed_when: false

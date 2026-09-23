@@ -1,0 +1,90 @@
+---
+# Purge leftover bogus-* MachineSets/Machines before openstack_test.
+# Pairs with openstack-test bz_2073398 cleanup; suite-level hygiene if that It left
+# stuck objects that poison later Machine / MachineSet / ProviderSpec specs.
+# After delete, wait until gone; fail if leftovers remain so openstack_test does not start dirty.
+- name: List bogus MachineSets in openshift-machine-api
+  ansible.builtin.shell: |
+    set -o pipefail
+    oc get machineset -n openshift-machine-api -o name 2>/dev/null \
+      | grep -E 'bogus-' || true
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+  register: bogus_machinesets_cmd
+  changed_when: false
+  failed_when: false
+
+- name: List bogus Machines in openshift-machine-api
+  ansible.builtin.shell: |
+    set -o pipefail
+    oc get machine -n openshift-machine-api -o name 2>/dev/null \
+      | grep -E 'bogus-' || true
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+  register: bogus_machines_cmd
+  changed_when: false
+  failed_when: false
+
+- name: Delete leftover bogus MachineSets
+  ansible.builtin.command:
+    argv:
+      - oc
+      - delete
+      - "{{ item }}"
+      - -n
+      - openshift-machine-api
+      - --wait=false
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+  loop: "{{ bogus_machinesets_cmd.stdout_lines | default([]) }}"
+  loop_control:
+    label: "{{ item }}"
+  register: bogus_ms_delete
+  changed_when: bogus_ms_delete.rc == 0
+  failed_when: false
+  when: bogus_machinesets_cmd.stdout_lines | default([]) | length > 0
+
+- name: Delete leftover bogus Machines
+  ansible.builtin.command:
+    argv:
+      - oc
+      - delete
+      - "{{ item }}"
+      - -n
+      - openshift-machine-api
+      - --wait=false
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+  loop: "{{ bogus_machines_cmd.stdout_lines | default([]) }}"
+  loop_control:
+    label: "{{ item }}"
+  register: bogus_machine_delete
+  changed_when: bogus_machine_delete.rc == 0
+  failed_when: false
+  when: bogus_machines_cmd.stdout_lines | default([]) | length > 0
+
+# Deletes used --wait=false; poll until matching objects are gone so openstack_test
+# does not start while bogus-* resources are still terminating. Bounded timeout.
+# Fail when leftovers remain after the timeout so openstack_test cannot start dirty.
+- name: Wait until bogus Machines and MachineSets are gone
+  ansible.builtin.shell: |
+    set -o pipefail
+    ms=$(oc get machineset -n openshift-machine-api -o name 2>/dev/null | grep -E 'bogus-' || true)
+    m=$(oc get machine -n openshift-machine-api -o name 2>/dev/null | grep -E 'bogus-' || true)
+    if [ -n "$ms" ] || [ -n "$m" ]; then
+      echo "bogus leftovers still present:"
+      printf '%s\n' "$ms" "$m" | sed '/^$/d'
+      exit 1
+    fi
+    echo "no bogus Machines or MachineSets remain"
+    exit 0
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+  register: bogus_gone
+  until: bogus_gone.rc == 0
+  retries: 30
+  delay: 10
+  changed_when: false
+  when: >-
+    (bogus_machinesets_cmd.stdout_lines | default([]) | length > 0)
+    or (bogus_machines_cmd.stdout_lines | default([]) | length > 0)

@@ -32,6 +32,9 @@
       delegate_to: "{{ hypervisor }}"
       remote_user: root
 
+    - name: Best-effort purge leftover bogus Machines before openstack-test
+      ansible.builtin.include_tasks: cleanup_bogus_machines.yml
+
     - name: Include Openstack-Test tasks
       ansible.builtin.include_tasks: run_openstack_test.yml
 
