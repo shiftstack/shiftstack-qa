@@ -101,3 +101,7 @@
     openstack_test_ote_run_serial: true
     openstack_testsuite_name: openstack_tests_lb_ovn
     openstack_reset_result_dir: no # As we want to keep the logs generated in the previous step
+
+- name: Best-effort cleanup after LB tests (before openstack_test)
+  ansible.builtin.include_tasks: cleanup_lb_test_leftovers.yml
+  when: lb_tests_guest_cleanup | bool

@@ -16,6 +16,7 @@
 openshift_release: "5.0"
 openshift_build_name: "" # Empty resolves to latest nightly via 5.0.0-0.nightly/latest
 installation_type: ipi
+lb_tests_guest_cleanup: true
 stages:
   - prepare
   - install

@@ -10,7 +10,7 @@ The real outcome is in nested STDOUT JSON (``"result": "passed"|"failed"|...``)
 or in ginkgo summary lines (``SUCCESS!`` / ``FAIL!``).
 
 Usage:
-  ote_resolve_results.py count <log> passed|failed|skipped
+  ote_resolve_results.py count <log> passed|failed|skipped|unknown
   ote_resolve_results.py junit <log> <junit_xml_path>
 """
 
@@ -23,26 +23,47 @@ import xml.etree.ElementTree as ET
 from typing import Any
 
 
+def _is_ote_shaped(entry: Any) -> bool:
+    return isinstance(entry, dict) and "result" in entry
+
+
 def _load_outer_results(raw: str) -> list[dict[str, Any]]:
     raw = raw.strip()
     if not raw:
         return []
 
-    # Skip leading klog / noise before the JSON array/object.
-    start_candidates = [i for i, ch in enumerate(raw) if ch in "[{"]
-    for start in start_candidates:
-        chunk = raw[start:]
+    # Scan top-level JSON values. Skip empty lists / non-OTE-shaped JSON
+    # (e.g. bare ``[]`` from ginkgo text like ``map[]``) so we reach the real
+    # result array(s) at the end of the log. Advance past each decoded value
+    # to avoid re-parsing nested JSON inside ``output`` fields. Serial
+    # run-test appends multiple arrays — collect all OTE-shaped entries.
+    results: list[dict[str, Any]] = []
+    decoder = json.JSONDecoder()
+    i = 0
+    n = len(raw)
+    while i < n:
+        while i < n and raw[i] not in "[{":
+            i += 1
+        if i >= n:
+            break
         try:
-            data, _ = json.JSONDecoder().raw_decode(chunk)
+            data, end = decoder.raw_decode(raw[i:])
         except json.JSONDecodeError:
+            i += 1
             continue
+        i = i + end
         if isinstance(data, list):
-            return [r for r in data if isinstance(r, dict)]
-        if isinstance(data, dict):
-            return [data]
+            ote = [r for r in data if _is_ote_shaped(r)]
+            if ote:
+                results.extend(ote)
+            continue
+        if _is_ote_shaped(data):
+            results.append(data)
+
+    if results:
+        return results
 
     # NDJSON fallback
-    results: list[dict[str, Any]] = []
     for line in raw.splitlines():
         line = line.strip()
         if not line or not line.startswith("{"):
@@ -51,7 +72,7 @@ def _load_outer_results(raw: str) -> list[dict[str, Any]]:
             obj = json.loads(line)
         except json.JSONDecodeError:
             continue
-        if isinstance(obj, dict):
+        if _is_ote_shaped(obj):
             results.append(obj)
     return results
 
@@ -206,7 +227,7 @@ def main(argv: list[str]) -> int:
     cmd = argv[1]
     if cmd == "count":
         if len(argv) != 4:
-            print("usage: count <log> passed|failed|skipped", file=sys.stderr)
+            print("usage: count <log> passed|failed|skipped|unknown", file=sys.stderr)
             return 2
         print(cmd_count(argv[2], argv[3]))
         return 0

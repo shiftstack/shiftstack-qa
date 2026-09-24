@@ -188,18 +188,57 @@
       ansible.builtin.shell: |
         set -o pipefail
         : > {{ openstack_test_log_path }}
-        run_exit=0
+        suite_exit=0
         py_exit=0
+        expected=0
+        resolve="{{ openstack_test_ote_resolve_script }}"
         while IFS= read -r test || [[ -n "$test" ]]; do
           [[ -z "${test// }" ]] && continue
-          if ! {{ openstack_test_executable }} run-test --output=json "$test" \
-            >> {{ openstack_test_log_path }} 2>&1; then
-            run_exit=1
+          expected=$((expected + 1))
+          tmp=$(mktemp)
+          rc=0
+          {{ openstack_test_executable }} run-test --output=json "$test" \
+            > "$tmp" 2>&1 || rc=$?
+          cat "$tmp" >> {{ openstack_test_log_path }}
+          # Skip-only (and pass) often exit non-zero from run-test; ignore that
+          # only when the resolver confirms skipped/passed. Failed/unknown keep
+          # the suite failed. Empty resolve on this chunk alone is deferred to
+          # the end-of-suite resolvable==expected check (OTE often exits
+          # non-zero before JSON is parseable as a standalone result).
+          if [ "$rc" -ne 0 ]; then
+            failed=$(python3 "$resolve" count "$tmp" failed || echo 1)
+            skipped=$(python3 "$resolve" count "$tmp" skipped || echo 0)
+            passed=$(python3 "$resolve" count "$tmp" passed || echo 0)
+            unknown=$(python3 "$resolve" count "$tmp" unknown || echo 0)
+            if [ "$failed" -gt 0 ] || [ "$unknown" -gt 0 ]; then
+              suite_exit=1
+            elif [ $((failed + skipped + passed + unknown)) -eq 0 ]; then
+              if grep -q 'FAIL!' "$tmp" 2>/dev/null; then
+                suite_exit=1
+              elif ! grep -qE 'SUCCESS!|SKIP' "$tmp" 2>/dev/null; then
+                # No resolvable outcome and no ginkgo success/skip signal.
+                suite_exit=1
+              fi
+            fi
           fi
+          rm -f "$tmp"
         done < {{ tests_to_run_path }}
-        python3 "{{ openstack_test_ote_resolve_script }}" junit \
+        python3 "$resolve" junit \
           "{{ openstack_test_log_path }}" "{{ openstack_test_junit_path }}" || py_exit=$?
-        if [ "$run_exit" -ne 0 ] || [ "$py_exit" -ne 0 ]; then
+        failed_count=$(python3 "$resolve" count \
+          "{{ openstack_test_log_path }}" failed || echo 0)
+        skipped_count=$(python3 "$resolve" count \
+          "{{ openstack_test_log_path }}" skipped || echo 0)
+        passed_count=$(python3 "$resolve" count \
+          "{{ openstack_test_log_path }}" passed || echo 0)
+        unknown_count=$(python3 "$resolve" count \
+          "{{ openstack_test_log_path }}" unknown || echo 0)
+        # Require every requested test to resolve as pass/skip/fail (no unknown,
+        # no missing entries). Exit 0 with empty/unresolvable output must fail.
+        resolvable=$(( ${passed_count:-0} + ${skipped_count:-0} + ${failed_count:-0} ))
+        if [ "$suite_exit" -ne 0 ] || [ "$py_exit" -ne 0 ] \
+          || [ "${failed_count:-0}" -gt 0 ] || [ "${unknown_count:-0}" -gt 0 ] \
+          || [ "$resolvable" -ne "$expected" ]; then
           exit 1
         fi
         exit 0
