@@ -31,6 +31,7 @@
           - "{{ resources.apps_accessible_ip }}"
       delegate_to: "{{ hypervisor }}"
       remote_user: root
+      when: hypervisor is defined
 
     - name: Best-effort purge leftover bogus Machines before openstack-test
       ansible.builtin.include_tasks: cleanup_bogus_machines.yml
@@ -55,3 +56,4 @@
         tasks_from: restore.yml
       delegate_to: "{{ hypervisor }}"
       remote_user: root
+      when: hypervisor is defined

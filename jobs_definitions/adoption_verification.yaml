@@ -11,6 +11,7 @@
 installation_type: ipi
 stages:
   - verification
+  - openstack_test
 # After adoption, OpenStack-dependent operators (OCCM, CSI,
 # image-registry) may be degraded because cloud-provider-config
 # still points at the dead pre-adoption endpoint (OSPRH-26025).
