@@ -1,0 +1,173 @@
+---
+# Prepare the recreated shiftstackclient / installer inventory host for warm
+# testing when the full prepare stage was skipped.
+
+- name: Check for PVC OpenStack clouds.yaml
+  ansible.builtin.stat:
+    path: "{{ osp_config_dir }}/clouds.yaml"
+  register: prepare_client_pod_pvc_clouds
+
+- name: Check for original-config OpenStack clouds.yaml
+  ansible.builtin.stat:
+    path: "{{ home_dir }}/.original-config/openstack/clouds.yaml"
+  register: prepare_client_pod_orig_clouds
+
+- name: Ensure OpenStack client config directory exists
+  ansible.builtin.file:
+    path: "{{ home_dir }}/.config/openstack"
+    state: directory
+    mode: u=rwx,g=rx,o=rx
+
+- name: Restore OpenStack clouds config from PVC osp_config_dir
+  when: prepare_client_pod_pvc_clouds.stat.exists | default(false)
+  ansible.builtin.copy:
+    src: "{{ osp_config_dir }}/"
+    dest: "{{ home_dir }}/.config/openstack/"
+    remote_src: true
+    mode: preserve
+
+- name: Fall back to original-config OpenStack clouds when PVC copy is absent
+  when:
+    - not (prepare_client_pod_pvc_clouds.stat.exists | default(false))
+    - prepare_client_pod_orig_clouds.stat.exists | default(false)
+  ansible.builtin.copy:
+    src: "{{ home_dir }}/.original-config/openstack/"
+    dest: "{{ home_dir }}/.config/openstack/"
+    remote_src: true
+    mode: preserve
+
+- name: Check for secure.yaml on destination and original-config
+  ansible.builtin.stat:
+    path: "{{ item }}"
+  loop:
+    - "{{ home_dir }}/.config/openstack/secure.yaml"
+    - "{{ home_dir }}/.original-config/openstack/secure.yaml"
+  register: prepare_client_pod_secure_stats
+
+- name: Ensure secure.yaml is present when only available on original-config
+  when:
+    - not (prepare_client_pod_secure_stats.results[0].stat.exists | default(false))
+    - prepare_client_pod_secure_stats.results[1].stat.exists | default(false)
+  ansible.builtin.copy:
+    src: "{{ home_dir }}/.original-config/openstack/secure.yaml"
+    dest: "{{ home_dir }}/.config/openstack/secure.yaml"
+    remote_src: true
+    mode: preserve
+
+- name: Check whether oc is already available
+  ansible.builtin.command:
+    cmd: which oc
+  register: prepare_client_pod_oc_which
+  changed_when: false
+  failed_when: false
+
+- name: Bootstrap oc and kubectl from the OpenShift mirror
+  when: prepare_client_pod_oc_which.rc != 0
+  block:
+    - name: Create bootstrap oc directory
+      ansible.builtin.file:
+        path: "{{ prepare_client_pod_bootstrap_oc_dir }}"
+        state: directory
+        mode: u=rwx,g=rw,o=r
+
+    - name: Download and extract stable oc client
+      ansible.builtin.unarchive:
+        src: "{{ prepare_client_pod_bootstrap_oc_url }}"
+        dest: "{{ prepare_client_pod_bootstrap_oc_dir }}"
+        remote_src: true
+        include:
+          - oc
+          - kubectl
+      register: prepare_client_pod_oc_download
+      until: prepare_client_pod_oc_download is not failed
+      retries: 3
+      delay: 10
+
+    - name: Symlink oc into /usr/local/bin
+      ansible.builtin.file:
+        src: "{{ prepare_client_pod_bootstrap_oc_dir }}/oc"
+        dest: /usr/local/bin/oc
+        state: link
+      become: true
+
+    - name: Symlink kubectl into /usr/bin
+      ansible.builtin.file:
+        src: "{{ prepare_client_pod_bootstrap_oc_dir }}/kubectl"
+        dest: /usr/bin/kubectl
+        state: link
+      become: true
+
+- name: Check install-config.yaml on the PVC
+  ansible.builtin.stat:
+    path: "{{ prepare_client_pod_install_config }}"
+  register: prepare_client_pod_ic_stat
+
+- name: Fail when install-config.yaml is missing
+  ansible.builtin.assert:
+    that:
+      - prepare_client_pod_ic_stat.stat.exists | default(false)
+    fail_msg: >-
+      prepare_client_pod requires {{ prepare_client_pod_install_config }} on the
+      PVC to restore guest API/apps FIPs into /etc/hosts and resources.yml.
+
+- name: Load install-config.yaml
+  ansible.builtin.slurp:
+    src: "{{ prepare_client_pod_install_config }}"
+  register: prepare_client_pod_install_config_slurp
+
+- name: Parse install-config FIPs and base domain
+  vars:
+    _ic: "{{ prepare_client_pod_install_config_slurp.content | b64decode | from_yaml }}"
+  ansible.builtin.set_fact:
+    api_accessible_ip: "{{ _ic.platform.openstack.apiFloatingIP }}"
+    apps_accessible_ip: "{{ _ic.platform.openstack.ingressFloatingIP }}"
+    api_ip: "{{ _ic.platform.openstack.apiFloatingIP }}"
+    apps_ip: "{{ _ic.platform.openstack.ingressFloatingIP }}"
+    prepare_client_pod_base_domain: "{{ _ic.baseDomain }}"
+    prepare_client_pod_cluster_name: "{{ ocp_cluster_name }}"
+
+- name: Check for metadata.json
+  ansible.builtin.stat:
+    path: "{{ prepare_client_pod_metadata }}"
+  register: prepare_client_pod_meta_stat
+
+- name: Override cluster name from metadata.json when present
+  when: prepare_client_pod_meta_stat.stat.exists | default(false)
+  block:
+    - name: Load metadata.json
+      ansible.builtin.slurp:
+        src: "{{ prepare_client_pod_metadata }}"
+      register: prepare_client_pod_metadata_slurp
+
+    - name: Set cluster name from metadata
+      vars:
+        _meta: "{{ prepare_client_pod_metadata_slurp.content | b64decode | from_json }}"
+      ansible.builtin.set_fact:
+        prepare_client_pod_cluster_name: >-
+          {{ _meta.clusterName | default(ocp_cluster_name) }}
+
+- name: Check whether resources.yml already exists
+  ansible.builtin.stat:
+    path: "{{ resources_file }}"
+  register: prepare_client_pod_resources_stat
+
+- name: Write resources.yml when absent
+  when: not (prepare_client_pod_resources_stat.stat.exists | default(false))
+  ansible.builtin.include_role:
+    name: shiftstack.tools.tools_register_resources_file
+  vars:
+    input:
+      api_accessible_ip: "{{ api_accessible_ip }}"
+      apps_accessible_ip: "{{ apps_accessible_ip }}"
+
+- name: Restore guest API and apps entries in /etc/hosts
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    regexp: "{{ item.regex }}"
+    line: "{{ item.row }}"
+    unsafe_writes: true
+  vars:
+    ocp_cluster_name: "{{ prepare_client_pod_cluster_name }}"
+    ocp_base_domain: "{{ prepare_client_pod_base_domain }}"
+  loop: "{{ prepare_client_pod_etc_hosts_entries }}"

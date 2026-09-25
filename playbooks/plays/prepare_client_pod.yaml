@@ -1,0 +1,10 @@
+---
+- name: Prepare the shiftstackclient pod for warm testing
+  hosts: localhost
+  gather_facts: true
+  vars_files:
+    - "../../configs/global.yml"
+  tasks:
+    - name: Bootstrap oc, clouds, hosts, and resources.yml on the client pod
+      ansible.builtin.include_role:
+        name: shiftstack.stages.prepare_client_pod

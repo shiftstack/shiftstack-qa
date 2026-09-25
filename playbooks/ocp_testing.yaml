@@ -59,6 +59,10 @@
         tasks_from: create_installer_group.yml
       when: "not deploy_installer_host"
 
+- name: Prepare the shiftstackclient pod when full prepare was skipped
+  ansible.builtin.import_playbook: plays/prepare_client_pod.yaml
+  when: "'prepare_client_pod' in stages"
+
 - name: Prepare the OpenShift installer
   ansible.builtin.import_playbook: plays/prepare.yaml
   when: "'prepare' in stages"
