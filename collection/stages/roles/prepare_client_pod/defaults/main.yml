@@ -1,0 +1,24 @@
+---
+# Lightweight client bootstrap when full "prepare" is skipped (e.g. Pipeline B
+# run-tests after a warm guest install). Mirrors the subset of prepare that is
+# lost when the shiftstackclient pod is recreated: oc, clouds.shiftstack,
+# /etc/hosts, and resources.yml.
+#
+# Do NOT recreate OpenStack projects, FIPs, or installer hosts here.
+prepare_client_pod_bootstrap_oc_dir: "{{ home_dir }}/bootstrap-oc"
+prepare_client_pod_bootstrap_oc_url: >-
+  {{ openshift_mirror_url | default('https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp') }}/stable/openshift-client-linux.tar.gz
+prepare_client_pod_install_config: "{{ user_cloud_installation_dir }}/install-config.yaml"
+prepare_client_pod_metadata: "{{ ocp_installation_dir }}/metadata.json"
+# Same host rows as prepare/defaults etc_hosts_entries (api_ip / apps_ip at runtime).
+prepare_client_pod_etc_hosts_entries:
+  - {regex: 'api\..*\.{{ ocp_base_domain }}', row: '{{ api_ip }} api.{{ ocp_cluster_name }}.{{ ocp_base_domain }}'}
+  - {regex: 'oauth-openshift.apps\..*\.{{ ocp_base_domain }}', row: '{{ apps_ip }} oauth-openshift.apps.{{ ocp_cluster_name }}.{{ ocp_base_domain }}'}
+  - {regex: 'console-openshift-console.apps\..*\.{{ ocp_base_domain }}', row: '{{ apps_ip }} console-openshift-console.apps.{{ ocp_cluster_name }}.{{ ocp_base_domain }}'}
+  - {regex: 'downloads-openshift-console.apps\..*\.{{ ocp_base_domain }}', row: '{{ apps_ip }} downloads-openshift-console.apps.{{ ocp_cluster_name }}.{{ ocp_base_domain }}'}
+  - {regex: 'canary-openshift-ingress-canary.apps\..*\.{{ ocp_base_domain }}', row: '{{ apps_ip }} canary-openshift-ingress-canary.apps.{{ ocp_cluster_name }}.{{ ocp_base_domain }}'}
+  - {regex: 'alertmanager-main-openshift-monitoring.apps\..*\.{{ ocp_base_domain }}', row: '{{ apps_ip }} alertmanager-main-openshift-monitoring.apps.{{ ocp_cluster_name }}.{{ ocp_base_domain }}'}
+  - {regex: 'grafana-openshift-monitoring.apps\..*\.{{ ocp_base_domain }}', row: '{{ apps_ip }} grafana-openshift-monitoring.apps.{{ ocp_cluster_name }}.{{ ocp_base_domain }}'}
+  - {regex: 'prometheus-k8s-openshift-monitoring.apps\..*\.{{ ocp_base_domain }}', row: '{{ apps_ip }} prometheus-k8s-openshift-monitoring.apps.{{ ocp_cluster_name }}.{{ ocp_base_domain }}'}
+  - {regex: 'prometheus-k8s-federate-openshift-monitoring.apps\..*\.{{ ocp_base_domain }}', row: '{{ apps_ip }} prometheus-k8s-federate-openshift-monitoring.apps.{{ ocp_cluster_name }}.{{ ocp_base_domain }}'}
+  - {regex: 'thanos-querier-openshift-monitoring.apps\..*\.{{ ocp_base_domain }}', row: '{{ apps_ip }} thanos-querier-openshift-monitoring.apps.{{ ocp_cluster_name }}.{{ ocp_base_domain }}'}
