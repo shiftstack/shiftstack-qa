@@ -141,6 +141,52 @@
   ansible.builtin.set_fact:
     openstack_test_filtering: "{{ (openstack_tests_allowlist_file | length > 0) or (openstack_tests_blocklist_file | length > 0) }}"
 
+# Option B: pull bz_2073398 + Machine trio out of the batch list for a serial coda.
+- name: Set machines leak-cluster serial list path
+  ansible.builtin.set_fact:
+    openstack_test_leak_cluster_path: >-
+      {{ openstack_test_results_dir }}/machines_leak_cluster_serial.txt
+    openstack_test_leak_cluster_matchers_path: >-
+      {{ openstack_test_results_dir }}/machines_leak_cluster_matchers.txt
+  when:
+    - openstack_test_use_ote | bool
+    - openstack_test_machines_leak_cluster_serial | bool
+    - openstack_test_filtering | bool
+
+# Write matchers one-per-line so multi-word phrases are never shell-split.
+- name: Write machines leak-cluster matchers file
+  ansible.builtin.copy:
+    dest: "{{ openstack_test_leak_cluster_matchers_path }}"
+    mode: "0644"
+    content: "{{ openstack_test_machines_leak_cluster_matchers | map('trim') | join('\n') }}\n"
+  when:
+    - openstack_test_use_ote | bool
+    - openstack_test_machines_leak_cluster_serial | bool
+    - openstack_test_filtering | bool
+
+- name: Split machines leak-cluster tests from batch list for serial coda
+  ansible.builtin.command:
+    argv:
+      - python3
+      - "{{ role_path }}/files/split_machines_leak_cluster.py"
+      - "{{ tests_to_run_path }}"
+      - "{{ openstack_test_leak_cluster_path }}"
+      - "{{ openstack_test_leak_cluster_matchers_path }}"
+  register: openstack_test_leak_cluster_split
+  changed_when: true
+  when:
+    - openstack_test_use_ote | bool
+    - openstack_test_machines_leak_cluster_serial | bool
+    - openstack_test_filtering | bool
+
+- name: Print machines leak-cluster split summary
+  ansible.builtin.debug:
+    msg: "{{ openstack_test_leak_cluster_split.stdout | default('leak cluster split skipped') }}"
+  when:
+    - openstack_test_use_ote | bool
+    - openstack_test_machines_leak_cluster_serial | bool
+    - openstack_test_filtering | bool
+
 # OTE run-suite often marks every outer JSON result as failed when stderr has
 # klog lines (Deserializaion Error: invalid character 'I'...). True outcomes
 # live in nested STDOUT JSON / ginkgo SUCCESS!|FAIL! lines — see
@@ -385,3 +431,12 @@
         name: tools_must-gather
       vars:
         must_gather_suffix: "openstack-tests"
+
+# Option B: serial coda after the main batch (or filtered serial) suite.
+- name: Run machines leak-cluster tests serially after main suite
+  ansible.builtin.include_tasks: run_machines_leak_cluster_serial.yml
+  when:
+    - openstack_test_use_ote | bool
+    - openstack_test_machines_leak_cluster_serial | bool
+    - openstack_test_filtering | bool
+    - openstack_test_leak_cluster_path is defined

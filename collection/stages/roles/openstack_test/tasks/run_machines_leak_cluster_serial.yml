@@ -1,0 +1,98 @@
+---
+# Option B: serially run bz_2073398 then Machine trio after the main batch suite.
+# Expects openstack_test_leak_cluster_path to already list the ordered tests.
+- name: Stat machines leak-cluster serial list
+  ansible.builtin.stat:
+    path: "{{ openstack_test_leak_cluster_path }}"
+  register: openstack_test_leak_cluster_stat
+
+- name: Count machines leak-cluster serial tests
+  ansible.builtin.command:
+    argv:
+      - bash
+      - -c
+      - "grep -cve '^[[:space:]]*$' '{{ openstack_test_leak_cluster_path }}' || true"
+  register: openstack_test_leak_cluster_count
+  changed_when: false
+  when: openstack_test_leak_cluster_stat.stat.exists | default(false)
+
+- name: Skip machines leak-cluster serial coda when empty
+  ansible.builtin.debug:
+    msg: >-
+      No machines leak-cluster tests matched the filtered list; skipping serial coda.
+  when: >
+    (not (openstack_test_leak_cluster_stat.stat.exists | default(false)))
+    or ((openstack_test_leak_cluster_count.stdout | default('0') | trim | int) == 0)
+
+- name: Run machines leak-cluster tests serially and merge into suite log/junit
+  when:
+    - openstack_test_leak_cluster_stat.stat.exists | default(false)
+    - (openstack_test_leak_cluster_count.stdout | default('0') | trim | int) > 0
+  block:
+    - name: Execute machines leak-cluster run-test loop
+      ansible.builtin.shell: |
+        set -o pipefail
+        suite_exit=0
+        py_exit=0
+        resolve="{{ openstack_test_ote_resolve_script }}"
+        leak_log="{{ openstack_test_results_dir }}/machines_leak_cluster.log"
+        leak_list="{{ openstack_test_leak_cluster_path }}"
+        # Pre-count from the list file (do not increment in-loop; avoids
+        # false UNSTABLE when resolvable!=expected after a successful coda).
+        expected="$(grep -cve '^[[:space:]]*$' "$leak_list" || true)"
+        : > "$leak_log"
+        while IFS= read -r tname || [ -n "${tname:-}" ]; do
+          [ -z "${tname// }" ] && continue
+          tmp=$(mktemp)
+          rc=0
+          {{ openstack_test_executable }} run-test --output=json -c 1 "$tname" \
+            > "$tmp" 2>&1 || rc=$?
+          cat "$tmp" >> "$leak_log"
+          cat "$tmp" >> {{ openstack_test_log_path }}
+          if [ "$rc" -ne 0 ]; then
+            failed=$(python3 "$resolve" count "$tmp" failed || echo 1)
+            skipped=$(python3 "$resolve" count "$tmp" skipped || echo 0)
+            passed=$(python3 "$resolve" count "$tmp" passed || echo 0)
+            unknown=$(python3 "$resolve" count "$tmp" unknown || echo 0)
+            if [ "$failed" -gt 0 ] || [ "$unknown" -gt 0 ]; then
+              suite_exit=1
+            elif [ $((failed + skipped + passed + unknown)) -eq 0 ]; then
+              if grep -q 'FAIL!' "$tmp" 2>/dev/null; then
+                suite_exit=1
+              elif ! grep -qE 'SUCCESS!|SKIP' "$tmp" 2>/dev/null; then
+                suite_exit=1
+              fi
+            fi
+          fi
+          rm -f "$tmp"
+        done < "$leak_list"
+        python3 "$resolve" junit \
+          "{{ openstack_test_log_path }}" "{{ openstack_test_junit_path }}" || py_exit=$?
+        failed_count=$(python3 "$resolve" count "$leak_log" failed || echo 0)
+        skipped_count=$(python3 "$resolve" count "$leak_log" skipped || echo 0)
+        passed_count=$(python3 "$resolve" count "$leak_log" passed || echo 0)
+        unknown_count=$(python3 "$resolve" count "$leak_log" unknown || echo 0)
+        resolvable=$(( ${passed_count:-0} + ${skipped_count:-0} + ${failed_count:-0} ))
+        echo "machines_leak_cluster counts: passed=${passed_count} failed=${failed_count} skipped=${skipped_count} unknown=${unknown_count} expected=${expected} resolvable=${resolvable}"
+        if [ "$suite_exit" -ne 0 ] || [ "$py_exit" -ne 0 ] \
+          || [ "${failed_count:-0}" -gt 0 ] || [ "${unknown_count:-0}" -gt 0 ] \
+          || [ "$resolvable" -ne "$expected" ]; then
+          exit 1
+        fi
+        exit 0
+      environment:
+        OS_CLOUD: "{{ user_cloud }}"
+        KUBECONFIG: "{{ kubeconfig }}"
+        RHOSO_KUBECONFIG: "{{ rhoso_kubeconfig }}"
+        SHIFTSTACK_PASS_FILE: "{{ kubeadmin_password }}"
+      changed_when: true
+      register: openstack_test_leak_cluster_run
+
+  rescue:
+    - name: Mark openstack-test UNSTABLE after machines leak-cluster serial failure
+      ansible.builtin.include_role:
+        name: tools_stage_results
+        tasks_from: mark_test_stage_unstable.yml
+      vars:
+        unstable_msg: >-
+          Machines leak-cluster serial coda failed (bz_2073398 / Machine trio).
