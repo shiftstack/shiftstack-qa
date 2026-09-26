@@ -11,7 +11,7 @@
     argv:
       - bash
       - -c
-      - "grep -cve '^[[:space:]]*$' {{ openstack_test_leak_cluster_path }} || true"
+      - "grep -cve '^[[:space:]]*$' '{{ openstack_test_leak_cluster_path }}' || true"
   register: openstack_test_leak_cluster_count
   changed_when: false
   when: openstack_test_leak_cluster_stat.stat.exists | default(false)
@@ -34,16 +34,18 @@
         set -o pipefail
         suite_exit=0
         py_exit=0
-        expected=0
         resolve="{{ openstack_test_ote_resolve_script }}"
         leak_log="{{ openstack_test_results_dir }}/machines_leak_cluster.log"
+        leak_list="{{ openstack_test_leak_cluster_path }}"
+        # Pre-count from the list file (do not increment in-loop; avoids
+        # false UNSTABLE when resolvable!=expected after a successful coda).
+        expected="$(grep -cve '^[[:space:]]*$' "$leak_list" || true)"
         : > "$leak_log"
-        while IFS= read -r test || [[ -n "$test" ]]; do
-          [[ -z "${test// }" ]] && continue
-          expected=$((expected + 1))
+        while IFS= read -r tname || [ -n "${tname:-}" ]; do
+          [ -z "${tname// }" ] && continue
           tmp=$(mktemp)
           rc=0
-          {{ openstack_test_executable }} run-test --output=json -c 1 "$test" \
+          {{ openstack_test_executable }} run-test --output=json -c 1 "$tname" \
             > "$tmp" 2>&1 || rc=$?
           cat "$tmp" >> "$leak_log"
           cat "$tmp" >> {{ openstack_test_log_path }}
@@ -63,7 +65,7 @@
             fi
           fi
           rm -f "$tmp"
-        done < {{ openstack_test_leak_cluster_path }}
+        done < "$leak_list"
         python3 "$resolve" junit \
           "{{ openstack_test_log_path }}" "{{ openstack_test_junit_path }}" || py_exit=$?
         failed_count=$(python3 "$resolve" count "$leak_log" failed || echo 0)
@@ -71,7 +73,7 @@
         passed_count=$(python3 "$resolve" count "$leak_log" passed || echo 0)
         unknown_count=$(python3 "$resolve" count "$leak_log" unknown || echo 0)
         resolvable=$(( ${passed_count:-0} + ${skipped_count:-0} + ${failed_count:-0} ))
-        echo "machines_leak_cluster counts: passed=${passed_count} failed=${failed_count} skipped=${skipped_count} unknown=${unknown_count} expected=${expected}"
+        echo "machines_leak_cluster counts: passed=${passed_count} failed=${failed_count} skipped=${skipped_count} unknown=${unknown_count} expected=${expected} resolvable=${resolvable}"
         if [ "$suite_exit" -ne 0 ] || [ "$py_exit" -ne 0 ] \
           || [ "${failed_count:-0}" -gt 0 ] || [ "${unknown_count:-0}" -gt 0 ] \
           || [ "$resolvable" -ne "$expected" ]; then
