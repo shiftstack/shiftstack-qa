@@ -19,7 +19,8 @@ openstack_test_ote_run_serial: false
 # Keeps the bulk suite in batch to limit wall time. No-ops when the matchers
 # are absent (e.g. lb_tests allowlists). Requires OTE filtered run path.
 openstack_test_machines_leak_cluster_serial: true
-# Ordered substrings matched against list_of_tests_to_run.txt. For the
+# Ordered substrings matched against list_of_tests_to_run.txt (one phrase
+# each; written to a matchers file so shell never splits them). For the
 # MachineSet replica matcher, ControlPlane variants are skipped.
 openstack_test_machines_leak_cluster_matchers:
   - "Bugfix bz_2073398: [Serial] MachineSet scale-in does not leak OpenStack ports"

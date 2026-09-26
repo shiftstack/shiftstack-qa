@@ -146,20 +146,32 @@
   ansible.builtin.set_fact:
     openstack_test_leak_cluster_path: >-
       {{ openstack_test_results_dir }}/machines_leak_cluster_serial.txt
+    openstack_test_leak_cluster_matchers_path: >-
+      {{ openstack_test_results_dir }}/machines_leak_cluster_matchers.txt
+  when:
+    - openstack_test_use_ote | bool
+    - openstack_test_machines_leak_cluster_serial | bool
+    - openstack_test_filtering | bool
+
+# Write matchers one-per-line so multi-word phrases are never shell-split.
+- name: Write machines leak-cluster matchers file
+  ansible.builtin.copy:
+    dest: "{{ openstack_test_leak_cluster_matchers_path }}"
+    mode: "0644"
+    content: "{{ openstack_test_machines_leak_cluster_matchers | map('trim') | join('\n') }}\n"
   when:
     - openstack_test_use_ote | bool
     - openstack_test_machines_leak_cluster_serial | bool
     - openstack_test_filtering | bool
 
 - name: Split machines leak-cluster tests from batch list for serial coda
-  ansible.builtin.shell: |
-    set -o pipefail
-    python3 "{{ role_path }}/files/split_machines_leak_cluster.py" \
-      "{{ tests_to_run_path }}" \
-      "{{ openstack_test_leak_cluster_path }}" \
-    {% for m in openstack_test_machines_leak_cluster_matchers %}
-      {{ m | quote }}{% if not loop.last %} \{% endif %}
-    {% endfor %}
+  ansible.builtin.command:
+    argv:
+      - python3
+      - "{{ role_path }}/files/split_machines_leak_cluster.py"
+      - "{{ tests_to_run_path }}"
+      - "{{ openstack_test_leak_cluster_path }}"
+      - "{{ openstack_test_leak_cluster_matchers_path }}"
   register: openstack_test_leak_cluster_split
   changed_when: true
   when:
