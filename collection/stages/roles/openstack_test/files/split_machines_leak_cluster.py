@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Split machines leak-cluster tests out of an OTE test list for serial coda.
+"""Split Option B serial-coda tests out of an OTE test list.
 
 Reads the filtered list_of_tests_to_run.txt and an ordered matchers file
 (one substring per line), writes:
   - leak_cluster_serial.txt: ordered matches for Option B serial run
+    (Machine leak cluster, plus optional suite-load flakes)
   - list_of_tests_to_run.txt: remaining tests for the batch suite
 
 Matchers are plain substrings (one full phrase per line). The MachineSet

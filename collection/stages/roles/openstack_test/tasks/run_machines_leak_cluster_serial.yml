@@ -1,5 +1,6 @@
 ---
-# Option B: serially run bz_2073398 then Machine trio after the main batch suite.
+# Option B: serially run the ordered coda list after the main batch suite
+# (Machine leak cluster, then egressIP FIP failover / prometheus resize).
 # Expects openstack_test_leak_cluster_path to already list the ordered tests.
 - name: Stat machines leak-cluster serial list
   ansible.builtin.stat:
@@ -95,4 +96,5 @@
         tasks_from: mark_test_stage_unstable.yml
       vars:
         unstable_msg: >-
-          Machines leak-cluster serial coda failed (bz_2073398 / Machine trio).
+          openstack_test serial coda failed (Machine leak cluster and/or
+          egressIP FIP failover / prometheus PVC resize).
