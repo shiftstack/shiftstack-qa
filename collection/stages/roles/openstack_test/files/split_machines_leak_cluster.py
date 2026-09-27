@@ -4,7 +4,7 @@
 Reads the filtered list_of_tests_to_run.txt and an ordered matchers file
 (one substring per line), writes:
   - leak_cluster_serial.txt: ordered matches for Option B serial run
-    (Machine leak cluster, plus optional suite-load flakes)
+    (Machine leak cluster, suite-load flakes, topology pair)
   - list_of_tests_to_run.txt: remaining tests for the batch suite
 
 Matchers are plain substrings (one full phrase per line). The MachineSet
