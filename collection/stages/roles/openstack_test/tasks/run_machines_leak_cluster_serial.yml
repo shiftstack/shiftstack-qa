@@ -1,6 +1,7 @@
 ---
 # Option B: serially run the ordered coda list after the main batch suite
-# (Machine leak cluster, then egressIP FIP failover / prometheus resize).
+# (Machine leak cluster, egressIP / prometheus, then topology AZ check
+# before enable_topology=false mutator).
 # Expects openstack_test_leak_cluster_path to already list the ordered tests.
 - name: Stat machines leak-cluster serial list
   ansible.builtin.stat:
@@ -96,5 +97,5 @@
         tasks_from: mark_test_stage_unstable.yml
       vars:
         unstable_msg: >-
-          openstack_test serial coda failed (Machine leak cluster and/or
-          egressIP FIP failover / prometheus PVC resize).
+          openstack_test serial coda failed (Machine leak cluster, egressIP /
+          prometheus resize, and/or topology enable_topology pair).
