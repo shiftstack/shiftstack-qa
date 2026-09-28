@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import argparse
 import sys
+from pathlib import Path
 
 
 def load_matchers(path: str) -> list[str]:
@@ -38,16 +39,13 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("tests_to_run_path")
     parser.add_argument("leak_cluster_path")
-    parser.add_argument(
-        "matchers_file",
-        help="File with one matcher substring per line (ordered)",
-    )
+    parser.add_argument("matchers_file")
     args = parser.parse_args()
 
     matchers = load_matchers(args.matchers_file)
     if not matchers:
         print("leak_cluster=0 batch_remaining=unchanged (empty matchers file)")
-        open(args.leak_cluster_path, "w", encoding="utf-8").close()
+        Path(args.leak_cluster_path).write_text("", encoding="utf-8")
         return 0
 
     with open(args.tests_to_run_path, "r", encoding="utf-8") as f:
