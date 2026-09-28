@@ -14,3 +14,26 @@ openstack_test_suite: openstack-test/all
 openstack_test_ote_binary_relpath: bin/openstack-test-tests-ext
 # Run filtered OTE tests one-by-one (required for [lb][Serial] under Octavia limits).
 openstack_test_ote_run_serial: false
+# Serial coda: after the main filtered batch suite, run selected tests
+# serially in fixed order. Starts with the bogus Machine leak cluster
+# (bz_2073398 cleanup, then Machine trio), then known suite-load flakes
+# that pass alone but time out in the randomized batch (egressIP FIP
+# failover AAP wait, prometheus PVC resize pod-ready wait), then topology
+# pair ordered so the AZ check runs while enable_topology is still true
+# before the mutator ([Serial] set enable_topology=false) can race it in
+# batch. Keeps the bulk suite in batch to limit wall time. No-ops when
+# the matchers are absent (e.g. lb_tests allowlists). Requires OTE
+# filtered run path.
+openstack_test_machines_leak_cluster_serial: true
+# Ordered substrings matched against list_of_tests_to_run.txt (one phrase
+# each; written to a matchers file so shell never splits them). For the
+# MachineSet replica matcher, ControlPlane variants are skipped.
+openstack_test_machines_leak_cluster_matchers:
+  - "Bugfix bz_2073398: [Serial] MachineSet scale-in does not leak OpenStack ports"
+  - "Machine are in phase Running"
+  - "MachineSet replica number corresponds to the number of Machines"
+  - "Machine ProviderSpec is correctly applied to OpenStack instances"
+  - "egressIP attached to a floating IP should be kept after EgressIP node failover"
+  - "should follow PVC specs during resizing for prometheus"
+  - "enables topology aware scheduling when compute and volume AZs are identical"
+  - "should allow the manual setting of enable_topology to false"
