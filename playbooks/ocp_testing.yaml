@@ -41,6 +41,12 @@
         mode: u=rwx,g=rwx,o=rwx
       when: "'cleanup' in stages or 'prepare' in stages"
 
+# Must run before create_installer_group so OpenStack credentials exist when
+# server_info looks up the installer VM on a recreated client pod.
+- name: Prepare the shiftstackclient pod when full prepare was skipped
+  ansible.builtin.import_playbook: plays/prepare_client_pod.yaml
+  when: "'prepare_client_pod' in stages"
+
 - name: Prepare the OpenShift environment
   hosts: localhost
   gather_facts: no
