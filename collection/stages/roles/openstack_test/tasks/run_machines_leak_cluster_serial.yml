@@ -1,5 +1,5 @@
 ---
-# Option B: serially run the ordered coda list after the main batch suite
+# Serial coda: serially run the ordered coda list after the main batch suite
 # (Machine leak cluster, egressIP / prometheus, then topology AZ check
 # before enable_topology=false mutator).
 # Expects openstack_test_leak_cluster_path to already list the ordered tests.

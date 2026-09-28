@@ -141,8 +141,8 @@
   ansible.builtin.set_fact:
     openstack_test_filtering: "{{ (openstack_tests_allowlist_file | length > 0) or (openstack_tests_blocklist_file | length > 0) }}"
 
-# Option B: pull serial-coda matchers (Machine leak cluster + suite-load
-# flakes) out of the batch list for an ordered serial run after the batch.
+# Serial coda: pull matchers (Machine leak cluster + suite-load flakes)
+# out of the batch list for an ordered serial run after the batch.
 - name: Set machines leak-cluster serial list path
   ansible.builtin.set_fact:
     openstack_test_leak_cluster_path: >-
@@ -433,8 +433,8 @@
       vars:
         must_gather_suffix: "openstack-tests"
 
-# Option B: serial coda after the main batch (or filtered serial) suite.
-- name: Run Option B serial-coda tests after main suite
+# Serial coda after the main batch (or filtered serial) suite.
+- name: Run serial-coda tests after main suite
   ansible.builtin.include_tasks: run_machines_leak_cluster_serial.yml
   when:
     - openstack_test_use_ote | bool
