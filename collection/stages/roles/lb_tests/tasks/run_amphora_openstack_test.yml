@@ -8,5 +8,7 @@
     openstack_tests_allowlist_file: "{{ lb_amphora_openstack_test_allowlist }}"
     openstack_tests_blocklist_file: "{{ lb_amphora_openstack_test_blocklist }}"
     openstack_test_ote_run_serial: true
+    # Same as OVN LB: do not apply Machine serial coda on LB allowlists.
+    openstack_test_machines_leak_cluster_serial: false
     openstack_testsuite_name: "{{ lb_amphora_openstack_testsuite_name }}"
     openstack_reset_result_dir: "{{ lb_amphora_openstack_reset_result_dir | default(false) }}"

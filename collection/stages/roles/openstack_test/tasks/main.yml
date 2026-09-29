@@ -38,6 +38,15 @@
     - name: Include Openstack-Test tasks
       ansible.builtin.include_tasks: run_openstack_test.yml
 
+  always:
+    # Always publish batch results when junit exists, even if run_openstack_test
+    # (or serial coda) failed after the suite wrote artifacts.
+    - name: Stat main openstack-test junit before post
+      ansible.builtin.stat:
+        path: "{{ openstack_test_results_dir }}/junit_e2e_openstack.xml"
+      register: openstack_test_main_junit_stat
+      failed_when: false
+
     - name: Post openshift-test
       ansible.builtin.include_role:
         name: tools_openshift_tests
@@ -47,8 +56,8 @@
         key_for_filtering_results: "openstack"
         test_name: "{{ openstack_test_name }}"
         results_dir: "{{ openstack_test_results_dir }}"
+      when: openstack_test_main_junit_stat.stat.exists | default(false)
 
-  always:
     - name: Restore hypervisor's cifmw-dnsmasq service
       ansible.builtin.import_role:
         name: tools_cifmw_dnsmasq

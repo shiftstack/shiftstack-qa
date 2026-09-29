@@ -99,6 +99,10 @@
     openstack_tests_allowlist_file: "{{ lb_ovn_allowlist_resolved }}"
     openstack_tests_blocklist_file: "{{ lb_ingress_blocklist_resolved }}"
     openstack_test_ote_run_serial: true
+    # LB allowlists can include egressIP (a coda matcher) without the Machine
+    # leak cluster; serial-coda uniqueness then fails. Coda belongs on the
+    # main openstack_test stage only.
+    openstack_test_machines_leak_cluster_serial: false
     openstack_testsuite_name: openstack_tests_lb_ovn
     openstack_reset_result_dir: no # As we want to keep the logs generated in the previous step
 

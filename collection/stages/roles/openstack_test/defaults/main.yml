@@ -25,6 +25,11 @@ openstack_test_ote_run_serial: false
 # the matchers are absent (e.g. lb_tests allowlists). Requires OTE
 # filtered run path.
 openstack_test_machines_leak_cluster_serial: true
+# Dedicated Zuul/artifact folder for the serial coda (same pattern as
+# lb_ovn / lb_amphora_*): own log, junit, list, and test_results copy.
+# Main openstack-test-results stays batch-only after the split.
+openstack_test_serial_coda_results_dir: "{{ artifacts_dir }}/openstack_test_serial_coda"
+openstack_test_serial_coda_testsuite_name: openstack_tests_serial_coda
 # Ordered substrings matched against list_of_tests_to_run.txt (one phrase
 # each; written to a matchers file so shell never splits them). For the
 # MachineSet replica matcher, ControlPlane variants are skipped.
