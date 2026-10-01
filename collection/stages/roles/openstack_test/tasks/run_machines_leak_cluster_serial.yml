@@ -2,7 +2,9 @@
 # Serial coda: serially run the ordered coda list after the main batch suite
 # (Machine leak cluster, egressIP / prometheus, then topology AZ check
 # before enable_topology=false mutator).
-# Expects openstack_test_leak_cluster_path to already list the ordered tests.
+# Artifacts go to openstack_test_serial_coda/ (separate from batch
+# openstack-test-results/), same layout as lb_ovn / lb_amphora_*.
+# Expects openstack_test_leak_cluster_path and coda log/junit paths set.
 - name: Stat machines leak-cluster serial list
   ansible.builtin.stat:
     path: "{{ openstack_test_leak_cluster_path }}"
@@ -26,7 +28,7 @@
     (not (openstack_test_leak_cluster_stat.stat.exists | default(false)))
     or ((openstack_test_leak_cluster_count.stdout | default('0') | trim | int) == 0)
 
-- name: Run machines leak-cluster tests serially and merge into suite log/junit
+- name: Run machines leak-cluster tests serially into dedicated results dir
   when:
     - openstack_test_leak_cluster_stat.stat.exists | default(false)
     - (openstack_test_leak_cluster_count.stdout | default('0') | trim | int) > 0
@@ -34,10 +36,10 @@
     - name: Execute machines leak-cluster run-test loop
       ansible.builtin.shell: |
         set -o pipefail
-        suite_exit=0
         py_exit=0
         resolve="{{ openstack_test_ote_resolve_script }}"
-        leak_log="{{ openstack_test_results_dir }}/machines_leak_cluster.log"
+        leak_log="{{ openstack_test_serial_coda_log_path }}"
+        leak_junit="{{ openstack_test_serial_coda_junit_path }}"
         leak_list="{{ openstack_test_leak_cluster_path }}"
         # Pre-count from the list file (do not increment in-loop; avoids
         # false UNSTABLE when resolvable!=expected after a successful coda).
@@ -46,37 +48,21 @@
         while IFS= read -r tname || [ -n "${tname:-}" ]; do
           [ -z "${tname// }" ] && continue
           tmp=$(mktemp)
-          rc=0
+          # OTE often exits non-zero on pass/skip; ignore per-test rc — final
+          # resolver counts are the source of truth (same as LB serial / batch).
           {{ openstack_test_executable }} run-test --output=json -c 1 "$tname" \
-            > "$tmp" 2>&1 || rc=$?
+            > "$tmp" 2>&1 || true
           cat "$tmp" >> "$leak_log"
-          cat "$tmp" >> {{ openstack_test_log_path }}
-          if [ "$rc" -ne 0 ]; then
-            failed=$(python3 "$resolve" count "$tmp" failed || echo 1)
-            skipped=$(python3 "$resolve" count "$tmp" skipped || echo 0)
-            passed=$(python3 "$resolve" count "$tmp" passed || echo 0)
-            unknown=$(python3 "$resolve" count "$tmp" unknown || echo 0)
-            if [ "$failed" -gt 0 ] || [ "$unknown" -gt 0 ]; then
-              suite_exit=1
-            elif [ $((failed + skipped + passed + unknown)) -eq 0 ]; then
-              if grep -q 'FAIL!' "$tmp" 2>/dev/null; then
-                suite_exit=1
-              elif ! grep -qE 'SUCCESS!|SKIP' "$tmp" 2>/dev/null; then
-                suite_exit=1
-              fi
-            fi
-          fi
           rm -f "$tmp"
         done < "$leak_list"
-        python3 "$resolve" junit \
-          "{{ openstack_test_log_path }}" "{{ openstack_test_junit_path }}" || py_exit=$?
+        python3 "$resolve" junit "$leak_log" "$leak_junit" || py_exit=$?
         failed_count=$(python3 "$resolve" count "$leak_log" failed || echo 0)
         skipped_count=$(python3 "$resolve" count "$leak_log" skipped || echo 0)
         passed_count=$(python3 "$resolve" count "$leak_log" passed || echo 0)
         unknown_count=$(python3 "$resolve" count "$leak_log" unknown || echo 0)
         resolvable=$(( ${passed_count:-0} + ${skipped_count:-0} + ${failed_count:-0} ))
         echo "machines_leak_cluster counts: passed=${passed_count} failed=${failed_count} skipped=${skipped_count} unknown=${unknown_count} expected=${expected} resolvable=${resolvable}"
-        if [ "$suite_exit" -ne 0 ] || [ "$py_exit" -ne 0 ] \
+        if [ "$py_exit" -ne 0 ] \
           || [ "${failed_count:-0}" -gt 0 ] || [ "${unknown_count:-0}" -gt 0 ] \
           || [ "$resolvable" -ne "$expected" ]; then
           exit 1
@@ -91,6 +77,61 @@
       register: openstack_test_leak_cluster_run
 
   rescue:
+    - name: Resolve machines leak-cluster serial failure counts
+      ansible.builtin.command:
+        argv:
+          - python3
+          - "{{ openstack_test_ote_resolve_script }}"
+          - count
+          - "{{ openstack_test_serial_coda_log_path }}"
+          - "{{ item }}"
+      loop:
+        - failed
+        - passed
+        - skipped
+        - unknown
+      register: openstack_test_leak_cluster_rescue_counts
+      changed_when: false
+      failed_when: false
+
+    - name: Normalize machines leak-cluster rescue counts
+      ansible.builtin.set_fact:
+        openstack_test_leak_failed: >-
+          {{ (openstack_test_leak_cluster_rescue_counts.results
+              | selectattr('item', 'equalto', 'failed')
+              | map(attribute='stdout') | first | default('0')) | trim }}
+        openstack_test_leak_passed: >-
+          {{ (openstack_test_leak_cluster_rescue_counts.results
+              | selectattr('item', 'equalto', 'passed')
+              | map(attribute='stdout') | first | default('0')) | trim }}
+        openstack_test_leak_skipped: >-
+          {{ (openstack_test_leak_cluster_rescue_counts.results
+              | selectattr('item', 'equalto', 'skipped')
+              | map(attribute='stdout') | first | default('0')) | trim }}
+        openstack_test_leak_unknown: >-
+          {{ (openstack_test_leak_cluster_rescue_counts.results
+              | selectattr('item', 'equalto', 'unknown')
+              | map(attribute='stdout') | first | default('0')) | trim }}
+        openstack_test_leak_expected: >-
+          {{ (openstack_test_leak_cluster_count.stdout | default('0')) | trim }}
+
+    - name: Compute machines leak-cluster resolvable count
+      ansible.builtin.set_fact:
+        openstack_test_leak_resolvable: >-
+          {{ (
+               (openstack_test_leak_passed | int)
+               + (openstack_test_leak_skipped | int)
+               + (openstack_test_leak_failed | int)
+             ) }}
+
+    - name: Print machines leak-cluster rescue counts
+      ansible.builtin.debug:
+        msg: >-
+          machines_leak_cluster rescue counts: passed={{ openstack_test_leak_passed }},
+          failed={{ openstack_test_leak_failed }}, skipped={{ openstack_test_leak_skipped }},
+          unknown={{ openstack_test_leak_unknown }}, expected={{ openstack_test_leak_expected }},
+          resolvable={{ openstack_test_leak_resolvable }}
+
     - name: Mark openstack-test UNSTABLE after machines leak-cluster serial failure
       ansible.builtin.include_role:
         name: tools_stage_results
@@ -99,3 +140,35 @@
         unstable_msg: >-
           openstack_test serial coda failed (Machine leak cluster, egressIP /
           prometheus resize, and/or topology enable_topology pair).
+      when: >
+        ((openstack_test_leak_failed | default('0')) | int > 0)
+        or ((openstack_test_leak_unknown | default('0')) | int > 0)
+        or (
+          (openstack_test_leak_resolvable | default('0')) | int
+          != (openstack_test_leak_expected | default('0')) | int
+        )
+
+  always:
+    # Publish coda results like lb_ovn when junit exists. No ignore_errors:
+    # publish failure must fail the stage so results are not silently missing.
+    - name: Stat serial-coda junit before post
+      ansible.builtin.stat:
+        path: "{{ openstack_test_serial_coda_junit_path }}"
+      register: openstack_test_serial_coda_junit_stat
+      failed_when: false
+      when:
+        - openstack_test_serial_coda_junit_path is defined
+        - openstack_test_leak_cluster_stat.stat.exists | default(false)
+        - (openstack_test_leak_cluster_count.stdout | default('0') | trim | int) > 0
+
+    - name: Post serial-coda openshift-test results
+      ansible.builtin.include_role:
+        name: tools_openshift_tests
+        tasks_from: post_openshift_tests.yml
+      vars:
+        testsuite_name: "{{ openstack_test_serial_coda_testsuite_name }}"
+        key_for_filtering_results: "openstack"
+        test_name: "{{ openstack_test_name }}"
+        results_dir: "{{ openstack_test_serial_coda_results_dir }}"
+      when:
+        - openstack_test_serial_coda_junit_stat.stat.exists | default(false)
