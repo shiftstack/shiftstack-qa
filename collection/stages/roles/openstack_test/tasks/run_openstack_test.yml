@@ -251,11 +251,17 @@
         set -o pipefail
         : > {{ openstack_test_log_path }}
         py_exit=0
-        expected=0
         resolve="{{ openstack_test_ote_resolve_script }}"
+        # Pre-count from the list file (do not increment in-loop; in-loop
+        # expected stays wrong under /bin/sh and false-fails
+        # resolvable!=expected after a clean LB serial run; same fix as coda).
+        expected="$(grep -cve '^[[:space:]]*$' {{ tests_to_run_path }} || true)"
+        if [ "${expected:-0}" -eq 0 ]; then
+          echo "ote serial: empty filtered test list (expected=0); failing"
+          exit 1
+        fi
         while IFS= read -r test || [[ -n "$test" ]]; do
           [[ -z "${test// }" ]] && continue
-          expected=$((expected + 1))
           tmp=$(mktemp)
           # OTE often exits non-zero on pass/skip (Deserializaion Error on
           # leading I... klog). Ignore per-test rc; end-of-suite resolver is
@@ -265,10 +271,6 @@
           cat "$tmp" >> {{ openstack_test_log_path }}
           rm -f "$tmp"
         done < {{ tests_to_run_path }}
-        if [ "$expected" -eq 0 ]; then
-          echo "ote serial: empty filtered test list (expected=0); failing"
-          exit 1
-        fi
         python3 "$resolve" junit \
           "{{ openstack_test_log_path }}" "{{ openstack_test_junit_path }}" || py_exit=$?
         failed_count=$(python3 "$resolve" count \
@@ -538,6 +540,20 @@
       vars:
         must_gather_suffix: "openstack-tests"
       when: (number_of_failed_tests | default('0')) | int > 0
+
+    # Hard-fail incomplete/inflated resolve so block/rescue cannot soft-recover
+    # a resolvable!=expected gate miss (UNSTABLE alone still clears the block).
+    - name: Fail when OTE resolvable count does not match expected
+      ansible.builtin.fail:
+        msg: >-
+          openstack-test resolvable={{ number_of_resolvable_tests | default('0') }}
+          != expected={{ number_of_expected_tests | default('0') }}
+          (incomplete or inflated resolve; cannot soft-recover)
+      when:
+        - openstack_test_use_ote | bool
+        - >
+          (number_of_resolvable_tests | default('0')) | int
+          != (number_of_expected_tests | default('0')) | int
 
 # Serial coda after the main batch (or filtered serial) suite.
 - name: Run serial-coda tests after main suite
