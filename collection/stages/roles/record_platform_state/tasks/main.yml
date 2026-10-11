@@ -1,0 +1,223 @@
+---
+# Probe live RHOSO from the shiftstackclient pod (incluster kubeconfig) and
+# write platform-state.yaml on the hypervisor for warm Pipeline B reuse.
+# Fail closed: do not write ready state when probes fail.
+
+- name: Require hypervisor and rhoso_kubeconfig for platform-state recording
+  ansible.builtin.assert:
+    that:
+      - hypervisor is defined
+      - (hypervisor | string | length) > 0
+      - rhoso_kubeconfig is defined
+      - (rhoso_kubeconfig | string | length) > 0
+    fail_msg: >-
+      record_platform_state requires -e hypervisor=<fqdn> and
+      -e rhoso_kubeconfig=<path> (cifmw passes both for monolithic jobs).
+
+- name: Check rhoso_kubeconfig exists on the client pod
+  ansible.builtin.stat:
+    path: "{{ rhoso_kubeconfig }}"
+  register: record_platform_state_kubeconfig_stat
+
+- name: Fail when rhoso_kubeconfig is missing
+  ansible.builtin.assert:
+    that:
+      - record_platform_state_kubeconfig_stat.stat.exists | default(false)
+    fail_msg: >-
+      record_platform_state: rhoso_kubeconfig not found at
+      {{ rhoso_kubeconfig }}.
+
+- name: Probe live OpenStackVersion.deployedVersion via rhoso_kubeconfig
+  environment:
+    KUBECONFIG: "{{ rhoso_kubeconfig }}"
+  ansible.builtin.shell: |
+    set -euo pipefail
+    oc --context=admin -n {{ record_platform_state_openstack_namespace }} \
+      get openstackversion {{ record_platform_state_openstackversion_name }} \
+      -o json | python3 -c "
+    import json, re, sys
+    data = json.load(sys.stdin)
+    deployed = str((data.get('status') or {}).get('deployedVersion') or '').strip()
+    if not deployed:
+        sys.stderr.write('OpenStackVersion status.deployedVersion missing\n')
+        sys.exit(1)
+    match = re.match(r'^(\\d+\\.\\d+)', deployed)
+    major_minor = match.group(1) if match else ''
+    if not major_minor:
+        sys.stderr.write(
+            'unable to parse major.minor from deployedVersion=' + deployed + '\n'
+        )
+        sys.exit(1)
+    print(deployed)
+    print(major_minor)
+    "
+  args:
+    executable: /bin/bash
+  register: record_platform_state_version_probe
+  changed_when: false
+  failed_when: false
+
+- name: Set live RHOSO version facts from probe
+  vars:
+    _stdout_lines: >-
+      {{
+        (record_platform_state_version_probe.stdout | default('') | trim).splitlines()
+      }}
+  ansible.builtin.set_fact:
+    record_platform_state_rhoso_version_ok: >-
+      {{
+        (record_platform_state_version_probe.rc | default(1) == 0)
+        and (_stdout_lines | length >= 2)
+      }}
+    record_platform_state_rhoso_version_full: >-
+      {{
+        _stdout_lines[0] | default('')
+        if (
+          (record_platform_state_version_probe.rc | default(1) == 0)
+          and (_stdout_lines | length >= 2)
+        )
+        else ''
+      }}
+    record_platform_state_rhoso_version: >-
+      {{
+        _stdout_lines[1] | default('')
+        if (
+          (record_platform_state_version_probe.rc | default(1) == 0)
+          and (_stdout_lines | length >= 2)
+        )
+        else ''
+      }}
+
+- name: Compare live RHOSO version against expected prefix
+  vars:
+    _expected: "{{ record_platform_state_expected_rhoso_version | string }}"
+    _live: "{{ record_platform_state_rhoso_version_full | default('') | string }}"
+  ansible.builtin.set_fact:
+    record_platform_state_rhoso_version_matches_expected: >-
+      {{
+        (record_platform_state_rhoso_version_ok | default(false) | bool)
+        and (_live | length > 0)
+        and (
+          (_live == _expected)
+          or _live.startswith(_expected ~ '.')
+          or _live.startswith(_expected ~ '-')
+        )
+      }}
+
+- name: Probe RHOSO OCP API reachability via rhoso_kubeconfig
+  environment:
+    KUBECONFIG: "{{ rhoso_kubeconfig }}"
+  ansible.builtin.command:
+    cmd: oc --context=admin get --raw=/readyz
+  register: record_platform_state_ocp_probe
+  changed_when: false
+  failed_when: false
+
+- name: Probe OpenStackControlPlane Ready condition via rhoso_kubeconfig
+  environment:
+    KUBECONFIG: "{{ rhoso_kubeconfig }}"
+  ansible.builtin.shell: |
+    set -euo pipefail
+    oc --context=admin -n {{ record_platform_state_openstack_namespace }} \
+      get openstackcontrolplane controlplane -o json | python3 -c "
+    import json, sys
+    data = json.load(sys.stdin)
+    ready = ''
+    for cond in data.get('status', {}).get('conditions', []):
+        if cond.get('type') == 'Ready':
+            ready = str(cond.get('status', ''))
+            break
+    print(ready if ready else 'Unknown')
+    sys.exit(0 if ready == 'True' else 1)
+    "
+  args:
+    executable: /bin/bash
+  register: record_platform_state_osp_probe
+  changed_when: false
+  failed_when: false
+
+- name: Set platform health facts from probes
+  ansible.builtin.set_fact:
+    record_platform_state_ocp_api_reachable: >-
+      {{ record_platform_state_ocp_probe.rc | default(1) == 0 }}
+    record_platform_state_openstack_ready: >-
+      {{ record_platform_state_osp_probe.rc | default(1) == 0 }}
+    # Client-pod oc against the RHOSO API implies the control plane is reachable
+    # for the purpose of this contract (phased also probes controller-0 SSH).
+    record_platform_state_controller_reachable: >-
+      {{
+        (record_platform_state_ocp_probe.rc | default(1) == 0)
+        and (record_platform_state_version_probe.rc | default(1) == 0)
+      }}
+
+- name: Fail without writing state when any probe fails
+  ansible.builtin.fail:
+    msg: >-
+      Platform probes failed; refusing to write platform-state.yaml.
+      controller_reachable={{ record_platform_state_controller_reachable | default(false) }};
+      ocp_api_reachable={{ record_platform_state_ocp_api_reachable | default(false) }};
+      openstack_ready={{ record_platform_state_openstack_ready | default(false) }}
+      ({{ record_platform_state_osp_probe.stdout | default('') | trim
+         or record_platform_state_osp_probe.stderr | default('osp probe failed') | trim }});
+      rhoso_version_ok={{ record_platform_state_rhoso_version_ok | default(false) }}
+      rhoso_version_matches_expected={{ record_platform_state_rhoso_version_matches_expected | default(false) }}
+      (live={{ record_platform_state_rhoso_version_full | default('missing') }}
+      expected={{ record_platform_state_expected_rhoso_version }}).
+  when: >-
+    not (
+      (record_platform_state_controller_reachable | default(false) | bool)
+      and (record_platform_state_ocp_api_reachable | default(false) | bool)
+      and (record_platform_state_openstack_ready | default(false) | bool)
+      and (record_platform_state_rhoso_version_ok | default(false) | bool)
+      and (record_platform_state_rhoso_version_matches_expected | default(false) | bool)
+    )
+
+- name: Ensure platform-state parent directory exists on hypervisor
+  ansible.builtin.file:
+    path: "{{ record_platform_state_path | dirname }}"
+    state: directory
+    mode: "0755"
+  delegate_to: "{{ hypervisor }}"
+  remote_user: "{{ record_platform_state_remote_user }}"
+  vars:
+    ansible_ssh_common_args: >-
+      -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
+
+- name: Build platform-state payload
+  ansible.builtin.set_fact:
+    record_platform_state_payload:
+      schema_version: "{{ record_platform_state_schema_version | int }}"
+      hypervisor: "{{ hypervisor }}"
+      rhoso_major: "{{ record_platform_state_rhoso_version.split('.')[0] }}"
+      rhoso_version: "{{ record_platform_state_rhoso_version }}"
+      rhoso_version_full: "{{ record_platform_state_rhoso_version_full }}"
+      platform_status: ready
+      phases_complete: [1, 2]
+      controller_reachable: "{{ record_platform_state_controller_reachable | bool }}"
+      ocp_api_reachable: "{{ record_platform_state_ocp_api_reachable | bool }}"
+      openstack_ready: "{{ record_platform_state_openstack_ready | bool }}"
+      recorded_at: "{{ lookup('pipe', 'date -u +%Y-%m-%dT%H:%M:%SZ') }}"
+      last_zuul_job: >-
+        {{
+          lookup('env', 'ZUUL_JOB_NAME')
+          | default(lookup('env', 'ZUUL_JOB'), true)
+          | default('monolithic-osp-verification', true)
+        }}
+
+- name: Write platform-state.yaml on hypervisor
+  ansible.builtin.copy:
+    content: "{{ record_platform_state_payload | to_nice_yaml }}"
+    dest: "{{ record_platform_state_path }}"
+    mode: "0644"
+  delegate_to: "{{ hypervisor }}"
+  remote_user: "{{ record_platform_state_remote_user }}"
+  vars:
+    ansible_ssh_common_args: >-
+      -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
+
+- name: Report recorded platform-state location
+  ansible.builtin.debug:
+    msg: >-
+      Wrote platform-state.yaml to {{ hypervisor }}:{{ record_platform_state_path }}
+      (rhoso_version_full={{ record_platform_state_rhoso_version_full }},
+      rhoso_version={{ record_platform_state_rhoso_version }}).

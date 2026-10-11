@@ -1,0 +1,13 @@
+---
+# Monolithic-only: record platform-state after RHOSO deploy for warm reuse.
+# Phased Pipeline A already records via ci-framework-jobs; do not add this
+# stage to Pipeline B stage overrides.
+- name: Record platform-state on hypervisor after RHOSO deployment
+  hosts: localhost
+  gather_facts: false
+  vars_files:
+    - "../../configs/global.yml"
+  tasks:
+    - name: Record platform-state for monolithic warm Pipeline B
+      ansible.builtin.include_role:
+        name: shiftstack.stages.record_platform_state

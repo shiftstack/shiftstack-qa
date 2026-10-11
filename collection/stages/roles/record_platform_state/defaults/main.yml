@@ -1,0 +1,15 @@
+---
+# Write the phased platform-state contract after RHOSO is already up.
+# Intended only for monolithic osp_verification* jobs; phased pipelines already
+# record state via ci-framework-jobs record-platform-state and must not list
+# this stage (Pipeline B overrides stages without it).
+#
+# Path and schema must stay aligned with
+# ci-framework-jobs/scenarios/baremetal/shiftstack/phased-platform-state-vars.yml
+record_platform_state_path: /home/zuul/ci-framework-data/platform-state.yaml
+record_platform_state_schema_version: 1
+record_platform_state_expected_rhoso_version: "18.0"
+record_platform_state_remote_user: root
+# rhoso_kubeconfig is passed by cifmw (-e rhoso_kubeconfig=...); no default.
+record_platform_state_openstack_namespace: openstack
+record_platform_state_openstackversion_name: controlplane

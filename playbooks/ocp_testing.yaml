@@ -69,6 +69,14 @@
   ansible.builtin.import_playbook: plays/prepare.yaml
   when: "'prepare' in stages"
 
+# Monolithic osp_verification* only: write platform-state.yaml after prepare
+# installs oc on the client pod (RHOSO is already up from cifmw). Phased jobs
+# must not list this stage (Pipeline B overrides stages without it; Pipeline A
+# already records via ci-framework-jobs).
+- name: Record platform-state for monolithic warm reuse
+  ansible.builtin.import_playbook: plays/record_platform_state.yaml
+  when: "'record_platform_state' in stages"
+
 - name: Install OpenShift
   ansible.builtin.import_playbook: plays/install.yaml
   when: "'install' in stages"
