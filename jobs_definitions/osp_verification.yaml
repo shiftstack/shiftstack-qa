@@ -16,6 +16,9 @@ openshift_build_name: "" # It can be an empty value "" (latest nightly), a given
 installation_type: ipi
 stages:
   - prepare
+  # Monolithic-only: after prepare installs oc; record RHOSO platform-state
+  # for warm Pipeline B. Do not add to phased Pipeline B stage overrides.
+  - record_platform_state
   - install
   - post
   - verification

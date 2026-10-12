@@ -16,6 +16,9 @@ installation_type: ipi
 lb_tests_guest_cleanup: true
 stages:
   - prepare
+  # Monolithic-only: after prepare installs oc; record RHOSO platform-state
+  # for warm Pipeline B. Do not add to phased Pipeline B stage overrides.
+  - record_platform_state
   - install
   - post
   - verification
