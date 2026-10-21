@@ -111,7 +111,7 @@
     - name: Get the images objects in swift for the {{ swift_check_ns }} namespace from the containers
       ansible.builtin.shell: |
         set -o pipefail
-        target="{{ swift_check_ns }}.{{ swift_check_image }}"
+        target="{{ swift_check_ns }}/{{ swift_check_image }}"
         openstack container list -f json \
           | jq -r '.[] | (.Name // .name // empty)' \
           | while read -r container; do
