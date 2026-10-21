@@ -189,7 +189,9 @@
 
   always:
     - name: Remove pull secret file
-      when: _pull_secret_preexists.stat.size | default(0) == 0
+      when:
+        - _pull_secret_preexists is defined
+        - _pull_secret_preexists.stat.size | default(0) == 0
       ansible.builtin.file:
         path: "{{ pull_secret_file }}"
         state: absent

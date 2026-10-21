@@ -3,8 +3,8 @@
 #     * ADOPTION VERIFICATION *
 #
 # - Post-adoption verification of the shiftstack cluster.
-# - Runs only the verification stage to confirm the OCP-on-OSP
-#   cluster is functional after adoption from OSP 17.1 to RHOSO 18.
+# - Runs the verification and openstack_test stages to confirm the
+#   OCP-on-OSP cluster is functional after adoption from OSP 17.1 to RHOSO 18.
 # - Skips prepare/install/post since the cluster already exists.
 #
 
