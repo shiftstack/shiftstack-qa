@@ -10,6 +10,7 @@
 - name: Remove hosts from existing aggregates
   openstack.cloud.host_aggregate:
     cloud: "{{ admin_cloud }}"
+    verify: "{{ admin_verify_cacert }}"
     state: present
     name: "{{ item }}"
     hosts: []
@@ -19,6 +20,7 @@
 - name: Delete existing host aggregates
   openstack.cloud.host_aggregate:
     cloud: "{{ admin_cloud }}"
+    verify: "{{ admin_verify_cacert }}"
     state: absent
     name: "{{ item }}"
   loop: "{{ az_existing_aggregates.stdout_lines }}"
