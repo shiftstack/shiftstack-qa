@@ -33,6 +33,7 @@
 - name: Create one host aggregate per compute host and assign its AZ
   openstack.cloud.host_aggregate:
     cloud: "{{ admin_cloud }}"
+    verify: "{{ admin_verify_cacert }}"
     state: present
     name: "HA-{{ az_idx }}"
     availability_zone: "AZ-{{ az_idx }}"
