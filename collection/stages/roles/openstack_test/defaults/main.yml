@@ -42,3 +42,9 @@ openstack_test_machines_leak_cluster_matchers:
   - "should follow PVC specs during resizing for prometheus"
   - "enables topology aware scheduling when compute and volume AZs are identical"
   - "should allow the manual setting of enable_topology to false"
+
+# The hypervisor's cifmw-dnsmasq config lives in /etc, so the tasks that touch it
+# need privilege. Use the unprivileged lab user with sudo instead of logging in as
+# root: root access is not provisioned on freshly (re)installed hypervisors and the
+# delegating pod only carries the QE key.
+hypervisor_ssh_user: zuul

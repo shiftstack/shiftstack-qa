@@ -30,7 +30,8 @@
         tools_cifmw_dnsmasq_ips:
           - "{{ resources.apps_accessible_ip }}"
       delegate_to: "{{ hypervisor }}"
-      remote_user: root
+      remote_user: "{{ hypervisor_ssh_user }}"
+      become: true
       when: hypervisor is defined
 
     - name: Best-effort purge leftover bogus Machines before openstack-test
@@ -64,5 +65,6 @@
         name: tools_cifmw_dnsmasq
         tasks_from: restore.yml
       delegate_to: "{{ hypervisor }}"
-      remote_user: root
+      remote_user: "{{ hypervisor_ssh_user }}"
+      become: true
       when: hypervisor is defined
